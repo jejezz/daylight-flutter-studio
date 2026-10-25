@@ -5,6 +5,7 @@ import '../settings/gate_settings.dart';
 import '../settings/editor_settings.dart';
 import '../theme/app_theme.dart';
 import '../theme/font_probe.dart';
+import '../theme/font_scan.dart';
 import '../theme/studio_icons.dart';
 import '../theme/editor_theme.dart';
 import '../theme/editor_zoom.dart';
@@ -381,6 +382,14 @@ class _FontSettings extends StatefulWidget {
 class _FontSettingsState extends State<_FontSettings> {
   late final _name = TextEditingController(text: widget.editor.fontName ?? '');
 
+  /// 이 컴퓨터에 설치된 고정폭 글꼴 중 Flutter가 실제로 쓸 수 있는 것.
+  late final Future<List<String>> _fonts = _loadFonts();
+
+  Future<List<String>> _loadFonts() async {
+    final found = <String>{...await monospaceFontLoader(), ...EditorSettings.presetFonts};
+    return found.where(FontProbe.isInstalled).toList()..sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
+  }
+
   @override
   void dispose() {
     _name.dispose();
@@ -415,26 +424,27 @@ class _FontSettingsState extends State<_FontSettings> {
               onChanged: editor.setFontName,
             ),
             SizedBox(height: t.spaceSm),
-            Wrap(
-              spacing: t.spaceSm,
-              runSpacing: t.spaceXs,
-              children: [
-                ChoiceChip(
-                  selected: editor.fontName == null,
-                  showCheckmark: false,
-                  label: Text(l10n.settingsEditorFontDefault),
-                  onSelected: (_) => _pick(null),
-                ),
-                for (final f in EditorSettings.presetFonts.where(
-                  FontProbe.isInstalled,
-                ))
+            FutureBuilder<List<String>>(
+              future: _fonts,
+              builder: (context, snapshot) => Wrap(
+                spacing: t.spaceSm,
+                runSpacing: t.spaceXs,
+                children: [
                   ChoiceChip(
-                    selected: editor.fontName == f,
+                    selected: editor.fontName == null,
                     showCheckmark: false,
-                    label: Text(f),
-                    onSelected: (_) => _pick(f),
+                    label: Text(l10n.settingsEditorFontDefault),
+                    onSelected: (_) => _pick(null),
                   ),
-              ],
+                  for (final f in snapshot.data ?? const <String>[])
+                    ChoiceChip(
+                      selected: editor.fontName == f,
+                      showCheckmark: false,
+                      label: Text(f),
+                      onSelected: (_) => _pick(f),
+                    ),
+                ],
+              ),
             ),
             SizedBox(height: t.spaceXs),
             if (name != null && !FontProbe.isInstalled(name))
