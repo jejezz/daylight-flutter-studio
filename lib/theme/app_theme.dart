@@ -7,6 +7,8 @@ library;
 
 import 'package:flutter/material.dart';
 
+import 'syntax_theme.dart';
+
 /// 고를 수 있는 색 구성 (Material 3 시드 색).
 enum StudioPalette {
   indigo(Color(0xFF3F51B5)),
@@ -151,6 +153,7 @@ class StudioTokens extends ThemeExtension<StudioTokens> {
 
 extension StudioTheme on BuildContext {
   StudioTokens get tokens => Theme.of(this).extension<StudioTokens>()!;
+  SyntaxTokens get syntax => Theme.of(this).extension<SyntaxTokens>()!;
 }
 
 abstract final class AppTheme {
@@ -161,7 +164,7 @@ abstract final class AppTheme {
     final shape = RoundedRectangleBorder(borderRadius: BorderRadius.circular(tokens.radius));
     final base = ThemeData(colorScheme: scheme, useMaterial3: true, visualDensity: VisualDensity.compact);
     return base.copyWith(
-      extensions: [tokens],
+      extensions: [tokens, SyntaxTokens.forBrightness(brightness)],
       scaffoldBackgroundColor: scheme.surface,
       appBarTheme: AppBarTheme(
         backgroundColor: scheme.surfaceContainer,

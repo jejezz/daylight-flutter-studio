@@ -6,6 +6,7 @@ import '../core/command_runner.dart';
 import '../devices/device_service.dart';
 import '../git/git_controller.dart';
 import '../run/run_controller.dart';
+import '../studio/dart_formatter.dart';
 import '../studio/studio_controller.dart';
 import '../studio/worktree.dart';
 import '../theme/app_theme.dart';
@@ -28,9 +29,9 @@ class StudioScreen extends StatefulWidget {
 }
 
 class _StudioScreenState extends State<StudioScreen> {
-  final _controller = StudioController();
   late final CommandLog _log = CommandLog();
   late final CommandRunner _runner = CommandRunner(_log);
+  late final StudioController _controller = StudioController(formatDart: DartFormatter(_runner).format);
   late final RunController _run = RunController(
     runner: _runner,
     deviceService: ProcessDeviceService(_runner),

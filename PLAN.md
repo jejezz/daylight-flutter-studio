@@ -19,6 +19,16 @@ Claude Code는 worktree에서 작업하고 사용자는 main만 쓴다. 그러�
 - 트리 위쪽에 worktree 선택기를 둔다. Claude worktree(`.claude/worktrees/`)는 표시로 구분하고 미검증이면 점을 붙인다.
 - 편집기는 일부러 단순하게 둔다: 열기·수정·저장·찾기·diff 읽기. 자동완성 등은 만들지 않는다.
 
+## 편집기
+
+- 엔진은 `re_editor`(줄 번호, 접기, 구문 강조). 구문 강조 색은 `SyntaxTokens`(테마)에서 온다.
+- **Dart 접기**: `()`, `[]`, `{}`가 여러 줄에 걸친 곳을 접는다. 한 줄에 `Column(children: [`처럼 함께 열리면 바깥 것을 접는다.
+  주석·문자열(여러 줄, 원시 문자열 포함)의 괄호는 무시한다. 도구 막대의 "모두 접기"는 메서드 몸통 등 안쪽 구간을 접는다.
+- **Dart 정렬**: 도구 막대 또는 Ctrl+Alt+L / Shift+Alt+F. `dart format`을 임시 파일로 돌려 편집기 글을 바꾼다(실행 취소 가능, 원본 파일은 저장 전까지 그대로).
+- **Markdown**: 편집/보기 전환. 보기는 테마를 따르고 상대 경로 이미지를 읽으며 웹 링크만 연다.
+- 줄 끝(CRLF/LF)은 파일 그대로 보존한다.
+- 아직 없음: 찾기·바꾸기 화면, 자동 완성, JSON 등 다른 언어 정렬, 편집기 글꼴 설정(IDE 테마 절 참고).
+
 ## 검증 기록 (핵심)
 
 - 저장: `<git-common-dir>/dock-verify/<커밋 sha>.json`, 필드 `version, sha, branch, mode, target, status(built|confirmed), at, note`.

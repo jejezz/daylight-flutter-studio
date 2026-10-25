@@ -2,19 +2,36 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:re_editor/re_editor.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'dart_formatter.dart';
+import 'file_language.dart';
 import 'worktree.dart';
 
 /// 편집기 탭 하나. 저장된 글과 지금 글을 비교해 수정 여부를 안다.
 class EditorTab {
   EditorTab(this.path, String text)
-      : savedText = text,
-        controller = TextEditingController(text: text);
+    : language = FileLanguage.of(path),
+      controller = CodeLineEditingController.fromText(
+        text,
+        CodeLineOptions(lineBreak: text.contains('\r\n') ? TextLineBreak.crlf : TextLineBreak.lf),
+      ) {
+    // 줄 끝이 섞인 파일을 열자마자 "수정됨"으로 보이지 않게, 편집기가 정리한 글을 기준으로 삼는다.
+    savedText = controller.text;
+  }
 
   final String path;
-  String savedText;
-  final TextEditingController controller;
+  final FileLanguage language;
+  late String savedText;
+  final CodeLineEditingController controller;
+
+  /// Markdown만: 렌더링된 모양으로 보는 중인가 (아니면 글을 편집하는 중).
+  bool preview = false;
+
+  /// 편집기가 만든 접기 제어. 편집기가 화면에 올라온 뒤에 채워진다.
+  CodeChunkController? chunks;
 
   bool get dirty => controller.text != savedText;
 
@@ -25,6 +42,11 @@ class EditorTab {
 
 /// 열린 프로젝트(폴더), worktree 목록, 편집기 탭을 들고 있다.
 class StudioController extends ChangeNotifier {
+  StudioController({this.formatDart});
+
+  /// Dart 글을 정렬한다 (`dart format`). 없으면 정렬 기능을 쓸 수 없다.
+  final Future<FormatResult> Function(String path, String text)? formatDart;
+
   static const _lastProjectKey = 'last_project';
   static const maxFileBytes = 2 * 1024 * 1024;
 
@@ -97,7 +119,7 @@ class StudioController extends ChangeNotifier {
       }
       final text = utf8.decode(await file.readAsBytes());
       final tab = EditorTab(path, text);
-      tab.controller.addListener(notifyListeners);
+      _watch(tab);
       tabs.add(tab);
       activeIndex = tabs.length - 1;
     } on FormatException {
@@ -106,6 +128,30 @@ class StudioController extends ChangeNotifier {
       message = '파일을 읽지 못했습니다: ${e.message}';
     }
     notifyListeners();
+  }
+
+  /// 수정 여부가 바뀔 때만 화면을 다시 그린다 (커서 이동·글자 입력마다 전체를 그리지 않는다).
+  void _watch(EditorTab tab) {
+    var wasDirty = false;
+    tab.controller.addListener(() {
+      final now = tab.dirty;
+      if (now == wasDirty) return;
+      wasDirty = now;
+      _notifySafely();
+    });
+  }
+
+  bool _disposed = false;
+
+  /// 편집기가 그려지는 도중(초기화·선택 영역 정리)에 값이 바뀌면 그 프레임이 끝난 뒤에 알린다.
+  void _notifySafely() {
+    if (SchedulerBinding.instance.schedulerPhase == SchedulerPhase.persistentCallbacks) {
+      SchedulerBinding.instance.addPostFrameCallback((_) {
+        if (!_disposed) notifyListeners();
+      });
+    } else {
+      notifyListeners();
+    }
   }
 
   void selectTab(int index) {
@@ -133,12 +179,38 @@ class StudioController extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// 지금 탭의 Dart 글을 `dart format`으로 정렬한다. 성공하면 편집기 글을 바꾸되 실행 취소할 수 있다.
+  Future<void> formatActive() async {
+    final tab = activeTab;
+    final format = formatDart;
+    if (tab == null || format == null || !tab.language.isDart) return;
+    final r = await format(tab.path, tab.controller.text);
+    if (!r.ok) {
+      message = r.error;
+    } else if (r.text == tab.controller.text) {
+      message = '이미 정렬되어 있습니다';
+    } else {
+      final line = tab.controller.selection.extentIndex;
+      tab.controller.runRevocableOp(() => tab.controller.text = r.text!);
+      final last = tab.controller.codeLines.length - 1;
+      tab.controller.selection = CodeLineSelection.collapsed(index: line > last ? last : line, offset: 0);
+      message = '정렬했습니다';
+    }
+    notifyListeners();
+  }
+
+  void togglePreview(EditorTab tab) {
+    tab.preview = !tab.preview;
+    notifyListeners();
+  }
+
   void clearMessage() {
     message = null;
   }
 
   @override
   void dispose() {
+    _disposed = true;
     for (final t in tabs) {
       t.dispose();
     }

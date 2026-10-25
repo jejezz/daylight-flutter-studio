@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:re_editor/re_editor.dart';
 
+import '../studio/dart_chunk_analyzer.dart';
+import '../studio/fold_plan.dart';
 import '../studio/studio_controller.dart';
 import '../theme/app_theme.dart';
+import '../theme/editor_theme.dart';
+import 'markdown_view.dart';
 
-/// 탭 막대 + 글 편집 영역. Ctrl/Cmd+S로 저장한다.
+/// 탭 막대 + 도구 막대 + 편집 영역. Markdown은 편집/보기를 전환한다.
 class EditorPane extends StatelessWidget {
   const EditorPane({super.key, required this.controller});
 
@@ -17,7 +22,8 @@ class EditorPane extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         _TabBar(controller: controller),
-        const Divider(height: 1),
+        const Divider(),
+        if (tab != null) ...[_Toolbar(controller: controller, tab: tab), const Divider()],
         Expanded(
           child: tab == null
               ? const Center(child: Text('왼쪽 트리에서 파일을 여세요'))
@@ -25,20 +31,106 @@ class EditorPane extends StatelessWidget {
                   bindings: {
                     const SingleActivator(LogicalKeyboardKey.keyS, control: true): () => controller.save(tab),
                     const SingleActivator(LogicalKeyboardKey.keyS, meta: true): () => controller.save(tab),
+                    const SingleActivator(LogicalKeyboardKey.keyL, control: true, alt: true): controller.formatActive,
+                    const SingleActivator(LogicalKeyboardKey.keyF, shift: true, alt: true): controller.formatActive,
                   },
-                  child: TextField(
-                    key: ValueKey(tab.path),
-                    controller: tab.controller,
-                    maxLines: null,
-                    expands: true,
-                    textAlignVertical: TextAlignVertical.top,
-                    keyboardType: TextInputType.multiline,
-                    style: context.tokens.editorText,
-                    decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.all(context.tokens.spaceMd)),
-                  ),
+                  child: tab.language.isMarkdown && tab.preview
+                      ? MarkdownView(
+                          key: ValueKey('${tab.path}#preview'),
+                          text: tab.controller.text,
+                          baseDir: tab.path.substring(0, tab.path.lastIndexOf(RegExp(r'[/\\]'))),
+                        )
+                      : _CodeView(key: ValueKey(tab.path), tab: tab),
                 ),
         ),
       ],
+    );
+  }
+}
+
+class _CodeView extends StatelessWidget {
+  const _CodeView({super.key, required this.tab});
+
+  final EditorTab tab;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+    final t = context.tokens;
+    final mode = tab.language.mode;
+    final font = t.editorText;
+    return CodeEditor(
+      controller: tab.controller,
+      wordWrap: false,
+      padding: EdgeInsets.all(t.spaceSm),
+      chunkAnalyzer: tab.language.isDart ? const DartChunkAnalyzer() : const DefaultCodeChunkAnalyzer(),
+      style: buildEditorStyle(context, languageId: tab.language.id, mode: mode),
+      indicatorBuilder: (context, editing, chunks, notifier) {
+        tab.chunks = chunks;
+        return Row(
+          children: [
+            DefaultCodeLineNumber(
+              controller: editing,
+              notifier: notifier,
+              textStyle: font.copyWith(color: scheme.outline),
+              focusedTextStyle: font.copyWith(color: scheme.onSurface),
+            ),
+            DefaultCodeChunkIndicator(width: 20, controller: chunks, notifier: notifier),
+          ],
+        );
+      },
+    );
+  }
+}
+
+class _Toolbar extends StatelessWidget {
+  const _Toolbar({required this.controller, required this.tab});
+
+  final StudioController controller;
+  final EditorTab tab;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final t = context.tokens;
+    final editing = !(tab.language.isMarkdown && tab.preview);
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: t.spaceSm, vertical: t.spaceXs),
+      child: Row(
+        children: [
+          Text(tab.language.label, style: theme.textTheme.labelMedium),
+          const Spacer(),
+          if (editing) ...[
+            IconButton(
+              tooltip: '모두 접기',
+              icon: const Icon(Icons.unfold_less, size: 18),
+              onPressed: () => foldAll(tab.chunks),
+            ),
+            IconButton(
+              tooltip: '모두 펴기',
+              icon: const Icon(Icons.unfold_more, size: 18),
+              onPressed: () => unfoldAll(tab.controller, tab.chunks),
+            ),
+          ],
+          if (tab.language.isDart)
+            IconButton(
+              tooltip: 'Dart 정렬 (Ctrl+Alt+L)',
+              icon: const Icon(Icons.format_align_left, size: 18),
+              onPressed: controller.formatActive,
+            ),
+          if (tab.language.isMarkdown)
+            SegmentedButton<bool>(
+              showSelectedIcon: false,
+              segments: const [
+                ButtonSegment(value: false, icon: Icon(Icons.edit_outlined, size: 16), label: Text('편집')),
+                ButtonSegment(value: true, icon: Icon(Icons.visibility_outlined, size: 16), label: Text('보기')),
+              ],
+              selected: {tab.preview},
+              onSelectionChanged: (_) => controller.togglePreview(tab),
+            ),
+        ],
+      ),
     );
   }
 }
