@@ -7,9 +7,9 @@ daylight-commander 계열 앱.
 
 릴리스·버전·패키징·정보 창·아이콘·라이선스·UI/UX·글꼴·언어·테마는
 https://github.com/jejezz/application-release-templates/tree/main/conventions
-규약을 따른다. 이 앱에 적용할 규약 버전: conventions-v1 (아직 미적용)
+규약을 따른다. 이 앱에 적용할 규약 버전: conventions-v1 (미적용: 아이콘 원본 글리프, l10n 하드코딩 문자열 이전, 업데이트 확인, README 스크린샷)
 
-- 표시 이름 `Daylight Flutter Studio`, 패키지 `daylight_flutter_studio`, 식별자 `art.zoomon.daylightflutterstudio`.
+- 표시 이름 `Daylight Flutter Studio`, 패키지 `daylight_flutter_studio`, 식별자 `art.zoomon.daylightflutterstudio` (macOS Debug 빌드는 `.dev`).
 - 이름에 "Flutter"가 들어 있다. 개인용으로 운영하는 동안은 두되, 공개 배포 전에 이름을 다시 정한다 (Flutter 상표).
 - 기존 앱 flutty-dock-flutter, branch-dock-flutter는 **수정하지 않는다.** 필요한 코드는 이 프로젝트로 복사해서 쓴다.
 - 기능 범위와 순서는 [PLAN.md](PLAN.md). **이어서 작업할 때는 PLAN.md의 "현재 상태와 다음 할 일"부터 읽는다** (구현된 것, 알려진 한계, 작업 방식, 테스트 요령).
