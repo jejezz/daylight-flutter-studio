@@ -8,6 +8,7 @@ import '../devices/device_service.dart';
 import '../git/git_controller.dart';
 import '../run/run_controller.dart';
 import '../problems/dart_analyzer.dart';
+import '../settings/gate_settings.dart';
 import '../problems/diagnostic.dart';
 import '../problems/problems_controller.dart';
 import '../studio/dart_formatter.dart';
@@ -52,9 +53,11 @@ class _StudioScreenState extends State<StudioScreen>
     deviceService: ProcessDeviceService(_runner),
     store: VerifyStore(_runner),
   );
+  final GateSettings _gate = GateSettings();
   late final GitController _git = GitController(
     runner: _runner,
     store: VerifyStore(_runner),
+    gate: _gate,
   );
   double _treeWidth = 260;
   double _dockWidth = 400;
@@ -68,6 +71,8 @@ class _StudioScreenState extends State<StudioScreen>
     _controller.restore();
     _controller.startWatching();
     _git.addListener(_onGitChanged);
+    _run.addListener(_onRunChanged);
+    _gate.restore();
     _run.init();
   }
 
@@ -86,6 +91,8 @@ class _StudioScreenState extends State<StudioScreen>
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _git.removeListener(_onGitChanged);
+    _run.removeListener(_onRunChanged);
+    _gate.dispose();
     _controller.removeListener(_onStudioChanged);
     _controller.dispose();
     _run.dispose();
@@ -110,6 +117,17 @@ class _StudioScreenState extends State<StudioScreen>
     }
   }
 
+  String? _lastVerifyKey;
+
+  /// Run 탭에서 검증 기록이 바뀌면(확인함·문제 있음) Git 패널의 병합 관문도 바로 새 기록으로 판정한다.
+  void _onRunChanged() {
+    final r = _run.record;
+    final key = r == null ? null : '${r.sha}:${r.status.name}';
+    if (key == _lastVerifyKey) return;
+    _lastVerifyKey = key;
+    _git.refreshVerdict();
+  }
+
   String? _lastHead;
 
   /// 커밋이나 브랜치 전환으로 HEAD가 바뀌면 열린 파일의 비교 기준(HEAD 내용)을 다시 읽는다.
@@ -121,7 +139,7 @@ class _StudioScreenState extends State<StudioScreen>
   }
 
   Future<void> _openSettings() =>
-      showSettingsDialog(context, theme: widget.theme);
+      showSettingsDialog(context, theme: widget.theme, gate: _gate);
 
   Future<void> _pickProject() async {
     final dir = await getDirectoryPath(confirmButtonText: '프로젝트 열기');

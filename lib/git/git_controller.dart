@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 
 import '../core/command_runner.dart';
 import '../github/pull_request.dart';
+import '../settings/gate_settings.dart';
 import '../verify/verify_state.dart';
 import '../verify/verify_store.dart';
 import 'status.dart';
@@ -13,10 +14,13 @@ enum PrMergeMethod { merge, squash, rebase }
 
 /// Git 패널의 상태: 작업 폴더의 git 상태, 현재 브랜치의 PR, 그 PR head 커밋의 검증 판정.
 class GitController extends ChangeNotifier {
-  GitController({required this.runner, required this.store});
+  GitController({required this.runner, required this.store, this.gate});
 
   final CommandRunner runner;
   final VerifyStore store;
+
+  /// 병합 관문 설정. 없으면 관문 없이 병합할 수 있다.
+  final GateSettings? gate;
 
   String? dir;
 
@@ -176,12 +180,34 @@ class GitController extends ChangeNotifier {
   }
 
   /// PR을 병합한다. worktree에서는 기본 브랜치로 전환하지 않는다 — 다른 폴더가 이미 쓰고 있을 수 있다.
-  Future<bool> merge(PrMergeMethod method, {bool deleteBranch = true}) {
+  /// 지금 병합해도 되는지. 관문 설정이 없으면 항상 허용한다.
+  GateDecision get gateDecision => gate?.decide(verdict) ?? const GateDecision.allow();
+
+  /// 검증 기록만 다시 읽어 판정을 새로 한다 (`gh`나 git 상태는 다시 부르지 않는다).
+  /// Run 탭에서 "확인함"을 누른 직후처럼 기록만 바뀐 경우에 쓴다.
+  Future<void> refreshVerdict() async {
+    await _judge();
+    notifyListeners();
+  }
+
+  /// PR을 병합한다. 관문이 막으면(또는 확인이 필요하면) [overrideGate]가 true일 때만 병합한다 —
+  /// 화면이 사용자의 명시적 확인("검증 없이 병합")을 받은 뒤에만 true로 부른다.
+  Future<bool> merge(PrMergeMethod method, {bool deleteBranch = true, bool overrideGate = false}) async {
     final number = pr?.number;
-    if (number == null) return Future.value(false);
+    if (number == null) return false;
+    // 화면의 판정이 낡았을 수 있으니, 병합 직전에 기록을 다시 읽어 판정한다.
+    await _judge();
+    final decision = gateDecision;
+    if (!decision.allowed && !overrideGate) {
+      messageOk = false;
+      message = '병합하지 않았습니다: ${decision.message}';
+      notifyListeners();
+      return false;
+    }
+    final overridden = !decision.allowed;
     return _do(
       ['gh', 'pr', 'merge', '$number', '--${method.name}', if (deleteBranch) '--delete-branch'],
-      done: '#$number을 병합했습니다',
+      done: overridden ? '#$number을 검증 없이 병합했습니다' : '#$number을 병합했습니다',
     );
   }
 

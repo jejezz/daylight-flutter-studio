@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../git/git_controller.dart';
 import '../git/status.dart';
+import '../settings/gate_settings.dart';
 import '../theme/app_theme.dart';
 import '../verify/verify_state.dart';
 
@@ -46,7 +47,7 @@ class _GitPanelState extends State<GitPanel> {
   Widget build(BuildContext context) {
     final t = context.tokens;
     return ListenableBuilder(
-      listenable: c,
+      listenable: Listenable.merge([c, if (c.gate != null) c.gate!]),
       builder: (context, _) {
         final s = c.status;
         if (c.dir == null || s == null) {
@@ -287,6 +288,95 @@ class _CreatePr extends StatelessWidget {
   }
 }
 
+/// 병합 단추. 관문 설정에 따라 그대로 병합하거나, 확인을 받거나, 막고 "검증 없이 병합"만 둔다.
+class _MergeButtons extends StatelessWidget {
+  const _MergeButtons({required this.controller, required this.method, required this.deleteBranch});
+
+  final GitController controller;
+  final PrMergeMethod method;
+  final bool deleteBranch;
+
+  @override
+  Widget build(BuildContext context) {
+    final t = context.tokens;
+    final theme = Theme.of(context);
+    final pr = controller.pr!;
+    final decision = controller.gateDecision;
+    final unavailable = controller.busy || pr.draft || pr.conflicting;
+    final blocked = decision.action == GateAction.block;
+
+    Future<void> mergeWithConfirm() async {
+      final ok = await _confirmUnverified(context, decision.message);
+      if (ok) await controller.merge(method, deleteBranch: deleteBranch, overrideGate: true);
+    }
+
+    final (color, icon) = switch (decision.action) {
+      GateAction.allow => (t.success, Icons.verified_outlined),
+      GateAction.confirm => (t.warning, Icons.help_outline),
+      GateAction.block => (t.danger, Icons.block),
+    };
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        // 관문을 끄면(검증 규칙 없음) 상태 줄도 보이지 않는다.
+        if (controller.gate?.mode != GateMode.off)
+          Padding(
+            padding: EdgeInsets.only(bottom: t.spaceSm),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(icon, size: 16, color: color),
+                SizedBox(width: t.spaceSm),
+                Expanded(child: Text(decision.message, style: theme.textTheme.bodySmall?.copyWith(color: color))),
+              ],
+            ),
+          ),
+        FilledButton.icon(
+          // 차단 중에는 단추를 아예 비활성화한다. 예외는 아래의 "검증 없이 병합"으로만 가능하다.
+          onPressed: unavailable || blocked
+              ? null
+              : decision.action == GateAction.confirm
+              ? mergeWithConfirm
+              : () => controller.merge(method, deleteBranch: deleteBranch),
+          icon: const Icon(Icons.merge, size: 18),
+          label: Text(blocked ? 'PR 병합 (검증 필요)' : decision.action == GateAction.confirm ? 'PR 병합…' : 'PR 병합'),
+        ),
+        if (blocked)
+          Align(
+            alignment: Alignment.centerRight,
+            child: TextButton(
+              onPressed: unavailable ? null : mergeWithConfirm,
+              child: Text('검증 없이 병합…', style: TextStyle(color: t.danger)),
+            ),
+          ),
+      ],
+    );
+  }
+
+  static Future<bool> _confirmUnverified(BuildContext context, String reason) async {
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('확인하지 않은 커밋입니다'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(reason),
+            const SizedBox(height: 12),
+            const Text('그래도 병합하면 GitHub에서 모든 OS 빌드가 돌고, 문제가 나오면 고쳐서 릴리스를 다시 해야 합니다.'),
+          ],
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('취소')),
+          FilledButton(onPressed: () => Navigator.pop(context, true), child: const Text('그래도 병합')),
+        ],
+      ),
+    );
+    return ok ?? false;
+  }
+}
+
 class _PrCard extends StatelessWidget {
   const _PrCard({
     required this.controller,
@@ -354,11 +444,7 @@ class _PrCard extends StatelessWidget {
           ),
           SelectableText('gh pr merge ${pr.number} --${method.name}${deleteBranch ? ' --delete-branch' : ''}', style: t.logText),
           SizedBox(height: t.spaceSm),
-          FilledButton.icon(
-            onPressed: controller.busy || pr.draft || pr.conflicting ? null : () => controller.merge(method, deleteBranch: deleteBranch),
-            icon: const Icon(Icons.merge, size: 18),
-            label: const Text('PR 병합'),
-          ),
+          _MergeButtons(controller: controller, method: method, deleteBranch: deleteBranch),
         ],
       ],
     );

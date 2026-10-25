@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../settings/gate_settings.dart';
 import '../theme/app_theme.dart';
 import '../theme/editor_theme.dart';
 import '../theme/editor_zoom.dart';
@@ -8,7 +9,8 @@ import '../theme/theme_controller.dart';
 /// 설정 화면의 구역. 왼쪽 목록에 이 순서로 나온다.
 enum SettingsSection {
   appearance('외형', Icons.palette_outlined),
-  editor('편집기', Icons.edit_note_outlined);
+  editor('편집기', Icons.edit_note_outlined),
+  gate('병합 관문', Icons.shield_outlined);
 
   const SettingsSection(this.label, this.icon);
 
@@ -17,17 +19,29 @@ enum SettingsSection {
 }
 
 /// 설정 대화상자: 왼쪽에서 구역을 고르고 오른쪽에서 바꾼다. 바꾼 값은 바로 적용되고 저장된다.
-Future<void> showSettingsDialog(BuildContext context, {required ThemeController theme, SettingsSection initial = SettingsSection.appearance}) {
+Future<void> showSettingsDialog(
+  BuildContext context, {
+  required ThemeController theme,
+  GateSettings? gate,
+  SettingsSection initial = SettingsSection.appearance,
+}) {
   return showDialog<void>(
     context: context,
-    builder: (context) => SettingsDialog(theme: theme, initial: initial),
+    builder: (context) =>
+        SettingsDialog(theme: theme, gate: gate, initial: initial),
   );
 }
 
 class SettingsDialog extends StatefulWidget {
-  const SettingsDialog({super.key, required this.theme, this.initial = SettingsSection.appearance});
+  const SettingsDialog({
+    super.key,
+    required this.theme,
+    this.gate,
+    this.initial = SettingsSection.appearance,
+  });
 
   final ThemeController theme;
+  final GateSettings? gate;
   final SettingsSection initial;
 
   @override
@@ -55,13 +69,14 @@ class _SettingsDialogState extends State<SettingsDialog> {
               child: ListView(
                 children: [
                   for (final s in SettingsSection.values)
-                    ListTile(
-                      selected: s == _section,
-                      selectedTileColor: scheme.secondaryContainer,
-                      leading: Icon(s.icon, size: 20),
-                      title: Text(s.label),
-                      onTap: () => setState(() => _section = s),
-                    ),
+                    if (s != SettingsSection.gate || widget.gate != null)
+                      ListTile(
+                        selected: s == _section,
+                        selectedTileColor: scheme.secondaryContainer,
+                        leading: Icon(s.icon, size: 20),
+                        title: Text(s.label),
+                        onTap: () => setState(() => _section = s),
+                      ),
                 ],
               ),
             ),
@@ -70,15 +85,23 @@ class _SettingsDialogState extends State<SettingsDialog> {
               child: SingleChildScrollView(
                 padding: EdgeInsets.only(left: t.spaceMd, bottom: t.spaceMd),
                 child: switch (_section) {
-                  SettingsSection.appearance => _AppearanceSection(theme: widget.theme),
+                  SettingsSection.appearance => _AppearanceSection(
+                    theme: widget.theme,
+                  ),
                   SettingsSection.editor => const _EditorSection(),
+                  SettingsSection.gate => _GateSection(gate: widget.gate!),
                 },
               ),
             ),
           ],
         ),
       ),
-      actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('닫기'))],
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('닫기'),
+        ),
+      ],
     );
   }
 }
@@ -123,9 +146,21 @@ class _AppearanceSection extends StatelessWidget {
           SegmentedButton<ThemeMode>(
             showSelectedIcon: false,
             segments: const [
-              ButtonSegment(value: ThemeMode.system, icon: Icon(Icons.brightness_auto_outlined, size: 16), label: Text('시스템')),
-              ButtonSegment(value: ThemeMode.light, icon: Icon(Icons.light_mode_outlined, size: 16), label: Text('라이트')),
-              ButtonSegment(value: ThemeMode.dark, icon: Icon(Icons.dark_mode_outlined, size: 16), label: Text('다크')),
+              ButtonSegment(
+                value: ThemeMode.system,
+                icon: Icon(Icons.brightness_auto_outlined, size: 16),
+                label: Text('시스템'),
+              ),
+              ButtonSegment(
+                value: ThemeMode.light,
+                icon: Icon(Icons.light_mode_outlined, size: 16),
+                label: Text('라이트'),
+              ),
+              ButtonSegment(
+                value: ThemeMode.dark,
+                icon: Icon(Icons.dark_mode_outlined, size: 16),
+                label: Text('다크'),
+              ),
             ],
             selected: {theme.mode},
             onSelectionChanged: (s) => theme.setMode(s.first),
@@ -146,7 +181,53 @@ class _AppearanceSection extends StatelessWidget {
             ],
           ),
           SizedBox(height: t.spaceMd),
-          Text('바꾼 값은 바로 적용되고 다음 실행에도 유지됩니다.', style: Theme.of(context).textTheme.bodySmall),
+          Text(
+            '바꾼 값은 바로 적용되고 다음 실행에도 유지됩니다.',
+            style: Theme.of(context).textTheme.bodySmall,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _GateSection extends StatelessWidget {
+  const _GateSection({required this.gate});
+
+  final GateSettings gate;
+
+  @override
+  Widget build(BuildContext context) {
+    final t = context.tokens;
+    final theme = Theme.of(context);
+    return ListenableBuilder(
+      listenable: gate,
+      builder: (context, _) => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const _Heading('PR 병합 전 검증'),
+          Text(
+            '빌드해서 눈으로 확인한 커밋만 병합하게 합니다. 확인하지 않고 병합하면 GitHub에서 모든 OS 빌드가 돌고, '
+            '문제가 나오면 고쳐서 릴리스를 다시 해야 합니다.',
+            style: theme.textTheme.bodySmall,
+          ),
+          SizedBox(height: t.spaceMd),
+          SegmentedButton<GateMode>(
+            showSelectedIcon: false,
+            segments: [
+              for (final m in GateMode.values)
+                ButtonSegment(value: m, label: Text(m.label)),
+            ],
+            selected: {gate.mode},
+            onSelectionChanged: (s) => gate.setMode(s.first),
+          ),
+          SizedBox(height: t.spaceSm),
+          Text(gate.mode.description),
+          SizedBox(height: t.spaceMd),
+          Text(
+            '"확인함"은 Run 탭에서 앱을 실행해 본 뒤 직접 누르는 단추입니다. 빌드만 성공한 것은 확인으로 치지 않습니다.',
+            style: theme.textTheme.bodySmall,
+          ),
         ],
       ),
     );
@@ -176,14 +257,23 @@ class _EditorSection extends StatelessWidget {
                 child: Slider(
                   min: EditorZoom.min,
                   max: EditorZoom.max,
-                  divisions: ((EditorZoom.max - EditorZoom.min) / EditorZoom.step).round(),
+                  divisions:
+                      ((EditorZoom.max - EditorZoom.min) / EditorZoom.step)
+                          .round(),
                   value: zoom.value,
                   label: '${zoom.percent}%',
                   onChanged: zoom.setValue,
                 ),
               ),
-              SizedBox(width: 56, child: Text('${zoom.percent}%', textAlign: TextAlign.end)),
-              IconButton(tooltip: '100%로', icon: const Icon(Icons.restart_alt, size: 18), onPressed: zoom.isDefault ? null : zoom.reset),
+              SizedBox(
+                width: 56,
+                child: Text('${zoom.percent}%', textAlign: TextAlign.end),
+              ),
+              IconButton(
+                tooltip: '100%로',
+                icon: const Icon(Icons.restart_alt, size: 18),
+                onPressed: zoom.isDefault ? null : zoom.reset,
+              ),
             ],
           ),
           Container(
@@ -194,7 +284,10 @@ class _EditorSection extends StatelessWidget {
               border: Border.all(color: scheme.outlineVariant),
               borderRadius: BorderRadius.circular(t.radius),
             ),
-            child: Text(_sample, style: editorTextStyle(context).copyWith(color: scheme.onSurface)),
+            child: Text(
+              _sample,
+              style: editorTextStyle(context).copyWith(color: scheme.onSurface),
+            ),
           ),
           SizedBox(height: t.spaceSm),
           Text(
