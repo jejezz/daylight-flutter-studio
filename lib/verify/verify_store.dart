@@ -137,6 +137,24 @@ class VerifyStore {
     }
   }
 
+  /// 이 저장소의 모든 검증 기록 (오래된 것부터).
+  Future<List<VerifyRecord>> readAll(String commonDir) async {
+    final dir = Directory('$commonDir${Platform.pathSeparator}dock-verify');
+    if (!await dir.exists()) return const [];
+    final out = <VerifyRecord>[];
+    await for (final f in dir.list()) {
+      if (f is! File || !f.path.endsWith('.json')) continue;
+      try {
+        final rec = VerifyRecord.fromJson(jsonDecode(await f.readAsString()) as Map<String, dynamic>);
+        if (rec != null) out.add(rec);
+      } on Object {
+        // 깨진 기록은 없는 것으로 본다.
+      }
+    }
+    out.sort((a, b) => a.at.compareTo(b.at));
+    return out;
+  }
+
   Future<void> write(String commonDir, VerifyRecord record) async {
     final f = _file(commonDir, record.sha);
     await f.parent.create(recursive: true);

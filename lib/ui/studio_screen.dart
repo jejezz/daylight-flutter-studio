@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../core/command_log.dart';
 import '../core/command_runner.dart';
 import '../devices/device_service.dart';
+import '../git/git_controller.dart';
 import '../run/run_controller.dart';
 import '../studio/studio_controller.dart';
 import '../studio/worktree.dart';
@@ -12,6 +13,7 @@ import '../theme/theme_controller.dart';
 import '../verify/verify_store.dart';
 import 'editor_pane.dart';
 import 'file_tree.dart';
+import 'git_panel.dart';
 import 'run_panel.dart';
 import 'theme_menu.dart';
 
@@ -34,6 +36,7 @@ class _StudioScreenState extends State<StudioScreen> {
     deviceService: ProcessDeviceService(_runner),
     store: VerifyStore(_runner),
   );
+  late final GitController _git = GitController(runner: _runner, store: VerifyStore(_runner));
   double _treeWidth = 260;
   double _dockWidth = 400;
   String? _lastRoot;
@@ -51,6 +54,7 @@ class _StudioScreenState extends State<StudioScreen> {
     _controller.removeListener(_onStudioChanged);
     _controller.dispose();
     _run.dispose();
+    _git.dispose();
     _log.dispose();
     super.dispose();
   }
@@ -65,6 +69,7 @@ class _StudioScreenState extends State<StudioScreen> {
     if (_controller.root != _lastRoot) {
       _lastRoot = _controller.root;
       _run.setProjectDir(_lastRoot);
+      _git.setDir(_lastRoot);
     }
   }
 
@@ -100,7 +105,7 @@ class _StudioScreenState extends State<StudioScreen> {
                           _Splitter(onDrag: (dx) => setState(() => _treeWidth = (_treeWidth + dx).clamp(160, 520))),
                           Expanded(child: EditorPane(controller: _controller)),
                           _Splitter(onDrag: (dx) => setState(() => _dockWidth = (_dockWidth - dx).clamp(300, 700))),
-                          SizedBox(width: _dockWidth, child: _DockPane(run: _run, log: _log)),
+                          SizedBox(width: _dockWidth, child: _DockPane(run: _run, git: _git, log: _log)),
                         ],
                       ),
                     ),
@@ -181,11 +186,12 @@ class _TreePane extends StatelessWidget {
   }
 }
 
-/// Run(Flutty Dock)·Git(Branch Dock) 패널. Git 패널은 3단계에서 채운다.
+/// Run(Flutty Dock)·Git(Branch Dock) 패널.
 class _DockPane extends StatelessWidget {
-  const _DockPane({required this.run, required this.log});
+  const _DockPane({required this.run, required this.git, required this.log});
 
   final RunController run;
+  final GitController git;
   final CommandLog log;
 
   @override
@@ -199,7 +205,7 @@ class _DockPane extends StatelessWidget {
             child: TabBarView(
               children: [
                 RunPanel(controller: run, log: log),
-                const Center(child: Text('Git 패널 (3단계)')),
+                GitPanel(controller: git),
               ],
             ),
           ),

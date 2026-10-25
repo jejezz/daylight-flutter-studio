@@ -1,0 +1,188 @@
+import 'dart:convert';
+
+import 'package:flutter/foundation.dart';
+
+import '../core/command_runner.dart';
+import '../github/pull_request.dart';
+import '../verify/verify_state.dart';
+import '../verify/verify_store.dart';
+import 'status.dart';
+
+enum PrMergeMethod { merge, squash, rebase }
+
+/// Git 패널의 상태: 작업 폴더의 git 상태, 현재 브랜치의 PR, 그 PR head 커밋의 검증 판정.
+class GitController extends ChangeNotifier {
+  GitController({required this.runner, required this.store});
+
+  final CommandRunner runner;
+  final VerifyStore store;
+
+  String? dir;
+
+  /// git 저장소가 아니거나 읽지 못하면 null.
+  RepoStatus? status;
+  RepoSnapshot? snapshot;
+
+  /// 현재 브랜치의 PR (열렸거나 병합된 것). 없으면 null.
+  PullRequest? pr;
+
+  /// PR의 head 커밋. 병합되는 것은 이 커밋이다.
+  String? prHeadSha;
+
+  /// `gh`를 실행할 수 없다.
+  bool ghMissing = false;
+
+  VerifyVerdict? verdict;
+  bool busy = false;
+
+  /// 마지막 동작의 결과 한 줄과 성공 여부. 화면이 보여 준다.
+  String? message;
+  bool messageOk = true;
+
+  static const _prFields = '${PullRequest.jsonFields},headRefOid';
+
+  /// 로컬 HEAD와 PR head가 다르다 — 아직 push하지 않았거나 원격이 앞서 있다.
+  bool get localDiffersFromPr {
+    final head = status?.oid;
+    final remote = prHeadSha;
+    return pr != null && pr!.open && head != null && remote != null && head != remote;
+  }
+
+  Future<void> setDir(String? value) async {
+    dir = value;
+    status = null;
+    snapshot = null;
+    pr = null;
+    prHeadSha = null;
+    verdict = null;
+    message = null;
+    notifyListeners();
+    await refresh();
+  }
+
+  Future<void> refresh() async {
+    final d = dir;
+    if (d == null) return;
+    final s = await runner.run(['git', 'status', '--porcelain=v2', '--branch', '-z'], workingDirectory: d, quiet: true);
+    if (dir != d) return;
+    status = s.ok ? RepoStatus.parse(s.stdout) : null;
+    snapshot = status == null ? null : await store.snapshot(d);
+    await _loadPr();
+    await _judge();
+    notifyListeners();
+  }
+
+  Future<void> _loadPr() async {
+    pr = null;
+    prHeadSha = null;
+    final branch = status?.head;
+    final d = dir;
+    if (branch == null || d == null) return;
+    final r = await runner.run(['gh', 'pr', 'view', branch, '--json', _prFields], workingDirectory: d, quiet: true);
+    ghMissing = r.exitCode == 127;
+    if (!r.ok) return;
+    final found = PullRequest.parse(r.stdout);
+    if (found == null || found.headRef != branch || found.state == PrState.closed) return;
+    pr = found;
+    try {
+      prHeadSha = (jsonDecode(r.stdout) as Map<String, dynamic>)['headRefOid'] as String?;
+    } on FormatException {
+      prHeadSha = null;
+    }
+  }
+
+  Future<void> _judge() async {
+    final snap = snapshot;
+    final d = dir;
+    if (snap == null || d == null) {
+      verdict = null;
+      return;
+    }
+    final head = prHeadSha ?? snap.sha;
+    verdict = await judgeVerification(
+      headSha: head,
+      branch: pr?.headRef ?? snap.branch,
+      records: await store.readAll(snap.commonDir),
+      commitsBetween: (from, to) async {
+        final r = await runner.run(['git', 'rev-list', '--count', '$from..$to'], workingDirectory: d, quiet: true);
+        return r.ok ? int.tryParse(r.stdout.trim()) : null;
+      },
+    );
+  }
+
+  /// 마지막 커밋의 제목 — PR 제목의 기본값.
+  Future<String> lastCommitSubject() async {
+    final d = dir;
+    if (d == null) return '';
+    final r = await runner.run(['git', 'log', '-1', '--format=%s'], workingDirectory: d, quiet: true);
+    return r.ok ? r.stdout.trim() : '';
+  }
+
+  /// PR의 base로 쓸 기본 브랜치.
+  Future<String> defaultBranch() async {
+    final d = dir;
+    if (d != null) {
+      final r = await runner.run(['git', 'symbolic-ref', '--short', 'refs/remotes/origin/HEAD'], workingDirectory: d, quiet: true);
+      final name = r.stdout.trim();
+      if (r.ok && name.startsWith('origin/')) return name.substring('origin/'.length);
+    }
+    return 'main';
+  }
+
+  Future<bool> fetch() => _do(['git', 'fetch', '--prune'], done: '가져왔습니다');
+
+  Future<bool> pull() {
+    if (status?.behind == 0 || !(status?.clean ?? false)) return Future.value(false);
+    return _do(['git', 'pull', '--ff-only'], done: '받았습니다');
+  }
+
+  Future<bool> push() {
+    final s = status;
+    if (s?.head == null) return Future.value(false);
+    return _do(
+      s!.hasUpstream ? ['git', 'push'] : ['git', 'push', '-u', 'origin', s.head!],
+      done: '올렸습니다',
+    );
+  }
+
+  Future<bool> createPr(String title, {bool draft = false}) async {
+    final s = status;
+    if (s?.head == null || title.trim().isEmpty) return false;
+    return _do(
+      ['gh', 'pr', 'create', '--base', await defaultBranch(), '--head', s!.head!, '--title', title.trim(), '--body-file', '-', if (draft) '--draft'],
+      stdin: '',
+      done: 'PR을 만들었습니다',
+    );
+  }
+
+  /// PR을 병합한다. worktree에서는 기본 브랜치로 전환하지 않는다 — 다른 폴더가 이미 쓰고 있을 수 있다.
+  Future<bool> merge(PrMergeMethod method, {bool deleteBranch = true}) {
+    final number = pr?.number;
+    if (number == null) return Future.value(false);
+    return _do(
+      ['gh', 'pr', 'merge', '$number', '--${method.name}', if (deleteBranch) '--delete-branch'],
+      done: '#$number을 병합했습니다',
+    );
+  }
+
+  Future<bool> _do(List<String> args, {String? stdin, required String done}) async {
+    final d = dir;
+    if (d == null || busy) return false;
+    busy = true;
+    message = null;
+    notifyListeners();
+    final r = await runner.run(args, workingDirectory: d, stdin: stdin);
+    ghMissing = r.exitCode == 127 && args.first == 'gh';
+    messageOk = r.ok;
+    message = r.ok ? done : _failure(r);
+    busy = false;
+    await refresh();
+    return r.ok;
+  }
+
+  static String _failure(CommandResult r) {
+    if (r.exitCode == 127) return '명령을 찾을 수 없습니다. git과 GitHub CLI(gh)가 설치되어 PATH에 있는지 확인하세요.';
+    final lines = r.combined.trim().split('\n').where((l) => l.trim().isNotEmpty).toList();
+    return lines.isEmpty ? '실패했습니다 (종료 코드 ${r.exitCode})' : lines.last.trim();
+  }
+}
