@@ -2425,6 +2425,18 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'{packages}의 패키지 정보(.dart_tool)가 없어서 import 오류가 가짜로 섞입니다.'**
   String problemsNoPackageInfoSub(String packages);
+
+  /// No description provided for @settingsIndentGuides.
+  ///
+  /// In ko, this message translates to:
+  /// **'들여쓰기 선'**
+  String get settingsIndentGuides;
+
+  /// No description provided for @settingsIndentGuidesNote.
+  ///
+  /// In ko, this message translates to:
+  /// **'들여쓴 줄마다 깊이별로 색이 다른 세로선을 그어 짝을 맞춰 볼 수 있게 합니다. 고정폭 글꼴에서 정확합니다.'**
+  String get settingsIndentGuidesNote;
 }
 
 class _AppLocalizationsDelegate

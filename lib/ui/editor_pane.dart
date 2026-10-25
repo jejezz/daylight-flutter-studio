@@ -6,6 +6,7 @@ import '../l10n/app_localizations.dart';
 import '../diff/line_diff.dart';
 import '../studio/dart_chunk_analyzer.dart';
 import '../studio/fold_plan.dart';
+import '../settings/editor_settings.dart';
 import '../studio/studio_controller.dart';
 import '../theme/app_theme.dart';
 import '../theme/editor_theme.dart';
@@ -14,6 +15,7 @@ import '../problems/problems_controller.dart';
 import 'change_gutter.dart';
 import 'diff_view.dart';
 import 'find_panel.dart';
+import 'indent_guides.dart';
 import 'markdown_view.dart';
 import 'problem_gutter.dart';
 
@@ -140,6 +142,14 @@ class _CodeViewState extends State<_CodeView> {
     super.dispose();
   }
 
+  /// 글자 하나의 폭 (고정폭 글꼴 기준) — 들여쓰기 선의 간격 계산에 쓴다.
+  double _charWidth(BuildContext context) {
+    final painter = TextPainter(text: TextSpan(text: '0', style: editorTextStyle(context)), textDirection: TextDirection.ltr)..layout();
+    final w = painter.width;
+    painter.dispose();
+    return w;
+  }
+
   @override
   Widget build(BuildContext context) {
     final tab = widget.tab;
@@ -157,6 +167,7 @@ class _CodeViewState extends State<_CodeView> {
         style: buildEditorStyle(context, languageId: tab.language.id, mode: mode),
         indicatorBuilder: (context, editing, chunks, notifier) {
           tab.chunks = chunks;
+          final guides = EditorSettingsScope.maybeOf(context)?.indentGuides ?? true;
           return Row(
             children: [
               if (widget.problems != null)
@@ -169,6 +180,14 @@ class _CodeViewState extends State<_CodeView> {
               ),
               ChangeGutter(editing: editing, indicator: notifier, marks: tab.marks),
               DefaultCodeChunkIndicator(width: 20, controller: chunks, notifier: notifier),
+              if (guides)
+                IndentGuides(
+                  editing: editing,
+                  indicator: notifier,
+                  horizontal: _horizontal,
+                  charWidth: _charWidth(context),
+                  textInset: t.spaceSm,
+                ),
             ],
           );
         },

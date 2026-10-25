@@ -341,6 +341,15 @@ class _EditorSection extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(height: t.spaceMd),
+                  _Heading(l10n.settingsIndentGuides),
+                  SwitchListTile(
+                    contentPadding: EdgeInsets.zero,
+                    value: editor.indentGuides,
+                    onChanged: editor.setIndentGuides,
+                    title: Text(l10n.settingsIndentGuides),
+                    subtitle: Text(l10n.settingsIndentGuidesNote),
+                  ),
+                  SizedBox(height: t.spaceMd),
                   _Heading(l10n.settingsFormatOnSave),
                   SwitchListTile(
                     contentPadding: EdgeInsets.zero,

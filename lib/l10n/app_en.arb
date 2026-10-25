@@ -734,5 +734,7 @@
         "type": "String"
       }
     }
-  }
+  },
+  "settingsIndentGuides": "Indent guides",
+  "settingsIndentGuidesNote": "Draws vertical lines in a different color per depth so you can match blocks. Accurate with monospace fonts."
 }

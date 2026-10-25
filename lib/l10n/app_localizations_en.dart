@@ -1346,4 +1346,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String problemsNoPackageInfoSub(String packages) {
     return 'Package info (.dart_tool) is missing in $packages, so bogus import errors are mixed in.';
   }
+
+  @override
+  String get settingsIndentGuides => 'Indent guides';
+
+  @override
+  String get settingsIndentGuidesNote =>
+      'Draws vertical lines in a different color per depth so you can match blocks. Accurate with monospace fonts.';
 }

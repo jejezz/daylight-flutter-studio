@@ -6,6 +6,7 @@ class EditorSettings extends ChangeNotifier {
   EditorSettings([this._formatOnSave = false]);
 
   static const _formatOnSaveKey = 'format_on_save';
+  static const _indentGuidesKey = 'indent_guides';
   static const _fontNameKey = 'editor_font_family';
   static const _lineHeightKey = 'editor_line_height';
 
@@ -17,6 +18,17 @@ class EditorSettings extends ChangeNotifier {
   static const presetFonts = ['Menlo', 'SF Mono', 'Consolas', 'Cascadia Mono', 'JetBrains Mono', 'Fira Code'];
 
   bool _formatOnSave;
+  bool _indentGuides = true;
+
+  /// 들여쓰기 쌍을 깊이별 색의 세로선으로 표시한다.
+  bool get indentGuides => _indentGuides;
+
+  Future<void> setIndentGuides(bool value) async {
+    if (value == _indentGuides) return;
+    _indentGuides = value;
+    notifyListeners();
+    await _store((p) => p.setBool(_indentGuidesKey, value));
+  }
   String? _fontName;
   double? _lineHeight;
 
@@ -57,6 +69,7 @@ class EditorSettings extends ChangeNotifier {
     try {
       final prefs = await SharedPreferences.getInstance();
       _formatOnSave = prefs.getBool(_formatOnSaveKey) ?? _formatOnSave;
+      _indentGuides = prefs.getBool(_indentGuidesKey) ?? _indentGuides;
       _fontName = prefs.getString(_fontNameKey) ?? _fontName;
       _lineHeight = prefs.getDouble(_lineHeightKey) ?? _lineHeight;
       notifyListeners();

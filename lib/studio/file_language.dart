@@ -2,7 +2,6 @@ import 'package:re_highlight/languages/bash.dart';
 import 'package:re_highlight/languages/cmake.dart';
 import 'package:re_highlight/languages/cpp.dart';
 import 'package:re_highlight/languages/css.dart';
-import 'package:re_highlight/languages/dart.dart';
 import 'package:re_highlight/languages/diff.dart';
 import 'package:re_highlight/languages/dockerfile.dart';
 import 'package:re_highlight/languages/gradle.dart';
@@ -19,6 +18,8 @@ import 'package:re_highlight/languages/swift.dart';
 import 'package:re_highlight/languages/xml.dart';
 import 'package:re_highlight/languages/yaml.dart';
 import 'package:re_highlight/re_highlight.dart';
+
+import 'dart_highlight.dart';
 
 import '../l10n/current_l10n.dart';
 
@@ -40,7 +41,7 @@ class FileLanguage {
   bool get isJson => id == 'json';
 
   static final _byExtension = <String, FileLanguage>{
-    'dart': FileLanguage('dart', 'Dart', langDart),
+    'dart': FileLanguage('dart', 'Dart', langDartRich),
     'md': FileLanguage('markdown', 'Markdown', langMarkdown),
     'markdown': FileLanguage('markdown', 'Markdown', langMarkdown),
     'yaml': FileLanguage('yaml', 'YAML', langYaml),

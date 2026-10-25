@@ -1314,4 +1314,11 @@ class AppLocalizationsKo extends AppLocalizations {
   String problemsNoPackageInfoSub(String packages) {
     return '$packages의 패키지 정보(.dart_tool)가 없어서 import 오류가 가짜로 섞입니다.';
   }
+
+  @override
+  String get settingsIndentGuides => '들여쓰기 선';
+
+  @override
+  String get settingsIndentGuidesNote =>
+      '들여쓴 줄마다 깊이별로 색이 다른 세로선을 그어 짝을 맞춰 볼 수 있게 합니다. 고정폭 글꼴에서 정확합니다.';
 }
