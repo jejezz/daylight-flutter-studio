@@ -14,7 +14,10 @@ TextStyle editorTextStyle(BuildContext context) {
   final settings = EditorSettingsScope.maybeOf(context);
   var base = context.tokens.editorText;
   // 사용자가 고른 글꼴 이름·줄 간격이 테마 기본을 덮는다 (없는 글꼴이면 테마의 대체 글꼴이 이어받는다).
-  if (settings?.fontName != null) base = base.copyWith(fontFamily: settings!.fontName);
+  if (settings?.fontName != null) {
+    // 없는 글꼴이면 Menlo가 먼저 이어받는다 (아니면 OS가 Courier 같은 엉뚱한 글꼴을 고른다).
+    base = base.copyWith(fontFamily: settings!.fontName, fontFamilyFallback: ['Menlo', ...?base.fontFamilyFallback]);
+  }
   if (settings?.lineHeight != null) base = base.copyWith(height: settings!.lineHeight);
   final size = base.fontSize ?? 13;
   // Text 위젯은 주변 글자 모양(M3 본문의 글자 사이 0.25 등)을 물려받지만 편집기는 받지 않는다.

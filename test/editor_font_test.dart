@@ -3,6 +3,7 @@ import 'package:daylight_flutter_studio/settings/editor_settings.dart';
 import 'package:daylight_flutter_studio/theme/app_theme.dart';
 import 'package:daylight_flutter_studio/theme/editor_theme.dart';
 import 'package:daylight_flutter_studio/theme/editor_zoom.dart';
+import 'package:daylight_flutter_studio/theme/font_probe.dart';
 import 'package:daylight_flutter_studio/theme/theme_controller.dart';
 import 'package:daylight_flutter_studio/ui/settings_dialog.dart';
 import 'package:flutter/material.dart';
@@ -25,6 +26,8 @@ void main() {
   late ThemeController theme;
 
   setUp(() {
+    // 테스트에서는 모든 글꼴이 같은 글꼴로 그려지므로 설치 여부를 흉내 낸다.
+    FontProbe.isInstalled = (family) => family != 'Nonexistent Font';
     SharedPreferences.setMockInitialValues({});
     editor = EditorSettings();
     zoom = EditorZoom();
@@ -119,6 +122,49 @@ void main() {
     expect(style.fontFamily, span.style!.fontFamily);
     expect(style.fontHeight, span.style!.height);
     expect(style.fontSize, span.style!.fontSize);
+  });
+
+  testWidgets('설치되지 않은 글꼴은 단추에서 빠지고, 직접 적으면 안내가 뜬다', (tester) async {
+    FontProbe.isInstalled = (family) => family != 'Fira Code';
+    await tester.pumpWidget(
+      app(
+        (context) => FilledButton(
+          onPressed: () => showSettingsDialog(context, theme: theme, initial: SettingsSection.editor),
+          child: const Text('열기'),
+        ),
+      ),
+    );
+    await tester.tap(find.text('열기'));
+    await tester.pumpAndSettle();
+    expect(find.widgetWithText(ChoiceChip, 'Fira Code'), findsNothing);
+    expect(find.widgetWithText(ChoiceChip, 'Menlo'), findsOneWidget);
+
+    await editor.setFontName('Fira Code');
+    await tester.pump();
+    expect(find.textContaining('설치되어 있지 않은'), findsOneWidget);
+  });
+
+  testWidgets('미리보기는 글꼴 설정 아래에 있고, 글꼴을 바꾸면 따라 바뀐다', (tester) async {
+    await tester.pumpWidget(
+      app(
+        (context) => FilledButton(
+          onPressed: () => showSettingsDialog(context, theme: theme, initial: SettingsSection.editor),
+          child: const Text('열기'),
+        ),
+      ),
+    );
+    await tester.tap(find.text('열기'));
+    await tester.pumpAndSettle();
+    final fontY = tester.getTopLeft(find.text('편집기 글꼴')).dy;
+    final lineY = tester.getTopLeft(find.text('줄 간격')).dy;
+    final previewY = tester.getTopLeft(find.text('미리보기')).dy;
+    expect(previewY, greaterThan(lineY));
+    expect(lineY, greaterThan(fontY));
+
+    await editor.setFontName('Consolas');
+    await tester.pump();
+    final preview = tester.widget<Text>(find.textContaining('Hello, Flutter'));
+    expect(preview.style!.fontFamily, 'Consolas');
   });
 
   test('글꼴·줄 간격은 저장되고 다시 읽힌다', () async {
