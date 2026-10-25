@@ -90,7 +90,7 @@ class _QuickOpenState extends State<_QuickOpen> {
                 TextField(
                   controller: _query,
                   autofocus: true,
-                  decoration: InputDecoration(hintText: l10n.quickOpenHint, prefixIcon: const Icon(Icons.search, size: 18)),
+                  decoration: InputDecoration(hintText: l10n.quickOpenHint, prefixIcon: Icon(context.icons.search, size: 18)),
                   onChanged: (_) => setState(_refilter),
                   onSubmitted: (_) {
                     if (_shown.isNotEmpty) _open(_shown[_selected]);

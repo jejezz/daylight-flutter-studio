@@ -94,20 +94,20 @@ class _ProjectSearchState extends State<_ProjectSearch> {
                   child: TextField(
                     controller: _query,
                     autofocus: true,
-                    decoration: InputDecoration(hintText: l10n.searchHint, prefixIcon: const Icon(Icons.search, size: 18)),
+                    decoration: InputDecoration(hintText: l10n.searchHint, prefixIcon: Icon(context.icons.search, size: 18)),
                     onSubmitted: (_) => _go(),
                   ),
                 ),
                 IconButton(
                   tooltip: l10n.findMatchCase,
                   isSelected: _caseSensitive,
-                  icon: const Icon(Icons.text_fields),
+                  icon: Icon(context.icons.textFields),
                   onPressed: () => setState(() => _caseSensitive = !_caseSensitive),
                 ),
                 IconButton(
                   tooltip: l10n.findRegex,
                   isSelected: _regex,
-                  icon: const Icon(Icons.code),
+                  icon: Icon(context.icons.code),
                   onPressed: () => setState(() => _regex = !_regex),
                 ),
               ],

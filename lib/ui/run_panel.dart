@@ -93,7 +93,7 @@ class _Devices extends StatelessWidget {
             if (controller.loadingDevices)
               const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
             else
-              IconButton(tooltip: AppLocalizations.of(context).runRefreshDevices, icon: const Icon(Icons.refresh, size: 18), onPressed: controller.running ? null : controller.refreshDevices),
+              IconButton(tooltip: AppLocalizations.of(context).runRefreshDevices, icon: Icon(context.icons.refresh, size: 18), onPressed: controller.running ? null : controller.refreshDevices),
           ],
         ),
         if (devices.isEmpty) Text(AppLocalizations.of(context).runNoDevices),
@@ -169,13 +169,13 @@ class _ModeAndRun extends StatelessWidget {
             Expanded(
               child: FilledButton.icon(
                 onPressed: !running && plan.runnable ? controller.start : null,
-                icon: Icon(controller.mode == BuildMode.debug ? Icons.play_arrow : Icons.build),
+                icon: Icon(controller.mode == BuildMode.debug ? context.icons.playArrow : context.icons.build),
                 label: Text(controller.mode == BuildMode.debug ? l10n.runStart : l10n.runBuildInstall),
               ),
             ),
             if (running) ...[
               SizedBox(width: t.spaceSm),
-              OutlinedButton.icon(onPressed: controller.cancel, icon: const Icon(Icons.stop), label: Text(l10n.commonStop)),
+              OutlinedButton.icon(onPressed: controller.cancel, icon: Icon(context.icons.stop), label: Text(l10n.commonStop)),
             ],
           ],
         ),
@@ -247,11 +247,11 @@ class _Steps extends StatelessWidget {
     final t = context.tokens;
     final scheme = Theme.of(context).colorScheme;
     return switch (s) {
-      StepStatus.done => Icon(Icons.check_circle, size: 16, color: t.success),
-      StepStatus.failed => Icon(Icons.error, size: 16, color: t.danger),
-      StepStatus.cancelled => Icon(Icons.cancel_outlined, size: 16, color: t.warning),
+      StepStatus.done => Icon(context.icons.checkCircle, size: 16, color: t.success),
+      StepStatus.failed => Icon(context.icons.error, size: 16, color: t.danger),
+      StepStatus.cancelled => Icon(context.icons.cancel, size: 16, color: t.warning),
       StepStatus.running => const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2)),
-      _ => Icon(Icons.radio_button_unchecked, size: 16, color: scheme.outline),
+      _ => Icon(context.icons.radioButtonUnchecked, size: 16, color: scheme.outline),
     };
   }
 
@@ -305,13 +305,13 @@ class _VerifyCard extends StatelessWidget {
               Row(
                 children: [
                   Expanded(
-                    child: FilledButton.icon(onPressed: controller.confirm, icon: const Icon(Icons.check), label: Text(l10n.runVerifyConfirmed)),
+                    child: FilledButton.icon(onPressed: controller.confirm, icon: Icon(context.icons.check), label: Text(l10n.runVerifyConfirmed)),
                   ),
                   SizedBox(width: t.spaceSm),
                   Expanded(
                     child: OutlinedButton.icon(
                       onPressed: () => _reportProblem(context),
-                      icon: const Icon(Icons.report_problem_outlined),
+                      icon: Icon(context.icons.reportProblem),
                       label: Text(l10n.runVerifyProblem),
                     ),
                   ),
@@ -377,7 +377,7 @@ class _Output extends StatelessWidget {
             const Spacer(),
             IconButton(
               tooltip: l10n.runCopyOutput,
-              icon: const Icon(Icons.copy, size: 16),
+              icon: Icon(context.icons.copy, size: 16),
               onPressed: () => Clipboard.setData(ClipboardData(text: text)),
             ),
           ],

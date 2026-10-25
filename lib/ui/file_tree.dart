@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 
+import '../theme/app_theme.dart';
+
 /// 폴더를 펼칠 때 내용을 읽는 파일 트리.
 class FileTree extends StatelessWidget {
   const FileTree({super.key, required this.root, required this.onOpenFile, this.activePath, this.revision = 0});
@@ -113,9 +115,9 @@ class _DirNodeState extends State<_DirNode> {
             padding: EdgeInsets.fromLTRB(indent, 3, 8, 3),
             child: Row(
               children: [
-                Icon(_expanded ? Icons.expand_more : Icons.chevron_right, size: 16),
+                Icon(_expanded ? context.icons.expandMore : context.icons.chevronRight, size: 16),
                 const SizedBox(width: 2),
-                Icon(_expanded ? Icons.folder_open : Icons.folder, size: 16, color: theme.colorScheme.primary),
+                Icon(_expanded ? context.icons.folderOpen : context.icons.folder, size: 16, color: theme.colorScheme.primary),
                 const SizedBox(width: 6),
                 Expanded(child: Text(_baseName(widget.path), overflow: TextOverflow.ellipsis)),
               ],
@@ -168,7 +170,7 @@ class _FileRow extends StatelessWidget {
         padding: EdgeInsets.fromLTRB(8.0 + depth * 14 + 18, 3, 8, 3),
         child: Row(
           children: [
-            const Icon(Icons.insert_drive_file_outlined, size: 15),
+            Icon(context.icons.insertDriveFile, size: 15),
             const SizedBox(width: 6),
             Expanded(child: Text(_baseName(path), overflow: TextOverflow.ellipsis)),
           ],

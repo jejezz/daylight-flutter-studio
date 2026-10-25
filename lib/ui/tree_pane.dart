@@ -31,7 +31,7 @@ class TreePane extends StatelessWidget {
               ),
               IconButton(
                 tooltip: AppLocalizations.of(context).treeRefresh,
-                icon: const Icon(Icons.refresh, size: 18),
+                icon: Icon(context.icons.refresh, size: 18),
                 onPressed: controller.refreshTree,
               ),
             ],
@@ -69,7 +69,7 @@ class _WorktreePicker extends StatelessWidget {
             value: w,
             child: Row(
               children: [
-                if (w.byClaude) ...[const Icon(Icons.smart_toy_outlined, size: 16), SizedBox(width: t.spaceXs)],
+                if (w.byClaude) ...[Icon(context.icons.smartToy, size: 16), SizedBox(width: t.spaceXs)],
                 Expanded(child: Text(w.label, overflow: TextOverflow.ellipsis)),
               ],
             ),

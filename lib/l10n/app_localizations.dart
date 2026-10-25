@@ -1807,6 +1807,30 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'그래도 태그'**
   String get releaseTagAnyway;
+
+  /// No description provided for @settingsIconSet.
+  ///
+  /// In ko, this message translates to:
+  /// **'아이콘 모양'**
+  String get settingsIconSet;
+
+  /// No description provided for @settingsIconSetRounded.
+  ///
+  /// In ko, this message translates to:
+  /// **'둥근'**
+  String get settingsIconSetRounded;
+
+  /// No description provided for @settingsIconSetOutlined.
+  ///
+  /// In ko, this message translates to:
+  /// **'윤곽선'**
+  String get settingsIconSetOutlined;
+
+  /// No description provided for @settingsIconSetFilled.
+  ///
+  /// In ko, this message translates to:
+  /// **'채움'**
+  String get settingsIconSetFilled;
 }
 
 class _AppLocalizationsDelegate

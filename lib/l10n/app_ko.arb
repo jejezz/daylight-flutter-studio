@@ -565,5 +565,9 @@
   "releaseTagWithoutVerification": "검증 없이 태그…",
   "releaseUnverifiedTitle": "확인하지 않은 커밋입니다",
   "releaseUnverifiedBody": "그래도 태그를 올리면 GitHub에서 모든 OS 빌드가 돌고, 문제가 나와도 이미 올린 태그는 옮기지 않습니다. PATCH를 올려 다시 릴리스해야 합니다.",
-  "releaseTagAnyway": "그래도 태그"
+  "releaseTagAnyway": "그래도 태그",
+  "settingsIconSet": "아이콘 모양",
+  "settingsIconSetRounded": "둥근",
+  "settingsIconSetOutlined": "윤곽선",
+  "settingsIconSetFilled": "채움"
 }

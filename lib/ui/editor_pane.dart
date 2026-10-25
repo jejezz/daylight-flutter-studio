@@ -97,7 +97,7 @@ class _ExternalBanner extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: t.spaceMd, vertical: t.spaceXs),
       child: Row(
         children: [
-          Icon(Icons.warning_amber_rounded, size: 18, color: t.warning),
+          Icon(context.icons.warningAmber, size: 18, color: t.warning),
           SizedBox(width: t.spaceSm),
           Expanded(
             child: Text(
@@ -208,12 +208,12 @@ class _Toolbar extends StatelessWidget {
           if (editing) ...[
             IconButton(
               tooltip: l10n.editorFoldAll,
-              icon: const Icon(Icons.unfold_less, size: 18),
+              icon: Icon(context.icons.unfoldLess, size: 18),
               onPressed: () => foldAll(tab.chunks),
             ),
             IconButton(
               tooltip: l10n.editorUnfoldAll,
-              icon: const Icon(Icons.unfold_more, size: 18),
+              icon: Icon(context.icons.unfoldMore, size: 18),
               onPressed: () => unfoldAll(tab.controller, tab.chunks),
             ),
           ],
@@ -224,7 +224,7 @@ class _Toolbar extends StatelessWidget {
                 tooltip: showingDiff ? l10n.editorBackToEdit : (marks.isEmpty ? l10n.editorDiffSame : l10n.editorDiffChanged),
                 isSelected: showingDiff,
                 icon: Icon(
-                  Icons.difference_outlined,
+                  context.icons.difference,
                   size: 18,
                   color: !showingDiff && !marks.isEmpty ? Theme.of(context).colorScheme.primary : null,
                 ),
@@ -234,15 +234,15 @@ class _Toolbar extends StatelessWidget {
           if (controller.canFormat(tab))
             IconButton(
               tooltip: l10n.editorFormat,
-              icon: const Icon(Icons.format_align_left, size: 18),
+              icon: Icon(context.icons.formatAlignLeft, size: 18),
               onPressed: controller.formatActive,
             ),
           if (tab.language.isMarkdown)
             SegmentedButton<bool>(
               showSelectedIcon: false,
               segments: [
-                ButtonSegment(value: false, icon: const Icon(Icons.edit_outlined, size: 16), label: Text(l10n.editorEdit)),
-                ButtonSegment(value: true, icon: const Icon(Icons.visibility_outlined, size: 16), label: Text(l10n.editorPreview)),
+                ButtonSegment(value: false, icon: Icon(context.icons.edit, size: 16), label: Text(l10n.editorEdit)),
+                ButtonSegment(value: true, icon: Icon(context.icons.visibility, size: 16), label: Text(l10n.editorPreview)),
               ],
               selected: {tab.preview},
               onSelectionChanged: (_) => controller.togglePreview(tab),
@@ -287,7 +287,7 @@ class _TabBar extends StatelessWidget {
                       iconSize: 14,
                       visualDensity: VisualDensity.compact,
                       tooltip: l10n.commonClose,
-                      icon: const Icon(Icons.close),
+                      icon: Icon(context.icons.close),
                       onPressed: () => _close(context, i),
                     ),
                   ],
