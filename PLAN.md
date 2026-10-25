@@ -22,6 +22,8 @@
 - 편집기 찾기·바꾸기(Ctrl/Cmd+F, re_editor 엔진 + 테마 맞춘 줄), 빠른 열기(Ctrl/Cmd+P), 프로젝트에서 찾기(Ctrl/Cmd+Shift+F), 프로젝트별 열어 둔 탭 복원.
 
 ### 알려진 한계
+- **(나중에 점검) 설치된 글꼴 판별이 이상하다.** 설정 → 편집기의 글꼴 단추에 "기본"과 Menlo만 나온다. 이 Mac에는 더 있을 것으로 보이는데(사용자가 설치했거나 macOS 기본인 Monaco·Courier 등) 판별(`lib/theme/font_probe.dart`, 같은 글자를 그 글꼴과 없는 글꼴로 재어 폭 비교)이 놓치는지,
+  Flutter가 이름으로 못 찾는 글꼴인지(예: 글꼴의 "패밀리 이름"과 설치 이름이 다름) 확인한다. 후보: 실제 글꼴 이름을 OS에서 읽어 오기(macOS `system_profiler SPFontsDataType`/`fc-list`, Windows 레지스트리), 목록에 Monaco·Courier New·Andale Mono 추가.
 - 문제 표시는 줄 단위 점뿐(글자 단위 물결 밑줄·빠른 수정·LSP 없음). 변경점 보기는 줄 단위(줄 안의 글자 차이는 표시 안 함)이고 HEAD와만 비교.
 - 프로젝트 검색에서 바꾸기 없음. 파일 목록은 열 때마다 새로 읽는다(최대 2만 개).
 - 규약 쪽 남은 것: 업데이트 확인(`lib/update`, 서버가 정해지면), README 스크린샷·GIF(`tool/readme/capture.sh`), 앱 이름의 "Flutter".
