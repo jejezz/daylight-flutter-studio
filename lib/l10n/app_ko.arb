@@ -758,5 +758,7 @@
         "type": "String"
       }
     }
-  }
+  },
+  "settingsIndentGuides": "들여쓰기 선",
+  "settingsIndentGuidesNote": "들여쓴 줄마다 깊이별로 색이 다른 세로선을 그어 짝을 맞춰 볼 수 있게 합니다. 고정폭 글꼴에서 정확합니다."
 }
