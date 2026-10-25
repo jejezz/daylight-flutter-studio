@@ -296,6 +296,7 @@ class _EditorSection extends StatelessWidget {
             ),
             child: Text(
               _sample,
+              strutStyle: editorStrutStyle(context),
               style: editorTextStyle(context).copyWith(color: scheme.onSurface),
             ),
           ),

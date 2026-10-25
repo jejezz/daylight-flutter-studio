@@ -17,7 +17,15 @@ TextStyle editorTextStyle(BuildContext context) {
   if (settings?.fontName != null) base = base.copyWith(fontFamily: settings!.fontName);
   if (settings?.lineHeight != null) base = base.copyWith(height: settings!.lineHeight);
   final size = base.fontSize ?? 13;
-  return base.copyWith(fontSize: size * EditorZoomScope.scaleOf(context));
+  // Text 위젯은 주변 글자 모양(M3 본문의 글자 사이 0.25 등)을 물려받지만 편집기는 받지 않는다.
+  // 같은 글꼴이 같게 보이도록 물려받을 수 있는 값을 편집기와 같은 값으로 못 박는다.
+  return base.copyWith(
+    fontSize: size * EditorZoomScope.scaleOf(context),
+    letterSpacing: 0,
+    wordSpacing: 0,
+    fontWeight: FontWeight.w400,
+    fontStyle: FontStyle.normal,
+  );
 }
 
 /// 줄 번호 글꼴. 현재 줄은 본문 색, 나머지는 흐린 색.
@@ -49,4 +57,11 @@ CodeEditorStyle buildEditorStyle(BuildContext context, {required String language
             theme: context.syntax.highlightTheme(base: scheme.onSurface),
           ),
   );
+}
+
+/// 편집기와 같은 줄 높이 규칙(글자 크기 × 줄 간격, 정확히)을 [Text]에도 적용한다.
+/// re_editor는 줄 높이를 이 방식으로 고정하므로, 미리보기·변경점 보기도 같은 strut를 써야 줄 간격이 같다.
+StrutStyle editorStrutStyle(BuildContext context) {
+  final font = editorTextStyle(context);
+  return StrutStyle(fontSize: font.fontSize, fontFamily: font.fontFamily, height: font.height, forceStrutHeight: true);
 }
