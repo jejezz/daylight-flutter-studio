@@ -4,7 +4,6 @@ import 'package:daylight_flutter_studio/theme/app_theme.dart';
 import 'package:daylight_flutter_studio/ui/project_search.dart';
 import 'package:daylight_flutter_studio/ui/quick_open.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 Widget _host(Widget Function(BuildContext) open) => MaterialApp(

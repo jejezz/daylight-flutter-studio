@@ -25,6 +25,7 @@ import 'editor_pane.dart';
 import 'git_panel.dart';
 import 'problems_panel.dart';
 import 'run_panel.dart';
+import '../settings/editor_settings.dart';
 import '../studio/project_index.dart';
 import 'project_search.dart';
 import 'quick_open.dart';
@@ -52,6 +53,7 @@ class _StudioScreenState extends State<StudioScreen>
     formatDart: DartFormatter(_runner).format,
     readBase: GitBaseReader(_runner).read,
     onSaved: (path) => _problems.onSaved(path),
+    formatOnSave: () => EditorSettingsScope.maybeOf(context)?.formatOnSave ?? false,
   );
   late final DartAnalyzer _analyzer = DartAnalyzer(_runner);
   late final ProblemsController _problems = ProblemsController(

@@ -263,7 +263,6 @@
   "editorBackToEdit": "편집으로 돌아가기",
   "editorDiffSame": "변경점 보기 (HEAD와 같음)",
   "editorDiffChanged": "변경점 보기 (HEAD와 비교)",
-  "editorFormatDart": "Dart 정렬 (Ctrl+Alt+L)",
   "editorEdit": "편집",
   "editorPreview": "보기",
   "editorSavePromptTitle": "{name} 저장할까요?",
@@ -493,5 +492,16 @@
   },
   "searchInvalidPattern": "정규식이 올바르지 않습니다",
   "studioQuickOpenTooltip": "파일 열기 (Ctrl+P)",
-  "studioSearchTooltip": "프로젝트에서 찾기 (Ctrl+Shift+F)"
+  "studioSearchTooltip": "프로젝트에서 찾기 (Ctrl+Shift+F)",
+  "editorFormat": "정렬 (Ctrl+Alt+L)",
+  "formatJsonInvalid": "JSON 문법 오류라 정렬하지 못했습니다: {detail}",
+  "@formatJsonInvalid": {
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsFormatOnSave": "저장할 때 자동 정렬",
+  "settingsFormatOnSaveNote": "Dart, JSON, ARB 파일을 저장하기 직전에 정렬합니다. 문법 오류가 있어 정렬하지 못해도 저장은 그대로 됩니다."
 }

@@ -436,6 +436,9 @@ abstract final class _SaturnTheme {
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
+        // 데스크톱은 입력칸·드롭다운을 낮게 (ui-ux.md §4 밀도).
+        isDense: dense,
+        contentPadding: dense ? const EdgeInsets.symmetric(horizontal: 12, vertical: 8) : null,
         filled: true,
         fillColor: scheme.surfaceContainerHighest,
         border: OutlineInputBorder(

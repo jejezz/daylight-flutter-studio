@@ -577,9 +577,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get editorDiffChanged => 'View changes (vs HEAD)';
 
   @override
-  String get editorFormatDart => 'Format Dart (Ctrl+Alt+L)';
-
-  @override
   String get editorEdit => 'Edit';
 
   @override
@@ -868,4 +865,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get studioSearchTooltip => 'Find in project (Ctrl+Shift+F)';
+
+  @override
+  String get editorFormat => 'Format (Ctrl+Alt+L)';
+
+  @override
+  String formatJsonInvalid(String detail) {
+    return 'Invalid JSON, couldn\'t format: $detail';
+  }
+
+  @override
+  String get settingsFormatOnSave => 'Format on save';
+
+  @override
+  String get settingsFormatOnSaveNote =>
+      'Formats Dart, JSON and ARB files just before saving. If a syntax error prevents formatting, the file is still saved.';
 }

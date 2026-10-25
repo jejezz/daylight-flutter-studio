@@ -69,7 +69,7 @@ void main() {
     await tester.pump();
 
     expect(find.byType(CodeEditor), findsOneWidget);
-    expect(find.byTooltip('Dart 정렬 (Ctrl+Alt+L)'), findsOneWidget);
+    expect(find.byTooltip('정렬 (Ctrl+Alt+L)'), findsOneWidget);
     expect(find.text('Dart'), findsOneWidget);
     expect(c.activeTab!.dirty, isFalse);
     expect(c.activeTab!.controller.text.contains('\r\n'), isTrue);
@@ -109,7 +109,7 @@ void main() {
 
     expect(find.byType(CodeEditor), findsOneWidget);
     expect(find.byType(MarkdownView), findsNothing);
-    expect(find.byTooltip('Dart 정렬 (Ctrl+Alt+L)'), findsNothing);
+    expect(find.byTooltip('정렬 (Ctrl+Alt+L)'), findsNothing);
 
     await tester.tap(find.text('보기'));
     await tester.pump();

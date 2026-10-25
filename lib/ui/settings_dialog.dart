@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../l10n/app_localizations.dart';
 import '../settings/gate_settings.dart';
+import '../settings/editor_settings.dart';
 import '../theme/app_theme.dart';
 import '../theme/editor_theme.dart';
 import '../theme/editor_zoom.dart';
@@ -252,6 +253,7 @@ class _EditorSection extends StatelessWidget {
     final t = context.tokens;
     final scheme = Theme.of(context).colorScheme;
     final zoom = EditorZoomScope.maybeOf(context);
+    final editor = EditorSettingsScope.maybeOf(context);
     if (zoom == null) return Text(l10n.settingsEditorUnavailable);
     return ListenableBuilder(
       listenable: zoom,
@@ -302,6 +304,24 @@ class _EditorSection extends StatelessWidget {
             l10n.settingsZoomNote,
             style: Theme.of(context).textTheme.bodySmall,
           ),
+          if (editor != null)
+            ListenableBuilder(
+              listenable: editor,
+              builder: (context, _) => Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: t.spaceMd),
+                  _Heading(l10n.settingsFormatOnSave),
+                  SwitchListTile(
+                    contentPadding: EdgeInsets.zero,
+                    value: editor.formatOnSave,
+                    onChanged: editor.setFormatOnSave,
+                    title: Text(l10n.settingsFormatOnSave),
+                    subtitle: Text(l10n.settingsFormatOnSaveNote),
+                  ),
+                ],
+              ),
+            ),
         ],
       ),
     );

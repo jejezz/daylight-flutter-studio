@@ -231,9 +231,9 @@ class _Toolbar extends StatelessWidget {
                 onPressed: () => controller.toggleDiff(tab),
               ),
             ),
-          if (tab.language.isDart)
+          if (controller.canFormat(tab))
             IconButton(
-              tooltip: l10n.editorFormatDart,
+              tooltip: l10n.editorFormat,
               icon: const Icon(Icons.format_align_left, size: 18),
               onPressed: controller.formatActive,
             ),

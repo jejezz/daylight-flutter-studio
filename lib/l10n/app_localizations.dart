@@ -1118,12 +1118,6 @@ abstract class AppLocalizations {
   /// **'변경점 보기 (HEAD와 비교)'**
   String get editorDiffChanged;
 
-  /// No description provided for @editorFormatDart.
-  ///
-  /// In ko, this message translates to:
-  /// **'Dart 정렬 (Ctrl+Alt+L)'**
-  String get editorFormatDart;
-
   /// No description provided for @editorEdit.
   ///
   /// In ko, this message translates to:
@@ -1603,6 +1597,30 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'프로젝트에서 찾기 (Ctrl+Shift+F)'**
   String get studioSearchTooltip;
+
+  /// No description provided for @editorFormat.
+  ///
+  /// In ko, this message translates to:
+  /// **'정렬 (Ctrl+Alt+L)'**
+  String get editorFormat;
+
+  /// No description provided for @formatJsonInvalid.
+  ///
+  /// In ko, this message translates to:
+  /// **'JSON 문법 오류라 정렬하지 못했습니다: {detail}'**
+  String formatJsonInvalid(String detail);
+
+  /// No description provided for @settingsFormatOnSave.
+  ///
+  /// In ko, this message translates to:
+  /// **'저장할 때 자동 정렬'**
+  String get settingsFormatOnSave;
+
+  /// No description provided for @settingsFormatOnSaveNote.
+  ///
+  /// In ko, this message translates to:
+  /// **'Dart, JSON, ARB 파일을 저장하기 직전에 정렬합니다. 문법 오류가 있어 정렬하지 못해도 저장은 그대로 됩니다.'**
+  String get settingsFormatOnSaveNote;
 }
 
 class _AppLocalizationsDelegate
