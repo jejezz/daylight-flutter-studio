@@ -151,7 +151,50 @@ class StudioController extends ChangeNotifier {
   Future<void> restore() async {
     final prefs = await SharedPreferences.getInstance();
     final last = prefs.getString(_lastProjectKey);
-    if (last != null && Directory(last).existsSync()) await openProject(last);
+    if (last != null && Directory(last).existsSync() && await openProject(last)) await _restoreTabs(last);
+  }
+
+  // --- 열어 둔 탭 복원 -----------------------------------------------------
+
+  static String _tabsKey(String root) => 'open_tabs:$root';
+
+  bool _restoringTabs = false;
+
+  /// 프로젝트별로 열어 둔 탭 경로와 활성 탭을 기억한다.
+  Future<void> _persistTabs() async {
+    final r = root;
+    if (r == null || _restoringTabs) return;
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(
+        _tabsKey(r),
+        jsonEncode({'paths': [for (final t in tabs) t.path], 'active': activeIndex}),
+      );
+    } on Object {
+      // 기억해 둔 값은 편의일 뿐이다.
+    }
+  }
+
+  Future<void> _restoreTabs(String r) async {
+    _restoringTabs = true;
+    try {
+      final raw = (await SharedPreferences.getInstance()).getString(_tabsKey(r));
+      if (raw == null) return;
+      final data = jsonDecode(raw) as Map<String, dynamic>;
+      final paths = [for (final p in data['paths'] as List<dynamic>) p as String];
+      for (final p in paths) {
+        if (File(p).existsSync()) await openFile(p);
+      }
+      message = null; // 사라졌거나 못 여는 파일은 조용히 건너뛴다.
+      final active = data['active'] as int? ?? -1;
+      final wanted = active >= 0 && active < paths.length ? tabFor(paths[active]) : null;
+      if (wanted != null) activeIndex = tabs.indexOf(wanted);
+      notifyListeners();
+    } on Object {
+      // 형식이 맞지 않으면 복원하지 않는다.
+    } finally {
+      _restoringTabs = false;
+    }
   }
 
   Future<bool> openProject(String path) async {
@@ -197,6 +240,7 @@ class StudioController extends ChangeNotifier {
     if (existing >= 0) {
       activeIndex = existing;
       notifyListeners();
+      unawaited(_persistTabs());
       return;
     }
     final file = File(path);
@@ -219,6 +263,7 @@ class StudioController extends ChangeNotifier {
       message = CurrentL10n.value.messageReadFailed(e.message);
     }
     notifyListeners();
+    unawaited(_persistTabs());
   }
 
   /// 탭의 비교 기준(git HEAD의 글)을 다시 읽고 변경 표시를 새로 계산한다.
@@ -303,6 +348,7 @@ class StudioController extends ChangeNotifier {
   void selectTab(int index) {
     activeIndex = index;
     notifyListeners();
+    unawaited(_persistTabs());
   }
 
   Future<bool> save(EditorTab tab) async {
@@ -451,6 +497,7 @@ class StudioController extends ChangeNotifier {
     tab.dispose();
     if (activeIndex >= tabs.length) activeIndex = tabs.length - 1;
     notifyListeners();
+    unawaited(_persistTabs());
   }
 
   /// 지금 탭의 Dart 글을 `dart format`으로 정렬한다. 성공하면 편집기 글을 바꾸되 실행 취소할 수 있다.

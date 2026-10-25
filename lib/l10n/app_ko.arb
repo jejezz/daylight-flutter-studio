@@ -445,5 +445,53 @@
         "type": "int"
       }
     }
-  }
+  },
+  "findHint": "찾기",
+  "findReplaceHint": "바꿀 내용",
+  "findNoResults": "결과 없음",
+  "findCount": "{current}/{total}",
+  "@findCount": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "findMatchCase": "대소문자 구분",
+  "findRegex": "정규식",
+  "findPrevious": "이전 (Shift+Enter)",
+  "findNext": "다음 (Enter)",
+  "findClose": "찾기 닫기 (Esc)",
+  "findToggleReplace": "바꾸기 보기/숨기기",
+  "findReplaceOne": "바꾸기",
+  "findReplaceAll": "모두 바꾸기",
+  "quickOpenHint": "파일 이름으로 열기 (Ctrl+P)",
+  "quickOpenNoMatch": "맞는 파일이 없습니다",
+  "quickOpenLoading": "파일 목록을 읽는 중…",
+  "searchTitle": "프로젝트에서 찾기",
+  "searchHint": "찾을 글 (Enter로 검색)",
+  "searchSearching": "찾는 중…",
+  "searchNoResults": "결과가 없습니다",
+  "searchResultCount": "{count}곳",
+  "@searchResultCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchTruncated": "{count}곳에서 멈췄습니다. 더 좁혀서 찾아 보세요.",
+  "@searchTruncated": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchInvalidPattern": "정규식이 올바르지 않습니다",
+  "studioQuickOpenTooltip": "파일 열기 (Ctrl+P)",
+  "studioSearchTooltip": "프로젝트에서 찾기 (Ctrl+Shift+F)"
 }

@@ -428,5 +428,53 @@
         "type": "int"
       }
     }
-  }
+  },
+  "findHint": "Find",
+  "findReplaceHint": "Replace with",
+  "findNoResults": "No results",
+  "findCount": "{current}/{total}",
+  "@findCount": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "findMatchCase": "Match case",
+  "findRegex": "Regular expression",
+  "findPrevious": "Previous (Shift+Enter)",
+  "findNext": "Next (Enter)",
+  "findClose": "Close find (Esc)",
+  "findToggleReplace": "Show/hide replace",
+  "findReplaceOne": "Replace",
+  "findReplaceAll": "Replace all",
+  "quickOpenHint": "Open by file name (Ctrl+P)",
+  "quickOpenNoMatch": "No matching files",
+  "quickOpenLoading": "Reading the file list…",
+  "searchTitle": "Find in project",
+  "searchHint": "Text to find (Enter to search)",
+  "searchSearching": "Searching…",
+  "searchNoResults": "No results",
+  "searchResultCount": "{count} matches",
+  "@searchResultCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchTruncated": "Stopped at {count} matches. Narrow your search.",
+  "@searchTruncated": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchInvalidPattern": "The regular expression is invalid",
+  "studioQuickOpenTooltip": "Open file (Ctrl+P)",
+  "studioSearchTooltip": "Find in project (Ctrl+Shift+F)"
 }
