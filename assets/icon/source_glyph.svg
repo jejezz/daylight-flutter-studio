@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="76 76 872 872">
+  <defs>
+    <radialGradient id="sun" cx="50%" cy="42%" r="60%">
+      <stop offset="0" stop-color="#FFE27A"/>
+      <stop offset="1" stop-color="#FF9F1C"/>
+    </radialGradient>
+  </defs>
+  <g stroke="#FFFFFF" stroke-width="40" stroke-linejoin="round" stroke-linecap="round" fill="none">
+    <g transform="translate(512 512)">
+      <g stroke="#FFB627" stroke-width="40">
+        <path id="r" d="M0 -330 V-410"/>
+        <use href="#r" transform="rotate(45)"/><use href="#r" transform="rotate(90)"/><use href="#r" transform="rotate(135)"/>
+        <use href="#r" transform="rotate(180)"/><use href="#r" transform="rotate(225)"/><use href="#r" transform="rotate(270)"/><use href="#r" transform="rotate(315)"/>
+      </g>
+    </g>
+  </g>
+  <circle cx="512" cy="512" r="290" fill="url(#sun)" stroke="#FFFFFF" stroke-width="36"/>
+  <g fill="none" stroke="#3B2A00" stroke-width="54" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M424 436 L348 512 L424 588"/>
+    <path d="M600 436 L676 512 L600 588"/>
+    <path d="M536 424 L488 600"/>
+  </g>
+</svg>
