@@ -14,5 +14,419 @@
   "languageSystem": "System / 시스템 설정 따르기",
   "languageSystemShort": "System",
   "aboutTagline": "An all-in-one workbench for building Flutter apps",
-  "aboutDescription": "Combines a project tree, a light editor, build/install, and PR/merge/release in one window, keeping the order: work → local verification → merge → release."
+  "aboutDescription": "Combines a project tree, a light editor, build/install, and PR/merge/release in one window, keeping the order: work → local verification → merge → release.",
+  "runNotFlutterProject": "The open folder is not a Flutter project",
+  "runNoPlatforms": "No supported platforms",
+  "runTarget": "Target",
+  "runRefreshDevices": "Rescan devices",
+  "runNoDevices": "No devices connected",
+  "runPlatformMacos": "macOS desktop",
+  "runPlatformWindows": "Windows desktop",
+  "runLinkWireless": "Wireless",
+  "runLinkLocal": "This computer",
+  "runModeDebug": "Debug (flutter run)",
+  "runStart": "Run",
+  "runBuildInstall": "Build & install",
+  "runStop": "Stop",
+  "runHotReload": "r hot reload",
+  "runHotRestart": "R hot restart",
+  "runQuit": "q quit",
+  "runBlockerNoProject": "Open a project.",
+  "runBlockerNoDevice": "Choose a target.",
+  "runBlockerPlatformMissing": "This project does not support the selected platform.",
+  "runBlockerIosNeedsMac": "iOS installs are only possible on macOS.",
+  "runBlockerWireless": "Installs fail over a wireless connection. Connect with USB.",
+  "runBlockerDeveloperModeOff": "Developer Mode is off on the iPhone.",
+  "runBlockerAndroidUnauthorized": "Approve USB debugging on the phone.",
+  "runBlockerNeedsTeamId": "An iOS signing Team ID is required. (The project needs DEVELOPMENT_TEAM)",
+  "runCommandsToRun": "Commands to run",
+  "runCommandNotFound": "Command {command} not found. Check your PATH.",
+  "@runCommandNotFound": {
+    "placeholders": {
+      "command": {
+        "type": "String"
+      }
+    }
+  },
+  "runHintUseUsb": "Installs drop over a wireless connection. Connect with USB.",
+  "runHintUnlockDevice": "Unlock the device screen and try again.",
+  "runHintDeveloperMode": "Turn on Developer Mode on the device.",
+  "runHintSigning": "Signing is misconfigured. Check the Team ID and provisioning profile.",
+  "runHintTrustComputer": "Tap \"Trust This Computer\" on the device.",
+  "runHintNoAdb": "adb not found. Add the Android SDK platform-tools to your PATH.",
+  "runHintCocoapods": "CocoaPods is required.",
+  "runHintVisualStudio": "The Visual Studio \"Desktop development with C++\" workload is required.",
+  "runHintRestartApp": "Plugin links were not found. Reopen the app and try once more.",
+  "runHintStaleBuildCache": "A build cache from an older Visual Studio is left over. Delete the build folder and try again.",
+  "runVerifyConfirmed": "Confirmed",
+  "runVerifyBuilt": "Built only — not yet checked by eye",
+  "runVerifyProblem": "Problem found",
+  "runVerifyNone": "This commit has not been verified yet",
+  "runVerifyTitle": "Verification",
+  "runDetachedHead": "(detached HEAD)",
+  "runRecordSkippedNotGit": "Not a git repository, so no verification was recorded.",
+  "runRecordSkippedDirty": "Uncommitted changes exist, so no verification was recorded. Commit and build again.",
+  "runProblemTitle": "What went wrong?",
+  "runProblemHint": "e.g. The login button does nothing",
+  "commonCancel": "Cancel",
+  "runRecordAndCopy": "Record and copy",
+  "runNoteCopied": "Note copied. Paste it into your Claude session.",
+  "runOutput": "Output",
+  "runCopyOutput": "Copy output",
+  "runNoOutput": "(no output)",
+  "commonStop": "Stop",
+  "gitNotRepo": "The open folder is not a git repository",
+  "gitNoGh": "GitHub CLI (gh) not found, so PR features are unavailable.",
+  "gitUpstreamGone": "Gone from remote",
+  "gitNoUpstream": "No upstream branch",
+  "gitDetachedHead": "(detached HEAD)",
+  "gitRefresh": "Refresh",
+  "gitClean": "No changes",
+  "gitChangedFiles": "{count} changed files",
+  "@gitChangedFiles": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "gitMoreFiles": "… and {count} more",
+  "@gitMoreFiles": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "gitFileDeleted": "Deleted file",
+  "gitFileOpenDiff": "Click to view changes",
+  "gitFetch": "Fetch",
+  "gitPull": "Pull (↓{behind})",
+  "@gitPull": {
+    "placeholders": {
+      "behind": {
+        "type": "int"
+      }
+    }
+  },
+  "gitPush": "Push",
+  "gitVerified": "Verified",
+  "gitBuiltOnly": "Built only — not checked by eye",
+  "gitVerifyProblem": "A problem was found when checked",
+  "gitStaleSome": "Commits were added after verification",
+  "gitStaleCount": "{count} commits were added after verification",
+  "@gitStaleCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "gitUnverified": "This commit has not been verified",
+  "gitHeadDiffers": "Local HEAD and PR head differ. The verdict is based on the PR head.",
+  "gitBuildInRunTab": "Before merging, build and check this commit in the Run tab.",
+  "gitNoPr": "This branch has no PR.",
+  "gitPrTitle": "PR title",
+  "gitPushFirst": "Push the branch first to create a PR.",
+  "gitCreatePr": "Create PR",
+  "gitMergeBlocked": "Merge PR (verification required)",
+  "gitMergeConfirm": "Merge PR…",
+  "gitMerge": "Merge PR",
+  "gitMergeUnverified": "Merge without verification…",
+  "gitUnverifiedDialogTitle": "This commit has not been checked",
+  "gitUnverifiedDialogBody": "If you merge anyway, GitHub builds every OS, and any problem means fixing it and releasing again.",
+  "gitMergeAnyway": "Merge anyway",
+  "gitPrDraft": "This is a draft PR.",
+  "gitPrConflict": "There are conflicts.",
+  "gitPrChecksFailed": "Failed checks: {names}",
+  "@gitPrChecksFailed": {
+    "placeholders": {
+      "names": {
+        "type": "String"
+      }
+    }
+  },
+  "gitPrChecksPending": "{count} checks are in progress.",
+  "@gitPrChecksPending": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "gitPrReviewRequired": "A review is required.",
+  "gitPrMerged": "Merged",
+  "gitPrOpen": "Open",
+  "gitPrChecks": "Checks passed {passed} · failed {failed} · pending {pending}",
+  "@gitPrChecks": {
+    "placeholders": {
+      "passed": {
+        "type": "int"
+      },
+      "failed": {
+        "type": "int"
+      },
+      "pending": {
+        "type": "int"
+      }
+    }
+  },
+  "gitMergeMethod": "Merge method",
+  "gitMergeCommit": "Merge commit",
+  "gitDeleteBranchAfter": "Delete branch after merge",
+  "studioOpenProject": "Open project",
+  "studioOpenProjectFolder": "Open project folder",
+  "studioSettingsTooltip": "Settings (Ctrl+,)",
+  "studioProblemsTab": "Problems",
+  "studioVerifyConfirmed": "Verified",
+  "studioVerifyBuilt": "Built only",
+  "studioVerifyProblem": "Problem found",
+  "studioVerifyNone": "Unverified",
+  "studioNotRepo": "Not a repository",
+  "studioAnalyzing": "Analyzing…",
+  "studioDirty": "Modified (Ctrl+S to save)",
+  "studioSaved": "Saved",
+  "settingsTitle": "Settings",
+  "settingsSectionAppearance": "Appearance",
+  "settingsSectionEditor": "Editor",
+  "settingsSectionGate": "Merge gate",
+  "settingsPaletteSaturn": "Saturn",
+  "settingsPaletteTeal": "Teal",
+  "settingsPaletteAmber": "Amber",
+  "settingsPaletteRose": "Rose",
+  "settingsPaletteSlate": "Slate",
+  "settingsBrightness": "Brightness",
+  "settingsBrightnessSystem": "System",
+  "settingsPalette": "Color scheme",
+  "settingsAppliedNote": "Changes apply immediately and are kept for the next launch.",
+  "settingsGateHeading": "Verification before PR merge",
+  "settingsGateIntro": "Only commits you built and checked by eye can be merged. If you merge without checking, GitHub builds every OS, and any problem means fixing it and releasing again.",
+  "settingsGateConfirmNote": "\"Confirmed\" is a button you press yourself after running the app from the Run tab. A successful build alone doesn't count.",
+  "settingsEditorUnavailable": "Editor settings are unavailable.",
+  "settingsFontSize": "Font size",
+  "settingsResetZoom": "Reset to 100%",
+  "settingsZoomNote": "Applies to the editor, Markdown view and diff view only. In the editor you can also use Ctrl+scroll or Ctrl +/-/0.",
+  "gateModeBlock": "Block",
+  "gateModeBlockHelp": "Only checked commits merge. For an exception, press \"Merge without verification\" separately.",
+  "gateModeWarn": "Warn only",
+  "gateModeWarnHelp": "Asks once more before merging an unchecked commit.",
+  "gateModeOff": "Off",
+  "gateModeOffHelp": "Merging is allowed whether or not the commit was checked.",
+  "gateVerified": "Verified — ready to merge",
+  "gateBuiltOnly": "Built but not checked by eye. After trying it, press \"Confirmed\" in the Run tab.",
+  "gateProblem": "This commit was recorded as having a problem.",
+  "gateProblemNote": "This commit was recorded as having a problem: {note}",
+  "@gateProblemNote": {
+    "placeholders": {
+      "note": {
+        "type": "String"
+      }
+    }
+  },
+  "gateStaleSome": "Commits were added after verification. Build and check again.",
+  "gateStaleCount": "{count} commits were added after verification. Build and check again.",
+  "@gateStaleCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "gateUnverified": "This commit has not been checked locally. Build it in the Run tab and check by eye.",
+  "editorOpenFromTree": "Open a file from the tree on the left",
+  "editorFileGone": "This file has disappeared from disk.",
+  "editorFileChanged": "The file on disk has changed. Saving will overwrite those edits.",
+  "editorCloseTab": "Close tab",
+  "editorLeaveAsIs": "Leave as is",
+  "editorReloadDiscard": "Reload (discard my edits)",
+  "editorKeepMine": "Keep my edits",
+  "editorZoomHint": "Ctrl+scroll or Ctrl +/- to resize text · click for 100%",
+  "editorFoldAll": "Fold all",
+  "editorUnfoldAll": "Unfold all",
+  "editorBackToEdit": "Back to editing",
+  "editorDiffSame": "View changes (same as HEAD)",
+  "editorDiffChanged": "View changes (vs HEAD)",
+  "editorFormatDart": "Format Dart (Ctrl+Alt+L)",
+  "editorEdit": "Edit",
+  "editorPreview": "View",
+  "editorSavePromptTitle": "Save {name}?",
+  "@editorSavePromptTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "editorSavePromptBody": "There are unsaved changes.",
+  "editorDontSave": "Don't save",
+  "commonSave": "Save",
+  "treeExplorer": "Explorer",
+  "treeRefresh": "Refresh tree",
+  "problemsNoPackage": "No Dart package (pubspec.yaml) found in the open folder",
+  "problemsError": "Errors",
+  "problemsWarning": "Warnings",
+  "problemsInfo": "Info",
+  "problemsReanalyze": "Analyze again",
+  "problemsNoPackageInfo": "Package info (.dart_tool) is missing, so bogus import errors are mixed in.",
+  "problemsAnalyzing": "Analyzing…",
+  "problemsNotAnalyzed": "Not analyzed yet",
+  "problemsFilteredOut": "No problems of the selected kinds",
+  "problemsUnknown": "Analysis failed, so problems are unknown",
+  "problemsNone": "No problems",
+  "diffNotComparable": "This file can't be compared with git.\n(Not a git repository, or ignored by .gitignore)",
+  "diffAgainstHead": "Compared with HEAD",
+  "diffNewFile": "New file (not committed yet)",
+  "diffSameAsHead": "Same as HEAD. Nothing changed.",
+  "diffHiddenLines": "{count} unchanged lines — click to expand",
+  "@diffHiddenLines": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "markdownImageUnavailable": "(image unavailable)",
+  "markdownImage": "(image: {alt})",
+  "@markdownImage": {
+    "placeholders": {
+      "alt": {
+        "type": "String"
+      }
+    }
+  },
+  "languagePlain": "Text",
+  "messageFolderUnavailable": "Can't open folder: {path}",
+  "@messageFolderUnavailable": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "messageFileTooLarge": "Files over 2MB are not opened: {name}",
+  "@messageFileTooLarge": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "messageNotUtf8Open": "Not a text (UTF-8) file, can't open: {name}",
+  "@messageNotUtf8Open": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "messageReadFailed": "Couldn't read the file: {error}",
+  "@messageReadFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "messageDiskChangedSaveBlocked": "The file on disk has changed. Before saving, choose \"Reload\" or \"Keep my edits\".",
+  "messageSaveFailed": "Couldn't save: {error}",
+  "@messageSaveFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "messageChangedNotUtf8": "{name} changed on disk but is not a text (UTF-8) file, so it was not reloaded.",
+  "@messageChangedNotUtf8": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "messageChangedReloaded": "{name} changed on disk and was reloaded.",
+  "@messageChangedReloaded": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "messageReloadedFromDisk": "Reloaded {name} from disk.",
+  "@messageReloadedFromDisk": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "messageNotUtf8Reload": "Not a text (UTF-8) file, so it was not reloaded.",
+  "messageAlreadyFormatted": "Already formatted",
+  "messageFormatted": "Formatted",
+  "formatNoDart": "dart command not found. Make sure the Flutter SDK bin folder is on your PATH.",
+  "formatTempWriteFailed": "Couldn't write a temp file: {error}",
+  "@formatTempWriteFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "formatCurrentFile": "(current file)",
+  "formatFailed": "Couldn't format.",
+  "formatFailedDetail": "Couldn't format: {detail}",
+  "@formatFailedDetail": {
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "analyzeFailedRead": "Couldn't read the analysis result.",
+  "analyzeFailedDetail": "Couldn't analyze: {detail}",
+  "@analyzeFailedDetail": {
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "problemsPubGetFailed": "flutter pub get failed. See the output in the command log below.",
+  "gitDoneFetch": "Fetched",
+  "gitDonePull": "Pulled",
+  "gitDonePush": "Pushed",
+  "gitDonePrCreated": "PR created",
+  "gitNotMerged": "Not merged: {reason}",
+  "@gitNotMerged": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "gitDoneMergedUnverified": "Merged #{number} without verification",
+  "@gitDoneMergedUnverified": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "gitDoneMerged": "Merged #{number}",
+  "@gitDoneMerged": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "gitCommandNotFound": "Command not found. Make sure git and the GitHub CLI (gh) are installed and on your PATH.",
+  "gitFailedExit": "Failed (exit code {code})",
+  "@gitFailedExit": {
+    "placeholders": {
+      "code": {
+        "type": "int"
+      }
+    }
+  }
 }

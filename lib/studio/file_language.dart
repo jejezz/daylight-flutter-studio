@@ -20,12 +20,17 @@ import 'package:re_highlight/languages/xml.dart';
 import 'package:re_highlight/languages/yaml.dart';
 import 'package:re_highlight/re_highlight.dart';
 
+import '../l10n/current_l10n.dart';
+
 /// 파일 하나의 언어: 구문 강조 규칙과 접기·정렬 방식을 정한다.
 class FileLanguage {
-  const FileLanguage(this.id, this.label, this.mode);
+  const FileLanguage(this.id, this._label, this.mode);
 
   final String id;
-  final String label;
+  final String _label;
+
+  /// 화면에 보일 이름. 일반 텍스트만 번역한다.
+  String get label => id == 'plain' ? CurrentL10n.value.languagePlain : _label;
 
   /// 구문 강조 규칙. 모르는 파일이면 null (색 없이 보여 준다).
   final Mode? mode;
@@ -66,7 +71,7 @@ class FileLanguage {
     'patch': FileLanguage('diff', 'Diff', langDiff),
   };
 
-  static const plain = FileLanguage('plain', '텍스트', null);
+  static const plain = FileLanguage('plain', 'Text', null);
 
   /// 파일 경로로 언어를 정한다. `CMakeLists.txt`, `Dockerfile`은 이름으로, 나머지는 확장자로.
   static FileLanguage of(String path) {

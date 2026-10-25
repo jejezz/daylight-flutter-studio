@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:daylight_flutter_studio/l10n/app_localizations.dart';
 import 'package:daylight_flutter_studio/problems/diagnostic.dart';
 import 'package:daylight_flutter_studio/problems/problems_controller.dart';
 import 'package:daylight_flutter_studio/studio/studio_controller.dart';
@@ -26,7 +27,7 @@ void main() {
 
   String file(String name) => '${pkg.path}${_sep}lib$_sep$name';
 
-  Widget app(Widget body) => MaterialApp(
+  Widget app(Widget body) => MaterialApp(localizationsDelegates: AppLocalizations.localizationsDelegates, supportedLocales: AppLocalizations.supportedLocales, locale: const Locale('ko'), 
     theme: AppTheme.build(StudioPalette.saturn, Brightness.light),
     home: Scaffold(body: body),
   );

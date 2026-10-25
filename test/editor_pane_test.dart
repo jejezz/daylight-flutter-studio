@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:daylight_flutter_studio/l10n/app_localizations.dart';
 import 'package:daylight_flutter_studio/studio/dart_chunk_analyzer.dart';
 import 'package:daylight_flutter_studio/studio/fold_plan.dart';
 import 'package:daylight_flutter_studio/studio/studio_controller.dart';
@@ -26,7 +27,7 @@ class A {
 }
 ''';
 
-Widget _app(StudioController c, {Brightness brightness = Brightness.light}) => MaterialApp(
+Widget _app(StudioController c, {Brightness brightness = Brightness.light}) => MaterialApp(localizationsDelegates: AppLocalizations.localizationsDelegates, supportedLocales: AppLocalizations.supportedLocales, locale: const Locale('ko'), 
   theme: AppTheme.build(StudioPalette.saturn, brightness),
   home: Scaffold(
     body: ListenableBuilder(

@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:daylight_flutter_studio/l10n/app_localizations.dart';
 import 'package:daylight_flutter_studio/core/command_log.dart';
 import 'package:daylight_flutter_studio/core/command_runner.dart';
 import 'package:daylight_flutter_studio/git/git_controller.dart';
@@ -192,7 +193,7 @@ void main() {
     });
     tearDown(() => c.dispose());
 
-    Widget app(Widget body) => MaterialApp(
+    Widget app(Widget body) => MaterialApp(localizationsDelegates: AppLocalizations.localizationsDelegates, supportedLocales: AppLocalizations.supportedLocales, locale: const Locale('ko'), 
       theme: AppTheme.build(StudioPalette.saturn, Brightness.light),
       home: Scaffold(body: body),
     );

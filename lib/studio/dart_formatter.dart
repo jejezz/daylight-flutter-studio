@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import '../l10n/current_l10n.dart';
 import '../core/command_runner.dart';
 
 /// `dart format` 결과: 정렬된 글자, 또는 실패 이유.
@@ -29,12 +30,12 @@ class DartFormatter {
       await tmp.writeAsString(text);
       final r = await runner.run(['dart', 'format', tmp.path], workingDirectory: file.parent.path, quiet: true);
       if (r.exitCode == 127) {
-        return const FormatResult.failed('dart 명령을 찾을 수 없습니다. Flutter SDK의 bin 폴더가 PATH에 있는지 확인하세요.');
+        return FormatResult.failed(CurrentL10n.value.formatNoDart);
       }
       if (!r.ok) return FormatResult.failed(_firstError(r.combined));
       return FormatResult.ok(await tmp.readAsString());
     } on FileSystemException catch (e) {
-      return FormatResult.failed('임시 파일을 쓰지 못했습니다: ${e.message}');
+      return FormatResult.failed(CurrentL10n.value.formatTempWriteFailed(e.message));
     } finally {
       try {
         if (await tmp.exists()) await tmp.delete();
@@ -47,7 +48,7 @@ class DartFormatter {
   /// 구문 오류 첫 줄만 보여 준다 (임시 파일 이름은 빼고).
   static String _firstError(String output) {
     final line = output.split('\n').map((l) => l.trim()).firstWhere((l) => l.isNotEmpty, orElse: () => '');
-    final cleaned = line.replaceAll(RegExp(r'\.studio_format_\d+\.dart'), '(현재 파일)');
-    return cleaned.isEmpty ? '정렬하지 못했습니다.' : '정렬하지 못했습니다: $cleaned';
+    final cleaned = line.replaceAll(RegExp(r'\.studio_format_\d+\.dart'), CurrentL10n.value.formatCurrentFile);
+    return cleaned.isEmpty ? CurrentL10n.value.formatFailed : CurrentL10n.value.formatFailedDetail(cleaned);
   }
 }

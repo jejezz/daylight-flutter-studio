@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../l10n/app_localizations.dart';
 import '../settings/gate_settings.dart';
 import '../theme/app_theme.dart';
 import '../theme/editor_theme.dart';
@@ -8,14 +9,19 @@ import '../theme/theme_controller.dart';
 
 /// 설정 화면의 구역. 왼쪽 목록에 이 순서로 나온다.
 enum SettingsSection {
-  appearance('외형', Icons.palette_outlined),
-  editor('편집기', Icons.edit_note_outlined),
-  gate('병합 관문', Icons.shield_outlined);
+  appearance(Icons.palette_outlined),
+  editor(Icons.edit_note_outlined),
+  gate(Icons.shield_outlined);
 
-  const SettingsSection(this.label, this.icon);
+  const SettingsSection(this.icon);
 
-  final String label;
   final IconData icon;
+
+  String label(AppLocalizations l10n) => switch (this) {
+    appearance => l10n.settingsSectionAppearance,
+    editor => l10n.settingsSectionEditor,
+    gate => l10n.settingsSectionGate,
+  };
 }
 
 /// 설정 대화상자: 왼쪽에서 구역을 고르고 오른쪽에서 바꾼다. 바꾼 값은 바로 적용되고 저장된다.
@@ -56,7 +62,7 @@ class _SettingsDialogState extends State<SettingsDialog> {
     final t = context.tokens;
     final scheme = Theme.of(context).colorScheme;
     return AlertDialog(
-      title: const Text('설정'),
+      title: Text(AppLocalizations.of(context).settingsTitle),
       contentPadding: EdgeInsets.fromLTRB(0, t.spaceSm, t.spaceLg, 0),
       content: SizedBox(
         width: 720,
@@ -74,7 +80,7 @@ class _SettingsDialogState extends State<SettingsDialog> {
                         selected: s == _section,
                         selectedTileColor: scheme.secondaryContainer,
                         leading: Icon(s.icon, size: 20),
-                        title: Text(s.label),
+                        title: Text(s.label(AppLocalizations.of(context))),
                         onTap: () => setState(() => _section = s),
                       ),
                 ],
@@ -99,7 +105,7 @@ class _SettingsDialogState extends State<SettingsDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('닫기'),
+          child: Text(AppLocalizations.of(context).commonClose),
         ),
       ],
     );
@@ -126,46 +132,47 @@ class _AppearanceSection extends StatelessWidget {
 
   final ThemeController theme;
 
-  static String _palette(StudioPalette p) => switch (p) {
-    StudioPalette.saturn => '새턴',
-    StudioPalette.teal => '청록',
-    StudioPalette.amber => '호박',
-    StudioPalette.rose => '장미',
-    StudioPalette.slate => '슬레이트',
+  static String _palette(AppLocalizations l10n, StudioPalette p) => switch (p) {
+    StudioPalette.saturn => l10n.settingsPaletteSaturn,
+    StudioPalette.teal => l10n.settingsPaletteTeal,
+    StudioPalette.amber => l10n.settingsPaletteAmber,
+    StudioPalette.rose => l10n.settingsPaletteRose,
+    StudioPalette.slate => l10n.settingsPaletteSlate,
   };
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final t = context.tokens;
     return ListenableBuilder(
       listenable: theme,
       builder: (context, _) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const _Heading('밝기'),
+          _Heading(l10n.settingsBrightness),
           SegmentedButton<ThemeMode>(
             showSelectedIcon: false,
-            segments: const [
+            segments: [
               ButtonSegment(
                 value: ThemeMode.system,
-                icon: Icon(Icons.brightness_auto_outlined, size: 16),
-                label: Text('시스템'),
+                icon: const Icon(Icons.brightness_auto_outlined, size: 16),
+                label: Text(l10n.settingsBrightnessSystem),
               ),
               ButtonSegment(
                 value: ThemeMode.light,
-                icon: Icon(Icons.light_mode_outlined, size: 16),
-                label: Text('라이트'),
+                icon: const Icon(Icons.light_mode_outlined, size: 16),
+                label: Text(l10n.themeLight),
               ),
               ButtonSegment(
                 value: ThemeMode.dark,
-                icon: Icon(Icons.dark_mode_outlined, size: 16),
-                label: Text('다크'),
+                icon: const Icon(Icons.dark_mode_outlined, size: 16),
+                label: Text(l10n.themeDark),
               ),
             ],
             selected: {theme.mode},
             onSelectionChanged: (s) => theme.setMode(s.first),
           ),
-          const _Heading('색 구성'),
+          _Heading(l10n.settingsPalette),
           Wrap(
             spacing: t.spaceSm,
             runSpacing: t.spaceSm,
@@ -175,14 +182,14 @@ class _AppearanceSection extends StatelessWidget {
                   selected: theme.palette == p,
                   showCheckmark: false,
                   avatar: Icon(Icons.circle, size: 14, color: p.primaryFor(Theme.of(context).brightness)),
-                  label: Text(_palette(p)),
+                  label: Text(_palette(l10n, p)),
                   onSelected: (_) => theme.setPalette(p),
                 ),
             ],
           ),
           SizedBox(height: t.spaceMd),
           Text(
-            '바꾼 값은 바로 적용되고 다음 실행에도 유지됩니다.',
+            l10n.settingsAppliedNote,
             style: Theme.of(context).textTheme.bodySmall,
           ),
         ],
@@ -198,6 +205,7 @@ class _GateSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final t = context.tokens;
     final theme = Theme.of(context);
     return ListenableBuilder(
@@ -205,10 +213,9 @@ class _GateSection extends StatelessWidget {
       builder: (context, _) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const _Heading('PR 병합 전 검증'),
+          _Heading(l10n.settingsGateHeading),
           Text(
-            '빌드해서 눈으로 확인한 커밋만 병합하게 합니다. 확인하지 않고 병합하면 GitHub에서 모든 OS 빌드가 돌고, '
-            '문제가 나오면 고쳐서 릴리스를 다시 해야 합니다.',
+            l10n.settingsGateIntro,
             style: theme.textTheme.bodySmall,
           ),
           SizedBox(height: t.spaceMd),
@@ -216,16 +223,16 @@ class _GateSection extends StatelessWidget {
             showSelectedIcon: false,
             segments: [
               for (final m in GateMode.values)
-                ButtonSegment(value: m, label: Text(m.label)),
+                ButtonSegment(value: m, label: Text(m.label(l10n))),
             ],
             selected: {gate.mode},
             onSelectionChanged: (s) => gate.setMode(s.first),
           ),
           SizedBox(height: t.spaceSm),
-          Text(gate.mode.description),
+          Text(gate.mode.description(l10n)),
           SizedBox(height: t.spaceMd),
           Text(
-            '"확인함"은 Run 탭에서 앱을 실행해 본 뒤 직접 누르는 단추입니다. 빌드만 성공한 것은 확인으로 치지 않습니다.',
+            l10n.settingsGateConfirmNote,
             style: theme.textTheme.bodySmall,
           ),
         ],
@@ -241,16 +248,17 @@ class _EditorSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final t = context.tokens;
     final scheme = Theme.of(context).colorScheme;
     final zoom = EditorZoomScope.maybeOf(context);
-    if (zoom == null) return const Text('편집기 설정을 불러올 수 없습니다.');
+    if (zoom == null) return Text(l10n.settingsEditorUnavailable);
     return ListenableBuilder(
       listenable: zoom,
       builder: (context, _) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const _Heading('글자 크기'),
+          _Heading(l10n.settingsFontSize),
           Row(
             children: [
               Expanded(
@@ -270,7 +278,7 @@ class _EditorSection extends StatelessWidget {
                 child: Text('${zoom.percent}%', textAlign: TextAlign.end),
               ),
               IconButton(
-                tooltip: '100%로',
+                tooltip: l10n.settingsResetZoom,
                 icon: const Icon(Icons.restart_alt, size: 18),
                 onPressed: zoom.isDefault ? null : zoom.reset,
               ),
@@ -291,7 +299,7 @@ class _EditorSection extends StatelessWidget {
           ),
           SizedBox(height: t.spaceSm),
           Text(
-            '편집기와 Markdown 보기, 변경점 보기에만 적용됩니다. 편집기에서는 Ctrl+스크롤이나 Ctrl +/-/0으로도 바꿀 수 있습니다.',
+            l10n.settingsZoomNote,
             style: Theme.of(context).textTheme.bodySmall,
           ),
         ],

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../git/git_controller.dart';
 import '../git/status.dart';
 import '../settings/gate_settings.dart';
+import '../l10n/app_localizations.dart';
 import '../theme/app_theme.dart';
 import '../verify/verify_state.dart';
 
@@ -51,7 +52,7 @@ class _GitPanelState extends State<GitPanel> {
       builder: (context, _) {
         final s = c.status;
         if (c.dir == null || s == null) {
-          return const Center(child: Text('열린 폴더가 git 저장소가 아닙니다'));
+          return Center(child: Text(AppLocalizations.of(context).gitNotRepo));
         }
         _prefillTitle();
         return ListView(
@@ -68,7 +69,7 @@ class _GitPanelState extends State<GitPanel> {
             _VerifyCard(controller: c),
             SizedBox(height: t.spaceMd),
             if (c.ghMissing)
-              Text('GitHub CLI(gh)를 찾을 수 없어 PR 기능을 쓸 수 없습니다.', style: TextStyle(color: t.warning))
+              Text(AppLocalizations.of(context).gitNoGh, style: TextStyle(color: t.warning))
             else if (c.pr == null)
               _CreatePr(controller: c, title: _title)
             else
@@ -94,14 +95,15 @@ class _BranchHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final t = context.tokens;
     final s = controller.status!;
     final sync = [
       if (s.ahead > 0) '↑${s.ahead}',
       if (s.behind > 0) '↓${s.behind}',
-      if (s.upstreamGone) '원격에 없음',
-      if (s.upstream == null) '추적 브랜치 없음',
+      if (s.upstreamGone) l10n.gitUpstreamGone,
+      if (s.upstream == null) l10n.gitNoUpstream,
     ].join('  ');
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -110,21 +112,21 @@ class _BranchHeader extends StatelessWidget {
           children: [
             const Icon(Icons.account_tree_outlined, size: 18),
             SizedBox(width: t.spaceSm),
-            Expanded(child: Text(s.head ?? '(분리된 HEAD)', style: theme.textTheme.titleMedium, overflow: TextOverflow.ellipsis)),
-            IconButton(tooltip: '새로 고침', icon: const Icon(Icons.refresh, size: 18), onPressed: controller.busy ? null : controller.refresh),
+            Expanded(child: Text(s.head ?? l10n.gitDetachedHead, style: theme.textTheme.titleMedium, overflow: TextOverflow.ellipsis)),
+            IconButton(tooltip: l10n.gitRefresh, icon: const Icon(Icons.refresh, size: 18), onPressed: controller.busy ? null : controller.refresh),
           ],
         ),
         if (sync.isNotEmpty) Text(sync, style: theme.textTheme.bodySmall),
         if (s.clean)
-          Text('변경 없음', style: theme.textTheme.bodySmall)
+          Text(l10n.gitClean, style: theme.textTheme.bodySmall)
         else
           ExpansionTile(
             initiallyExpanded: true,
             tilePadding: EdgeInsets.zero,
-            title: Text('변경된 파일 ${s.changedCount}개', style: theme.textTheme.bodyMedium),
+            title: Text(l10n.gitChangedFiles(s.changedCount), style: theme.textTheme.bodyMedium),
             children: [
               for (final f in s.files.take(60)) _FileRow(file: f, controller: controller, onOpenDiff: onOpenDiff),
-              if (s.files.length > 60) Text('… 외 ${s.files.length - 60}개'),
+              if (s.files.length > 60) Text(l10n.gitMoreFiles(s.files.length - 60)),
             ],
           ),
       ],
@@ -149,6 +151,7 @@ class _FileRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final t = context.tokens;
     final theme = Theme.of(context);
     final deleted = file.index == 'D' || file.worktree == 'D';
@@ -161,7 +164,7 @@ class _FileRow extends StatelessWidget {
       _ => theme.colorScheme.primary,
     };
     return Tooltip(
-      message: deleted ? '삭제된 파일' : (open == null ? '' : '눌러서 변경점 보기'),
+      message: deleted ? l10n.gitFileDeleted : (open == null ? '' : l10n.gitFileOpenDiff),
       child: InkWell(
         onTap: open,
         child: Padding(
@@ -185,6 +188,7 @@ class _Sync extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final s = controller.status!;
     final t = context.tokens;
     final busy = controller.busy;
@@ -193,15 +197,15 @@ class _Sync extends StatelessWidget {
       spacing: t.spaceSm,
       runSpacing: t.spaceSm,
       children: [
-        OutlinedButton.icon(onPressed: busy ? null : controller.fetch, icon: const Icon(Icons.sync, size: 18), label: const Text('가져오기')),
+        OutlinedButton.icon(onPressed: busy ? null : controller.fetch, icon: const Icon(Icons.sync, size: 18), label: Text(l10n.gitFetch)),
         if (s.behind > 0)
           OutlinedButton.icon(
             onPressed: busy || !s.clean ? null : controller.pull,
             icon: const Icon(Icons.download, size: 18),
-            label: Text('받기 (↓${s.behind})'),
+            label: Text(l10n.gitPull(s.behind)),
           ),
         if (needsPush)
-          FilledButton.icon(onPressed: busy ? null : controller.push, icon: const Icon(Icons.upload, size: 18), label: const Text('올리기')),
+          FilledButton.icon(onPressed: busy ? null : controller.push, icon: const Icon(Icons.upload, size: 18), label: Text(l10n.gitPush)),
         if (busy) const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2)),
       ],
     );
@@ -215,19 +219,20 @@ class _VerifyCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final t = context.tokens;
     final v = controller.verdict;
     final (icon, label, color) = switch (v?.state) {
-      VerifyState.verified => (Icons.verified, '검증됨', t.success),
-      VerifyState.builtOnly => (Icons.build_circle_outlined, '빌드만 됨 — 눈으로 확인하지 않았습니다', t.warning),
-      VerifyState.problem => (Icons.report_problem_outlined, '확인했더니 문제가 있었습니다', t.danger),
+      VerifyState.verified => (Icons.verified, l10n.gitVerified, t.success),
+      VerifyState.builtOnly => (Icons.build_circle_outlined, l10n.gitBuiltOnly, t.warning),
+      VerifyState.problem => (Icons.report_problem_outlined, l10n.gitVerifyProblem, t.danger),
       VerifyState.stale => (
         Icons.update,
-        v!.commitsSince == null ? '검증한 뒤 커밋이 추가되었습니다' : '검증한 뒤 커밋 ${v.commitsSince}개가 추가되었습니다',
+        v!.commitsSince == null ? l10n.gitStaleSome : l10n.gitStaleCount(v.commitsSince!),
         t.warning,
       ),
-      VerifyState.unverified || null => (Icons.help_outline, '검증하지 않은 커밋입니다', theme.colorScheme.onSurfaceVariant),
+      VerifyState.unverified || null => (Icons.help_outline, l10n.gitUnverified, theme.colorScheme.onSurfaceVariant),
     };
     final rec = v?.record;
     return Card(
@@ -246,8 +251,8 @@ class _VerifyCard extends StatelessWidget {
             if (rec != null) Text('${rec.target} · ${rec.mode} · ${rec.sha.substring(0, 7)}', style: t.logText),
             if (rec != null && rec.note.isNotEmpty) Text(rec.note),
             if (controller.localDiffersFromPr)
-              Text('로컬 HEAD와 PR head가 다릅니다. 판정은 PR head 기준입니다.', style: theme.textTheme.bodySmall),
-            if (v != null && !v.passes) Text('병합하기 전에 Run 탭에서 이 커밋을 빌드해 확인하세요.', style: theme.textTheme.bodySmall),
+              Text(l10n.gitHeadDiffers, style: theme.textTheme.bodySmall),
+            if (v != null && !v.passes) Text(l10n.gitBuildInRunTab, style: theme.textTheme.bodySmall),
           ],
         ),
       ),
@@ -263,6 +268,7 @@ class _CreatePr extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final t = context.tokens;
     final s = controller.status!;
@@ -273,15 +279,15 @@ class _CreatePr extends StatelessWidget {
       children: [
         Text('Pull Request', style: theme.textTheme.titleSmall),
         SizedBox(height: t.spaceXs),
-        const Text('이 브랜치의 PR이 없습니다.'),
+        Text(l10n.gitNoPr),
         SizedBox(height: t.spaceSm),
-        TextField(controller: title, decoration: const InputDecoration(labelText: 'PR 제목')),
+        TextField(controller: title, decoration: InputDecoration(labelText: l10n.gitPrTitle)),
         SizedBox(height: t.spaceSm),
-        if (!pushed) Text('먼저 브랜치를 올려야 PR을 만들 수 있습니다.', style: theme.textTheme.bodySmall),
+        if (!pushed) Text(l10n.gitPushFirst, style: theme.textTheme.bodySmall),
         FilledButton.icon(
           onPressed: controller.busy || !pushed ? null : () => controller.createPr(title.text),
           icon: const Icon(Icons.call_merge, size: 18),
-          label: const Text('PR 만들기'),
+          label: Text(l10n.gitCreatePr),
         ),
       ],
     );
@@ -298,6 +304,7 @@ class _MergeButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final t = context.tokens;
     final theme = Theme.of(context);
     final pr = controller.pr!;
@@ -339,14 +346,14 @@ class _MergeButtons extends StatelessWidget {
               ? mergeWithConfirm
               : () => controller.merge(method, deleteBranch: deleteBranch),
           icon: const Icon(Icons.merge, size: 18),
-          label: Text(blocked ? 'PR 병합 (검증 필요)' : decision.action == GateAction.confirm ? 'PR 병합…' : 'PR 병합'),
+          label: Text(blocked ? l10n.gitMergeBlocked : decision.action == GateAction.confirm ? l10n.gitMergeConfirm : l10n.gitMerge),
         ),
         if (blocked)
           Align(
             alignment: Alignment.centerRight,
             child: TextButton(
               onPressed: unavailable ? null : mergeWithConfirm,
-              child: Text('검증 없이 병합…', style: TextStyle(color: t.danger)),
+              child: Text(l10n.gitMergeUnverified, style: TextStyle(color: t.danger)),
             ),
           ),
       ],
@@ -357,19 +364,19 @@ class _MergeButtons extends StatelessWidget {
     final ok = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('확인하지 않은 커밋입니다'),
+        title: Text(AppLocalizations.of(context).gitUnverifiedDialogTitle),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(reason),
             const SizedBox(height: 12),
-            const Text('그래도 병합하면 GitHub에서 모든 OS 빌드가 돌고, 문제가 나오면 고쳐서 릴리스를 다시 해야 합니다.'),
+            Text(AppLocalizations.of(context).gitUnverifiedDialogBody),
           ],
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('취소')),
-          FilledButton(onPressed: () => Navigator.pop(context, true), child: const Text('그래도 병합')),
+          TextButton(onPressed: () => Navigator.pop(context, false), child: Text(AppLocalizations.of(context).commonCancel)),
+          FilledButton(onPressed: () => Navigator.pop(context, true), child: Text(AppLocalizations.of(context).gitMergeAnyway)),
         ],
       ),
     );
@@ -394,20 +401,21 @@ class _PrCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final t = context.tokens;
     final pr = controller.pr!;
     final c = pr.checks;
     final blocker = pr.draft
-        ? '초안(draft) PR입니다.'
+        ? l10n.gitPrDraft
         : pr.conflicting
-        ? '충돌이 있습니다.'
+        ? l10n.gitPrConflict
         : c.failed > 0
-        ? '실패한 검사: ${c.failedNames.join(', ')}'
+        ? l10n.gitPrChecksFailed(c.failedNames.join(', '))
         : c.pending > 0
-        ? '검사 ${c.pending}개가 진행 중입니다.'
+        ? l10n.gitPrChecksPending(c.pending)
         : pr.reviewRequired
-        ? '리뷰가 필요합니다.'
+        ? l10n.gitPrReviewRequired
         : null;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -416,22 +424,22 @@ class _PrCard extends StatelessWidget {
           children: [
             Text('PR #${pr.number}', style: theme.textTheme.titleSmall),
             SizedBox(width: t.spaceSm),
-            Chip(label: Text(pr.merged ? '병합됨' : '열림'), visualDensity: VisualDensity.compact),
+            Chip(label: Text(pr.merged ? l10n.gitPrMerged : l10n.gitPrOpen), visualDensity: VisualDensity.compact),
           ],
         ),
         Text(pr.title),
         Text('${pr.headRef} → ${pr.baseRef}', style: t.logText),
-        if (c.total > 0) Text('검사 통과 ${c.passed} · 실패 ${c.failed} · 진행 ${c.pending}', style: theme.textTheme.bodySmall),
+        if (c.total > 0) Text(l10n.gitPrChecks(c.passed, c.failed, c.pending), style: theme.textTheme.bodySmall),
         if (pr.open) ...[
           if (blocker != null) Text(blocker, style: TextStyle(color: t.warning)),
           SizedBox(height: t.spaceSm),
           DropdownButtonFormField<PrMergeMethod>(
             initialValue: method,
-            decoration: const InputDecoration(labelText: '병합 방식'),
-            items: const [
-              DropdownMenuItem(value: PrMergeMethod.merge, child: Text('병합 커밋')),
-              DropdownMenuItem(value: PrMergeMethod.squash, child: Text('Squash')),
-              DropdownMenuItem(value: PrMergeMethod.rebase, child: Text('Rebase')),
+            decoration: InputDecoration(labelText: l10n.gitMergeMethod),
+            items: [
+              DropdownMenuItem(value: PrMergeMethod.merge, child: Text(l10n.gitMergeCommit)),
+              const DropdownMenuItem(value: PrMergeMethod.squash, child: Text('Squash')),
+              const DropdownMenuItem(value: PrMergeMethod.rebase, child: Text('Rebase')),
             ],
             onChanged: (m) => m == null ? null : onMethod(m),
           ),
@@ -440,7 +448,7 @@ class _PrCard extends StatelessWidget {
             controlAffinity: ListTileControlAffinity.leading,
             value: deleteBranch,
             onChanged: (v) => onDeleteBranch(v ?? true),
-            title: const Text('병합 후 브랜치 삭제'),
+            title: Text(l10n.gitDeleteBranchAfter),
           ),
           SelectableText('gh pr merge ${pr.number} --${method.name}${deleteBranch ? ' --delete-branch' : ''}', style: t.logText),
           SizedBox(height: t.spaceSm),
