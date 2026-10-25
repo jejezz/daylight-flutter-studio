@@ -507,7 +507,9 @@
   "settingsEditorFont": "편집기 글꼴",
   "settingsEditorFontHint": "글꼴 이름 (비우면 기본)",
   "settingsEditorFontDefault": "기본",
-  "settingsEditorFontNote": "설치된 고정폭 글꼴의 이름을 그대로 적습니다. 없는 글꼴이면 기본 글꼴로 보입니다.",
+  "settingsEditorFontNote": "이 컴퓨터에 설치된 글꼴만 단추로 보입니다. 다른 글꼴은 이름을 그대로 적으세요.",
   "settingsLineHeight": "줄 간격",
-  "settingsLineHeightReset": "기본 줄 간격으로"
+  "settingsLineHeightReset": "기본 줄 간격으로",
+  "settingsEditorFontMissing": "이 글꼴은 이 컴퓨터에 설치되어 있지 않은 것 같습니다. Menlo 등 대체 글꼴로 보입니다.",
+  "settingsPreview": "미리보기"
 }

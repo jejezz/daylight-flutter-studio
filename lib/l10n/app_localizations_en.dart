@@ -892,11 +892,18 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsEditorFontNote =>
-      'Type the name of an installed monospace font. A missing font falls back to the default.';
+      'Only fonts installed on this computer appear as buttons. Type the name of any other font.';
 
   @override
   String get settingsLineHeight => 'Line spacing';
 
   @override
   String get settingsLineHeightReset => 'Reset line spacing';
+
+  @override
+  String get settingsEditorFontMissing =>
+      'This font doesn\'t seem to be installed on this computer. A fallback such as Menlo is shown instead.';
+
+  @override
+  String get settingsPreview => 'Preview';
 }

@@ -869,11 +869,18 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get settingsEditorFontNote =>
-      '설치된 고정폭 글꼴의 이름을 그대로 적습니다. 없는 글꼴이면 기본 글꼴로 보입니다.';
+      '이 컴퓨터에 설치된 글꼴만 단추로 보입니다. 다른 글꼴은 이름을 그대로 적으세요.';
 
   @override
   String get settingsLineHeight => '줄 간격';
 
   @override
   String get settingsLineHeightReset => '기본 줄 간격으로';
+
+  @override
+  String get settingsEditorFontMissing =>
+      '이 글꼴은 이 컴퓨터에 설치되어 있지 않은 것 같습니다. Menlo 등 대체 글꼴로 보입니다.';
+
+  @override
+  String get settingsPreview => '미리보기';
 }

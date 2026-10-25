@@ -1643,7 +1643,7 @@ abstract class AppLocalizations {
   /// No description provided for @settingsEditorFontNote.
   ///
   /// In ko, this message translates to:
-  /// **'설치된 고정폭 글꼴의 이름을 그대로 적습니다. 없는 글꼴이면 기본 글꼴로 보입니다.'**
+  /// **'이 컴퓨터에 설치된 글꼴만 단추로 보입니다. 다른 글꼴은 이름을 그대로 적으세요.'**
   String get settingsEditorFontNote;
 
   /// No description provided for @settingsLineHeight.
@@ -1657,6 +1657,18 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'기본 줄 간격으로'**
   String get settingsLineHeightReset;
+
+  /// No description provided for @settingsEditorFontMissing.
+  ///
+  /// In ko, this message translates to:
+  /// **'이 글꼴은 이 컴퓨터에 설치되어 있지 않은 것 같습니다. Menlo 등 대체 글꼴로 보입니다.'**
+  String get settingsEditorFontMissing;
+
+  /// No description provided for @settingsPreview.
+  ///
+  /// In ko, this message translates to:
+  /// **'미리보기'**
+  String get settingsPreview;
 }
 
 class _AppLocalizationsDelegate

@@ -4,6 +4,7 @@ import '../l10n/app_localizations.dart';
 import '../settings/gate_settings.dart';
 import '../settings/editor_settings.dart';
 import '../theme/app_theme.dart';
+import '../theme/font_probe.dart';
 import '../theme/editor_theme.dart';
 import '../theme/editor_zoom.dart';
 import '../theme/theme_controller.dart';
@@ -182,7 +183,11 @@ class _AppearanceSection extends StatelessWidget {
                 ChoiceChip(
                   selected: theme.palette == p,
                   showCheckmark: false,
-                  avatar: Icon(Icons.circle, size: 14, color: p.primaryFor(Theme.of(context).brightness)),
+                  avatar: Icon(
+                    Icons.circle,
+                    size: 14,
+                    color: p.primaryFor(Theme.of(context).brightness),
+                  ),
                   label: Text(_palette(l10n, p)),
                   onSelected: (_) => theme.setPalette(p),
                 ),
@@ -215,10 +220,7 @@ class _GateSection extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _Heading(l10n.settingsGateHeading),
-          Text(
-            l10n.settingsGateIntro,
-            style: theme.textTheme.bodySmall,
-          ),
+          Text(l10n.settingsGateIntro, style: theme.textTheme.bodySmall),
           SizedBox(height: t.spaceMd),
           SegmentedButton<GateMode>(
             showSelectedIcon: false,
@@ -232,10 +234,7 @@ class _GateSection extends StatelessWidget {
           SizedBox(height: t.spaceSm),
           Text(gate.mode.description(l10n)),
           SizedBox(height: t.spaceMd),
-          Text(
-            l10n.settingsGateConfirmNote,
-            style: theme.textTheme.bodySmall,
-          ),
+          Text(l10n.settingsGateConfirmNote, style: theme.textTheme.bodySmall),
         ],
       ),
     );
@@ -245,13 +244,10 @@ class _GateSection extends StatelessWidget {
 class _EditorSection extends StatelessWidget {
   const _EditorSection();
 
-  static const _sample = "void main() {\n  print('Hello, Flutter');\n}";
-
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final t = context.tokens;
-    final scheme = Theme.of(context).colorScheme;
     final zoom = EditorZoomScope.maybeOf(context);
     final editor = EditorSettingsScope.maybeOf(context);
     if (zoom == null) return Text(l10n.settingsEditorUnavailable);
@@ -286,26 +282,15 @@ class _EditorSection extends StatelessWidget {
               ),
             ],
           ),
-          Container(
-            width: double.infinity,
-            padding: EdgeInsets.all(t.spaceMd),
-            decoration: BoxDecoration(
-              color: scheme.surfaceContainerLowest,
-              border: Border.all(color: scheme.outlineVariant),
-              borderRadius: BorderRadius.circular(t.radius),
-            ),
-            child: Text(
-              _sample,
-              strutStyle: editorStrutStyle(context),
-              style: editorTextStyle(context).copyWith(color: scheme.onSurface),
-            ),
-          ),
           SizedBox(height: t.spaceSm),
           Text(
             l10n.settingsZoomNote,
             style: Theme.of(context).textTheme.bodySmall,
           ),
           if (editor != null) _FontSettings(editor: editor),
+          SizedBox(height: t.spaceMd),
+          _Heading(l10n.settingsPreview),
+          const _Preview(),
           if (editor != null)
             ListenableBuilder(
               listenable: editor,
@@ -330,6 +315,32 @@ class _EditorSection extends StatelessWidget {
   }
 }
 
+const _previewSample = "void main() {\n  print('Hello, Flutter');\n}";
+
+/// 글자 크기·글꼴·줄 간격이 바뀌면 바로 따라 바뀌는 편집기 미리보기.
+class _Preview extends StatelessWidget {
+  const _Preview();
+
+  @override
+  Widget build(BuildContext context) {
+    final t = context.tokens;
+    final scheme = Theme.of(context).colorScheme;
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(t.spaceMd),
+      decoration: BoxDecoration(
+        color: scheme.surfaceContainerLowest,
+        border: Border.all(color: scheme.outlineVariant),
+        borderRadius: BorderRadius.circular(t.radius),
+      ),
+      child: Text(
+        _previewSample,
+        strutStyle: editorStrutStyle(context),
+        style: editorTextStyle(context).copyWith(color: scheme.onSurface),
+      ),
+    );
+  }
+}
 
 /// 편집기 글꼴 이름과 줄 간격. 위의 미리보기가 바로 따라 바뀐다.
 class _FontSettings extends StatefulWidget {
@@ -364,6 +375,7 @@ class _FontSettingsState extends State<_FontSettings> {
       listenable: editor,
       builder: (context, _) {
         final lineHeight = editor.lineHeight ?? t.editorText.height ?? 1.45;
+        final name = editor.fontName;
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -371,7 +383,9 @@ class _FontSettingsState extends State<_FontSettings> {
             _Heading(l10n.settingsEditorFont),
             TextField(
               controller: _name,
-              decoration: InputDecoration(hintText: l10n.settingsEditorFontHint),
+              decoration: InputDecoration(
+                hintText: l10n.settingsEditorFontHint,
+              ),
               onChanged: editor.setFontName,
             ),
             SizedBox(height: t.spaceSm),
@@ -385,7 +399,9 @@ class _FontSettingsState extends State<_FontSettings> {
                   label: Text(l10n.settingsEditorFontDefault),
                   onSelected: (_) => _pick(null),
                 ),
-                for (final f in EditorSettings.presetFonts)
+                for (final f in EditorSettings.presetFonts.where(
+                  FontProbe.isInstalled,
+                ))
                   ChoiceChip(
                     selected: editor.fontName == f,
                     showCheckmark: false,
@@ -395,7 +411,16 @@ class _FontSettingsState extends State<_FontSettings> {
               ],
             ),
             SizedBox(height: t.spaceXs),
-            Text(l10n.settingsEditorFontNote, style: Theme.of(context).textTheme.bodySmall),
+            if (name != null && !FontProbe.isInstalled(name))
+              Text(
+                l10n.settingsEditorFontMissing,
+                style: TextStyle(color: t.warning),
+              )
+            else
+              Text(
+                l10n.settingsEditorFontNote,
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
             SizedBox(height: t.spaceMd),
             _Heading(l10n.settingsLineHeight),
             Row(
@@ -405,16 +430,27 @@ class _FontSettingsState extends State<_FontSettings> {
                     min: EditorSettings.minLineHeight,
                     max: EditorSettings.maxLineHeight,
                     divisions: 16,
-                    value: lineHeight.clamp(EditorSettings.minLineHeight, EditorSettings.maxLineHeight),
+                    value: lineHeight.clamp(
+                      EditorSettings.minLineHeight,
+                      EditorSettings.maxLineHeight,
+                    ),
                     label: lineHeight.toStringAsFixed(2),
                     onChanged: editor.setLineHeight,
                   ),
                 ),
-                SizedBox(width: 56, child: Text(lineHeight.toStringAsFixed(2), textAlign: TextAlign.end)),
+                SizedBox(
+                  width: 56,
+                  child: Text(
+                    lineHeight.toStringAsFixed(2),
+                    textAlign: TextAlign.end,
+                  ),
+                ),
                 IconButton(
                   tooltip: l10n.settingsLineHeightReset,
                   icon: const Icon(Icons.restart_alt, size: 18),
-                  onPressed: editor.lineHeight == null ? null : () => editor.setLineHeight(null),
+                  onPressed: editor.lineHeight == null
+                      ? null
+                      : () => editor.setLineHeight(null),
                 ),
               ],
             ),
