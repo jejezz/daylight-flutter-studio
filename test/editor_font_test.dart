@@ -4,6 +4,7 @@ import 'package:daylight_flutter_studio/theme/app_theme.dart';
 import 'package:daylight_flutter_studio/theme/editor_theme.dart';
 import 'package:daylight_flutter_studio/theme/editor_zoom.dart';
 import 'package:daylight_flutter_studio/theme/font_probe.dart';
+import 'package:daylight_flutter_studio/theme/font_scan.dart';
 import 'package:daylight_flutter_studio/theme/theme_controller.dart';
 import 'package:daylight_flutter_studio/ui/settings_dialog.dart';
 import 'package:flutter/material.dart';
@@ -28,6 +29,7 @@ void main() {
   setUp(() {
     // 테스트에서는 모든 글꼴이 같은 글꼴로 그려지므로 설치 여부를 흉내 낸다.
     FontProbe.isInstalled = (family) => family != 'Nonexistent Font';
+    monospaceFontLoader = () async => ['Fira Code', 'Monaco'];
     SharedPreferences.setMockInitialValues({});
     editor = EditorSettings();
     zoom = EditorZoom();
@@ -126,6 +128,7 @@ void main() {
 
   testWidgets('설치되지 않은 글꼴은 단추에서 빠지고, 직접 적으면 안내가 뜬다', (tester) async {
     FontProbe.isInstalled = (family) => family != 'Fira Code';
+    monospaceFontLoader = () async => ['Fira Code', 'Monaco'];
     await tester.pumpWidget(
       app(
         (context) => FilledButton(
@@ -138,6 +141,8 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.widgetWithText(ChoiceChip, 'Fira Code'), findsNothing);
     expect(find.widgetWithText(ChoiceChip, 'Menlo'), findsOneWidget);
+    // 폴더에서 읽은 글꼴도 단추로 나온다.
+    expect(find.widgetWithText(ChoiceChip, 'Monaco'), findsOneWidget);
 
     await editor.setFontName('Fira Code');
     await tester.pump();
