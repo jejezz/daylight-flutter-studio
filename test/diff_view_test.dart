@@ -193,7 +193,7 @@ void main() {
     tearDown(() => c.dispose());
 
     Widget app(Widget body) => MaterialApp(
-      theme: AppTheme.build(StudioPalette.indigo, Brightness.light),
+      theme: AppTheme.build(StudioPalette.saturn, Brightness.light),
       home: Scaffold(body: body),
     );
 
@@ -308,7 +308,7 @@ void main() {
       );
       await tester.pump(const Duration(milliseconds: 100));
 
-      final theme = AppTheme.build(StudioPalette.indigo, Brightness.light);
+      final theme = AppTheme.build(StudioPalette.saturn, Brightness.light);
       final tokens = theme.extension<StudioTokens>()!;
       final gutter = tester.renderObject(find.descendant(of: find.byType(ChangeGutter), matching: find.byType(CustomPaint)).last);
       expect(gutter, paints..rect(color: theme.colorScheme.primary)..rect(color: tokens.success));

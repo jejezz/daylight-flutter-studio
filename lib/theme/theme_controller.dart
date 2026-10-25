@@ -1,24 +1,46 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../settings/app_settings.dart';
 import 'app_theme.dart';
 
 /// 사용자가 고른 밝기(시스템/라이트/다크)와 색 구성. 저장해 두고 다음 실행에도 쓴다.
+///
+/// 밝기는 규약 공통 설정([AppSettings], `theme_mode` 키)에 있고, 색 구성은 이 앱 고유라 여기서 저장한다.
+/// [settings] 없이 만들면(테스트) 밝기도 이 객체가 직접 들고 있다.
 class ThemeController extends ChangeNotifier {
-  static const _modeKey = 'theme_mode';
+  ThemeController([this.settings]) {
+    settings?.addListener(notifyListeners);
+  }
+
+  static const _modeKey = AppSettings.themeModeKey;
   static const _paletteKey = 'theme_palette';
 
-  ThemeMode mode = ThemeMode.system;
-  StudioPalette palette = StudioPalette.indigo;
+  final AppSettings? settings;
+  ThemeMode _mode = ThemeMode.system;
+  StudioPalette palette = StudioPalette.saturn;
+
+  ThemeMode get mode => settings?.themeMode ?? _mode;
 
   ThemeData get light => AppTheme.build(palette, Brightness.light);
   ThemeData get dark => AppTheme.build(palette, Brightness.dark);
 
+  @override
+  void dispose() {
+    settings?.removeListener(notifyListeners);
+    super.dispose();
+  }
+
   Future<void> restore() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      mode = ThemeMode.values.asNameMap()[prefs.getString(_modeKey)] ?? mode;
-      palette = StudioPalette.values.asNameMap()[prefs.getString(_paletteKey)] ?? palette;
+      if (settings == null) {
+        _mode =
+            ThemeMode.values.asNameMap()[prefs.getString(_modeKey)] ?? _mode;
+      }
+      palette =
+          StudioPalette.values.asNameMap()[prefs.getString(_paletteKey)] ??
+          palette;
       notifyListeners();
     } on Object {
       // 기억해 둔 값은 편의일 뿐이다.
@@ -26,7 +48,8 @@ class ThemeController extends ChangeNotifier {
   }
 
   Future<void> setMode(ThemeMode value) async {
-    mode = value;
+    if (settings != null) return settings!.setThemeMode(value);
+    _mode = value;
     notifyListeners();
     try {
       (await SharedPreferences.getInstance()).setString(_modeKey, value.name);
@@ -39,7 +62,10 @@ class ThemeController extends ChangeNotifier {
     palette = value;
     notifyListeners();
     try {
-      (await SharedPreferences.getInstance()).setString(_paletteKey, value.name);
+      (await SharedPreferences.getInstance()).setString(
+        _paletteKey,
+        value.name,
+      );
     } on Object {
       // 저장하지 못해도 이번 실행에는 적용된다.
     }

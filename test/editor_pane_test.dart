@@ -27,7 +27,7 @@ class A {
 ''';
 
 Widget _app(StudioController c, {Brightness brightness = Brightness.light}) => MaterialApp(
-  theme: AppTheme.build(StudioPalette.indigo, brightness),
+  theme: AppTheme.build(StudioPalette.saturn, brightness),
   home: Scaffold(
     body: ListenableBuilder(
       listenable: c,

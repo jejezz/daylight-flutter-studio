@@ -24,22 +24,27 @@ void main() {
   });
 
   /// 앱과 같은 구조: 배율 범위를 MaterialApp.builder로 감싸고, 단추를 눌러 설정을 연다.
-  Widget app({SettingsSection initial = SettingsSection.appearance}) => MaterialApp(
-    theme: AppTheme.build(StudioPalette.indigo, Brightness.light),
-    builder: (context, child) => EditorZoomScope(zoom: zoom, child: child!),
-    home: Builder(
-      builder: (context) => Scaffold(
-        body: Center(
-          child: FilledButton(
-            onPressed: () => showSettingsDialog(context, theme: theme, initial: initial),
-            child: const Text('열기'),
+  Widget app({SettingsSection initial = SettingsSection.appearance}) =>
+      MaterialApp(
+        theme: AppTheme.build(StudioPalette.saturn, Brightness.light),
+        builder: (context, child) => EditorZoomScope(zoom: zoom, child: child!),
+        home: Builder(
+          builder: (context) => Scaffold(
+            body: Center(
+              child: FilledButton(
+                onPressed: () =>
+                    showSettingsDialog(context, theme: theme, initial: initial),
+                child: const Text('열기'),
+              ),
+            ),
           ),
         ),
-      ),
-    ),
-  );
+      );
 
-  Future<void> open(WidgetTester tester, {SettingsSection initial = SettingsSection.appearance}) async {
+  Future<void> open(
+    WidgetTester tester, {
+    SettingsSection initial = SettingsSection.appearance,
+  }) async {
     await tester.pumpWidget(app(initial: initial));
     await tester.tap(find.text('열기'));
     await tester.pumpAndSettle();
@@ -69,12 +74,14 @@ void main() {
 
   testWidgets('색 구성을 고르면 바로 적용된다', (tester) async {
     await open(tester);
-    expect(theme.palette, StudioPalette.indigo);
+    expect(theme.palette, StudioPalette.saturn);
 
+    await tester.ensureVisible(find.text('청록'));
     await tester.tap(find.text('청록'));
     await tester.pump();
     expect(theme.palette, StudioPalette.teal);
 
+    await tester.ensureVisible(find.text('장미'));
     await tester.tap(find.text('장미'));
     await tester.pump();
     expect(theme.palette, StudioPalette.rose);

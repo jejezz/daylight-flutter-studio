@@ -127,7 +127,7 @@ class _AppearanceSection extends StatelessWidget {
   final ThemeController theme;
 
   static String _palette(StudioPalette p) => switch (p) {
-    StudioPalette.indigo => '인디고',
+    StudioPalette.saturn => '새턴',
     StudioPalette.teal => '청록',
     StudioPalette.amber => '호박',
     StudioPalette.rose => '장미',
@@ -174,7 +174,7 @@ class _AppearanceSection extends StatelessWidget {
                 ChoiceChip(
                   selected: theme.palette == p,
                   showCheckmark: false,
-                  avatar: Icon(Icons.circle, size: 14, color: p.seed),
+                  avatar: Icon(Icons.circle, size: 14, color: p.primaryFor(Theme.of(context).brightness)),
                   label: Text(_palette(p)),
                   onSelected: (_) => theme.setPalette(p),
                 ),
