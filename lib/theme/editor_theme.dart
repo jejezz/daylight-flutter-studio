@@ -5,12 +5,17 @@ import 'package:flutter/material.dart';
 import 'package:re_editor/re_editor.dart';
 import 'package:re_highlight/re_highlight.dart';
 
+import '../settings/editor_settings.dart';
 import 'app_theme.dart';
 import 'editor_zoom.dart';
 
 /// 편집기 본문 글꼴: 테마의 [StudioTokens.editorText]에 배율을 곱한 것.
 TextStyle editorTextStyle(BuildContext context) {
-  final base = context.tokens.editorText;
+  final settings = EditorSettingsScope.maybeOf(context);
+  var base = context.tokens.editorText;
+  // 사용자가 고른 글꼴 이름·줄 간격이 테마 기본을 덮는다 (없는 글꼴이면 테마의 대체 글꼴이 이어받는다).
+  if (settings?.fontName != null) base = base.copyWith(fontFamily: settings!.fontName);
+  if (settings?.lineHeight != null) base = base.copyWith(height: settings!.lineHeight);
   final size = base.fontSize ?? 13;
   return base.copyWith(fontSize: size * EditorZoomScope.scaleOf(context));
 }
