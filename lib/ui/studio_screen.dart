@@ -1,5 +1,6 @@
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../core/command_log.dart';
 import '../core/command_runner.dart';
@@ -19,7 +20,7 @@ import 'editor_pane.dart';
 import 'git_panel.dart';
 import 'problems_panel.dart';
 import 'run_panel.dart';
-import 'theme_menu.dart';
+import 'settings_dialog.dart';
 import 'tree_pane.dart';
 
 /// 프로젝트 트리 | 편집기 | Dock 패널 (3단) + 하단 상태 막대.
@@ -32,7 +33,8 @@ class StudioScreen extends StatefulWidget {
   State<StudioScreen> createState() => _StudioScreenState();
 }
 
-class _StudioScreenState extends State<StudioScreen> with WidgetsBindingObserver {
+class _StudioScreenState extends State<StudioScreen>
+    with WidgetsBindingObserver {
   late final CommandLog _log = CommandLog();
   late final CommandRunner _runner = CommandRunner(_log);
   late final StudioController _controller = StudioController(
@@ -41,13 +43,19 @@ class _StudioScreenState extends State<StudioScreen> with WidgetsBindingObserver
     onSaved: (path) => _problems.onSaved(path),
   );
   late final DartAnalyzer _analyzer = DartAnalyzer(_runner);
-  late final ProblemsController _problems = ProblemsController(analyze: _analyzer.run, pubGet: _analyzer.pubGet);
+  late final ProblemsController _problems = ProblemsController(
+    analyze: _analyzer.run,
+    pubGet: _analyzer.pubGet,
+  );
   late final RunController _run = RunController(
     runner: _runner,
     deviceService: ProcessDeviceService(_runner),
     store: VerifyStore(_runner),
   );
-  late final GitController _git = GitController(runner: _runner, store: VerifyStore(_runner));
+  late final GitController _git = GitController(
+    runner: _runner,
+    store: VerifyStore(_runner),
+  );
   double _treeWidth = 260;
   double _dockWidth = 400;
   String? _lastRoot;
@@ -112,6 +120,9 @@ class _StudioScreenState extends State<StudioScreen> with WidgetsBindingObserver
     _controller.refreshBases();
   }
 
+  Future<void> _openSettings() =>
+      showSettingsDialog(context, theme: widget.theme);
+
   Future<void> _pickProject() async {
     final dir = await getDirectoryPath(confirmButtonText: '프로젝트 열기');
     if (dir != null) await _controller.openProject(dir);
@@ -124,41 +135,103 @@ class _StudioScreenState extends State<StudioScreen> with WidgetsBindingObserver
       listenable: _controller,
       builder: (context, _) {
         final root = _controller.root;
-        return Scaffold(
-          appBar: AppBar(
-            title: Text(root == null ? 'Daylight Flutter Studio' : root.split(RegExp(r'[/\\]')).last),
-            actions: [
-              TextButton.icon(onPressed: _pickProject, icon: const Icon(Icons.folder_open, size: 18), label: const Text('프로젝트 열기')),
-              ThemeMenu(controller: widget.theme),
-              SizedBox(width: t.spaceSm),
-            ],
-          ),
-          body: root == null
-              ? Center(child: FilledButton.icon(onPressed: _pickProject, icon: const Icon(Icons.folder_open), label: const Text('프로젝트 폴더 열기')))
-              : Column(
-                  children: [
-                    Expanded(
-                      child: Row(
-                        children: [
-                          SizedBox(width: _treeWidth, child: TreePane(controller: _controller)),
-                          _Splitter(onDrag: (dx) => setState(() => _treeWidth = (_treeWidth + dx).clamp(160, 520))),
-                          Expanded(child: EditorPane(controller: _controller, problems: _problems)),
-                          _Splitter(onDrag: (dx) => setState(() => _dockWidth = (_dockWidth - dx).clamp(300, 700))),
-                          SizedBox(width: _dockWidth, child: _DockPane(
-                              run: _run,
-                              git: _git,
-                              log: _log,
-                              problems: _problems,
-                              onOpenDiff: _controller.openDiff,
-                              onOpenProblem: (d) => _controller.openAt(d.file, d.line, d.column),
-                            )),
-                        ],
-                      ),
-                    ),
-                    const Divider(),
-                    _StatusBar(controller: _controller, run: _run, problems: _problems),
-                  ],
+        return CallbackShortcuts(
+          bindings: {
+            const SingleActivator(LogicalKeyboardKey.comma, control: true):
+                _openSettings,
+            const SingleActivator(LogicalKeyboardKey.comma, meta: true):
+                _openSettings,
+          },
+          child: Focus(
+            autofocus: true,
+            child: Scaffold(
+              appBar: AppBar(
+                title: Text(
+                  root == null
+                      ? 'Daylight Flutter Studio'
+                      : root.split(RegExp(r'[/\\]')).last,
                 ),
+                actions: [
+                  TextButton.icon(
+                    onPressed: _pickProject,
+                    icon: const Icon(Icons.folder_open, size: 18),
+                    label: const Text('프로젝트 열기'),
+                  ),
+                  IconButton(
+                    tooltip: '설정 (Ctrl+,)',
+                    icon: const Icon(Icons.settings_outlined),
+                    onPressed: _openSettings,
+                  ),
+                  SizedBox(width: t.spaceSm),
+                ],
+              ),
+              body: root == null
+                  ? Center(
+                      child: FilledButton.icon(
+                        onPressed: _pickProject,
+                        icon: const Icon(Icons.folder_open),
+                        label: const Text('프로젝트 폴더 열기'),
+                      ),
+                    )
+                  : Column(
+                      children: [
+                        Expanded(
+                          child: Row(
+                            children: [
+                              SizedBox(
+                                width: _treeWidth,
+                                child: TreePane(controller: _controller),
+                              ),
+                              _Splitter(
+                                onDrag: (dx) => setState(
+                                  () => _treeWidth = (_treeWidth + dx).clamp(
+                                    160,
+                                    520,
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                child: EditorPane(
+                                  controller: _controller,
+                                  problems: _problems,
+                                ),
+                              ),
+                              _Splitter(
+                                onDrag: (dx) => setState(
+                                  () => _dockWidth = (_dockWidth - dx).clamp(
+                                    300,
+                                    700,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                width: _dockWidth,
+                                child: _DockPane(
+                                  run: _run,
+                                  git: _git,
+                                  log: _log,
+                                  problems: _problems,
+                                  onOpenDiff: _controller.openDiff,
+                                  onOpenProblem: (d) => _controller.openAt(
+                                    d.file,
+                                    d.line,
+                                    d.column,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const Divider(),
+                        _StatusBar(
+                          controller: _controller,
+                          run: _run,
+                          problems: _problems,
+                        ),
+                      ],
+                    ),
+            ),
+          ),
         );
       },
     );
@@ -178,7 +251,10 @@ class _Splitter extends StatelessWidget {
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onHorizontalDragUpdate: (d) => onDrag(d.delta.dx),
-        child: SizedBox(width: w, child: VerticalDivider(width: w)),
+        child: SizedBox(
+          width: w,
+          child: VerticalDivider(width: w),
+        ),
       ),
     );
   }
@@ -218,14 +294,25 @@ class _DockPane extends StatelessWidget {
                 builder: (context, _) {
                   final errors = problems.errors;
                   final warnings = problems.warnings;
-                  final badge = errors > 0 ? ' $errors' : (warnings > 0 ? ' $warnings' : '');
-                  final color = errors > 0 ? context.tokens.danger : context.tokens.warning;
+                  final badge = errors > 0
+                      ? ' $errors'
+                      : (warnings > 0 ? ' $warnings' : '');
+                  final color = errors > 0
+                      ? context.tokens.danger
+                      : context.tokens.warning;
                   return Tab(
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         const Text('문제'),
-                        if (badge.isNotEmpty) Text(badge, style: TextStyle(color: color, fontWeight: FontWeight.bold)),
+                        if (badge.isNotEmpty)
+                          Text(
+                            badge,
+                            style: TextStyle(
+                              color: color,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                       ],
                     ),
                   );
@@ -249,7 +336,11 @@ class _DockPane extends StatelessWidget {
 }
 
 class _StatusBar extends StatelessWidget {
-  const _StatusBar({required this.controller, required this.run, required this.problems});
+  const _StatusBar({
+    required this.controller,
+    required this.run,
+    required this.problems,
+  });
 
   final StudioController controller;
   final RunController run;
@@ -272,12 +363,19 @@ class _StatusBar extends StatelessWidget {
           null => ('미검증', theme.colorScheme.onSurfaceVariant),
         };
         return Padding(
-          padding: EdgeInsets.symmetric(horizontal: t.spaceMd, vertical: t.spaceXs),
+          padding: EdgeInsets.symmetric(
+            horizontal: t.spaceMd,
+            vertical: t.spaceXs,
+          ),
           child: DefaultTextStyle.merge(
             style: theme.textTheme.bodySmall,
             child: Row(
               children: [
-                Icon(Icons.account_tree_outlined, size: 14, color: theme.colorScheme.primary),
+                Icon(
+                  Icons.account_tree_outlined,
+                  size: 14,
+                  color: theme.colorScheme.primary,
+                ),
                 SizedBox(width: t.spaceXs + 2),
                 Text(w == null ? '저장소 아님' : w.label),
                 if (w?.byClaude ?? false) const Text('  · Claude worktree'),
@@ -290,11 +388,23 @@ class _StatusBar extends StatelessWidget {
                 if (problems.running)
                   const Text('분석 중…')
                 else if (problems.packageRoot != null && problems.analyzed) ...[
-                  Icon(Icons.error, size: 14, color: problems.errors > 0 ? t.danger : theme.colorScheme.outline),
+                  Icon(
+                    Icons.error,
+                    size: 14,
+                    color: problems.errors > 0
+                        ? t.danger
+                        : theme.colorScheme.outline,
+                  ),
                   SizedBox(width: t.spaceXs),
                   Text('${problems.errors}'),
                   SizedBox(width: t.spaceSm),
-                  Icon(Icons.warning_amber_rounded, size: 14, color: problems.warnings > 0 ? t.warning : theme.colorScheme.outline),
+                  Icon(
+                    Icons.warning_amber_rounded,
+                    size: 14,
+                    color: problems.warnings > 0
+                        ? t.warning
+                        : theme.colorScheme.outline,
+                  ),
                   SizedBox(width: t.spaceXs),
                   Text('${problems.warnings}'),
                 ],

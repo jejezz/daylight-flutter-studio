@@ -41,6 +41,9 @@ class EditorZoom extends ChangeNotifier {
 
   void reset() => _set(1);
 
+  /// 설정 화면의 슬라이더처럼 값을 직접 정할 때. 범위 밖이면 가장 가까운 값으로 맞춘다.
+  void setValue(double value) => _set(value);
+
   void _set(double next, {bool save = true}) {
     // 0.1 단위로 맞춘다 (부동소수 오차가 쌓이지 않게).
     final clamped = ((next.clamp(min, max)) * 100).round() / 100;
