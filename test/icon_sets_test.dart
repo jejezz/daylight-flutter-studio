@@ -18,6 +18,8 @@ void main() {
     expect(outlined.settings, Icons.settings_outlined);
     expect(rounded.settings, Icons.settings_rounded);
     expect({filled.folderOpen, outlined.folderOpen, rounded.folderOpen}, hasLength(3));
+    // 설정 화면의 세트 단추 미리보기: 단추마다 다른 아이콘이어야 모양 차이를 알 수 있다.
+    expect({filled.checkBox, outlined.checkBox, rounded.checkBox}, hasLength(3));
   });
 
   test('아이콘 세트는 저장되고 다시 읽힌다', () async {
@@ -59,6 +61,11 @@ void main() {
     expect(tester.widget<Icon>(find.byKey(const Key('probe'))).icon, Icons.settings_rounded);
     await tester.tap(find.text('열기'));
     await tester.pumpAndSettle();
+    final avatars = [
+      for (final label in ['둥근', '윤곽선', '채움'])
+        tester.widget<Icon>(find.descendant(of: find.widgetWithText(ChoiceChip, label), matching: find.byType(Icon))).icon,
+    ];
+    expect(avatars.toSet(), hasLength(3), reason: '세트 단추의 미리보기 아이콘이 서로 달라야 한다');
     await tester.ensureVisible(find.text('윤곽선'));
     await tester.tap(find.text('윤곽선'));
     await tester.pumpAndSettle();
