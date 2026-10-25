@@ -1001,4 +1001,180 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsIconSetFilled => 'Filled';
+
+  @override
+  String get homeBuildTitle => 'Build';
+
+  @override
+  String get homeModeDebug => 'Debug';
+
+  @override
+  String get homeModeRelease => 'Release';
+
+  @override
+  String get homeTeamLabel => 'Apple Team ID';
+
+  @override
+  String get homeTeamHelp =>
+      'Passed only as a build argument — the project is not modified. Find it at developer.apple.com/account → Membership';
+
+  @override
+  String get homeStepsTitle => 'Commands to run';
+
+  @override
+  String get homeStepPrepare => 'Prepare';
+
+  @override
+  String get homeStepBuild => 'Build';
+
+  @override
+  String get homeStepInstall => 'Install';
+
+  @override
+  String get homeStepLaunch => 'Launch';
+
+  @override
+  String get homeStepRun => 'Run (hot reload)';
+
+  @override
+  String get homeActionInstall => 'Build & install';
+
+  @override
+  String get homeActionBuildRun => 'Build & run';
+
+  @override
+  String get homeActionInstallOnly => 'Install only';
+
+  @override
+  String get homeActionClean => 'Clean & get packages';
+
+  @override
+  String get homeCleanHelp =>
+      'flutter clean → flutter pub get. Worth trying when a build fails for no clear reason.';
+
+  @override
+  String get optTitle => 'Build options';
+
+  @override
+  String get optDefault => 'Defaults';
+
+  @override
+  String get optFlavor => 'Flavor';
+
+  @override
+  String get optFlavorHelp =>
+      '--flavor. Only if the project defines flavors (Windows needs Flutter 3.47+)';
+
+  @override
+  String get optFlavorInvalid =>
+      'Start with a letter; letters, digits, _ and - only';
+
+  @override
+  String get optHelp => 'Help';
+
+  @override
+  String get optHelpLink =>
+      'Opens the Flutter docs on setting up flavors for the selected target (Android, iOS, Windows …) in a browser';
+
+  @override
+  String get optTarget => 'Entry point';
+
+  @override
+  String get optTargetHelp => '-t. Empty means lib/main.dart';
+
+  @override
+  String get optDefineFile => 'dart-define file';
+
+  @override
+  String get optDefineFileHelp =>
+      '--dart-define-from-file. Only the path is stored; the file is never read or saved';
+
+  @override
+  String get optFileMissing => 'File not found';
+
+  @override
+  String get optAppId => 'App ID (optional)';
+
+  @override
+  String get optAppIdHelp =>
+      'When the flavor changes the app ID, the ID to launch after installing (e.g. art.zoomon.app.dev)';
+
+  @override
+  String get optExtra => 'Extra arguments';
+
+  @override
+  String get optExtraHelp =>
+      'e.g. --obfuscate --split-debug-info=build/symbols';
+
+  @override
+  String get optPick => 'Choose file';
+
+  @override
+  String get optClear => 'Clear options';
+
+  @override
+  String get homeCleanDone =>
+      'Cleaned and packages restored. Try building again.';
+
+  @override
+  String get homeCleanFailed =>
+      'Clean failed. Check the output in the Log tab.';
+
+  @override
+  String get homeActionRun => 'Run debug';
+
+  @override
+  String get homeActionCancel => 'Cancel';
+
+  @override
+  String get homeActionStop => 'Stop';
+
+  @override
+  String get homeHotReload => 'Hot reload';
+
+  @override
+  String get homeHotRestart => 'Hot restart';
+
+  @override
+  String get homeOutputTitle => 'Output';
+
+  @override
+  String get homeCopyCommand => 'Copy command';
+
+  @override
+  String get outputCopyAll => 'Copy all output';
+
+  @override
+  String get outputCopied => 'Output copied';
+
+  @override
+  String get outputViewer => 'Open in viewer';
+
+  @override
+  String get viewerPause => 'Pause updates (to select text)';
+
+  @override
+  String get viewerResume => 'Resume live updates';
+
+  @override
+  String viewerLines(Object count) {
+    return '$count lines';
+  }
+
+  @override
+  String get logRunning => 'Running';
+
+  @override
+  String logExit(String code) {
+    return 'Exit code $code';
+  }
+
+  @override
+  String get homeActionBuildOnly => 'Build only';
+
+  @override
+  String get homeActionRunOnly => 'Run only';
+
+  @override
+  String get homeRunOnlyNeedsBuild => 'No release build to run. Build first';
 }

@@ -95,4 +95,8 @@ class StudioIcons {
   IconData get arrowDownward => _pick(Icons.arrow_downward, Icons.arrow_downward_outlined, Icons.arrow_downward_rounded);
 
   IconData get checkBox => _pick(Icons.check_box, Icons.check_box_outlined, Icons.check_box_rounded);
+  IconData get cleaningServices => _pick(Icons.cleaning_services, Icons.cleaning_services_outlined, Icons.cleaning_services_rounded);
+  IconData get openInFull => _pick(Icons.open_in_full, Icons.open_in_full_outlined, Icons.open_in_full_rounded);
+  IconData get pause => _pick(Icons.pause, Icons.pause_outlined, Icons.pause_rounded);
+  IconData get bolt => _pick(Icons.bolt, Icons.bolt_outlined, Icons.bolt_rounded);
 }

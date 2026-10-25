@@ -23,6 +23,8 @@ class RunController extends ChangeNotifier {
       hostIsWindows = hostIsWindows ?? Platform.isWindows;
 
   static const _modeKey = 'build_mode';
+  static const _teamKey = 'ios_team_id';
+  static const _optionsKeyPrefix = 'build_options:';
 
   final CommandRunner runner;
   final DeviceService deviceService;
@@ -36,6 +38,15 @@ class RunController extends ChangeNotifier {
   String? selectedId;
   BuildMode mode = BuildMode.debug;
   BuildOptions options = const BuildOptions();
+
+  /// 사용자가 입력한 iOS 서명 Team ID (10자리 영문 대문자·숫자). 없으면 프로젝트의 것을 쓴다.
+  String? teamId;
+
+  /// `flutter clean` + `flutter pub get`을 실행 중인지, 마지막 결과(null이면 아직 안 함).
+  bool cleaning = false;
+  bool? cleanResult;
+
+  SharedPreferences? _prefs;
 
   bool running = false;
   List<StepStatus> statuses = const [];
@@ -65,11 +76,14 @@ class RunController extends ChangeNotifier {
     return null;
   }
 
+  /// 입력한 Team ID → 프로젝트의 Team ID 순서.
+  String? get effectiveTeamId => teamId ?? project?.iosTeamId;
+
   InstallPlan get plan => buildInstallPlan(
     project: project,
     device: device,
     mode: mode,
-    teamId: null,
+    teamId: effectiveTeamId,
     hostIsMac: hostIsMac,
     windowsArch: Platform.environment['PROCESSOR_ARCHITECTURE']?.toUpperCase() == 'ARM64' ? 'arm64' : 'x64',
     options: options,
@@ -95,8 +109,9 @@ class RunController extends ChangeNotifier {
 
   Future<void> init() async {
     try {
-      final prefs = await SharedPreferences.getInstance();
+      final prefs = _prefs = await SharedPreferences.getInstance();
       mode = BuildMode.values.asNameMap()[prefs.getString(_modeKey)] ?? mode;
+      teamId = prefs.getString(_teamKey);
     } on Object {
       // 기억해 둔 값은 편의일 뿐이다.
     }
@@ -107,6 +122,8 @@ class RunController extends ChangeNotifier {
   Future<void> setProjectDir(String? dir) async {
     if (running) return;
     project = dir == null ? null : await FlutterProject.detect(dir);
+    _loadOptions();
+    cleanResult = null;
     statuses = const [];
     hint = null;
     missingCommand = null;
@@ -141,6 +158,73 @@ class RunController extends ChangeNotifier {
     }
   }
 
+  void _loadOptions() {
+    final p = project;
+    options = p == null ? const BuildOptions() : BuildOptions.decode(_prefs?.getString('$_optionsKeyPrefix${p.path}'));
+  }
+
+  /// 빌드 옵션을 바꾸고 이 프로젝트용으로 저장한다 (비우면 저장된 것도 지운다).
+  void setOptions(BuildOptions value) {
+    final p = project;
+    if (running || value == options) return;
+    options = value;
+    if (p != null) {
+      final key = '$_optionsKeyPrefix${p.path}';
+      if (value.isEmpty) {
+        _prefs?.remove(key);
+      } else {
+        _prefs?.setString(key, value.encode());
+      }
+    }
+    notifyListeners();
+  }
+
+  void setTeamId(String value) {
+    final v = value.trim().toUpperCase();
+    teamId = v.isEmpty ? null : v;
+    if (teamId == null) {
+      _prefs?.remove(_teamKey);
+    } else if (RegExp(r'^[A-Z0-9]{10}$').hasMatch(teamId!)) {
+      _prefs?.setString(_teamKey, teamId!);
+    }
+    notifyListeners();
+  }
+
+  /// 빌드 없이 실행할 수 있는지: release 결과물이 이미 있다.
+  bool get artifactReady {
+    final a = plan.artifact;
+    return a != null && FileSystemEntity.typeSync(a) != FileSystemEntityType.notFound;
+  }
+
+  /// 빌드가 알 수 없는 이유로 깨질 때의 처방: `flutter clean` 다음 `flutter pub get`.
+  /// 둘 다 성공하면 true. 명령은 출력에도 남는다.
+  Future<bool> cleanProject() async {
+    final p = project;
+    if (p == null || running || cleaning) return false;
+    cleaning = true;
+    cleanResult = null;
+    missingCommand = null;
+    hint = null;
+    statuses = const [];
+    notifyListeners();
+    var ok = true;
+    for (final args in const [
+      ['flutter', 'clean'],
+      ['flutter', 'pub', 'get'],
+    ]) {
+      final r = await runner.run(args, workingDirectory: p.path);
+      if (!r.ok) {
+        ok = false;
+        if (r.exitCode == 127) missingCommand = args.first;
+        break;
+      }
+    }
+    cleaning = false;
+    cleanResult = ok;
+    notifyListeners();
+    return ok;
+  }
+
   /// 작업 폴더의 git 상태와 HEAD 커밋의 기록을 다시 읽는다.
   Future<void> refreshVerify() async {
     final p = project;
@@ -150,20 +234,32 @@ class RunController extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// 계획의 단계를 차례로 실행한다. 하나라도 실패하면 거기서 멈춘다. 끝까지 성공하면 검증 기록을 남긴다.
-  Future<void> start() async {
+  /// 계획의 단계를 차례로 실행한다. 하나라도 실패하면 거기서 멈춘다. 빌드까지 끝까지 성공하면 검증 기록을 남긴다.
+  ///
+  /// [phase]가 build나 run이면 그 단계들만 실행한다 (release에서 빌드와 실행을 따로 할 때).
+  /// 다른 단계의 이전 결과(체크 표시)는 그대로 둔다. 실행(run)만 한 경우에는 새로 빌드한 것이 아니라서 기록하지 않는다.
+  Future<void> start({RunPhase phase = RunPhase.all}) async {
     final p = plan;
-    if (running || !p.runnable) return;
+    if (running || !p.runnable || cleaning) return;
+    final indices = p.indicesOf(phase);
+    if (indices.isEmpty) return;
     running = true;
     hint = null;
     missingCommand = null;
     awaitingConfirm = false;
     recordSkipped = null;
-    statuses = List.filled(p.steps.length, StepStatus.pending);
+    if (phase == RunPhase.all || statuses.length != p.steps.length) {
+      statuses = List.filled(p.steps.length, StepStatus.pending);
+    } else {
+      statuses = [...statuses];
+      for (final i in indices) {
+        statuses[i] = StepStatus.pending;
+      }
+    }
     final handle = _handle = RunHandle();
     notifyListeners();
     var ok = true;
-    for (var i = 0; i < p.steps.length; i++) {
+    for (final i in indices) {
       final step = p.steps[i];
       statuses[i] = StepStatus.running;
       notifyListeners();
@@ -179,7 +275,8 @@ class RunController extends ChangeNotifier {
         ok = false;
         break;
       }
-      if (r.ok) {
+      // 계속 실행되는 단계(flutter run)는 사용자가 `q`로 끝내도 정상이다.
+      if (r.ok || step.interactive && r.exitCode == 0) {
         statuses[i] = StepStatus.done;
         continue;
       }
@@ -191,7 +288,7 @@ class RunController extends ChangeNotifier {
     }
     running = false;
     _handle = null;
-    if (ok) await _recordBuilt();
+    if (ok && phase != RunPhase.run) await _recordBuilt();
     notifyListeners();
   }
 
