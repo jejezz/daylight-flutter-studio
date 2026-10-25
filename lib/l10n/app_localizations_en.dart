@@ -1341,4 +1341,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get studioRecentForget => 'Remove from list';
+
+  @override
+  String problemsNoPackageInfoSub(String packages) {
+    return 'Package info (.dart_tool) is missing in $packages, so bogus import errors are mixed in.';
+  }
 }

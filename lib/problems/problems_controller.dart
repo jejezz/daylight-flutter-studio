@@ -50,11 +50,42 @@ class ProblemsController extends ChangeNotifier {
     return !File('$root${Platform.pathSeparator}.dart_tool${Platform.pathSeparator}package_config.json').existsSync();
   }
 
+  static bool _hasPackageConfig(String root) =>
+      File('$root${Platform.pathSeparator}.dart_tool${Platform.pathSeparator}package_config.json').existsSync();
+
+  /// 문제가 난 파일이 속한 다른 패키지(모노레포의 `packages/*` 등) 중 패키지 정보가 없는 것.
+  /// 분석은 열린 패키지에서 돌지만, 안에 있는 서브 패키지는 자기 `.dart_tool`을 쓰므로 거기에도 `pub get`이 필요하다.
+  List<String> _subMissing = const [];
+
+  /// `pub get`이 필요한 패키지 폴더들 (열린 패키지가 먼저). 비어 있으면 안내할 것이 없다.
+  List<String> get packagesNeedingPubGet {
+    final root = packageRoot;
+    if (root == null) return const [];
+    return [
+      if (needsPubGet) root,
+      for (final p in _subMissing)
+        if (!_hasPackageConfig(p)) p,
+    ];
+  }
+
+  void _findSubMissing() {
+    final root = packageRoot;
+    final seen = <String>{};
+    final missing = <String>[];
+    for (final d in diagnostics) {
+      final sub = findPackageRoot(d.file);
+      if (sub == null || pathKey(sub) == pathKey(root ?? '') || !seen.add(pathKey(sub))) continue;
+      if (!_hasPackageConfig(sub)) missing.add(sub);
+    }
+    _subMissing = missing..sort((a, b) => pathKey(a).compareTo(pathKey(b)));
+  }
+
   /// 열린 폴더가 바뀔 때 부른다. 다른 패키지면 결과를 비우고 새로 분석한다.
   Future<void> setProjectDir(String? dir) async {
     final root = dir == null ? null : findPackageRoot(dir);
     if (root == packageRoot) return;
     packageRoot = root;
+    _subMissing = const [];
     diagnostics = const [];
     _byFile = const {};
     error = null;
@@ -85,6 +116,7 @@ class ProblemsController extends ChangeNotifier {
         error = r.error;
       }
       _byFile = _index(diagnostics);
+      _findSubMissing();
       analyzed = true;
       lastRun = DateTime.now();
     } while (_again && !_disposed);
@@ -110,14 +142,18 @@ class ProblemsController extends ChangeNotifier {
     _saveTimer = Timer(saveDelay, refresh);
   }
 
-  /// `flutter pub get`을 돌린 뒤 다시 분석한다.
+  /// `flutter pub get`을 돌린 뒤 다시 분석한다. 패키지 정보가 없는 패키지가 여럿이면(열린 패키지와 서브 패키지) 모두 받는다.
   Future<void> runPubGet() async {
     final root = packageRoot;
     if (root == null || gettingPackages) return;
+    final targets = packagesNeedingPubGet;
     gettingPackages = true;
     notifyListeners();
-    final ok = await pubGet(root);
-    if (_disposed) return;
+    var ok = true;
+    for (final p in targets.isEmpty ? [root] : targets) {
+      if (!await pubGet(p)) ok = false;
+      if (_disposed) return;
+    }
     gettingPackages = false;
     if (!ok) error = CurrentL10n.value.problemsPubGetFailed;
     notifyListeners();

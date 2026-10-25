@@ -2419,6 +2419,12 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'목록에서 빼기'**
   String get studioRecentForget;
+
+  /// No description provided for @problemsNoPackageInfoSub.
+  ///
+  /// In ko, this message translates to:
+  /// **'{packages}의 패키지 정보(.dart_tool)가 없어서 import 오류가 가짜로 섞입니다.'**
+  String problemsNoPackageInfoSub(String packages);
 }
 
 class _AppLocalizationsDelegate
