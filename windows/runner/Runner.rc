@@ -89,13 +89,13 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "CompanyName", "art.zoomon" "\0"
-            VALUE "FileDescription", "daylight_flutter_studio" "\0"
+            VALUE "CompanyName", "Jongyun Ahn" "\0"
+            VALUE "FileDescription", "Daylight Flutter Studio" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
             VALUE "InternalName", "daylight_flutter_studio" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2026 art.zoomon. All rights reserved." "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2026 Jongyun Ahn" "\0"
             VALUE "OriginalFilename", "daylight_flutter_studio.exe" "\0"
-            VALUE "ProductName", "daylight_flutter_studio" "\0"
+            VALUE "ProductName", "Daylight Flutter Studio" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END
