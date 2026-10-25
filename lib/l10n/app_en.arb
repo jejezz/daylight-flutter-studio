@@ -246,7 +246,6 @@
   "editorBackToEdit": "Back to editing",
   "editorDiffSame": "View changes (same as HEAD)",
   "editorDiffChanged": "View changes (vs HEAD)",
-  "editorFormatDart": "Format Dart (Ctrl+Alt+L)",
   "editorEdit": "Edit",
   "editorPreview": "View",
   "editorSavePromptTitle": "Save {name}?",
@@ -476,5 +475,16 @@
   },
   "searchInvalidPattern": "The regular expression is invalid",
   "studioQuickOpenTooltip": "Open file (Ctrl+P)",
-  "studioSearchTooltip": "Find in project (Ctrl+Shift+F)"
+  "studioSearchTooltip": "Find in project (Ctrl+Shift+F)",
+  "editorFormat": "Format (Ctrl+Alt+L)",
+  "formatJsonInvalid": "Invalid JSON, couldn't format: {detail}",
+  "@formatJsonInvalid": {
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsFormatOnSave": "Format on save",
+  "settingsFormatOnSaveNote": "Formats Dart, JSON and ARB files just before saving. If a syntax error prevents formatting, the file is still saved."
 }

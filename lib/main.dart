@@ -10,6 +10,7 @@ import 'app_identity.dart';
 import 'l10n/app_localizations.dart';
 import 'l10n/current_l10n.dart';
 import 'settings/app_settings.dart';
+import 'settings/editor_settings.dart';
 import 'theme/editor_zoom.dart';
 import 'theme/theme_controller.dart';
 import 'ui/studio_screen.dart';
@@ -52,6 +53,7 @@ class _StudioAppState extends State<StudioApp> with WidgetsBindingObserver {
   final _navigatorKey = GlobalKey<NavigatorState>();
   late final _theme = ThemeController(widget.settings);
   final _zoom = EditorZoom();
+  final _editor = EditorSettings();
 
   @override
   void initState() {
@@ -60,6 +62,7 @@ class _StudioAppState extends State<StudioApp> with WidgetsBindingObserver {
     _theme.addListener(_syncWindowBrightness);
     _theme.restore();
     _zoom.restore();
+    _editor.restore();
     _syncWindowBrightness();
   }
 
@@ -69,6 +72,7 @@ class _StudioAppState extends State<StudioApp> with WidgetsBindingObserver {
     _theme.removeListener(_syncWindowBrightness);
     _theme.dispose();
     _zoom.dispose();
+    _editor.dispose();
     super.dispose();
   }
 
@@ -117,7 +121,12 @@ class _StudioAppState extends State<StudioApp> with WidgetsBindingObserver {
           localeResolutionCallback: AppSettings.resolveLocale,
           builder: (context, child) => AppMenuBar(
             onAbout: _showAbout,
-            child: L10nBridge(child: EditorZoomScope(zoom: _zoom, child: child!)),
+            child: L10nBridge(
+              child: EditorSettingsScope(
+                settings: _editor,
+                child: EditorZoomScope(zoom: _zoom, child: child!),
+              ),
+            ),
           ),
           home: StudioScreen(theme: _theme, onAbout: _showAbout),
         ),

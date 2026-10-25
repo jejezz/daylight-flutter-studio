@@ -37,6 +37,7 @@ class FileLanguage {
 
   bool get isDart => id == 'dart';
   bool get isMarkdown => id == 'markdown';
+  bool get isJson => id == 'json';
 
   static final _byExtension = <String, FileLanguage>{
     'dart': FileLanguage('dart', 'Dart', langDart),

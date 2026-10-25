@@ -556,9 +556,6 @@ class AppLocalizationsKo extends AppLocalizations {
   String get editorDiffChanged => '변경점 보기 (HEAD와 비교)';
 
   @override
-  String get editorFormatDart => 'Dart 정렬 (Ctrl+Alt+L)';
-
-  @override
   String get editorEdit => '편집';
 
   @override
@@ -845,4 +842,19 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get studioSearchTooltip => '프로젝트에서 찾기 (Ctrl+Shift+F)';
+
+  @override
+  String get editorFormat => '정렬 (Ctrl+Alt+L)';
+
+  @override
+  String formatJsonInvalid(String detail) {
+    return 'JSON 문법 오류라 정렬하지 못했습니다: $detail';
+  }
+
+  @override
+  String get settingsFormatOnSave => '저장할 때 자동 정렬';
+
+  @override
+  String get settingsFormatOnSaveNote =>
+      'Dart, JSON, ARB 파일을 저장하기 직전에 정렬합니다. 문법 오류가 있어 정렬하지 못해도 저장은 그대로 됩니다.';
 }

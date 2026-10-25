@@ -13,6 +13,7 @@ import '../problems/diagnostic.dart' show pathKey;
 import 'dart_formatter.dart';
 import 'file_language.dart';
 import 'git_base.dart';
+import 'json_formatter.dart';
 import 'worktree.dart';
 
 /// 파일의 마지막 수정 시각과 크기 — 디스크에서 바뀌었는지 가볍게 확인하는 데 쓴다.
@@ -119,7 +120,7 @@ class EditorTab {
 
 /// 열린 프로젝트(폴더), worktree 목록, 편집기 탭을 들고 있다.
 class StudioController extends ChangeNotifier {
-  StudioController({this.formatDart, this.readBase, this.onSaved});
+  StudioController({this.formatDart, this.readBase, this.onSaved, this.formatOnSave});
 
   /// Dart 글을 정렬한다 (`dart format`). 없으면 정렬 기능을 쓸 수 없다.
   final Future<FormatResult> Function(String path, String text)? formatDart;
@@ -129,6 +130,9 @@ class StudioController extends ChangeNotifier {
 
   /// 파일을 저장한 뒤 부른다 (Dart 문제를 다시 분석하는 데 쓴다).
   final void Function(String path)? onSaved;
+
+  /// 저장하기 직전에 정렬할지. 없으면 정렬하지 않는다.
+  final bool Function()? formatOnSave;
 
   static const _lastProjectKey = 'last_project';
   static const maxFileBytes = 2 * 1024 * 1024;
@@ -357,6 +361,11 @@ class StudioController extends ChangeNotifier {
       notifyListeners();
       return false;
     }
+    if (formatOnSave?.call() ?? false) {
+      // 문법 오류 등으로 정렬하지 못해도 저장은 한다 — 정렬은 덤이다.
+      final r = await _formatted(tab);
+      if (r != null && r.ok) _applyFormatted(tab, r.text!);
+    }
     try {
       await File(tab.path).writeAsString(tab.controller.text);
       tab.savedText = tab.controller.text;
@@ -500,22 +509,38 @@ class StudioController extends ChangeNotifier {
     unawaited(_persistTabs());
   }
 
-  /// 지금 탭의 Dart 글을 `dart format`으로 정렬한다. 성공하면 편집기 글을 바꾸되 실행 취소할 수 있다.
+  /// 이 탭의 글을 정렬할 수 있는가 (Dart · JSON · ARB).
+  bool canFormat(EditorTab tab) => tab.language.isDart || tab.language.isJson;
+
+  Future<FormatResult?> _formatted(EditorTab tab) async {
+    if (tab.language.isJson) return formatJson(tab.controller.text);
+    final format = formatDart;
+    if (tab.language.isDart && format != null) return format(tab.path, tab.controller.text);
+    return null;
+  }
+
+  /// 정렬한 글로 편집기 글을 바꾼다 (실행 취소할 수 있다). 바꿨으면 true.
+  bool _applyFormatted(EditorTab tab, String text) {
+    if (text == tab.controller.text) return false;
+    final line = tab.controller.selection.extentIndex;
+    tab.controller.runRevocableOp(() => tab.controller.text = text);
+    final last = tab.controller.codeLines.length - 1;
+    tab.controller.selection = CodeLineSelection.collapsed(index: line > last ? last : line, offset: 0);
+    return true;
+  }
+
+  /// 지금 탭의 글을 정렬한다. 성공하면 편집기 글을 바꾸되 실행 취소할 수 있다.
   Future<void> formatActive() async {
     final tab = activeTab;
-    final format = formatDart;
-    if (tab == null || format == null || !tab.language.isDart) return;
-    final r = await format(tab.path, tab.controller.text);
+    if (tab == null) return;
+    final r = await _formatted(tab);
+    if (r == null) return;
     if (!r.ok) {
       message = r.error;
-    } else if (r.text == tab.controller.text) {
-      message = CurrentL10n.value.messageAlreadyFormatted;
-    } else {
-      final line = tab.controller.selection.extentIndex;
-      tab.controller.runRevocableOp(() => tab.controller.text = r.text!);
-      final last = tab.controller.codeLines.length - 1;
-      tab.controller.selection = CodeLineSelection.collapsed(index: line > last ? last : line, offset: 0);
+    } else if (_applyFormatted(tab, r.text!)) {
       message = CurrentL10n.value.messageFormatted;
+    } else {
+      message = CurrentL10n.value.messageAlreadyFormatted;
     }
     notifyListeners();
   }
