@@ -1,0 +1,18 @@
+{
+  "@@locale": "en",
+  "aboutTooltip": "About",
+  "aboutVersion": "Version {version} (build {build})",
+  "aboutOpenSourceLicenses": "Open Source Licenses",
+  "aboutRepository": "GitHub",
+  "commonClose": "Close",
+  "aboutMenuItem": "About {appName}",
+  "themeMenuTooltip": "Theme",
+  "themeSystem": "Follow System",
+  "themeLight": "Light",
+  "themeDark": "Dark",
+  "languageMenuTooltip": "Language",
+  "languageSystem": "System / 시스템 설정 따르기",
+  "languageSystemShort": "System",
+  "aboutTagline": "An all-in-one workbench for building Flutter apps",
+  "aboutDescription": "Combines a project tree, a light editor, build/install, and PR/merge/release in one window, keeping the order: work → local verification → merge → release."
+}
