@@ -1669,6 +1669,144 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'미리보기'**
   String get settingsPreview;
+
+  /// No description provided for @releaseButton.
+  ///
+  /// In ko, this message translates to:
+  /// **'릴리스…'**
+  String get releaseButton;
+
+  /// No description provided for @releaseTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'릴리스 태그'**
+  String get releaseTitle;
+
+  /// No description provided for @releaseNotReady.
+  ///
+  /// In ko, this message translates to:
+  /// **'점검을 통과하지 못해 태그를 달지 않았습니다.'**
+  String get releaseNotReady;
+
+  /// No description provided for @releaseTagged.
+  ///
+  /// In ko, this message translates to:
+  /// **'{tag} 태그를 올렸습니다. GitHub Actions가 릴리스를 만듭니다.'**
+  String releaseTagged(String tag);
+
+  /// No description provided for @releaseTagPushFailed.
+  ///
+  /// In ko, this message translates to:
+  /// **'태그를 올리지 못했습니다: {error}'**
+  String releaseTagPushFailed(String error);
+
+  /// No description provided for @releaseVersionLine.
+  ///
+  /// In ko, this message translates to:
+  /// **'pubspec {version} → 태그 {tag}'**
+  String releaseVersionLine(String version, String tag);
+
+  /// No description provided for @releaseLastTag.
+  ///
+  /// In ko, this message translates to:
+  /// **'마지막 태그: {tag}'**
+  String releaseLastTag(String tag);
+
+  /// No description provided for @releaseNoLastTag.
+  ///
+  /// In ko, this message translates to:
+  /// **'아직 태그가 없습니다'**
+  String get releaseNoLastTag;
+
+  /// No description provided for @releaseNoVersion.
+  ///
+  /// In ko, this message translates to:
+  /// **'pubspec.yaml에서 버전을 읽지 못했습니다'**
+  String get releaseNoVersion;
+
+  /// No description provided for @releaseCheckCleanTree.
+  ///
+  /// In ko, this message translates to:
+  /// **'작업 폴더에 커밋하지 않은 수정이 없다'**
+  String get releaseCheckCleanTree;
+
+  /// No description provided for @releaseCheckOnDefaultBranch.
+  ///
+  /// In ko, this message translates to:
+  /// **'기본 브랜치에 있다 (작업 브랜치에는 태그를 달지 않습니다)'**
+  String get releaseCheckOnDefaultBranch;
+
+  /// No description provided for @releaseCheckSynced.
+  ///
+  /// In ko, this message translates to:
+  /// **'원격과 같다'**
+  String get releaseCheckSynced;
+
+  /// No description provided for @releaseCheckVersionBumped.
+  ///
+  /// In ko, this message translates to:
+  /// **'버전이 마지막 태그보다 높다 (버전 올림이 병합됐다)'**
+  String get releaseCheckVersionBumped;
+
+  /// No description provided for @releaseCheckTagFree.
+  ///
+  /// In ko, this message translates to:
+  /// **'같은 이름의 태그가 아직 없다'**
+  String get releaseCheckTagFree;
+
+  /// No description provided for @releaseCheckVerified.
+  ///
+  /// In ko, this message translates to:
+  /// **'이 커밋을 빌드해서 눈으로 확인했다'**
+  String get releaseCheckVerified;
+
+  /// No description provided for @releaseBumpHint.
+  ///
+  /// In ko, this message translates to:
+  /// **'버전을 올리려면 PR로 병합할 버전 올림 커밋을 만드세요:'**
+  String get releaseBumpHint;
+
+  /// No description provided for @releaseBumpHintNoScript.
+  ///
+  /// In ko, this message translates to:
+  /// **'pubspec.yaml의 version을 올린 커밋을 PR로 병합하세요.'**
+  String get releaseBumpHintNoScript;
+
+  /// No description provided for @releaseRecheck.
+  ///
+  /// In ko, this message translates to:
+  /// **'다시 확인'**
+  String get releaseRecheck;
+
+  /// No description provided for @releaseCreateTag.
+  ///
+  /// In ko, this message translates to:
+  /// **'태그 만들고 올리기'**
+  String get releaseCreateTag;
+
+  /// No description provided for @releaseTagWithoutVerification.
+  ///
+  /// In ko, this message translates to:
+  /// **'검증 없이 태그…'**
+  String get releaseTagWithoutVerification;
+
+  /// No description provided for @releaseUnverifiedTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'확인하지 않은 커밋입니다'**
+  String get releaseUnverifiedTitle;
+
+  /// No description provided for @releaseUnverifiedBody.
+  ///
+  /// In ko, this message translates to:
+  /// **'그래도 태그를 올리면 GitHub에서 모든 OS 빌드가 돌고, 문제가 나와도 이미 올린 태그는 옮기지 않습니다. PATCH를 올려 다시 릴리스해야 합니다.'**
+  String get releaseUnverifiedBody;
+
+  /// No description provided for @releaseTagAnyway.
+  ///
+  /// In ko, this message translates to:
+  /// **'그래도 태그'**
+  String get releaseTagAnyway;
 }
 
 class _AppLocalizationsDelegate

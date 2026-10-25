@@ -906,4 +906,87 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsPreview => 'Preview';
+
+  @override
+  String get releaseButton => 'Release…';
+
+  @override
+  String get releaseTitle => 'Release tag';
+
+  @override
+  String get releaseNotReady => 'Checks did not pass, so no tag was created.';
+
+  @override
+  String releaseTagged(String tag) {
+    return 'Pushed tag $tag. GitHub Actions will build the release.';
+  }
+
+  @override
+  String releaseTagPushFailed(String error) {
+    return 'Couldn\'t push the tag: $error';
+  }
+
+  @override
+  String releaseVersionLine(String version, String tag) {
+    return 'pubspec $version → tag $tag';
+  }
+
+  @override
+  String releaseLastTag(String tag) {
+    return 'Last tag: $tag';
+  }
+
+  @override
+  String get releaseNoLastTag => 'No tags yet';
+
+  @override
+  String get releaseNoVersion => 'Couldn\'t read a version from pubspec.yaml';
+
+  @override
+  String get releaseCheckCleanTree =>
+      'No uncommitted changes in the working folder';
+
+  @override
+  String get releaseCheckOnDefaultBranch =>
+      'On the default branch (no tags on work branches)';
+
+  @override
+  String get releaseCheckSynced => 'In sync with the remote';
+
+  @override
+  String get releaseCheckVersionBumped =>
+      'Version is higher than the last tag (the bump is merged)';
+
+  @override
+  String get releaseCheckTagFree => 'No tag with that name yet';
+
+  @override
+  String get releaseCheckVerified => 'This commit was built and checked by eye';
+
+  @override
+  String get releaseBumpHint =>
+      'To bump the version, make a bump commit and merge it by PR:';
+
+  @override
+  String get releaseBumpHintNoScript =>
+      'Merge a commit that raises version in pubspec.yaml via PR.';
+
+  @override
+  String get releaseRecheck => 'Check again';
+
+  @override
+  String get releaseCreateTag => 'Create and push tag';
+
+  @override
+  String get releaseTagWithoutVerification => 'Tag without verification…';
+
+  @override
+  String get releaseUnverifiedTitle => 'This commit has not been checked';
+
+  @override
+  String get releaseUnverifiedBody =>
+      'If you push the tag anyway, GitHub builds every OS, and a pushed tag is never moved — a problem means releasing a new PATCH.';
+
+  @override
+  String get releaseTagAnyway => 'Tag anyway';
 }

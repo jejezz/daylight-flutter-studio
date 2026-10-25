@@ -883,4 +883,83 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get settingsPreview => '미리보기';
+
+  @override
+  String get releaseButton => '릴리스…';
+
+  @override
+  String get releaseTitle => '릴리스 태그';
+
+  @override
+  String get releaseNotReady => '점검을 통과하지 못해 태그를 달지 않았습니다.';
+
+  @override
+  String releaseTagged(String tag) {
+    return '$tag 태그를 올렸습니다. GitHub Actions가 릴리스를 만듭니다.';
+  }
+
+  @override
+  String releaseTagPushFailed(String error) {
+    return '태그를 올리지 못했습니다: $error';
+  }
+
+  @override
+  String releaseVersionLine(String version, String tag) {
+    return 'pubspec $version → 태그 $tag';
+  }
+
+  @override
+  String releaseLastTag(String tag) {
+    return '마지막 태그: $tag';
+  }
+
+  @override
+  String get releaseNoLastTag => '아직 태그가 없습니다';
+
+  @override
+  String get releaseNoVersion => 'pubspec.yaml에서 버전을 읽지 못했습니다';
+
+  @override
+  String get releaseCheckCleanTree => '작업 폴더에 커밋하지 않은 수정이 없다';
+
+  @override
+  String get releaseCheckOnDefaultBranch => '기본 브랜치에 있다 (작업 브랜치에는 태그를 달지 않습니다)';
+
+  @override
+  String get releaseCheckSynced => '원격과 같다';
+
+  @override
+  String get releaseCheckVersionBumped => '버전이 마지막 태그보다 높다 (버전 올림이 병합됐다)';
+
+  @override
+  String get releaseCheckTagFree => '같은 이름의 태그가 아직 없다';
+
+  @override
+  String get releaseCheckVerified => '이 커밋을 빌드해서 눈으로 확인했다';
+
+  @override
+  String get releaseBumpHint => '버전을 올리려면 PR로 병합할 버전 올림 커밋을 만드세요:';
+
+  @override
+  String get releaseBumpHintNoScript =>
+      'pubspec.yaml의 version을 올린 커밋을 PR로 병합하세요.';
+
+  @override
+  String get releaseRecheck => '다시 확인';
+
+  @override
+  String get releaseCreateTag => '태그 만들고 올리기';
+
+  @override
+  String get releaseTagWithoutVerification => '검증 없이 태그…';
+
+  @override
+  String get releaseUnverifiedTitle => '확인하지 않은 커밋입니다';
+
+  @override
+  String get releaseUnverifiedBody =>
+      '그래도 태그를 올리면 GitHub에서 모든 OS 빌드가 돌고, 문제가 나와도 이미 올린 태그는 옮기지 않습니다. PATCH를 올려 다시 릴리스해야 합니다.';
+
+  @override
+  String get releaseTagAnyway => '그래도 태그';
 }

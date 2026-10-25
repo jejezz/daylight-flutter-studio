@@ -4,6 +4,7 @@ import '../git/git_controller.dart';
 import '../git/status.dart';
 import '../settings/gate_settings.dart';
 import '../l10n/app_localizations.dart';
+import 'release_dialog.dart';
 import '../theme/app_theme.dart';
 import '../verify/verify_state.dart';
 
@@ -206,6 +207,11 @@ class _Sync extends StatelessWidget {
           ),
         if (needsPush)
           FilledButton.icon(onPressed: busy ? null : controller.push, icon: const Icon(Icons.upload, size: 18), label: Text(l10n.gitPush)),
+        OutlinedButton.icon(
+          onPressed: busy ? null : () => showReleaseDialog(context, controller),
+          icon: const Icon(Icons.rocket_launch_outlined, size: 18),
+          label: Text(l10n.releaseButton),
+        ),
         if (busy) const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2)),
       ],
     );

@@ -494,5 +494,59 @@
   "settingsLineHeight": "Line spacing",
   "settingsLineHeightReset": "Reset line spacing",
   "settingsEditorFontMissing": "This font doesn't seem to be installed on this computer. A fallback such as Menlo is shown instead.",
-  "settingsPreview": "Preview"
+  "settingsPreview": "Preview",
+  "releaseButton": "Release…",
+  "releaseTitle": "Release tag",
+  "releaseNotReady": "Checks did not pass, so no tag was created.",
+  "releaseTagged": "Pushed tag {tag}. GitHub Actions will build the release.",
+  "@releaseTagged": {
+    "placeholders": {
+      "tag": {
+        "type": "String"
+      }
+    }
+  },
+  "releaseTagPushFailed": "Couldn't push the tag: {error}",
+  "@releaseTagPushFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "releaseVersionLine": "pubspec {version} → tag {tag}",
+  "@releaseVersionLine": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      },
+      "tag": {
+        "type": "String"
+      }
+    }
+  },
+  "releaseLastTag": "Last tag: {tag}",
+  "@releaseLastTag": {
+    "placeholders": {
+      "tag": {
+        "type": "String"
+      }
+    }
+  },
+  "releaseNoLastTag": "No tags yet",
+  "releaseNoVersion": "Couldn't read a version from pubspec.yaml",
+  "releaseCheckCleanTree": "No uncommitted changes in the working folder",
+  "releaseCheckOnDefaultBranch": "On the default branch (no tags on work branches)",
+  "releaseCheckSynced": "In sync with the remote",
+  "releaseCheckVersionBumped": "Version is higher than the last tag (the bump is merged)",
+  "releaseCheckTagFree": "No tag with that name yet",
+  "releaseCheckVerified": "This commit was built and checked by eye",
+  "releaseBumpHint": "To bump the version, make a bump commit and merge it by PR:",
+  "releaseBumpHintNoScript": "Merge a commit that raises version in pubspec.yaml via PR.",
+  "releaseRecheck": "Check again",
+  "releaseCreateTag": "Create and push tag",
+  "releaseTagWithoutVerification": "Tag without verification…",
+  "releaseUnverifiedTitle": "This commit has not been checked",
+  "releaseUnverifiedBody": "If you push the tag anyway, GitHub builds every OS, and a pushed tag is never moved — a problem means releasing a new PATCH.",
+  "releaseTagAnyway": "Tag anyway"
 }
