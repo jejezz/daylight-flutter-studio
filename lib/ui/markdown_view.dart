@@ -6,10 +6,11 @@ import 'package:markdown/markdown.dart' as md;
 import 'package:url_launcher/url_launcher.dart';
 
 import '../theme/app_theme.dart';
+import '../theme/editor_zoom.dart';
 
 /// Markdown을 렌더링해서 보여 준다. 색과 글꼴은 모두 현재 테마를 따르고,
-/// 상대 경로 이미지는 문서가 있는 폴더 기준으로 읽는다.
-class MarkdownView extends StatelessWidget {
+/// 글자 크기는 편집기와 같은 배율을 쓰며, 상대 경로 이미지는 문서가 있는 폴더 기준으로 읽는다.
+class MarkdownView extends StatefulWidget {
   const MarkdownView({super.key, required this.text, required this.baseDir});
 
   final String text;
@@ -18,10 +19,24 @@ class MarkdownView extends StatelessWidget {
   final String baseDir;
 
   @override
+  State<MarkdownView> createState() => _MarkdownViewState();
+}
+
+class _MarkdownViewState extends State<MarkdownView> {
+  final _scroll = ScrollController();
+
+  @override
+  void dispose() {
+    _scroll.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final t = context.tokens;
     final scheme = theme.colorScheme;
+    final zoom = EditorZoomScope.scaleOf(context);
     final sheet = MarkdownStyleSheet.fromTheme(theme).copyWith(
       code: t.editorText.copyWith(backgroundColor: scheme.surfaceContainerHighest, color: scheme.onSurface),
       codeblockPadding: EdgeInsets.all(t.spaceMd),
@@ -37,23 +52,33 @@ class MarkdownView extends StatelessWidget {
       horizontalRuleDecoration: BoxDecoration(border: Border(top: BorderSide(color: scheme.outlineVariant))),
       tableBorder: TableBorder.all(color: scheme.outlineVariant),
     );
-    return Markdown(
-      data: text,
-      selectable: true,
-      styleSheet: sheet,
-      padding: EdgeInsets.all(t.spaceLg),
-      extensionSet: md.ExtensionSet.gitHubFlavored,
-      onTapLink: (_, href, _) => _open(href),
-      imageBuilder: (uri, title, alt) => _image(context, uri, alt),
+    return ZoomWheel(
+      scrollers: [_scroll],
+      // 글자 배율은 본문과 코드에 한 번만 곱한다 (코드 글꼴은 배율을 곱하지 않은 값을 쓴다).
+      child: MediaQuery(
+        data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(zoom)),
+        child: Markdown(
+          controller: _scroll,
+          data: widget.text,
+          selectable: true,
+          styleSheet: sheet,
+          padding: EdgeInsets.all(t.spaceLg),
+          extensionSet: md.ExtensionSet.gitHubFlavored,
+          onTapLink: (_, href, _) => _open(href),
+          imageBuilder: (uri, title, alt) => _image(uri, alt),
+        ),
+      ),
     );
   }
 
-  Widget _image(BuildContext context, Uri uri, String? alt) {
+  Widget _image(Uri uri, String? alt) {
     final fallback = Text(alt == null || alt.isEmpty ? '(이미지를 불러올 수 없습니다)' : '(이미지: $alt)');
     if (uri.scheme == 'http' || uri.scheme == 'https') {
       return Image.network(uri.toString(), errorBuilder: (_, _, _) => fallback);
     }
-    final file = File(uri.scheme == 'file' ? uri.toFilePath() : '$baseDir${Platform.pathSeparator}${Uri.decodeComponent(uri.path)}');
+    final file = File(
+      uri.scheme == 'file' ? uri.toFilePath() : '${widget.baseDir}${Platform.pathSeparator}${Uri.decodeComponent(uri.path)}',
+    );
     return Image.file(file, errorBuilder: (_, _, _) => fallback);
   }
 

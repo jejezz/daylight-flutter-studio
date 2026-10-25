@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'theme/editor_zoom.dart';
 import 'theme/theme_controller.dart';
 import 'ui/studio_screen.dart';
 
@@ -16,16 +17,19 @@ class StudioApp extends StatefulWidget {
 
 class _StudioAppState extends State<StudioApp> {
   final _theme = ThemeController();
+  final _zoom = EditorZoom();
 
   @override
   void initState() {
     super.initState();
     _theme.restore();
+    _zoom.restore();
   }
 
   @override
   void dispose() {
     _theme.dispose();
+    _zoom.dispose();
     super.dispose();
   }
 
@@ -39,6 +43,7 @@ class _StudioAppState extends State<StudioApp> {
         theme: _theme.light,
         darkTheme: _theme.dark,
         themeMode: _theme.mode,
+        builder: (context, child) => EditorZoomScope(zoom: _zoom, child: child!),
         home: StudioScreen(theme: _theme),
       ),
     );
