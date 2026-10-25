@@ -974,4 +974,176 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get settingsIconSetFilled => '채움';
+
+  @override
+  String get homeBuildTitle => '빌드';
+
+  @override
+  String get homeModeDebug => 'Debug';
+
+  @override
+  String get homeModeRelease => 'Release';
+
+  @override
+  String get homeTeamLabel => 'Apple Team ID';
+
+  @override
+  String get homeTeamHelp =>
+      '프로젝트를 고치지 않고 빌드 인자로만 넘깁니다. developer.apple.com/account → Membership에서 확인하세요';
+
+  @override
+  String get homeStepsTitle => '실행할 명령';
+
+  @override
+  String get homeStepPrepare => '준비';
+
+  @override
+  String get homeStepBuild => '빌드';
+
+  @override
+  String get homeStepInstall => '설치';
+
+  @override
+  String get homeStepLaunch => '실행';
+
+  @override
+  String get homeStepRun => '실행 (핫 리로드)';
+
+  @override
+  String get homeActionInstall => '빌드 & 설치';
+
+  @override
+  String get homeActionBuildRun => '빌드 & 실행';
+
+  @override
+  String get homeActionInstallOnly => '설치만';
+
+  @override
+  String get homeActionClean => '정리 후 패키지 다시 받기';
+
+  @override
+  String get homeCleanHelp =>
+      'flutter clean → flutter pub get. 이유 없이 빌드가 실패할 때 해 볼 만합니다.';
+
+  @override
+  String get optTitle => '빌드 옵션';
+
+  @override
+  String get optDefault => '기본값';
+
+  @override
+  String get optFlavor => 'Flavor';
+
+  @override
+  String get optFlavorHelp =>
+      '--flavor. 프로젝트에 flavor가 있을 때만 입력하세요 (Windows는 Flutter 3.47 이상)';
+
+  @override
+  String get optFlavorInvalid => '영문자로 시작하고 영문자·숫자·_·-만 쓸 수 있습니다';
+
+  @override
+  String get optHelp => '도움말';
+
+  @override
+  String get optHelpLink =>
+      '선택한 대상(Android·iOS·Windows …)에 맞는 Flutter 문서의 flavor 설정 방법을 브라우저로 엽니다';
+
+  @override
+  String get optTarget => '진입 파일';
+
+  @override
+  String get optTargetHelp => '-t. 비우면 lib/main.dart';
+
+  @override
+  String get optDefineFile => 'dart-define 파일';
+
+  @override
+  String get optDefineFileHelp =>
+      '--dart-define-from-file. 경로만 저장하고 파일 내용은 읽거나 저장하지 않습니다';
+
+  @override
+  String get optFileMissing => '파일을 찾을 수 없습니다';
+
+  @override
+  String get optAppId => '앱 ID (선택)';
+
+  @override
+  String get optAppIdHelp =>
+      'flavor가 앱 ID를 바꿀 때, 설치 뒤 실행에 쓸 ID (예: art.zoomon.app.dev)';
+
+  @override
+  String get optExtra => '추가 인자';
+
+  @override
+  String get optExtraHelp => '예: --obfuscate --split-debug-info=build/symbols';
+
+  @override
+  String get optPick => '파일 고르기';
+
+  @override
+  String get optClear => '옵션 지우기';
+
+  @override
+  String get homeCleanDone => '정리했고 패키지를 다시 받았습니다. 이제 빌드해 보세요.';
+
+  @override
+  String get homeCleanFailed => '정리에 실패했습니다. 기록 탭에서 출력을 확인하세요.';
+
+  @override
+  String get homeActionRun => '디버그 실행';
+
+  @override
+  String get homeActionCancel => '취소';
+
+  @override
+  String get homeActionStop => '중지';
+
+  @override
+  String get homeHotReload => '핫 리로드';
+
+  @override
+  String get homeHotRestart => '핫 리스타트';
+
+  @override
+  String get homeOutputTitle => '출력';
+
+  @override
+  String get homeCopyCommand => '명령 복사';
+
+  @override
+  String get outputCopyAll => '출력 전체 복사';
+
+  @override
+  String get outputCopied => '출력을 복사했습니다';
+
+  @override
+  String get outputViewer => '뷰어로 보기';
+
+  @override
+  String get viewerPause => '갱신 멈추기 (텍스트 선택용)';
+
+  @override
+  String get viewerResume => '실시간 갱신 다시 켜기';
+
+  @override
+  String viewerLines(Object count) {
+    return '$count줄';
+  }
+
+  @override
+  String get logRunning => '실행 중';
+
+  @override
+  String logExit(String code) {
+    return '종료 코드 $code';
+  }
+
+  @override
+  String get homeActionBuildOnly => '빌드만';
+
+  @override
+  String get homeActionRunOnly => '실행만';
+
+  @override
+  String get homeRunOnlyNeedsBuild => '실행할 release 결과물이 없습니다. 먼저 빌드하세요';
 }

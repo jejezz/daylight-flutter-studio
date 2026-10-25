@@ -1831,6 +1831,330 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'채움'**
   String get settingsIconSetFilled;
+
+  /// No description provided for @homeBuildTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'빌드'**
+  String get homeBuildTitle;
+
+  /// No description provided for @homeModeDebug.
+  ///
+  /// In ko, this message translates to:
+  /// **'Debug'**
+  String get homeModeDebug;
+
+  /// No description provided for @homeModeRelease.
+  ///
+  /// In ko, this message translates to:
+  /// **'Release'**
+  String get homeModeRelease;
+
+  /// No description provided for @homeTeamLabel.
+  ///
+  /// In ko, this message translates to:
+  /// **'Apple Team ID'**
+  String get homeTeamLabel;
+
+  /// No description provided for @homeTeamHelp.
+  ///
+  /// In ko, this message translates to:
+  /// **'프로젝트를 고치지 않고 빌드 인자로만 넘깁니다. developer.apple.com/account → Membership에서 확인하세요'**
+  String get homeTeamHelp;
+
+  /// No description provided for @homeStepsTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'실행할 명령'**
+  String get homeStepsTitle;
+
+  /// No description provided for @homeStepPrepare.
+  ///
+  /// In ko, this message translates to:
+  /// **'준비'**
+  String get homeStepPrepare;
+
+  /// No description provided for @homeStepBuild.
+  ///
+  /// In ko, this message translates to:
+  /// **'빌드'**
+  String get homeStepBuild;
+
+  /// No description provided for @homeStepInstall.
+  ///
+  /// In ko, this message translates to:
+  /// **'설치'**
+  String get homeStepInstall;
+
+  /// No description provided for @homeStepLaunch.
+  ///
+  /// In ko, this message translates to:
+  /// **'실행'**
+  String get homeStepLaunch;
+
+  /// No description provided for @homeStepRun.
+  ///
+  /// In ko, this message translates to:
+  /// **'실행 (핫 리로드)'**
+  String get homeStepRun;
+
+  /// No description provided for @homeActionInstall.
+  ///
+  /// In ko, this message translates to:
+  /// **'빌드 & 설치'**
+  String get homeActionInstall;
+
+  /// No description provided for @homeActionBuildRun.
+  ///
+  /// In ko, this message translates to:
+  /// **'빌드 & 실행'**
+  String get homeActionBuildRun;
+
+  /// No description provided for @homeActionInstallOnly.
+  ///
+  /// In ko, this message translates to:
+  /// **'설치만'**
+  String get homeActionInstallOnly;
+
+  /// No description provided for @homeActionClean.
+  ///
+  /// In ko, this message translates to:
+  /// **'정리 후 패키지 다시 받기'**
+  String get homeActionClean;
+
+  /// No description provided for @homeCleanHelp.
+  ///
+  /// In ko, this message translates to:
+  /// **'flutter clean → flutter pub get. 이유 없이 빌드가 실패할 때 해 볼 만합니다.'**
+  String get homeCleanHelp;
+
+  /// No description provided for @optTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'빌드 옵션'**
+  String get optTitle;
+
+  /// No description provided for @optDefault.
+  ///
+  /// In ko, this message translates to:
+  /// **'기본값'**
+  String get optDefault;
+
+  /// No description provided for @optFlavor.
+  ///
+  /// In ko, this message translates to:
+  /// **'Flavor'**
+  String get optFlavor;
+
+  /// No description provided for @optFlavorHelp.
+  ///
+  /// In ko, this message translates to:
+  /// **'--flavor. 프로젝트에 flavor가 있을 때만 입력하세요 (Windows는 Flutter 3.47 이상)'**
+  String get optFlavorHelp;
+
+  /// No description provided for @optFlavorInvalid.
+  ///
+  /// In ko, this message translates to:
+  /// **'영문자로 시작하고 영문자·숫자·_·-만 쓸 수 있습니다'**
+  String get optFlavorInvalid;
+
+  /// No description provided for @optHelp.
+  ///
+  /// In ko, this message translates to:
+  /// **'도움말'**
+  String get optHelp;
+
+  /// No description provided for @optHelpLink.
+  ///
+  /// In ko, this message translates to:
+  /// **'선택한 대상(Android·iOS·Windows …)에 맞는 Flutter 문서의 flavor 설정 방법을 브라우저로 엽니다'**
+  String get optHelpLink;
+
+  /// No description provided for @optTarget.
+  ///
+  /// In ko, this message translates to:
+  /// **'진입 파일'**
+  String get optTarget;
+
+  /// No description provided for @optTargetHelp.
+  ///
+  /// In ko, this message translates to:
+  /// **'-t. 비우면 lib/main.dart'**
+  String get optTargetHelp;
+
+  /// No description provided for @optDefineFile.
+  ///
+  /// In ko, this message translates to:
+  /// **'dart-define 파일'**
+  String get optDefineFile;
+
+  /// No description provided for @optDefineFileHelp.
+  ///
+  /// In ko, this message translates to:
+  /// **'--dart-define-from-file. 경로만 저장하고 파일 내용은 읽거나 저장하지 않습니다'**
+  String get optDefineFileHelp;
+
+  /// No description provided for @optFileMissing.
+  ///
+  /// In ko, this message translates to:
+  /// **'파일을 찾을 수 없습니다'**
+  String get optFileMissing;
+
+  /// No description provided for @optAppId.
+  ///
+  /// In ko, this message translates to:
+  /// **'앱 ID (선택)'**
+  String get optAppId;
+
+  /// No description provided for @optAppIdHelp.
+  ///
+  /// In ko, this message translates to:
+  /// **'flavor가 앱 ID를 바꿀 때, 설치 뒤 실행에 쓸 ID (예: art.zoomon.app.dev)'**
+  String get optAppIdHelp;
+
+  /// No description provided for @optExtra.
+  ///
+  /// In ko, this message translates to:
+  /// **'추가 인자'**
+  String get optExtra;
+
+  /// No description provided for @optExtraHelp.
+  ///
+  /// In ko, this message translates to:
+  /// **'예: --obfuscate --split-debug-info=build/symbols'**
+  String get optExtraHelp;
+
+  /// No description provided for @optPick.
+  ///
+  /// In ko, this message translates to:
+  /// **'파일 고르기'**
+  String get optPick;
+
+  /// No description provided for @optClear.
+  ///
+  /// In ko, this message translates to:
+  /// **'옵션 지우기'**
+  String get optClear;
+
+  /// No description provided for @homeCleanDone.
+  ///
+  /// In ko, this message translates to:
+  /// **'정리했고 패키지를 다시 받았습니다. 이제 빌드해 보세요.'**
+  String get homeCleanDone;
+
+  /// No description provided for @homeCleanFailed.
+  ///
+  /// In ko, this message translates to:
+  /// **'정리에 실패했습니다. 기록 탭에서 출력을 확인하세요.'**
+  String get homeCleanFailed;
+
+  /// No description provided for @homeActionRun.
+  ///
+  /// In ko, this message translates to:
+  /// **'디버그 실행'**
+  String get homeActionRun;
+
+  /// No description provided for @homeActionCancel.
+  ///
+  /// In ko, this message translates to:
+  /// **'취소'**
+  String get homeActionCancel;
+
+  /// No description provided for @homeActionStop.
+  ///
+  /// In ko, this message translates to:
+  /// **'중지'**
+  String get homeActionStop;
+
+  /// No description provided for @homeHotReload.
+  ///
+  /// In ko, this message translates to:
+  /// **'핫 리로드'**
+  String get homeHotReload;
+
+  /// No description provided for @homeHotRestart.
+  ///
+  /// In ko, this message translates to:
+  /// **'핫 리스타트'**
+  String get homeHotRestart;
+
+  /// No description provided for @homeOutputTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'출력'**
+  String get homeOutputTitle;
+
+  /// No description provided for @homeCopyCommand.
+  ///
+  /// In ko, this message translates to:
+  /// **'명령 복사'**
+  String get homeCopyCommand;
+
+  /// No description provided for @outputCopyAll.
+  ///
+  /// In ko, this message translates to:
+  /// **'출력 전체 복사'**
+  String get outputCopyAll;
+
+  /// No description provided for @outputCopied.
+  ///
+  /// In ko, this message translates to:
+  /// **'출력을 복사했습니다'**
+  String get outputCopied;
+
+  /// No description provided for @outputViewer.
+  ///
+  /// In ko, this message translates to:
+  /// **'뷰어로 보기'**
+  String get outputViewer;
+
+  /// No description provided for @viewerPause.
+  ///
+  /// In ko, this message translates to:
+  /// **'갱신 멈추기 (텍스트 선택용)'**
+  String get viewerPause;
+
+  /// No description provided for @viewerResume.
+  ///
+  /// In ko, this message translates to:
+  /// **'실시간 갱신 다시 켜기'**
+  String get viewerResume;
+
+  /// No description provided for @viewerLines.
+  ///
+  /// In ko, this message translates to:
+  /// **'{count}줄'**
+  String viewerLines(Object count);
+
+  /// No description provided for @logRunning.
+  ///
+  /// In ko, this message translates to:
+  /// **'실행 중'**
+  String get logRunning;
+
+  /// No description provided for @logExit.
+  ///
+  /// In ko, this message translates to:
+  /// **'종료 코드 {code}'**
+  String logExit(String code);
+
+  /// No description provided for @homeActionBuildOnly.
+  ///
+  /// In ko, this message translates to:
+  /// **'빌드만'**
+  String get homeActionBuildOnly;
+
+  /// No description provided for @homeActionRunOnly.
+  ///
+  /// In ko, this message translates to:
+  /// **'실행만'**
+  String get homeActionRunOnly;
+
+  /// No description provided for @homeRunOnlyNeedsBuild.
+  ///
+  /// In ko, this message translates to:
+  /// **'실행할 release 결과물이 없습니다. 먼저 빌드하세요'**
+  String get homeRunOnlyNeedsBuild;
 }
 
 class _AppLocalizationsDelegate
