@@ -1309,4 +1309,9 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get studioRecentForget => '목록에서 빼기';
+
+  @override
+  String problemsNoPackageInfoSub(String packages) {
+    return '$packages의 패키지 정보(.dart_tool)가 없어서 import 오류가 가짜로 섞입니다.';
+  }
 }

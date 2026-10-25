@@ -109,6 +109,13 @@ void main() {
     expect(c.cleaning, isFalse);
   });
 
+  test('정리가 끝나면 문제 분석을 다시 하도록 알린다', () async {
+    var notified = 0;
+    c.onCleaned = () => notified++;
+    await c.cleanProject();
+    expect(notified, 1);
+  });
+
   test('release는 빌드만 · 실행만으로 나눠 돌릴 수 있고, 실행만은 새 검증 기록을 남기지 않는다', () async {
     await c.setMode(BuildMode.release);
     expect(c.plan.splittable, isTrue);

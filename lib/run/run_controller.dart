@@ -48,6 +48,9 @@ class RunController extends ChangeNotifier {
 
   SharedPreferences? _prefs;
 
+  /// `정리 후 패키지 다시 받기`가 끝나면(성공하든 실패하든) 부른다 — 패키지 정보가 바뀌었으니 문제 분석을 다시 하는 데 쓴다.
+  VoidCallback? onCleaned;
+
   bool running = false;
   List<StepStatus> statuses = const [];
   FailureHint? hint;
@@ -222,6 +225,7 @@ class RunController extends ChangeNotifier {
     cleaning = false;
     cleanResult = ok;
     notifyListeners();
+    onCleaned?.call();
     return ok;
   }
 

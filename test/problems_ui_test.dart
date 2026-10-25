@@ -53,6 +53,22 @@ void main() {
       await tester.runAsync(() => problems.setProjectDir(pkg.path));
     }
 
+    testWidgets('서브 패키지에 패키지 정보가 없으면 배너가 그 패키지 이름을 알려 주고 pub get 단추가 있다', (tester) async {
+      // 열린 패키지는 멀쩡하다(패키지 정보 있음) — 문제는 packages/sub 안의 파일에서 난다.
+      Directory('${pkg.path}$_sep.dart_tool').createSync();
+      File('${pkg.path}$_sep.dart_tool${_sep}package_config.json').writeAsStringSync('{}');
+      final sub = '${pkg.path}${_sep}packages${_sep}sub';
+      Directory('$sub${_sep}test').createSync(recursive: true);
+      File('$sub${_sep}pubspec.yaml').writeAsStringSync('name: sub');
+      File('$sub${_sep}test${_sep}a_test.dart').writeAsStringSync('x\n');
+      await load(tester, [_d('$sub${_sep}test${_sep}a_test.dart', 5, DiagnosticSeverity.error, message: 'Target of URI doesn\'t exist')]);
+      await tester.pumpWidget(app(ProblemsPanel(controller: problems, onOpen: (_) {})));
+      await tester.pump();
+
+      expect(find.textContaining('packages/sub의 패키지 정보'), findsOneWidget);
+      expect(find.text('flutter pub get'), findsOneWidget);
+    });
+
     testWidgets('파일별로 묶어 보여 주고, 누르면 그 문제를 연다', (tester) async {
       await load(tester, [
         _d(file('a.dart'), 3, DiagnosticSeverity.error, message: '정의되지 않은 함수', column: 7),

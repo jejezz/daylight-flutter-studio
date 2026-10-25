@@ -37,7 +37,7 @@ class _ProblemsPanelState extends State<ProblemsPanel> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             _Header(controller: c, shown: _shown, onToggle: _toggle),
-            if (c.needsPubGet) _PubGetBanner(controller: c),
+            if (c.packagesNeedingPubGet.isNotEmpty) _PubGetBanner(controller: c),
             if (c.error != null) _ErrorBanner(message: c.error!),
             const Divider(),
             Expanded(
@@ -110,6 +110,17 @@ class _PubGetBanner extends StatelessWidget {
 
   final ProblemsController controller;
 
+  /// 열린 패키지만이면 기본 문구, 서브 패키지가 끼면 그 패키지들의 이름(열린 폴더 기준 경로)을 알려 준다.
+  String _message(AppLocalizations l10n) {
+    final root = controller.packageRoot!;
+    final missing = controller.packagesNeedingPubGet;
+    final subs = [
+      for (final p in missing)
+        if (pathKey(p) != pathKey(root)) p.length > root.length ? p.substring(root.length + 1).replaceAll('\\', '/') : p,
+    ];
+    return subs.isEmpty ? l10n.problemsNoPackageInfo : l10n.problemsNoPackageInfoSub(subs.join(', '));
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
@@ -121,7 +132,7 @@ class _PubGetBanner extends StatelessWidget {
         children: [
           Icon(context.icons.warningAmber, size: 18, color: t.warning),
           SizedBox(width: t.spaceSm),
-          Expanded(child: Text(l10n.problemsNoPackageInfo)),
+          Expanded(child: Text(_message(l10n))),
           controller.gettingPackages
               ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2))
               : TextButton(onPressed: controller.runPubGet, child: const Text('flutter pub get')),

@@ -726,5 +726,13 @@
   "studioRecentTooltip": "Show recent projects",
   "studioRecentNone": "No recent projects",
   "studioRecentClear": "Clear list",
-  "studioRecentForget": "Remove from list"
+  "studioRecentForget": "Remove from list",
+  "problemsNoPackageInfoSub": "Package info (.dart_tool) is missing in {packages}, so bogus import errors are mixed in.",
+  "@problemsNoPackageInfoSub": {
+    "placeholders": {
+      "packages": {
+        "type": "String"
+      }
+    }
+  }
 }
