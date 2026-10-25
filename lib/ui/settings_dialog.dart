@@ -212,7 +212,8 @@ class _AppearanceSection extends StatelessWidget {
                 ChoiceChip(
                   selected: theme.iconSet == set,
                   showCheckmark: false,
-                  avatar: Icon(StudioIcons(set).folderOpen, size: 16),
+                  // 세트마다 모양 차이가 뚜렷한(채운 사각형 · 윤곽선 · 둥근 모서리) 아이콘으로 미리 보여 준다.
+                  avatar: Icon(StudioIcons(set).checkBox, size: 18),
                   label: Text(_iconSetLabel(l10n, set)),
                   onSelected: (_) => theme.setIconSet(set),
                 ),

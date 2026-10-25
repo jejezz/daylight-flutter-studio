@@ -93,4 +93,6 @@ class StudioIcons {
   IconData get build => _pick(Icons.build, Icons.build_outlined, Icons.build_rounded);
   IconData get arrowUpward => _pick(Icons.arrow_upward, Icons.arrow_upward_outlined, Icons.arrow_upward_rounded);
   IconData get arrowDownward => _pick(Icons.arrow_downward, Icons.arrow_downward_outlined, Icons.arrow_downward_rounded);
+
+  IconData get checkBox => _pick(Icons.check_box, Icons.check_box_outlined, Icons.check_box_rounded);
 }
