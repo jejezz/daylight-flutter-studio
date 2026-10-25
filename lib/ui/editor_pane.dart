@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:re_editor/re_editor.dart';
 
+import '../diff/line_diff.dart';
 import '../studio/dart_chunk_analyzer.dart';
 import '../studio/fold_plan.dart';
 import '../studio/studio_controller.dart';
 import '../theme/app_theme.dart';
 import '../theme/editor_theme.dart';
 import '../theme/editor_zoom.dart';
+import 'change_gutter.dart';
+import 'diff_view.dart';
 import 'markdown_view.dart';
 
 /// 탭 막대 + 도구 막대 + 편집 영역. Markdown은 편집/보기를 전환한다.
@@ -37,7 +40,9 @@ class EditorPane extends StatelessWidget {
                     const SingleActivator(LogicalKeyboardKey.keyF, shift: true, alt: true): controller.formatActive,
                     ..._zoomBindings(EditorZoomScope.maybeOf(context)),
                   },
-                  child: tab.language.isMarkdown && tab.preview
+                  child: tab.diffMode && tab.hasBase
+                      ? DiffView(key: ValueKey('${tab.path}#diff'), tab: tab)
+                      : tab.language.isMarkdown && tab.preview
                       ? MarkdownView(
                           key: ValueKey('${tab.path}#preview'),
                           text: tab.controller.text,
@@ -150,6 +155,7 @@ class _CodeViewState extends State<_CodeView> {
                 textStyle: editorLineNumberStyle(context, focused: false),
                 focusedTextStyle: editorLineNumberStyle(context, focused: true),
               ),
+              ChangeGutter(editing: editing, indicator: notifier, marks: tab.marks),
               DefaultCodeChunkIndicator(width: 20, controller: chunks, notifier: notifier),
             ],
           );
@@ -169,7 +175,8 @@ class _Toolbar extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final t = context.tokens;
-    final editing = !(tab.language.isMarkdown && tab.preview);
+    final showingDiff = tab.diffMode && tab.hasBase;
+    final editing = !(tab.language.isMarkdown && tab.preview) && !showingDiff;
     final zoom = EditorZoomScope.maybeOf(context);
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: t.spaceSm, vertical: t.spaceXs),
@@ -197,6 +204,20 @@ class _Toolbar extends StatelessWidget {
               onPressed: () => unfoldAll(tab.controller, tab.chunks),
             ),
           ],
+          if (tab.hasBase)
+            ValueListenableBuilder<ChangeMarks>(
+              valueListenable: tab.marks,
+              builder: (context, marks, _) => IconButton(
+                tooltip: showingDiff ? '편집으로 돌아가기' : (marks.isEmpty ? '변경점 보기 (HEAD와 같음)' : '변경점 보기 (HEAD와 비교)'),
+                isSelected: showingDiff,
+                icon: Icon(
+                  Icons.difference_outlined,
+                  size: 18,
+                  color: !showingDiff && !marks.isEmpty ? Theme.of(context).colorScheme.primary : null,
+                ),
+                onPressed: () => controller.toggleDiff(tab),
+              ),
+            ),
           if (tab.language.isDart)
             IconButton(
               tooltip: 'Dart 정렬 (Ctrl+Alt+L)',

@@ -7,6 +7,7 @@ import '../devices/device_service.dart';
 import '../git/git_controller.dart';
 import '../run/run_controller.dart';
 import '../studio/dart_formatter.dart';
+import '../studio/git_base.dart';
 import '../studio/studio_controller.dart';
 import '../studio/worktree.dart';
 import '../theme/app_theme.dart';
@@ -31,7 +32,10 @@ class StudioScreen extends StatefulWidget {
 class _StudioScreenState extends State<StudioScreen> with WidgetsBindingObserver {
   late final CommandLog _log = CommandLog();
   late final CommandRunner _runner = CommandRunner(_log);
-  late final StudioController _controller = StudioController(formatDart: DartFormatter(_runner).format);
+  late final StudioController _controller = StudioController(
+    formatDart: DartFormatter(_runner).format,
+    readBase: GitBaseReader(_runner).read,
+  );
   late final RunController _run = RunController(
     runner: _runner,
     deviceService: ProcessDeviceService(_runner),
@@ -49,6 +53,7 @@ class _StudioScreenState extends State<StudioScreen> with WidgetsBindingObserver
     _controller.addListener(_onStudioChanged);
     _controller.restore();
     _controller.startWatching();
+    _git.addListener(_onGitChanged);
     _run.init();
   }
 
@@ -58,12 +63,14 @@ class _StudioScreenState extends State<StudioScreen> with WidgetsBindingObserver
     if (state == AppLifecycleState.resumed) {
       _controller.checkExternalChanges();
       _controller.refreshTree();
+      _controller.refreshBases();
     }
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    _git.removeListener(_onGitChanged);
     _controller.removeListener(_onStudioChanged);
     _controller.dispose();
     _run.dispose();
@@ -84,6 +91,16 @@ class _StudioScreenState extends State<StudioScreen> with WidgetsBindingObserver
       _run.setProjectDir(_lastRoot);
       _git.setDir(_lastRoot);
     }
+  }
+
+  String? _lastHead;
+
+  /// 커밋이나 브랜치 전환으로 HEAD가 바뀌면 열린 파일의 비교 기준(HEAD 내용)을 다시 읽는다.
+  void _onGitChanged() {
+    final head = _git.status?.oid;
+    if (head == _lastHead) return;
+    _lastHead = head;
+    _controller.refreshBases();
   }
 
   Future<void> _pickProject() async {
@@ -118,7 +135,7 @@ class _StudioScreenState extends State<StudioScreen> with WidgetsBindingObserver
                           _Splitter(onDrag: (dx) => setState(() => _treeWidth = (_treeWidth + dx).clamp(160, 520))),
                           Expanded(child: EditorPane(controller: _controller)),
                           _Splitter(onDrag: (dx) => setState(() => _dockWidth = (_dockWidth - dx).clamp(300, 700))),
-                          SizedBox(width: _dockWidth, child: _DockPane(run: _run, git: _git, log: _log)),
+                          SizedBox(width: _dockWidth, child: _DockPane(run: _run, git: _git, log: _log, onOpenDiff: _controller.openDiff)),
                         ],
                       ),
                     ),
@@ -210,9 +227,10 @@ class _TreePane extends StatelessWidget {
 
 /// Run(Flutty Dock)·Git(Branch Dock) 패널.
 class _DockPane extends StatelessWidget {
-  const _DockPane({required this.run, required this.git, required this.log});
+  const _DockPane({required this.run, required this.git, required this.log, required this.onOpenDiff});
 
   final RunController run;
+  final void Function(String absolutePath) onOpenDiff;
   final GitController git;
   final CommandLog log;
 
@@ -227,7 +245,7 @@ class _DockPane extends StatelessWidget {
             child: TabBarView(
               children: [
                 RunPanel(controller: run, log: log),
-                GitPanel(controller: git),
+                GitPanel(controller: git, onOpenDiff: onOpenDiff),
               ],
             ),
           ),

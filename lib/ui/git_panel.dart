@@ -8,9 +8,12 @@ import '../verify/verify_state.dart';
 /// Git 패널: 브랜치 상태, 현재 브랜치의 PR과 병합, 그리고 PR head 커밋의 검증 상태.
 /// 검증 상태는 지금은 보여 주기만 한다 (병합을 막는 관문은 4단계).
 class GitPanel extends StatefulWidget {
-  const GitPanel({super.key, required this.controller});
+  const GitPanel({super.key, required this.controller, this.onOpenDiff});
 
   final GitController controller;
+
+  /// 변경된 파일을 누르면 그 파일의 변경점 보기를 연다 (절대 경로).
+  final void Function(String absolutePath)? onOpenDiff;
 
   @override
   State<GitPanel> createState() => _GitPanelState();
@@ -53,7 +56,7 @@ class _GitPanelState extends State<GitPanel> {
         return ListView(
           padding: EdgeInsets.all(t.spaceMd),
           children: [
-            _BranchHeader(controller: c),
+            _BranchHeader(controller: c, onOpenDiff: widget.onOpenDiff),
             SizedBox(height: t.spaceMd),
             _Sync(controller: c),
             if (c.message != null) ...[
@@ -83,9 +86,10 @@ class _GitPanelState extends State<GitPanel> {
 }
 
 class _BranchHeader extends StatelessWidget {
-  const _BranchHeader({required this.controller});
+  const _BranchHeader({required this.controller, this.onOpenDiff});
 
   final GitController controller;
+  final void Function(String absolutePath)? onOpenDiff;
 
   @override
   Widget build(BuildContext context) {
@@ -114,14 +118,11 @@ class _BranchHeader extends StatelessWidget {
           Text('변경 없음', style: theme.textTheme.bodySmall)
         else
           ExpansionTile(
+            initiallyExpanded: true,
             tilePadding: EdgeInsets.zero,
             title: Text('변경된 파일 ${s.changedCount}개', style: theme.textTheme.bodyMedium),
             children: [
-              for (final f in s.files.take(60))
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text('${_letter(f)}  ${f.path}', style: t.logText, overflow: TextOverflow.ellipsis),
-                ),
+              for (final f in s.files.take(60)) _FileRow(file: f, controller: controller, onOpenDiff: onOpenDiff),
               if (s.files.length > 60) Text('… 외 ${s.files.length - 60}개'),
             ],
           ),
@@ -129,10 +130,50 @@ class _BranchHeader extends StatelessWidget {
     );
   }
 
-  static String _letter(FileChange f) {
+}
+
+/// 변경된 파일 한 줄. 눌러서 변경점 보기를 연다 (삭제된 파일과 폴더는 열 수 없다).
+class _FileRow extends StatelessWidget {
+  const _FileRow({required this.file, required this.controller, this.onOpenDiff});
+
+  final FileChange file;
+  final GitController controller;
+  final void Function(String absolutePath)? onOpenDiff;
+
+  static String letter(FileChange f) {
     if (f.conflicted) return 'U';
     if (f.untracked) return '?';
     return f.index != '.' ? f.index : f.worktree;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final t = context.tokens;
+    final theme = Theme.of(context);
+    final deleted = file.index == 'D' || file.worktree == 'D';
+    final absolute = file.path.endsWith('/') || deleted ? null : controller.absolutePath(file.path);
+    final open = absolute == null || onOpenDiff == null ? null : () => onOpenDiff!(absolute);
+    final color = switch (letter(file)) {
+      'A' || '?' => t.success,
+      'D' => t.danger,
+      'U' => t.warning,
+      _ => theme.colorScheme.primary,
+    };
+    return Tooltip(
+      message: deleted ? '삭제된 파일' : (open == null ? '' : '눌러서 변경점 보기'),
+      child: InkWell(
+        onTap: open,
+        child: Padding(
+          padding: EdgeInsets.symmetric(vertical: t.spaceXs / 2),
+          child: Row(
+            children: [
+              SizedBox(width: 18, child: Text(letter(file), style: t.logText.copyWith(color: color))),
+              Expanded(child: Text(file.path, style: t.logText, overflow: TextOverflow.ellipsis)),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
 

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 
@@ -18,6 +19,9 @@ class GitController extends ChangeNotifier {
   final VerifyStore store;
 
   String? dir;
+
+  /// 작업 폴더(worktree)의 최상위 경로 (이 OS의 구분자). 변경 파일의 상대 경로를 절대 경로로 바꿀 때 쓴다.
+  String? topLevel;
 
   /// git 저장소가 아니거나 읽지 못하면 null.
   RepoStatus? status;
@@ -67,9 +71,25 @@ class GitController extends ChangeNotifier {
     if (dir != d) return;
     status = s.ok ? RepoStatus.parse(s.stdout) : null;
     snapshot = status == null ? null : await store.snapshot(d);
+    topLevel = status == null ? null : await _topLevel(d);
     await _loadPr();
     await _judge();
     notifyListeners();
+  }
+
+  Future<String?> _topLevel(String d) async {
+    final r = await runner.run(['git', 'rev-parse', '--show-toplevel'], workingDirectory: d, quiet: true);
+    final out = r.stdout.trim();
+    if (!r.ok || out.isEmpty) return null;
+    return out.replaceAll('/', Platform.pathSeparator);
+  }
+
+  /// 변경 파일의 저장소 기준 상대 경로를 절대 경로로 바꾼다. 최상위 경로를 모르면 null.
+  String? absolutePath(String relative) {
+    final top = topLevel;
+    if (top == null) return null;
+    final sep = Platform.pathSeparator;
+    return '$top$sep${relative.replaceAll('/', sep)}';
   }
 
   Future<void> _loadPr() async {

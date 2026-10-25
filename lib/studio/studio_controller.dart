@@ -7,8 +7,10 @@ import 'package:flutter/scheduler.dart';
 import 'package:re_editor/re_editor.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../diff/line_diff.dart';
 import 'dart_formatter.dart';
 import 'file_language.dart';
+import 'git_base.dart';
 import 'worktree.dart';
 
 /// 파일의 마지막 수정 시각과 크기 — 디스크에서 바뀌었는지 가볍게 확인하는 데 쓴다.
@@ -69,15 +71,59 @@ class EditorTab {
 
   String get name => path.split(RegExp(r'[/\\]')).last;
 
-  void dispose() => controller.dispose();
+  // --- git HEAD와의 차이 ---------------------------------------------------
+
+  /// HEAD 커밋의 글(줄 목록). git 저장소가 아니거나 무시되는 파일이면 null (비교하지 않는다).
+  List<String>? baseLines;
+
+  /// 아직 커밋되지 않은 새 파일이다.
+  bool baseIsNew = false;
+
+  /// 줄 번호 옆에 그리는 변경 표시. 편집할 때마다(잠깐 멈춘 뒤) 다시 계산한다.
+  final ValueNotifier<ChangeMarks> marks = ValueNotifier(ChangeMarks.empty);
+
+  /// 편집 대신 HEAD와의 차이(변경점)를 보여 주는 중인가.
+  bool diffMode = false;
+
+  Timer? _marksTimer;
+  CodeLines? _marksSource;
+
+  bool get hasBase => baseLines != null;
+
+  List<String> get currentLines => splitLines(controller.text);
+
+  /// 글이 바뀌었으면 잠시 뒤 변경 표시를 다시 계산한다. 커서만 움직였을 때는 아무것도 하지 않는다.
+  void onEdited() {
+    // 비교할 기준이 없으면 계산할 것이 없다 (기준은 파일을 연 뒤 뒤에서 읽어 온다).
+    if (baseLines == null || identical(_marksSource, controller.codeLines)) return;
+    _marksSource = controller.codeLines;
+    _marksTimer?.cancel();
+    _marksTimer = Timer(const Duration(milliseconds: 250), recomputeMarks);
+  }
+
+  void recomputeMarks() {
+    _marksTimer?.cancel();
+    _marksSource = controller.codeLines;
+    final base = baseLines;
+    marks.value = base == null ? ChangeMarks.empty : marksFromBlocks(diffLines(base, currentLines));
+  }
+
+  void dispose() {
+    _marksTimer?.cancel();
+    marks.dispose();
+    controller.dispose();
+  }
 }
 
 /// 열린 프로젝트(폴더), worktree 목록, 편집기 탭을 들고 있다.
 class StudioController extends ChangeNotifier {
-  StudioController({this.formatDart});
+  StudioController({this.formatDart, this.readBase});
 
   /// Dart 글을 정렬한다 (`dart format`). 없으면 정렬 기능을 쓸 수 없다.
   final Future<FormatResult> Function(String path, String text)? formatDart;
+
+  /// 파일의 git HEAD 내용을 읽는다. 없으면 변경 표시와 변경점 보기를 쓸 수 없다.
+  final Future<GitBase> Function(String path)? readBase;
 
   static const _lastProjectKey = 'last_project';
   static const maxFileBytes = 2 * 1024 * 1024;
@@ -154,6 +200,8 @@ class StudioController extends ChangeNotifier {
       _watch(tab);
       tabs.add(tab);
       activeIndex = tabs.length - 1;
+      // 변경 표시용 기준은 git을 몇 번 부르므로 화면을 막지 않고 뒤에서 읽는다.
+      unawaited(refreshBase(tab));
     } on FormatException {
       message = '글자 파일(UTF-8)이 아니라서 열 수 없습니다: ${file.uri.pathSegments.last}';
     } on FileSystemException catch (e) {
@@ -162,10 +210,41 @@ class StudioController extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// 탭의 비교 기준(git HEAD의 글)을 다시 읽고 변경 표시를 새로 계산한다.
+  Future<void> refreshBase(EditorTab tab) async {
+    final read = readBase;
+    if (read == null) return;
+    final base = await read(tab.path);
+    if (_disposed || !tabs.contains(tab)) return;
+    tab.baseLines = base.available ? splitLines(base.text) : null;
+    tab.baseIsNew = base.isNew;
+    tab.recomputeMarks();
+    notifyListeners();
+  }
+
+  /// 열린 모든 탭의 기준을 다시 읽는다 (커밋·브랜치 전환·창 활성화 뒤).
+  Future<void> refreshBases() => Future.wait([for (final t in List.of(tabs)) refreshBase(t)]);
+
+  /// 파일을 열고 곧바로 변경점 보기로 보여 준다.
+  Future<void> openDiff(String path) async {
+    await openFile(path);
+    final tab = tabs.where((t) => t.path == path).firstOrNull;
+    if (tab == null) return;
+    tab.diffMode = true;
+    activeIndex = tabs.indexOf(tab);
+    notifyListeners();
+  }
+
+  void toggleDiff(EditorTab tab) {
+    tab.diffMode = !tab.diffMode;
+    notifyListeners();
+  }
+
   /// 수정 여부가 바뀔 때만 화면을 다시 그린다 (커서 이동·글자 입력마다 전체를 그리지 않는다).
   void _watch(EditorTab tab) {
     var wasDirty = false;
     tab.controller.addListener(() {
+      tab.onEdited();
       final now = tab.dirty;
       if (now == wasDirty) return;
       wasDirty = now;
