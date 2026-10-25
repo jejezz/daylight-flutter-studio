@@ -1,3 +1,4 @@
+import '../l10n/current_l10n.dart';
 import '../core/command_runner.dart';
 import 'diagnostic.dart';
 
@@ -10,13 +11,13 @@ class DartAnalyzer {
   Future<AnalyzeResult> run(String packageRoot) async {
     final r = await runner.run(['dart', 'analyze', '--format=json'], workingDirectory: packageRoot, quiet: true);
     if (r.exitCode == 127) {
-      return const AnalyzeResult.failed('dart 명령을 찾을 수 없습니다. Flutter SDK의 bin 폴더가 PATH에 있는지 확인하세요.');
+      return AnalyzeResult.failed(CurrentL10n.value.formatNoDart);
     }
     // 문제가 있으면 종료 코드가 0이 아니다 — 출력이 읽히면 결과로 본다.
     final parsed = parseAnalyzeJson(r.stdout);
     if (parsed != null) return AnalyzeResult.ok(parsed);
     final detail = r.combined.split('\n').map((l) => l.trim()).firstWhere((l) => l.isNotEmpty, orElse: () => '');
-    return AnalyzeResult.failed(detail.isEmpty ? '분석 결과를 읽지 못했습니다.' : '분석하지 못했습니다: $detail');
+    return AnalyzeResult.failed(detail.isEmpty ? CurrentL10n.value.analyzeFailedRead : CurrentL10n.value.analyzeFailedDetail(detail));
   }
 
   /// `flutter pub get`. 새 worktree처럼 패키지 정보가 없는 폴더에서 분석·빌드 전에 필요하다.

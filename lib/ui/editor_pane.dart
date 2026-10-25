@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:re_editor/re_editor.dart';
 
+import '../l10n/app_localizations.dart';
 import '../diff/line_diff.dart';
 import '../studio/dart_chunk_analyzer.dart';
 import '../studio/fold_plan.dart';
@@ -36,7 +37,7 @@ class EditorPane extends StatelessWidget {
         if (tab != null) ...[_Toolbar(controller: controller, tab: tab), const Divider()],
         Expanded(
           child: tab == null
-              ? const Center(child: Text('왼쪽 트리에서 파일을 여세요'))
+              ? Center(child: Text(AppLocalizations.of(context).editorOpenFromTree))
               : CallbackShortcuts(
                   bindings: {
                     const SingleActivator(LogicalKeyboardKey.keyS, control: true): () => controller.save(tab),
@@ -86,6 +87,7 @@ class _ExternalBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final t = context.tokens;
     final deleted = tab.external == ExternalChange.deleted;
@@ -98,16 +100,16 @@ class _ExternalBanner extends StatelessWidget {
           SizedBox(width: t.spaceSm),
           Expanded(
             child: Text(
-              deleted ? '이 파일이 디스크에서 사라졌습니다.' : '디스크의 파일이 바뀌었습니다. 저장하면 그쪽 수정을 덮어씁니다.',
+              deleted ? l10n.editorFileGone : l10n.editorFileChanged,
               style: theme.textTheme.bodySmall,
             ),
           ),
           if (deleted) ...[
-            TextButton(onPressed: () => controller.closeTab(controller.tabs.indexOf(tab)), child: const Text('탭 닫기')),
-            TextButton(onPressed: () => controller.keepMine(tab), child: const Text('그대로 두기')),
+            TextButton(onPressed: () => controller.closeTab(controller.tabs.indexOf(tab)), child: Text(l10n.editorCloseTab)),
+            TextButton(onPressed: () => controller.keepMine(tab), child: Text(l10n.editorLeaveAsIs)),
           ] else ...[
-            TextButton(onPressed: () => controller.reloadFromDisk(tab), child: const Text('다시 읽기 (내 수정 버림)')),
-            TextButton(onPressed: () => controller.keepMine(tab), child: const Text('내 수정 유지')),
+            TextButton(onPressed: () => controller.reloadFromDisk(tab), child: Text(l10n.editorReloadDiscard)),
+            TextButton(onPressed: () => controller.keepMine(tab), child: Text(l10n.editorKeepMine)),
           ],
         ],
       ),
@@ -181,6 +183,7 @@ class _Toolbar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final t = context.tokens;
     final showingDiff = tab.diffMode && tab.hasBase;
@@ -194,7 +197,7 @@ class _Toolbar extends StatelessWidget {
           const Spacer(),
           if (zoom != null)
             Tooltip(
-              message: 'Ctrl+스크롤 또는 Ctrl +/- 로 글자 크기 조절 · 클릭하면 100%',
+              message: l10n.editorZoomHint,
               child: TextButton(
                 onPressed: zoom.isDefault ? null : zoom.reset,
                 child: Text('${zoom.percent}%'),
@@ -202,12 +205,12 @@ class _Toolbar extends StatelessWidget {
             ),
           if (editing) ...[
             IconButton(
-              tooltip: '모두 접기',
+              tooltip: l10n.editorFoldAll,
               icon: const Icon(Icons.unfold_less, size: 18),
               onPressed: () => foldAll(tab.chunks),
             ),
             IconButton(
-              tooltip: '모두 펴기',
+              tooltip: l10n.editorUnfoldAll,
               icon: const Icon(Icons.unfold_more, size: 18),
               onPressed: () => unfoldAll(tab.controller, tab.chunks),
             ),
@@ -216,7 +219,7 @@ class _Toolbar extends StatelessWidget {
             ValueListenableBuilder<ChangeMarks>(
               valueListenable: tab.marks,
               builder: (context, marks, _) => IconButton(
-                tooltip: showingDiff ? '편집으로 돌아가기' : (marks.isEmpty ? '변경점 보기 (HEAD와 같음)' : '변경점 보기 (HEAD와 비교)'),
+                tooltip: showingDiff ? l10n.editorBackToEdit : (marks.isEmpty ? l10n.editorDiffSame : l10n.editorDiffChanged),
                 isSelected: showingDiff,
                 icon: Icon(
                   Icons.difference_outlined,
@@ -228,16 +231,16 @@ class _Toolbar extends StatelessWidget {
             ),
           if (tab.language.isDart)
             IconButton(
-              tooltip: 'Dart 정렬 (Ctrl+Alt+L)',
+              tooltip: l10n.editorFormatDart,
               icon: const Icon(Icons.format_align_left, size: 18),
               onPressed: controller.formatActive,
             ),
           if (tab.language.isMarkdown)
             SegmentedButton<bool>(
               showSelectedIcon: false,
-              segments: const [
-                ButtonSegment(value: false, icon: Icon(Icons.edit_outlined, size: 16), label: Text('편집')),
-                ButtonSegment(value: true, icon: Icon(Icons.visibility_outlined, size: 16), label: Text('보기')),
+              segments: [
+                ButtonSegment(value: false, icon: const Icon(Icons.edit_outlined, size: 16), label: Text(l10n.editorEdit)),
+                ButtonSegment(value: true, icon: const Icon(Icons.visibility_outlined, size: 16), label: Text(l10n.editorPreview)),
               ],
               selected: {tab.preview},
               onSelectionChanged: (_) => controller.togglePreview(tab),
@@ -255,6 +258,7 @@ class _TabBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     return SizedBox(
       height: 36,
@@ -280,7 +284,7 @@ class _TabBar extends StatelessWidget {
                     IconButton(
                       iconSize: 14,
                       visualDensity: VisualDensity.compact,
-                      tooltip: '닫기',
+                      tooltip: l10n.commonClose,
                       icon: const Icon(Icons.close),
                       onPressed: () => _close(context, i),
                     ),
@@ -295,17 +299,18 @@ class _TabBar extends StatelessWidget {
   }
 
   Future<void> _close(BuildContext context, int i) async {
+    final l10n = AppLocalizations.of(context);
     final t = controller.tabs[i];
     if (!t.dirty) return controller.closeTab(i);
     final choice = await showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('${t.name} 저장할까요?'),
-        content: const Text('저장하지 않은 수정이 있습니다.'),
+        title: Text(l10n.editorSavePromptTitle(t.name)),
+        content: Text(l10n.editorSavePromptBody),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context, 'cancel'), child: const Text('취소')),
-          TextButton(onPressed: () => Navigator.pop(context, 'discard'), child: const Text('저장 안 함')),
-          FilledButton(onPressed: () => Navigator.pop(context, 'save'), child: const Text('저장')),
+          TextButton(onPressed: () => Navigator.pop(context, 'cancel'), child: Text(l10n.commonCancel)),
+          TextButton(onPressed: () => Navigator.pop(context, 'discard'), child: Text(l10n.editorDontSave)),
+          FilledButton(onPressed: () => Navigator.pop(context, 'save'), child: Text(l10n.commonSave)),
         ],
       ),
     );

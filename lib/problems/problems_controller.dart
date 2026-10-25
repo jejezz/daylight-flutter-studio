@@ -5,6 +5,8 @@ import 'package:flutter/foundation.dart';
 
 import 'diagnostic.dart';
 
+import '../l10n/current_l10n.dart';
+
 /// Dart 문제(오류·경고·정보) 목록의 상태. 패키지 하나를 `dart analyze`로 분석한 결과를 들고 있다.
 ///
 /// 분석은 한 번에 하나만 돌고, 도는 중에 다시 요청되면 끝난 뒤 한 번 더 돈다.
@@ -117,7 +119,7 @@ class ProblemsController extends ChangeNotifier {
     final ok = await pubGet(root);
     if (_disposed) return;
     gettingPackages = false;
-    if (!ok) error = 'flutter pub get이 실패했습니다. 출력은 아래 명령 기록에서 확인하세요.';
+    if (!ok) error = CurrentL10n.value.problemsPubGetFailed;
     notifyListeners();
     await refresh();
   }

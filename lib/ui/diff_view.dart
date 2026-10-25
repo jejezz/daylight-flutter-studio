@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../l10n/app_localizations.dart';
 import '../diff/line_diff.dart';
 import '../studio/studio_controller.dart';
 import '../theme/app_theme.dart';
@@ -45,11 +46,12 @@ class _DiffViewState extends State<DiffView> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final t = context.tokens;
     final base = widget.tab.baseLines;
     if (base == null) {
-      return _Message(icon: Icons.block, text: '이 파일은 git으로 비교할 수 없습니다.\n(git 저장소가 아니거나 .gitignore로 무시되는 파일입니다)');
+      return _Message(icon: Icons.block, text: l10n.diffNotComparable);
     }
     _compute(base);
     final counts = countChanges(_blocks);
@@ -66,14 +68,14 @@ class _DiffViewState extends State<DiffView> {
           padding: EdgeInsets.symmetric(horizontal: t.spaceMd, vertical: t.spaceXs),
           child: Row(
             children: [
-              Text('HEAD와 비교', style: theme.textTheme.labelMedium),
+              Text(l10n.diffAgainstHead, style: theme.textTheme.labelMedium),
               SizedBox(width: t.spaceMd),
               Text('+${counts.added}', style: theme.textTheme.labelMedium?.copyWith(color: t.success)),
               SizedBox(width: t.spaceSm),
               Text('−${counts.removed}', style: theme.textTheme.labelMedium?.copyWith(color: t.danger)),
               if (widget.tab.baseIsNew) ...[
                 SizedBox(width: t.spaceMd),
-                Text('새 파일 (아직 커밋되지 않음)', style: theme.textTheme.labelMedium?.copyWith(color: t.warning)),
+                Text(l10n.diffNewFile, style: theme.textTheme.labelMedium?.copyWith(color: t.warning)),
               ],
             ],
           ),
@@ -81,7 +83,7 @@ class _DiffViewState extends State<DiffView> {
         const Divider(),
         Expanded(
           child: rows.isEmpty
-              ? const _Message(icon: Icons.check_circle_outline, text: 'HEAD와 같습니다. 변경된 곳이 없습니다.')
+              ? _Message(icon: Icons.check_circle_outline, text: l10n.diffSameAsHead)
               : ZoomWheel(
                   scrollers: [_scroll],
                   child: SelectionArea(
@@ -138,6 +140,7 @@ class _RowView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
     final t = context.tokens;
@@ -152,7 +155,7 @@ class _RowView extends StatelessWidget {
             children: [
               Icon(Icons.unfold_more, size: 16, color: scheme.onSurfaceVariant),
               SizedBox(width: t.spaceSm),
-              Text('같은 줄 ${row.hidden}개 — 눌러서 펼치기', style: theme.textTheme.bodySmall),
+              Text(l10n.diffHiddenLines(row.hidden), style: theme.textTheme.bodySmall),
             ],
           ),
         ),

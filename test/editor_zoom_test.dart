@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:daylight_flutter_studio/l10n/app_localizations.dart';
 import 'package:daylight_flutter_studio/studio/studio_controller.dart';
 import 'package:daylight_flutter_studio/theme/app_theme.dart';
 import 'package:daylight_flutter_studio/theme/editor_zoom.dart';
@@ -84,7 +85,7 @@ void main() {
     late StudioController c;
     late EditorZoom zoom;
 
-    Widget app() => MaterialApp(
+    Widget app() => MaterialApp(localizationsDelegates: AppLocalizations.localizationsDelegates, supportedLocales: AppLocalizations.supportedLocales, locale: const Locale('ko'), 
       theme: AppTheme.build(StudioPalette.saturn, Brightness.light),
       builder: (context, child) => EditorZoomScope(zoom: zoom, child: child!),
       home: Scaffold(

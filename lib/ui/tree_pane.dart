@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../l10n/app_localizations.dart';
 import '../studio/studio_controller.dart';
 import '../studio/worktree.dart';
 import '../theme/app_theme.dart';
@@ -26,10 +27,10 @@ class TreePane extends StatelessWidget {
               Expanded(
                 child: worktrees.length > 1
                     ? _WorktreePicker(controller: controller)
-                    : Text('탐색기', style: Theme.of(context).textTheme.labelLarge),
+                    : Text(AppLocalizations.of(context).treeExplorer, style: Theme.of(context).textTheme.labelLarge),
               ),
               IconButton(
-                tooltip: '트리 새로 고침',
+                tooltip: AppLocalizations.of(context).treeRefresh,
                 icon: const Icon(Icons.refresh, size: 18),
                 onPressed: controller.refreshTree,
               ),

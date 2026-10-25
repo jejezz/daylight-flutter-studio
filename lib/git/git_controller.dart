@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 
+import '../l10n/current_l10n.dart';
 import '../core/command_runner.dart';
 import '../github/pull_request.dart';
 import '../settings/gate_settings.dart';
@@ -153,11 +154,11 @@ class GitController extends ChangeNotifier {
     return 'main';
   }
 
-  Future<bool> fetch() => _do(['git', 'fetch', '--prune'], done: '가져왔습니다');
+  Future<bool> fetch() => _do(['git', 'fetch', '--prune'], done: CurrentL10n.value.gitDoneFetch);
 
   Future<bool> pull() {
     if (status?.behind == 0 || !(status?.clean ?? false)) return Future.value(false);
-    return _do(['git', 'pull', '--ff-only'], done: '받았습니다');
+    return _do(['git', 'pull', '--ff-only'], done: CurrentL10n.value.gitDonePull);
   }
 
   Future<bool> push() {
@@ -165,7 +166,7 @@ class GitController extends ChangeNotifier {
     if (s?.head == null) return Future.value(false);
     return _do(
       s!.hasUpstream ? ['git', 'push'] : ['git', 'push', '-u', 'origin', s.head!],
-      done: '올렸습니다',
+      done: CurrentL10n.value.gitDonePush,
     );
   }
 
@@ -175,7 +176,7 @@ class GitController extends ChangeNotifier {
     return _do(
       ['gh', 'pr', 'create', '--base', await defaultBranch(), '--head', s!.head!, '--title', title.trim(), '--body-file', '-', if (draft) '--draft'],
       stdin: '',
-      done: 'PR을 만들었습니다',
+      done: CurrentL10n.value.gitDonePrCreated,
     );
   }
 
@@ -200,14 +201,14 @@ class GitController extends ChangeNotifier {
     final decision = gateDecision;
     if (!decision.allowed && !overrideGate) {
       messageOk = false;
-      message = '병합하지 않았습니다: ${decision.message}';
+      message = CurrentL10n.value.gitNotMerged(decision.message);
       notifyListeners();
       return false;
     }
     final overridden = !decision.allowed;
     return _do(
       ['gh', 'pr', 'merge', '$number', '--${method.name}', if (deleteBranch) '--delete-branch'],
-      done: overridden ? '#$number을 검증 없이 병합했습니다' : '#$number을 병합했습니다',
+      done: overridden ? CurrentL10n.value.gitDoneMergedUnverified(number) : CurrentL10n.value.gitDoneMerged(number),
     );
   }
 
@@ -227,8 +228,8 @@ class GitController extends ChangeNotifier {
   }
 
   static String _failure(CommandResult r) {
-    if (r.exitCode == 127) return '명령을 찾을 수 없습니다. git과 GitHub CLI(gh)가 설치되어 PATH에 있는지 확인하세요.';
+    if (r.exitCode == 127) return CurrentL10n.value.gitCommandNotFound;
     final lines = r.combined.trim().split('\n').where((l) => l.trim().isNotEmpty).toList();
-    return lines.isEmpty ? '실패했습니다 (종료 코드 ${r.exitCode})' : lines.last.trim();
+    return lines.isEmpty ? CurrentL10n.value.gitFailedExit(r.exitCode) : lines.last.trim();
   }
 }

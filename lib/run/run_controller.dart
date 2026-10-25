@@ -11,6 +11,9 @@ import '../install/build_options.dart';
 import '../install/install_plan.dart';
 import '../verify/verify_store.dart';
 
+/// 검증 기록을 남기지 않은 이유 — 문구는 화면이 번역해 보여 준다.
+enum RecordSkip { notGit, dirty }
+
 enum StepStatus { pending, running, done, failed, cancelled }
 
 /// Run 패널의 상태: 프로젝트·기기·모드를 고르고 계획을 실행하며, 성공하면 검증 기록을 남긴다.
@@ -45,7 +48,7 @@ class RunController extends ChangeNotifier {
   VerifyRecord? record;
 
   /// 이번 실행을 기록하지 못한 이유 (수정 중인 파일이 있음 등). 없으면 null.
-  String? recordSkipped;
+  RecordSkip? recordSkipped;
 
   /// 방금 끝난 실행이 기록 대상인지 — 성공했을 때만 "확인함/문제 있음"을 묻는다.
   bool awaitingConfirm = false;
@@ -203,11 +206,11 @@ class RunController extends ChangeNotifier {
     if (p == null || d == null) return;
     final s = snapshot = await store.snapshot(p.path);
     if (s == null) {
-      recordSkipped = 'git 저장소가 아니라서 검증 기록을 남기지 않았습니다.';
+      recordSkipped = RecordSkip.notGit;
       return;
     }
     if (s.dirty) {
-      recordSkipped = '커밋하지 않은 수정이 있어 검증 기록을 남기지 않았습니다. 커밋한 뒤 다시 빌드하세요.';
+      recordSkipped = RecordSkip.dirty;
       record = await store.read(s.commonDir, s.sha);
       return;
     }

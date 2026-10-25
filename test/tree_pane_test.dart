@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:daylight_flutter_studio/l10n/app_localizations.dart';
 import 'package:daylight_flutter_studio/studio/studio_controller.dart';
 import 'package:daylight_flutter_studio/studio/worktree.dart';
 import 'package:daylight_flutter_studio/theme/app_theme.dart';
@@ -25,7 +26,7 @@ void main() {
     await dir.delete(recursive: true);
   });
 
-  Widget app() => MaterialApp(
+  Widget app() => MaterialApp(localizationsDelegates: AppLocalizations.localizationsDelegates, supportedLocales: AppLocalizations.supportedLocales, locale: const Locale('ko'), 
     theme: AppTheme.build(StudioPalette.saturn, Brightness.light),
     // 실제 화면의 트리 영역과 같은 너비 (스크린샷의 260px대).
     home: Scaffold(body: SizedBox(width: 260, height: 600, child: TreePane(controller: c))),

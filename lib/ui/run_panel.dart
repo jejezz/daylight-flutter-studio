@@ -5,6 +5,7 @@ import '../core/command_log.dart';
 import '../devices/mobile_device.dart';
 import '../install/install_plan.dart';
 import '../run/run_controller.dart';
+import '../l10n/app_localizations.dart';
 import '../theme/app_theme.dart';
 import '../verify/verify_store.dart';
 
@@ -23,7 +24,7 @@ class RunPanel extends StatelessWidget {
       builder: (context, _) {
         final project = controller.project;
         if (project == null) {
-          return const Center(child: Text('열린 폴더가 Flutter 프로젝트가 아닙니다'));
+          return Center(child: Text(AppLocalizations.of(context).runNotFlutterProject));
         }
         return ListView(
           padding: EdgeInsets.all(t.spaceMd),
@@ -67,7 +68,7 @@ class _Header extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text('${p.name}${p.version == null ? '' : '  ${p.version}'}', style: theme.textTheme.titleMedium),
-        Text(platforms.isEmpty ? '지원 플랫폼 없음' : platforms.join(' · '), style: theme.textTheme.bodySmall),
+        Text(platforms.isEmpty ? AppLocalizations.of(context).runNoPlatforms : platforms.join(' · '), style: theme.textTheme.bodySmall),
       ],
     );
   }
@@ -87,15 +88,15 @@ class _Devices extends StatelessWidget {
       children: [
         Row(
           children: [
-            Text('대상', style: theme.textTheme.titleSmall),
+            Text(AppLocalizations.of(context).runTarget, style: theme.textTheme.titleSmall),
             const Spacer(),
             if (controller.loadingDevices)
               const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
             else
-              IconButton(tooltip: '기기 다시 찾기', icon: const Icon(Icons.refresh, size: 18), onPressed: controller.running ? null : controller.refreshDevices),
+              IconButton(tooltip: AppLocalizations.of(context).runRefreshDevices, icon: const Icon(Icons.refresh, size: 18), onPressed: controller.running ? null : controller.refreshDevices),
           ],
         ),
-        if (devices.isEmpty) const Text('연결된 기기가 없습니다'),
+        if (devices.isEmpty) Text(AppLocalizations.of(context).runNoDevices),
         RadioGroup<String>(
           groupValue: controller.selectedId,
           onChanged: (id) {
@@ -109,7 +110,7 @@ class _Devices extends StatelessWidget {
                 RadioListTile<String>(
                   value: d.id,
                   title: Text(d.name),
-                  subtitle: Text(_describe(d)),
+                  subtitle: Text(_describe(AppLocalizations.of(context), d)),
                   contentPadding: EdgeInsets.zero,
                 ),
             ],
@@ -119,17 +120,17 @@ class _Devices extends StatelessWidget {
     );
   }
 
-  static String _describe(MobileDevice d) {
+  static String _describe(AppLocalizations l10n, MobileDevice d) {
     final platform = switch (d.platform) {
       DevicePlatform.ios => 'iOS',
       DevicePlatform.android => 'Android',
-      DevicePlatform.macos => 'macOS 데스크톱',
-      DevicePlatform.windows => 'Windows 데스크톱',
+      DevicePlatform.macos => l10n.runPlatformMacos,
+      DevicePlatform.windows => l10n.runPlatformWindows,
     };
     final link = switch (d.link) {
       DeviceLink.usb => 'USB',
-      DeviceLink.wireless => '무선',
-      DeviceLink.local => '이 컴퓨터',
+      DeviceLink.wireless => l10n.runLinkWireless,
+      DeviceLink.local => l10n.runLinkLocal,
     };
     return '$platform · $link${d.osVersion == null ? '' : ' · ${d.osVersion}'}';
   }
@@ -142,6 +143,7 @@ class _ModeAndRun extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final t = context.tokens;
     final plan = controller.plan;
     final running = controller.running;
@@ -149,9 +151,9 @@ class _ModeAndRun extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         SegmentedButton<BuildMode>(
-          segments: const [
-            ButtonSegment(value: BuildMode.debug, label: Text('Debug (flutter run)')),
-            ButtonSegment(value: BuildMode.release, label: Text('Release')),
+          segments: [
+            ButtonSegment(value: BuildMode.debug, label: Text(l10n.runModeDebug)),
+            const ButtonSegment(value: BuildMode.release, label: Text('Release')),
           ],
           selected: {controller.mode},
           onSelectionChanged: running ? null : (s) => controller.setMode(s.first),
@@ -160,7 +162,7 @@ class _ModeAndRun extends StatelessWidget {
         for (final b in plan.blockers)
           Padding(
             padding: EdgeInsets.only(bottom: t.spaceXs),
-            child: Text(_blockerText(b), style: TextStyle(color: t.warning)),
+            child: Text(_blockerText(l10n, b), style: TextStyle(color: t.warning)),
           ),
         Row(
           children: [
@@ -168,12 +170,12 @@ class _ModeAndRun extends StatelessWidget {
               child: FilledButton.icon(
                 onPressed: !running && plan.runnable ? controller.start : null,
                 icon: Icon(controller.mode == BuildMode.debug ? Icons.play_arrow : Icons.build),
-                label: Text(controller.mode == BuildMode.debug ? '실행' : '빌드 & 설치'),
+                label: Text(controller.mode == BuildMode.debug ? l10n.runStart : l10n.runBuildInstall),
               ),
             ),
             if (running) ...[
               SizedBox(width: t.spaceSm),
-              OutlinedButton.icon(onPressed: controller.cancel, icon: const Icon(Icons.stop), label: const Text('중지')),
+              OutlinedButton.icon(onPressed: controller.cancel, icon: const Icon(Icons.stop), label: Text(l10n.commonStop)),
             ],
           ],
         ),
@@ -182,9 +184,9 @@ class _ModeAndRun extends StatelessWidget {
             padding: EdgeInsets.only(top: t.spaceSm),
             child: Row(
               children: [
-                TextButton(onPressed: () => controller.sendKey('r'), child: const Text('r 핫 리로드')),
-                TextButton(onPressed: () => controller.sendKey('R'), child: const Text('R 핫 리스타트')),
-                TextButton(onPressed: () => controller.sendKey('q'), child: const Text('q 종료')),
+                TextButton(onPressed: () => controller.sendKey('r'), child: Text(l10n.runHotReload)),
+                TextButton(onPressed: () => controller.sendKey('R'), child: Text(l10n.runHotRestart)),
+                TextButton(onPressed: () => controller.sendKey('q'), child: Text(l10n.runQuit)),
               ],
             ),
           ),
@@ -192,15 +194,15 @@ class _ModeAndRun extends StatelessWidget {
     );
   }
 
-  static String _blockerText(Blocker b) => switch (b) {
-    Blocker.noProject => '프로젝트를 열어 주세요.',
-    Blocker.noDevice => '대상을 고르세요.',
-    Blocker.platformMissing => '이 프로젝트는 선택한 플랫폼을 지원하지 않습니다.',
-    Blocker.iosNeedsMac => 'iOS 설치는 macOS에서만 할 수 있습니다.',
-    Blocker.wireless => '무선 연결에서는 설치가 실패합니다. USB로 연결하세요.',
-    Blocker.developerModeOff => 'iPhone의 개발자 모드가 꺼져 있습니다.',
-    Blocker.androidUnauthorized => '휴대폰에서 USB 디버깅 승인을 눌러 주세요.',
-    Blocker.needsTeamId => 'iOS 서명 Team ID가 필요합니다. (프로젝트에 DEVELOPMENT_TEAM이 있어야 합니다)',
+  static String _blockerText(AppLocalizations l10n, Blocker b) => switch (b) {
+    Blocker.noProject => l10n.runBlockerNoProject,
+    Blocker.noDevice => l10n.runBlockerNoDevice,
+    Blocker.platformMissing => l10n.runBlockerPlatformMissing,
+    Blocker.iosNeedsMac => l10n.runBlockerIosNeedsMac,
+    Blocker.wireless => l10n.runBlockerWireless,
+    Blocker.developerModeOff => l10n.runBlockerDeveloperModeOff,
+    Blocker.androidUnauthorized => l10n.runBlockerAndroidUnauthorized,
+    Blocker.needsTeamId => l10n.runBlockerNeedsTeamId,
   };
 }
 
@@ -211,6 +213,7 @@ class _Steps extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final t = context.tokens;
     final steps = controller.plan.steps;
@@ -218,7 +221,7 @@ class _Steps extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text('실행될 명령', style: theme.textTheme.titleSmall),
+        Text(l10n.runCommandsToRun, style: theme.textTheme.titleSmall),
         SizedBox(height: t.spaceXs),
         for (var i = 0; i < steps.length; i++)
           Padding(
@@ -233,9 +236,9 @@ class _Steps extends StatelessWidget {
             ),
           ),
         if (controller.hint != null)
-          Text(_hintText(controller.hint!), style: TextStyle(color: t.danger)),
+          Text(_hintText(l10n, controller.hint!), style: TextStyle(color: t.danger)),
         if (controller.missingCommand != null)
-          Text('${controller.missingCommand} 명령을 찾을 수 없습니다. PATH를 확인하세요.', style: TextStyle(color: t.danger)),
+          Text(l10n.runCommandNotFound(controller.missingCommand!), style: TextStyle(color: t.danger)),
       ],
     );
   }
@@ -252,17 +255,17 @@ class _Steps extends StatelessWidget {
     };
   }
 
-  static String _hintText(FailureHint h) => switch (h) {
-    FailureHint.useUsb => '무선 연결에서는 설치가 끊깁니다. USB로 연결하세요.',
-    FailureHint.unlockDevice => '기기 화면의 잠금을 풀고 다시 시도하세요.',
-    FailureHint.developerMode => '기기에서 개발자 모드를 켜세요.',
-    FailureHint.signing => '서명 설정이 맞지 않습니다. Team ID와 프로비저닝 프로파일을 확인하세요.',
-    FailureHint.trustComputer => '기기에서 "이 컴퓨터를 신뢰"를 눌러 주세요.',
-    FailureHint.noAdb => 'adb를 찾을 수 없습니다. Android SDK platform-tools를 PATH에 추가하세요.',
-    FailureHint.cocoapods => 'CocoaPods가 필요합니다.',
-    FailureHint.visualStudio => 'Visual Studio의 "C++를 사용한 데스크톱 개발" 구성 요소가 필요합니다.',
-    FailureHint.restartApp => '플러그인 링크를 못 찾았습니다. 앱을 다시 연 뒤 한 번 더 시도하세요.',
-    FailureHint.staleBuildCache => '이전 Visual Studio 버전의 빌드 캐시가 남아 있습니다. build 폴더를 지우고 다시 시도하세요.',
+  static String _hintText(AppLocalizations l10n, FailureHint h) => switch (h) {
+    FailureHint.useUsb => l10n.runHintUseUsb,
+    FailureHint.unlockDevice => l10n.runHintUnlockDevice,
+    FailureHint.developerMode => l10n.runHintDeveloperMode,
+    FailureHint.signing => l10n.runHintSigning,
+    FailureHint.trustComputer => l10n.runHintTrustComputer,
+    FailureHint.noAdb => l10n.runHintNoAdb,
+    FailureHint.cocoapods => l10n.runHintCocoapods,
+    FailureHint.visualStudio => l10n.runHintVisualStudio,
+    FailureHint.restartApp => l10n.runHintRestartApp,
+    FailureHint.staleBuildCache => l10n.runHintStaleBuildCache,
   };
 }
 
@@ -273,14 +276,15 @@ class _VerifyCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final t = context.tokens;
     final rec = controller.record;
     final (label, color) = switch (rec?.status) {
-      VerifyStatus.confirmed => ('확인함', t.success),
-      VerifyStatus.built => ('빌드만 됨 — 아직 눈으로 확인하지 않았습니다', t.warning),
-      VerifyStatus.problem => ('문제 있음', t.danger),
-      null => ('이 커밋은 아직 검증하지 않았습니다', theme.colorScheme.onSurfaceVariant),
+      VerifyStatus.confirmed => (l10n.runVerifyConfirmed, t.success),
+      VerifyStatus.built => (l10n.runVerifyBuilt, t.warning),
+      VerifyStatus.problem => (l10n.runVerifyProblem, t.danger),
+      null => (l10n.runVerifyNone, theme.colorScheme.onSurfaceVariant),
     };
     return Card(
       child: Padding(
@@ -288,27 +292,27 @@ class _VerifyCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text('검증', style: theme.textTheme.titleSmall),
+            Text(l10n.runVerifyTitle, style: theme.textTheme.titleSmall),
             SizedBox(height: t.spaceXs),
             if (controller.snapshot != null)
-              Text('${controller.snapshot!.branch ?? '(분리된 HEAD)'} @ ${controller.snapshot!.shortSha}', style: t.logText),
+              Text('${controller.snapshot!.branch ?? l10n.runDetachedHead} @ ${controller.snapshot!.shortSha}', style: t.logText),
             Text(label, style: TextStyle(color: color)),
             if (rec != null && rec.note.isNotEmpty) Text(rec.note),
             if (controller.recordSkipped != null)
-              Text(controller.recordSkipped!, style: TextStyle(color: t.warning)),
+              Text(_skippedText(l10n, controller.recordSkipped!), style: TextStyle(color: t.warning)),
             if (controller.awaitingConfirm) ...[
               SizedBox(height: t.spaceSm),
               Row(
                 children: [
                   Expanded(
-                    child: FilledButton.icon(onPressed: controller.confirm, icon: const Icon(Icons.check), label: const Text('확인함')),
+                    child: FilledButton.icon(onPressed: controller.confirm, icon: const Icon(Icons.check), label: Text(l10n.runVerifyConfirmed)),
                   ),
                   SizedBox(width: t.spaceSm),
                   Expanded(
                     child: OutlinedButton.icon(
                       onPressed: () => _reportProblem(context),
                       icon: const Icon(Icons.report_problem_outlined),
-                      label: const Text('문제 있음'),
+                      label: Text(l10n.runVerifyProblem),
                     ),
                   ),
                 ],
@@ -321,15 +325,16 @@ class _VerifyCard extends StatelessWidget {
   }
 
   Future<void> _reportProblem(BuildContext context) async {
+    final l10n = AppLocalizations.of(context);
     final text = TextEditingController();
     final note = await showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('어떤 문제가 있나요?'),
-        content: TextField(controller: text, autofocus: true, minLines: 3, maxLines: 8, decoration: const InputDecoration(hintText: '예: 로그인 버튼이 눌리지 않습니다')),
+        title: Text(l10n.runProblemTitle),
+        content: TextField(controller: text, autofocus: true, minLines: 3, maxLines: 8, decoration: InputDecoration(hintText: l10n.runProblemHint)),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('취소')),
-          FilledButton(onPressed: () => Navigator.pop(context, text.text.trim()), child: const Text('기록하고 복사')),
+          TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.commonCancel)),
+          FilledButton(onPressed: () => Navigator.pop(context, text.text.trim()), child: Text(l10n.runRecordAndCopy)),
         ],
       ),
     );
@@ -339,10 +344,15 @@ class _VerifyCard extends StatelessWidget {
     // Claude 세션에 바로 붙여 넣을 수 있게 복사한다.
     await Clipboard.setData(ClipboardData(text: note));
     if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('메모를 복사했습니다. Claude 세션에 붙여 넣으세요.')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.runNoteCopied)));
     }
   }
 }
+
+String _skippedText(AppLocalizations l10n, RecordSkip skip) => switch (skip) {
+  RecordSkip.notGit => l10n.runRecordSkippedNotGit,
+  RecordSkip.dirty => l10n.runRecordSkippedDirty,
+};
 
 class _Output extends StatelessWidget {
   const _Output({required this.log});
@@ -351,6 +361,7 @@ class _Output extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final t = context.tokens;
     final last = log.last;
@@ -362,10 +373,10 @@ class _Output extends StatelessWidget {
       children: [
         Row(
           children: [
-            Text('출력', style: theme.textTheme.titleSmall),
+            Text(l10n.runOutput, style: theme.textTheme.titleSmall),
             const Spacer(),
             IconButton(
-              tooltip: '출력 복사',
+              tooltip: l10n.runCopyOutput,
               icon: const Icon(Icons.copy, size: 16),
               onPressed: () => Clipboard.setData(ClipboardData(text: text)),
             ),
@@ -379,7 +390,7 @@ class _Output extends StatelessWidget {
             border: Border.all(color: theme.colorScheme.outlineVariant),
             borderRadius: BorderRadius.circular(t.radius),
           ),
-          child: SingleChildScrollView(reverse: true, child: SelectableText(tail.isEmpty ? '(출력 없음)' : tail, style: t.logText)),
+          child: SingleChildScrollView(reverse: true, child: SelectableText(tail.isEmpty ? l10n.runNoOutput : tail, style: t.logText)),
         ),
       ],
     );

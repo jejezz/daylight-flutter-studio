@@ -1,3 +1,4 @@
+import 'package:daylight_flutter_studio/l10n/app_localizations.dart';
 import 'package:daylight_flutter_studio/core/command_log.dart';
 import 'package:daylight_flutter_studio/core/command_runner.dart';
 import 'package:daylight_flutter_studio/git/git_controller.dart';
@@ -277,7 +278,7 @@ void main() {
         ..prHeadSha = _sha;
       await c.refreshVerdict();
       await tester.pumpWidget(
-        MaterialApp(
+        MaterialApp(localizationsDelegates: AppLocalizations.localizationsDelegates, supportedLocales: AppLocalizations.supportedLocales, locale: const Locale('ko'), 
           theme: AppTheme.build(StudioPalette.saturn, Brightness.light),
           home: Scaffold(body: GitPanel(controller: c)),
         ),
@@ -409,7 +410,7 @@ void main() {
       gate.dispose();
     });
 
-    Widget app({GateSettings? g}) => MaterialApp(
+    Widget app({GateSettings? g}) => MaterialApp(localizationsDelegates: AppLocalizations.localizationsDelegates, supportedLocales: AppLocalizations.supportedLocales, locale: const Locale('ko'), 
       theme: AppTheme.build(StudioPalette.saturn, Brightness.light),
       home: Builder(
         builder: (context) => Scaffold(

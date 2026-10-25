@@ -149,7 +149,7 @@ class _StudioScreenState extends State<StudioScreen>
       showSettingsDialog(context, theme: widget.theme, gate: _gate);
 
   Future<void> _pickProject() async {
-    final dir = await getDirectoryPath(confirmButtonText: '프로젝트 열기');
+    final dir = await getDirectoryPath(confirmButtonText: AppLocalizations.of(context).studioOpenProject);
     if (dir != null) await _controller.openProject(dir);
   }
 
@@ -181,10 +181,10 @@ class _StudioScreenState extends State<StudioScreen>
                   TextButton.icon(
                     onPressed: _pickProject,
                     icon: const Icon(Icons.folder_open, size: 18),
-                    label: const Text('프로젝트 열기'),
+                    label: Text(AppLocalizations.of(context).studioOpenProject),
                   ),
                   IconButton(
-                    tooltip: '설정 (Ctrl+,)',
+                    tooltip: AppLocalizations.of(context).studioSettingsTooltip,
                     icon: const Icon(Icons.settings_outlined),
                     onPressed: _openSettings,
                   ),
@@ -204,7 +204,7 @@ class _StudioScreenState extends State<StudioScreen>
                       child: FilledButton.icon(
                         onPressed: _pickProject,
                         icon: const Icon(Icons.folder_open),
-                        label: const Text('프로젝트 폴더 열기'),
+                        label: Text(AppLocalizations.of(context).studioOpenProjectFolder),
                       ),
                     )
                   : Column(
@@ -338,7 +338,7 @@ class _DockPane extends StatelessWidget {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Text('문제'),
+                        Text(AppLocalizations.of(context).studioProblemsTab),
                         if (badge.isNotEmpty)
                           Text(
                             badge,
@@ -382,6 +382,7 @@ class _StatusBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final t = context.tokens;
     final w = controller.currentWorktree;
@@ -391,10 +392,10 @@ class _StatusBar extends StatelessWidget {
       builder: (context, _) {
         final rec = run.record;
         final (label, color) = switch (rec?.status) {
-          VerifyStatus.confirmed => ('검증됨', t.success),
-          VerifyStatus.built => ('빌드만 됨', t.warning),
-          VerifyStatus.problem => ('문제 있음', t.danger),
-          null => ('미검증', theme.colorScheme.onSurfaceVariant),
+          VerifyStatus.confirmed => (l10n.studioVerifyConfirmed, t.success),
+          VerifyStatus.built => (l10n.studioVerifyBuilt, t.warning),
+          VerifyStatus.problem => (l10n.studioVerifyProblem, t.danger),
+          null => (l10n.studioVerifyNone, theme.colorScheme.onSurfaceVariant),
         };
         return Padding(
           padding: EdgeInsets.symmetric(
@@ -411,7 +412,7 @@ class _StatusBar extends StatelessWidget {
                   color: theme.colorScheme.primary,
                 ),
                 SizedBox(width: t.spaceXs + 2),
-                Text(w == null ? '저장소 아님' : w.label),
+                Text(w == null ? l10n.studioNotRepo : w.label),
                 if (w?.byClaude ?? false) const Text('  · Claude worktree'),
                 if (run.snapshot != null) Text('  @${run.snapshot!.shortSha}'),
                 SizedBox(width: t.spaceMd),
@@ -420,7 +421,7 @@ class _StatusBar extends StatelessWidget {
                 Text(label, style: TextStyle(color: color)),
                 SizedBox(width: t.spaceMd),
                 if (problems.running)
-                  const Text('분석 중…')
+                  Text(l10n.studioAnalyzing)
                 else if (problems.packageRoot != null && problems.analyzed) ...[
                   Icon(
                     Icons.error,
@@ -443,7 +444,7 @@ class _StatusBar extends StatelessWidget {
                   Text('${problems.warnings}'),
                 ],
                 const Spacer(),
-                if (tab != null) Text(tab.dirty ? '수정됨 (Ctrl+S 저장)' : '저장됨'),
+                if (tab != null) Text(tab.dirty ? l10n.studioDirty : l10n.studioSaved),
               ],
             ),
           ),

@@ -1,3 +1,4 @@
+import 'package:daylight_flutter_studio/l10n/app_localizations.dart';
 import 'package:daylight_flutter_studio/theme/app_theme.dart';
 import 'package:daylight_flutter_studio/theme/editor_zoom.dart';
 import 'package:daylight_flutter_studio/theme/theme_controller.dart';
@@ -26,6 +27,9 @@ void main() {
   /// 앱과 같은 구조: 배율 범위를 MaterialApp.builder로 감싸고, 단추를 눌러 설정을 연다.
   Widget app({SettingsSection initial = SettingsSection.appearance}) =>
       MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        locale: const Locale('ko'),
         theme: AppTheme.build(StudioPalette.saturn, Brightness.light),
         builder: (context, child) => EditorZoomScope(zoom: zoom, child: child!),
         home: Builder(

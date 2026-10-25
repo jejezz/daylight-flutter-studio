@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../l10n/app_localizations.dart';
 import '../problems/diagnostic.dart';
 import '../problems/problems_controller.dart';
 import '../theme/app_theme.dart';
@@ -29,7 +30,7 @@ class _ProblemsPanelState extends State<ProblemsPanel> {
       listenable: c,
       builder: (context, _) {
         if (c.packageRoot == null) {
-          return const Center(child: Text('열린 폴더에서 Dart 패키지(pubspec.yaml)를 찾지 못했습니다'));
+          return Center(child: Text(AppLocalizations.of(context).problemsNoPackage));
         }
         final groups = c.grouped(only: _shown);
         return Column(
@@ -70,6 +71,7 @@ class _Header extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final t = context.tokens;
     final scheme = Theme.of(context).colorScheme;
     Widget chip(DiagnosticSeverity s, String label, Color color) => FilterChip(
@@ -87,16 +89,16 @@ class _Header extends StatelessWidget {
             child: Wrap(
               spacing: t.spaceXs,
               children: [
-                chip(DiagnosticSeverity.error, '오류', t.danger),
-                chip(DiagnosticSeverity.warning, '경고', t.warning),
-                chip(DiagnosticSeverity.info, '정보', scheme.primary),
+                chip(DiagnosticSeverity.error, l10n.problemsError, t.danger),
+                chip(DiagnosticSeverity.warning, l10n.problemsWarning, t.warning),
+                chip(DiagnosticSeverity.info, l10n.problemsInfo, scheme.primary),
               ],
             ),
           ),
           if (controller.running)
             const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2))
           else
-            IconButton(tooltip: '다시 분석', icon: const Icon(Icons.refresh, size: 18), onPressed: controller.refresh),
+            IconButton(tooltip: l10n.problemsReanalyze, icon: const Icon(Icons.refresh, size: 18), onPressed: controller.refresh),
         ],
       ),
     );
@@ -110,6 +112,7 @@ class _PubGetBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final t = context.tokens;
     return Container(
       color: t.warning.withValues(alpha: 0.14),
@@ -118,7 +121,7 @@ class _PubGetBanner extends StatelessWidget {
         children: [
           Icon(Icons.warning_amber_rounded, size: 18, color: t.warning),
           SizedBox(width: t.spaceSm),
-          const Expanded(child: Text('패키지 정보(.dart_tool)가 없어서 import 오류가 가짜로 섞입니다.')),
+          Expanded(child: Text(l10n.problemsNoPackageInfo)),
           controller.gettingPackages
               ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2))
               : TextButton(onPressed: controller.runPubGet, child: const Text('flutter pub get')),
@@ -160,14 +163,15 @@ class _Empty extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final t = context.tokens;
     final (icon, text, color) = !controller.analyzed
-        ? (Icons.hourglass_empty, controller.running ? '분석하는 중…' : '아직 분석하지 않았습니다', Theme.of(context).colorScheme.outline)
+        ? (Icons.hourglass_empty, controller.running ? l10n.problemsAnalyzing : l10n.problemsNotAnalyzed, Theme.of(context).colorScheme.outline)
         : filtered
-        ? (Icons.filter_alt_outlined, '선택한 종류의 문제가 없습니다', Theme.of(context).colorScheme.outline)
+        ? (Icons.filter_alt_outlined, l10n.problemsFilteredOut, Theme.of(context).colorScheme.outline)
         : controller.error != null
-        ? (Icons.help_outline, '분석하지 못해서 문제 여부를 알 수 없습니다', t.warning)
-        : (Icons.check_circle_outline, '문제가 없습니다', t.success);
+        ? (Icons.help_outline, l10n.problemsUnknown, t.warning)
+        : (Icons.check_circle_outline, l10n.problemsNone, t.success);
     return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,

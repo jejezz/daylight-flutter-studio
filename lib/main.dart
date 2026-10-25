@@ -8,6 +8,7 @@ import 'about/app_menu_bar.dart';
 import 'about/extra_licenses.dart';
 import 'app_identity.dart';
 import 'l10n/app_localizations.dart';
+import 'l10n/current_l10n.dart';
 import 'settings/app_settings.dart';
 import 'theme/editor_zoom.dart';
 import 'theme/theme_controller.dart';
@@ -116,7 +117,7 @@ class _StudioAppState extends State<StudioApp> with WidgetsBindingObserver {
           localeResolutionCallback: AppSettings.resolveLocale,
           builder: (context, child) => AppMenuBar(
             onAbout: _showAbout,
-            child: EditorZoomScope(zoom: _zoom, child: child!),
+            child: L10nBridge(child: EditorZoomScope(zoom: _zoom, child: child!)),
           ),
           home: StudioScreen(theme: _theme, onAbout: _showAbout),
         ),

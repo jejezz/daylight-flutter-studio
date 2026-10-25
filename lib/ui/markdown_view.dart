@@ -5,6 +5,7 @@ import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:markdown/markdown.dart' as md;
 import 'package:url_launcher/url_launcher.dart';
 
+import '../l10n/app_localizations.dart';
 import '../theme/app_theme.dart';
 import '../theme/editor_zoom.dart';
 
@@ -72,7 +73,8 @@ class _MarkdownViewState extends State<MarkdownView> {
   }
 
   Widget _image(Uri uri, String? alt) {
-    final fallback = Text(alt == null || alt.isEmpty ? '(이미지를 불러올 수 없습니다)' : '(이미지: $alt)');
+    final l10n = AppLocalizations.of(context);
+    final fallback = Text(alt == null || alt.isEmpty ? l10n.markdownImageUnavailable : l10n.markdownImage(alt));
     if (uri.scheme == 'http' || uri.scheme == 'https') {
       return Image.network(uri.toString(), errorBuilder: (_, _, _) => fallback);
     }

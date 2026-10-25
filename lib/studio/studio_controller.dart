@@ -7,6 +7,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:re_editor/re_editor.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../l10n/current_l10n.dart';
 import '../diff/line_diff.dart';
 import '../problems/diagnostic.dart' show pathKey;
 import 'dart_formatter.dart';
@@ -155,7 +156,7 @@ class StudioController extends ChangeNotifier {
 
   Future<bool> openProject(String path) async {
     if (!Directory(path).existsSync()) {
-      message = '폴더를 열 수 없습니다: $path';
+      message = CurrentL10n.value.messageFolderUnavailable(path);
       notifyListeners();
       return false;
     }
@@ -201,7 +202,7 @@ class StudioController extends ChangeNotifier {
     final file = File(path);
     try {
       if (await file.length() > maxFileBytes) {
-        message = '2MB보다 큰 파일은 열지 않습니다: ${file.uri.pathSegments.last}';
+        message = CurrentL10n.value.messageFileTooLarge(file.uri.pathSegments.last);
         notifyListeners();
         return;
       }
@@ -213,9 +214,9 @@ class StudioController extends ChangeNotifier {
       // 변경 표시용 기준은 git을 몇 번 부르므로 화면을 막지 않고 뒤에서 읽는다.
       unawaited(refreshBase(tab));
     } on FormatException {
-      message = '글자 파일(UTF-8)이 아니라서 열 수 없습니다: ${file.uri.pathSegments.last}';
+      message = CurrentL10n.value.messageNotUtf8Open(file.uri.pathSegments.last);
     } on FileSystemException catch (e) {
-      message = '파일을 읽지 못했습니다: ${e.message}';
+      message = CurrentL10n.value.messageReadFailed(e.message);
     }
     notifyListeners();
   }
@@ -306,7 +307,7 @@ class StudioController extends ChangeNotifier {
 
   Future<bool> save(EditorTab tab) async {
     if (tab.external == ExternalChange.modified) {
-      message = '디스크의 파일이 바뀌었습니다. 저장하기 전에 "다시 읽기"나 "내 수정 유지"를 먼저 고르세요.';
+      message = CurrentL10n.value.messageDiskChangedSaveBlocked;
       notifyListeners();
       return false;
     }
@@ -319,7 +320,7 @@ class StudioController extends ChangeNotifier {
       onSaved?.call(tab.path);
       return true;
     } on FileSystemException catch (e) {
-      message = '저장하지 못했습니다: ${e.message}';
+      message = CurrentL10n.value.messageSaveFailed(e.message);
       notifyListeners();
       return false;
     }
@@ -386,7 +387,7 @@ class StudioController extends ChangeNotifier {
     } on FormatException {
       tab.stamp = now;
       tab.external = ExternalChange.modified;
-      message = '${tab.name}이(가) 디스크에서 바뀌었지만 글자 파일(UTF-8)이 아니라서 다시 읽지 못했습니다.';
+      message = CurrentL10n.value.messageChangedNotUtf8(tab.name);
       return true;
     } on FileSystemException {
       return false; // 쓰는 도중이었을 수 있다 — 다음 확인 때 다시 본다.
@@ -404,7 +405,7 @@ class StudioController extends ChangeNotifier {
     }
     _replaceText(tab, disk);
     tab.external = ExternalChange.none;
-    message = '${tab.name}이(가) 디스크에서 바뀌어 다시 읽었습니다.';
+    message = CurrentL10n.value.messageChangedReloaded(tab.name);
     return true;
   }
 
@@ -430,11 +431,11 @@ class StudioController extends ChangeNotifier {
       _replaceText(tab, disk);
       tab.stamp = await _stampOf(tab.path);
       tab.external = ExternalChange.none;
-      message = '${tab.name}을(를) 디스크 내용으로 다시 읽었습니다.';
+      message = CurrentL10n.value.messageReloadedFromDisk(tab.name);
     } on FormatException {
-      message = '글자 파일(UTF-8)이 아니라서 다시 읽지 못했습니다.';
+      message = CurrentL10n.value.messageNotUtf8Reload;
     } on FileSystemException catch (e) {
-      message = '파일을 읽지 못했습니다: ${e.message}';
+      message = CurrentL10n.value.messageReadFailed(e.message);
     }
     notifyListeners();
   }
@@ -461,13 +462,13 @@ class StudioController extends ChangeNotifier {
     if (!r.ok) {
       message = r.error;
     } else if (r.text == tab.controller.text) {
-      message = '이미 정렬되어 있습니다';
+      message = CurrentL10n.value.messageAlreadyFormatted;
     } else {
       final line = tab.controller.selection.extentIndex;
       tab.controller.runRevocableOp(() => tab.controller.text = r.text!);
       final last = tab.controller.codeLines.length - 1;
       tab.controller.selection = CodeLineSelection.collapsed(index: line > last ? last : line, offset: 0);
-      message = '정렬했습니다';
+      message = CurrentL10n.value.messageFormatted;
     }
     notifyListeners();
   }

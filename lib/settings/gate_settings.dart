@@ -7,22 +7,31 @@ library;
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../l10n/app_localizations.dart';
+import '../l10n/current_l10n.dart';
 import '../verify/verify_state.dart';
 
 enum GateMode {
   /// 확인된(`검증됨`) 커밋만 병합할 수 있다. 예외는 "검증 없이 병합"을 따로 눌러야 한다.
-  block('차단', '확인한 커밋만 병합합니다. 예외가 필요하면 "검증 없이 병합"을 따로 눌러야 합니다.'),
+  block,
 
   /// 확인되지 않은 커밋은 병합 전에 한 번 더 묻는다.
-  warn('경고만', '확인하지 않은 커밋을 병합하려 하면 한 번 더 묻습니다.'),
+  warn,
 
   /// 관문을 쓰지 않는다.
-  off('끔', '확인 여부와 상관없이 병합할 수 있습니다.');
+  off;
 
-  const GateMode(this.label, this.description);
+  String label(AppLocalizations l10n) => switch (this) {
+    block => l10n.gateModeBlock,
+    warn => l10n.gateModeWarn,
+    off => l10n.gateModeOff,
+  };
 
-  final String label;
-  final String description;
+  String description(AppLocalizations l10n) => switch (this) {
+    block => l10n.gateModeBlockHelp,
+    warn => l10n.gateModeWarnHelp,
+    off => l10n.gateModeOffHelp,
+  };
 }
 
 enum GateAction {
@@ -37,34 +46,39 @@ enum GateAction {
 }
 
 class GateDecision {
-  const GateDecision(this.action, this.message);
+  const GateDecision(this.action, String this._message);
 
-  const GateDecision.allow() : this(GateAction.allow, '검증됨 — 병합할 수 있습니다');
+  const GateDecision.allow() : this._(GateAction.allow);
+
+  const GateDecision._(this.action) : _message = null;
 
   final GateAction action;
 
+  final String? _message;
+
   /// 왜 그런 판단인지 한 줄 설명 (화면에 그대로 보여 준다).
-  final String message;
+  String get message => _message ?? CurrentL10n.value.gateVerified;
 
   bool get allowed => action == GateAction.allow;
 }
 
 /// 검증 판정을 사람이 읽는 한 줄로.
 String describeVerdict(VerifyVerdict? verdict) {
+  final l10n = CurrentL10n.value;
   switch (verdict?.state) {
     case VerifyState.verified:
-      return '검증됨 — 병합할 수 있습니다';
+      return l10n.gateVerified;
     case VerifyState.builtOnly:
-      return '빌드만 하고 눈으로 확인하지 않았습니다. 실행해 본 뒤 Run 탭에서 "확인함"을 눌러 주세요.';
+      return l10n.gateBuiltOnly;
     case VerifyState.problem:
       final note = verdict?.record?.note ?? '';
-      return note.isEmpty ? '확인했더니 문제가 있다고 기록된 커밋입니다.' : '확인했더니 문제가 있다고 기록된 커밋입니다: $note';
+      return note.isEmpty ? l10n.gateProblem : l10n.gateProblemNote(note);
     case VerifyState.stale:
       final n = verdict?.commitsSince;
-      return n == null ? '검증한 뒤 커밋이 추가되었습니다. 다시 빌드해 확인하세요.' : '검증한 뒤 커밋 $n개가 추가되었습니다. 다시 빌드해 확인하세요.';
+      return n == null ? l10n.gateStaleSome : l10n.gateStaleCount(n);
     case VerifyState.unverified:
     case null:
-      return '이 커밋은 로컬에서 확인하지 않았습니다. Run 탭에서 빌드해 눈으로 확인하세요.';
+      return l10n.gateUnverified;
   }
 }
 
