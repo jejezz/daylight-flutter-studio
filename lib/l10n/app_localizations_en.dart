@@ -880,4 +880,23 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get settingsFormatOnSaveNote =>
       'Formats Dart, JSON and ARB files just before saving. If a syntax error prevents formatting, the file is still saved.';
+
+  @override
+  String get settingsEditorFont => 'Editor font';
+
+  @override
+  String get settingsEditorFontHint => 'Font name (empty for default)';
+
+  @override
+  String get settingsEditorFontDefault => 'Default';
+
+  @override
+  String get settingsEditorFontNote =>
+      'Type the name of an installed monospace font. A missing font falls back to the default.';
+
+  @override
+  String get settingsLineHeight => 'Line spacing';
+
+  @override
+  String get settingsLineHeightReset => 'Reset line spacing';
 }

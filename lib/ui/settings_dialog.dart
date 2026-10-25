@@ -304,6 +304,7 @@ class _EditorSection extends StatelessWidget {
             l10n.settingsZoomNote,
             style: Theme.of(context).textTheme.bodySmall,
           ),
+          if (editor != null) _FontSettings(editor: editor),
           if (editor != null)
             ListenableBuilder(
               listenable: editor,
@@ -324,6 +325,101 @@ class _EditorSection extends StatelessWidget {
             ),
         ],
       ),
+    );
+  }
+}
+
+
+/// 편집기 글꼴 이름과 줄 간격. 위의 미리보기가 바로 따라 바뀐다.
+class _FontSettings extends StatefulWidget {
+  const _FontSettings({required this.editor});
+
+  final EditorSettings editor;
+
+  @override
+  State<_FontSettings> createState() => _FontSettingsState();
+}
+
+class _FontSettingsState extends State<_FontSettings> {
+  late final _name = TextEditingController(text: widget.editor.fontName ?? '');
+
+  @override
+  void dispose() {
+    _name.dispose();
+    super.dispose();
+  }
+
+  void _pick(String? family) {
+    _name.text = family ?? '';
+    widget.editor.setFontName(family);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final t = context.tokens;
+    final editor = widget.editor;
+    return ListenableBuilder(
+      listenable: editor,
+      builder: (context, _) {
+        final lineHeight = editor.lineHeight ?? t.editorText.height ?? 1.45;
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(height: t.spaceMd),
+            _Heading(l10n.settingsEditorFont),
+            TextField(
+              controller: _name,
+              decoration: InputDecoration(hintText: l10n.settingsEditorFontHint),
+              onChanged: editor.setFontName,
+            ),
+            SizedBox(height: t.spaceSm),
+            Wrap(
+              spacing: t.spaceSm,
+              runSpacing: t.spaceXs,
+              children: [
+                ChoiceChip(
+                  selected: editor.fontName == null,
+                  showCheckmark: false,
+                  label: Text(l10n.settingsEditorFontDefault),
+                  onSelected: (_) => _pick(null),
+                ),
+                for (final f in EditorSettings.presetFonts)
+                  ChoiceChip(
+                    selected: editor.fontName == f,
+                    showCheckmark: false,
+                    label: Text(f),
+                    onSelected: (_) => _pick(f),
+                  ),
+              ],
+            ),
+            SizedBox(height: t.spaceXs),
+            Text(l10n.settingsEditorFontNote, style: Theme.of(context).textTheme.bodySmall),
+            SizedBox(height: t.spaceMd),
+            _Heading(l10n.settingsLineHeight),
+            Row(
+              children: [
+                Expanded(
+                  child: Slider(
+                    min: EditorSettings.minLineHeight,
+                    max: EditorSettings.maxLineHeight,
+                    divisions: 16,
+                    value: lineHeight.clamp(EditorSettings.minLineHeight, EditorSettings.maxLineHeight),
+                    label: lineHeight.toStringAsFixed(2),
+                    onChanged: editor.setLineHeight,
+                  ),
+                ),
+                SizedBox(width: 56, child: Text(lineHeight.toStringAsFixed(2), textAlign: TextAlign.end)),
+                IconButton(
+                  tooltip: l10n.settingsLineHeightReset,
+                  icon: const Icon(Icons.restart_alt, size: 18),
+                  onPressed: editor.lineHeight == null ? null : () => editor.setLineHeight(null),
+                ),
+              ],
+            ),
+          ],
+        );
+      },
     );
   }
 }

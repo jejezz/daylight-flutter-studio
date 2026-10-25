@@ -1621,6 +1621,42 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'Dart, JSON, ARB 파일을 저장하기 직전에 정렬합니다. 문법 오류가 있어 정렬하지 못해도 저장은 그대로 됩니다.'**
   String get settingsFormatOnSaveNote;
+
+  /// No description provided for @settingsEditorFont.
+  ///
+  /// In ko, this message translates to:
+  /// **'편집기 글꼴'**
+  String get settingsEditorFont;
+
+  /// No description provided for @settingsEditorFontHint.
+  ///
+  /// In ko, this message translates to:
+  /// **'글꼴 이름 (비우면 기본)'**
+  String get settingsEditorFontHint;
+
+  /// No description provided for @settingsEditorFontDefault.
+  ///
+  /// In ko, this message translates to:
+  /// **'기본'**
+  String get settingsEditorFontDefault;
+
+  /// No description provided for @settingsEditorFontNote.
+  ///
+  /// In ko, this message translates to:
+  /// **'설치된 고정폭 글꼴의 이름을 그대로 적습니다. 없는 글꼴이면 기본 글꼴로 보입니다.'**
+  String get settingsEditorFontNote;
+
+  /// No description provided for @settingsLineHeight.
+  ///
+  /// In ko, this message translates to:
+  /// **'줄 간격'**
+  String get settingsLineHeight;
+
+  /// No description provided for @settingsLineHeightReset.
+  ///
+  /// In ko, this message translates to:
+  /// **'기본 줄 간격으로'**
+  String get settingsLineHeightReset;
 }
 
 class _AppLocalizationsDelegate
