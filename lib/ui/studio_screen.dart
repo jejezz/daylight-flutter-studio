@@ -12,16 +12,15 @@ import '../problems/problems_controller.dart';
 import '../studio/dart_formatter.dart';
 import '../studio/git_base.dart';
 import '../studio/studio_controller.dart';
-import '../studio/worktree.dart';
 import '../theme/app_theme.dart';
 import '../theme/theme_controller.dart';
 import '../verify/verify_store.dart';
 import 'editor_pane.dart';
-import 'file_tree.dart';
 import 'git_panel.dart';
 import 'problems_panel.dart';
 import 'run_panel.dart';
 import 'theme_menu.dart';
+import 'tree_pane.dart';
 
 /// 프로젝트 트리 | 편집기 | Dock 패널 (3단) + 하단 상태 막대.
 class StudioScreen extends StatefulWidget {
@@ -141,7 +140,7 @@ class _StudioScreenState extends State<StudioScreen> with WidgetsBindingObserver
                     Expanded(
                       child: Row(
                         children: [
-                          SizedBox(width: _treeWidth, child: _TreePane(controller: _controller)),
+                          SizedBox(width: _treeWidth, child: TreePane(controller: _controller)),
                           _Splitter(onDrag: (dx) => setState(() => _treeWidth = (_treeWidth + dx).clamp(160, 520))),
                           Expanded(child: EditorPane(controller: _controller, problems: _problems)),
                           _Splitter(onDrag: (dx) => setState(() => _dockWidth = (_dockWidth - dx).clamp(300, 700))),
@@ -181,63 +180,6 @@ class _Splitter extends StatelessWidget {
         onHorizontalDragUpdate: (d) => onDrag(d.delta.dx),
         child: SizedBox(width: w, child: VerticalDivider(width: w)),
       ),
-    );
-  }
-}
-
-class _TreePane extends StatelessWidget {
-  const _TreePane({required this.controller});
-
-  final StudioController controller;
-
-  @override
-  Widget build(BuildContext context) {
-    final t = context.tokens;
-    final root = controller.root!;
-    final worktrees = controller.worktrees;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        if (worktrees.length > 1)
-          Padding(
-            padding: EdgeInsets.fromLTRB(t.spaceSm, t.spaceSm, t.spaceSm, t.spaceXs),
-            child: DropdownButtonFormField<Worktree>(
-              isExpanded: true,
-              initialValue: controller.currentWorktree,
-              decoration: const InputDecoration(labelText: 'worktree'),
-              items: [
-                for (final w in worktrees)
-                  DropdownMenuItem(
-                    value: w,
-                    child: Row(
-                      children: [
-                        if (w.byClaude) ...[const Icon(Icons.smart_toy_outlined, size: 16), SizedBox(width: t.spaceXs)],
-                        Expanded(child: Text(w.label, overflow: TextOverflow.ellipsis)),
-                      ],
-                    ),
-                  ),
-              ],
-              onChanged: (w) => w == null ? null : controller.switchWorktree(w),
-            ),
-          ),
-        Align(
-          alignment: Alignment.centerRight,
-          child: IconButton(
-            tooltip: '트리 새로 고침',
-            icon: const Icon(Icons.refresh, size: 16),
-            onPressed: controller.refreshTree,
-          ),
-        ),
-        Expanded(
-          child: FileTree(
-            key: ValueKey(root),
-            root: root,
-            activePath: controller.activeTab?.path,
-            revision: controller.treeRevision,
-            onOpenFile: controller.openFile,
-          ),
-        ),
-      ],
     );
   }
 }
