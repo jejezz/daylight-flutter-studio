@@ -20,6 +20,7 @@
 
 - 규약(conventions-v1) 적용: 정보 창·오픈소스 라이선스·macOS 앱 메뉴, 한국어/영어(앱 바 `테마|언어|정보`), Saturn 팔레트·SeoulNamsan, 고양이 아이콘, 릴리스 워크플로(`release.yml`, macOS·Windows)와 Windows 설치기, `scripts/bump-version.sh`.
   macOS 앱 샌드박스는 **꺼져 있다**(폴더 선택·git·flutter 실행에 필요). Debug 빌드는 `.dev` 식별자.
+- 프로젝트 열기: 앱 바 "프로젝트 열기" 옆 화살표로 최근 프로젝트(최대 8개, 같은 폴더는 하나, 사라진 폴더는 알리고 뺌)를 다시 열고 "목록 지우기"가 있다. 프로젝트를 열기 전 첫 화면에도 같은 목록이 나온다. worktree 전환은 목록에 더하지 않는다.
 - 편집기 찾기·바꾸기(Ctrl/Cmd+F, re_editor 엔진 + 테마 맞춘 줄), 빠른 열기(Ctrl/Cmd+P), 프로젝트에서 찾기(Ctrl/Cmd+Shift+F), 프로젝트별 열어 둔 탭 복원.
 
 ### 알려진 한계

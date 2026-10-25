@@ -2389,6 +2389,36 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'환경 점검'**
   String get settingsSectionEnvironment;
+
+  /// No description provided for @studioRecentProjects.
+  ///
+  /// In ko, this message translates to:
+  /// **'최근 프로젝트'**
+  String get studioRecentProjects;
+
+  /// No description provided for @studioRecentTooltip.
+  ///
+  /// In ko, this message translates to:
+  /// **'최근 프로젝트 보기'**
+  String get studioRecentTooltip;
+
+  /// No description provided for @studioRecentNone.
+  ///
+  /// In ko, this message translates to:
+  /// **'최근에 연 프로젝트가 없습니다'**
+  String get studioRecentNone;
+
+  /// No description provided for @studioRecentClear.
+  ///
+  /// In ko, this message translates to:
+  /// **'목록 지우기'**
+  String get studioRecentClear;
+
+  /// No description provided for @studioRecentForget.
+  ///
+  /// In ko, this message translates to:
+  /// **'목록에서 빼기'**
+  String get studioRecentForget;
 }
 
 class _AppLocalizationsDelegate

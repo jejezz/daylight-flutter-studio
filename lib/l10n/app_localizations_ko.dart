@@ -1294,4 +1294,19 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get settingsSectionEnvironment => '환경 점검';
+
+  @override
+  String get studioRecentProjects => '최근 프로젝트';
+
+  @override
+  String get studioRecentTooltip => '최근 프로젝트 보기';
+
+  @override
+  String get studioRecentNone => '최근에 연 프로젝트가 없습니다';
+
+  @override
+  String get studioRecentClear => '목록 지우기';
+
+  @override
+  String get studioRecentForget => '목록에서 빼기';
 }

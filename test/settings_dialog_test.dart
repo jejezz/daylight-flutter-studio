@@ -80,13 +80,13 @@ void main() {
     await open(tester);
     expect(theme.palette, StudioPalette.saturn);
 
-    await tester.ensureVisible(find.text('청록'));
-    await tester.tap(find.text('청록'));
+    await tester.ensureVisible(find.widgetWithText(ChoiceChip, '청록'));
+    await tester.tap(find.widgetWithText(ChoiceChip, '청록'));
     await tester.pump();
     expect(theme.palette, StudioPalette.teal);
 
-    await tester.ensureVisible(find.text('장미'));
-    await tester.tap(find.text('장미'));
+    await tester.ensureVisible(find.widgetWithText(ChoiceChip, '장미'));
+    await tester.tap(find.widgetWithText(ChoiceChip, '장미'));
     await tester.pump();
     expect(theme.palette, StudioPalette.rose);
   });
