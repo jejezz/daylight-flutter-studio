@@ -6,6 +6,9 @@ import '../core/command_runner.dart';
 import '../devices/device_service.dart';
 import '../git/git_controller.dart';
 import '../run/run_controller.dart';
+import '../problems/dart_analyzer.dart';
+import '../problems/diagnostic.dart';
+import '../problems/problems_controller.dart';
 import '../studio/dart_formatter.dart';
 import '../studio/git_base.dart';
 import '../studio/studio_controller.dart';
@@ -16,6 +19,7 @@ import '../verify/verify_store.dart';
 import 'editor_pane.dart';
 import 'file_tree.dart';
 import 'git_panel.dart';
+import 'problems_panel.dart';
 import 'run_panel.dart';
 import 'theme_menu.dart';
 
@@ -35,7 +39,10 @@ class _StudioScreenState extends State<StudioScreen> with WidgetsBindingObserver
   late final StudioController _controller = StudioController(
     formatDart: DartFormatter(_runner).format,
     readBase: GitBaseReader(_runner).read,
+    onSaved: (path) => _problems.onSaved(path),
   );
+  late final DartAnalyzer _analyzer = DartAnalyzer(_runner);
+  late final ProblemsController _problems = ProblemsController(analyze: _analyzer.run, pubGet: _analyzer.pubGet);
   late final RunController _run = RunController(
     runner: _runner,
     deviceService: ProcessDeviceService(_runner),
@@ -64,6 +71,7 @@ class _StudioScreenState extends State<StudioScreen> with WidgetsBindingObserver
       _controller.checkExternalChanges();
       _controller.refreshTree();
       _controller.refreshBases();
+      _problems.refreshIfStale(const Duration(seconds: 30));
     }
   }
 
@@ -75,6 +83,7 @@ class _StudioScreenState extends State<StudioScreen> with WidgetsBindingObserver
     _controller.dispose();
     _run.dispose();
     _git.dispose();
+    _problems.dispose();
     _log.dispose();
     super.dispose();
   }
@@ -89,6 +98,7 @@ class _StudioScreenState extends State<StudioScreen> with WidgetsBindingObserver
     if (_controller.root != _lastRoot) {
       _lastRoot = _controller.root;
       _run.setProjectDir(_lastRoot);
+      _problems.setProjectDir(_lastRoot);
       _git.setDir(_lastRoot);
     }
   }
@@ -133,14 +143,21 @@ class _StudioScreenState extends State<StudioScreen> with WidgetsBindingObserver
                         children: [
                           SizedBox(width: _treeWidth, child: _TreePane(controller: _controller)),
                           _Splitter(onDrag: (dx) => setState(() => _treeWidth = (_treeWidth + dx).clamp(160, 520))),
-                          Expanded(child: EditorPane(controller: _controller)),
+                          Expanded(child: EditorPane(controller: _controller, problems: _problems)),
                           _Splitter(onDrag: (dx) => setState(() => _dockWidth = (_dockWidth - dx).clamp(300, 700))),
-                          SizedBox(width: _dockWidth, child: _DockPane(run: _run, git: _git, log: _log, onOpenDiff: _controller.openDiff)),
+                          SizedBox(width: _dockWidth, child: _DockPane(
+                              run: _run,
+                              git: _git,
+                              log: _log,
+                              problems: _problems,
+                              onOpenDiff: _controller.openDiff,
+                              onOpenProblem: (d) => _controller.openAt(d.file, d.line, d.column),
+                            )),
                         ],
                       ),
                     ),
                     const Divider(),
-                    _StatusBar(controller: _controller, run: _run),
+                    _StatusBar(controller: _controller, run: _run, problems: _problems),
                   ],
                 ),
         );
@@ -227,8 +244,17 @@ class _TreePane extends StatelessWidget {
 
 /// Run(Flutty Dock)·Git(Branch Dock) 패널.
 class _DockPane extends StatelessWidget {
-  const _DockPane({required this.run, required this.git, required this.log, required this.onOpenDiff});
+  const _DockPane({
+    required this.run,
+    required this.git,
+    required this.log,
+    required this.problems,
+    required this.onOpenDiff,
+    required this.onOpenProblem,
+  });
 
+  final ProblemsController problems;
+  final void Function(Diagnostic diagnostic) onOpenProblem;
   final RunController run;
   final void Function(String absolutePath) onOpenDiff;
   final GitController git;
@@ -237,15 +263,40 @@ class _DockPane extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 2,
+      length: 3,
       child: Column(
         children: [
-          const TabBar(tabs: [Tab(text: 'Run'), Tab(text: 'Git')]),
+          TabBar(
+            tabs: [
+              const Tab(text: 'Run'),
+              const Tab(text: 'Git'),
+              // 오류가 있으면 탭 이름에 개수를 붙여 다른 탭을 보고 있어도 알아챌 수 있게 한다.
+              ListenableBuilder(
+                listenable: problems,
+                builder: (context, _) {
+                  final errors = problems.errors;
+                  final warnings = problems.warnings;
+                  final badge = errors > 0 ? ' $errors' : (warnings > 0 ? ' $warnings' : '');
+                  final color = errors > 0 ? context.tokens.danger : context.tokens.warning;
+                  return Tab(
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Text('문제'),
+                        if (badge.isNotEmpty) Text(badge, style: TextStyle(color: color, fontWeight: FontWeight.bold)),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ],
+          ),
           Expanded(
             child: TabBarView(
               children: [
                 RunPanel(controller: run, log: log),
                 GitPanel(controller: git, onOpenDiff: onOpenDiff),
+                ProblemsPanel(controller: problems, onOpen: onOpenProblem),
               ],
             ),
           ),
@@ -256,10 +307,11 @@ class _DockPane extends StatelessWidget {
 }
 
 class _StatusBar extends StatelessWidget {
-  const _StatusBar({required this.controller, required this.run});
+  const _StatusBar({required this.controller, required this.run, required this.problems});
 
   final StudioController controller;
   final RunController run;
+  final ProblemsController problems;
 
   @override
   Widget build(BuildContext context) {
@@ -268,7 +320,7 @@ class _StatusBar extends StatelessWidget {
     final w = controller.currentWorktree;
     final tab = controller.activeTab;
     return ListenableBuilder(
-      listenable: run,
+      listenable: Listenable.merge([run, problems]),
       builder: (context, _) {
         final rec = run.record;
         final (label, color) = switch (rec?.status) {
@@ -292,6 +344,18 @@ class _StatusBar extends StatelessWidget {
                 Icon(Icons.verified_outlined, size: 14, color: color),
                 SizedBox(width: t.spaceXs),
                 Text(label, style: TextStyle(color: color)),
+                SizedBox(width: t.spaceMd),
+                if (problems.running)
+                  const Text('분석 중…')
+                else if (problems.packageRoot != null && problems.analyzed) ...[
+                  Icon(Icons.error, size: 14, color: problems.errors > 0 ? t.danger : theme.colorScheme.outline),
+                  SizedBox(width: t.spaceXs),
+                  Text('${problems.errors}'),
+                  SizedBox(width: t.spaceSm),
+                  Icon(Icons.warning_amber_rounded, size: 14, color: problems.warnings > 0 ? t.warning : theme.colorScheme.outline),
+                  SizedBox(width: t.spaceXs),
+                  Text('${problems.warnings}'),
+                ],
                 const Spacer(),
                 if (tab != null) Text(tab.dirty ? '수정됨 (Ctrl+S 저장)' : '저장됨'),
               ],

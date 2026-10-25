@@ -8,6 +8,7 @@ import 'package:re_editor/re_editor.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../diff/line_diff.dart';
+import '../problems/diagnostic.dart' show pathKey;
 import 'dart_formatter.dart';
 import 'file_language.dart';
 import 'git_base.dart';
@@ -117,13 +118,16 @@ class EditorTab {
 
 /// 열린 프로젝트(폴더), worktree 목록, 편집기 탭을 들고 있다.
 class StudioController extends ChangeNotifier {
-  StudioController({this.formatDart, this.readBase});
+  StudioController({this.formatDart, this.readBase, this.onSaved});
 
   /// Dart 글을 정렬한다 (`dart format`). 없으면 정렬 기능을 쓸 수 없다.
   final Future<FormatResult> Function(String path, String text)? formatDart;
 
   /// 파일의 git HEAD 내용을 읽는다. 없으면 변경 표시와 변경점 보기를 쓸 수 없다.
   final Future<GitBase> Function(String path)? readBase;
+
+  /// 파일을 저장한 뒤 부른다 (Dart 문제를 다시 분석하는 데 쓴다).
+  final void Function(String path)? onSaved;
 
   static const _lastProjectKey = 'last_project';
   static const maxFileBytes = 2 * 1024 * 1024;
@@ -181,8 +185,14 @@ class StudioController extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// [path]를 가진 탭. 경로 표기(구분자·대소문자)가 달라도 같은 파일이면 찾는다.
+  EditorTab? tabFor(String path) {
+    final key = pathKey(path);
+    return tabs.where((t) => pathKey(t.path) == key).firstOrNull;
+  }
+
   Future<void> openFile(String path) async {
-    final existing = tabs.indexWhere((t) => t.path == path);
+    final existing = tabs.indexWhere((t) => pathKey(t.path) == pathKey(path));
     if (existing >= 0) {
       activeIndex = existing;
       notifyListeners();
@@ -228,11 +238,35 @@ class StudioController extends ChangeNotifier {
   /// 파일을 열고 곧바로 변경점 보기로 보여 준다.
   Future<void> openDiff(String path) async {
     await openFile(path);
-    final tab = tabs.where((t) => t.path == path).firstOrNull;
+    final tab = tabFor(path);
     if (tab == null) return;
     tab.diffMode = true;
     activeIndex = tabs.indexOf(tab);
     notifyListeners();
+  }
+
+  /// 파일을 열고 [line]/[column](1부터)에 커서를 두어 보여 준다. 문제 패널에서 문제를 눌렀을 때 쓴다.
+  Future<void> openAt(String path, int line, int column) async {
+    await openFile(path);
+    final tab = tabFor(path);
+    if (tab == null) return;
+    tab.diffMode = false;
+    activeIndex = tabs.indexOf(tab);
+    final lines = tab.controller.codeLines;
+    final index = (line - 1).clamp(0, lines.length - 1);
+    final offset = (column - 1).clamp(0, lines[index].text.length);
+    tab.controller.selection = CodeLineSelection.collapsed(index: index, offset: offset);
+    notifyListeners();
+    // 편집기가 화면에 올라와 배치를 마친 뒤에 그 줄이 가운데 오게 스크롤한다.
+    void center() {
+      try {
+        tab.controller.makeCursorCenterIfInvisible();
+      } on Object {
+        // 편집기가 아직 붙지 않았으면 선택만 남는다.
+      }
+    }
+
+    SchedulerBinding.instance.addPostFrameCallback((_) => SchedulerBinding.instance.addPostFrameCallback((_) => center()));
   }
 
   void toggleDiff(EditorTab tab) {
@@ -282,6 +316,7 @@ class StudioController extends ChangeNotifier {
       tab.stamp = await _stampOf(tab.path);
       tab.external = ExternalChange.none;
       notifyListeners();
+      onSaved?.call(tab.path);
       return true;
     } on FileSystemException catch (e) {
       message = '저장하지 못했습니다: ${e.message}';

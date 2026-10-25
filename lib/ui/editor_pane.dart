@@ -9,15 +9,20 @@ import '../studio/studio_controller.dart';
 import '../theme/app_theme.dart';
 import '../theme/editor_theme.dart';
 import '../theme/editor_zoom.dart';
+import '../problems/problems_controller.dart';
 import 'change_gutter.dart';
 import 'diff_view.dart';
 import 'markdown_view.dart';
+import 'problem_gutter.dart';
 
 /// 탭 막대 + 도구 막대 + 편집 영역. Markdown은 편집/보기를 전환한다.
 class EditorPane extends StatelessWidget {
-  const EditorPane({super.key, required this.controller});
+  const EditorPane({super.key, required this.controller, this.problems});
 
   final StudioController controller;
+
+  /// Dart 문제. 있으면 줄 번호 왼쪽에 문제가 있는 줄을 점으로 표시한다.
+  final ProblemsController? problems;
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +53,7 @@ class EditorPane extends StatelessWidget {
                           text: tab.controller.text,
                           baseDir: tab.path.substring(0, tab.path.lastIndexOf(RegExp(r'[/\\]'))),
                         )
-                      : _CodeView(key: ValueKey(tab.path), tab: tab),
+                      : _CodeView(key: ValueKey(tab.path), tab: tab, problems: problems),
                 ),
         ),
       ],
@@ -111,9 +116,10 @@ class _ExternalBanner extends StatelessWidget {
 }
 
 class _CodeView extends StatefulWidget {
-  const _CodeView({super.key, required this.tab});
+  const _CodeView({super.key, required this.tab, this.problems});
 
   final EditorTab tab;
+  final ProblemsController? problems;
 
   @override
   State<_CodeView> createState() => _CodeViewState();
@@ -149,6 +155,8 @@ class _CodeViewState extends State<_CodeView> {
           tab.chunks = chunks;
           return Row(
             children: [
+              if (widget.problems != null)
+                ProblemGutter(editing: editing, indicator: notifier, problems: widget.problems!, path: tab.path),
               DefaultCodeLineNumber(
                 controller: editing,
                 notifier: notifier,
