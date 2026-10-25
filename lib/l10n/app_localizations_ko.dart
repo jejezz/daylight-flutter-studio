@@ -1146,4 +1146,152 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get homeRunOnlyNeedsBuild => '실행할 release 결과물이 없습니다. 먼저 빌드하세요';
+
+  @override
+  String get doctorRun => '다시 점검';
+
+  @override
+  String get doctorRunning => '점검 중…';
+
+  @override
+  String get doctorNever => '아직 점검하지 않았습니다';
+
+  @override
+  String doctorCollected(String time) {
+    return '$time에 점검함';
+  }
+
+  @override
+  String get doctorAllGood => '문제가 없습니다';
+
+  @override
+  String checkFlutterOk(String version) {
+    return 'Flutter $version';
+  }
+
+  @override
+  String checkFlutterRunFail(String error) {
+    return 'flutter를 실행했지만 실패했습니다: $error';
+  }
+
+  @override
+  String get checkFlutterFail => 'flutter를 찾지 못했습니다';
+
+  @override
+  String checkXcodeOk(String version) {
+    return 'Xcode $version';
+  }
+
+  @override
+  String get checkXcodeFail => 'Xcode를 찾지 못했습니다';
+
+  @override
+  String checkAdbOk(String version) {
+    return 'adb $version';
+  }
+
+  @override
+  String get checkAdbWarn => 'adb를 찾지 못했습니다 (Android 설치에 필요)';
+
+  @override
+  String checkCertificateOk(String count) {
+    return '개발 인증서 $count개 (개인 키 있음)';
+  }
+
+  @override
+  String get checkCertificateFail => '사용할 수 있는 Apple Development 인증서가 없음';
+
+  @override
+  String checkCertExpiryOk(String name, String days) {
+    return '$name · $days일 남음';
+  }
+
+  @override
+  String checkCertExpiryWarn(String name, String days) {
+    return '$name · $days일 뒤 만료';
+  }
+
+  @override
+  String checkCertExpiryFail(String name) {
+    return '$name · 만료됨';
+  }
+
+  @override
+  String get stepsCertificate =>
+      '1. Xcode → Settings → Accounts에서 Apple ID로 로그인합니다\n2. Manage Certificates → + → Apple Development을 추가합니다\n3. 다시 점검을 누릅니다';
+
+  @override
+  String get stepsFlutterMissing =>
+      '1. flutter.dev에서 Flutter SDK를 설치합니다\n2. flutter/bin을 PATH에 추가합니다 (~/.zshrc)\n3. 앱을 다시 열고 점검을 누릅니다';
+
+  @override
+  String get stepsFlutterMissingWindows =>
+      '1. flutter.dev에서 Flutter SDK를 설치합니다\n2. flutter\\bin 폴더를 PATH에 추가하거나, 위의 \'도구 경로 지정\'에서 flutter.bat을 직접 고릅니다\n3. 다시 점검을 누릅니다';
+
+  @override
+  String get stepsXcodeMissing =>
+      '1. App Store에서 Xcode를 설치합니다\n2. 터미널에서 sudo xcode-select -s /Applications/Xcode.app 를 실행합니다\n3. Xcode를 한 번 열어 라이선스에 동의합니다';
+
+  @override
+  String get stepsAdbMissing =>
+      '1. Android SDK platform-tools를 설치합니다 (Android Studio SDK Manager)\n2. platform-tools 폴더를 PATH에 추가합니다\n3. 다시 점검을 누릅니다';
+
+  @override
+  String get stepsCertExpiry =>
+      '1. Xcode → Settings → Accounts → Manage Certificates에서 새 Apple Development 인증서를 만듭니다\n2. 다시 점검을 누릅니다';
+
+  @override
+  String get toolPathsOpen => '도구 경로 지정…';
+
+  @override
+  String get toolPathsTitle => '도구 경로';
+
+  @override
+  String get toolPathsHelp =>
+      'PATH에서 찾지 못하는 도구는 직접 지정할 수 있습니다. 한 번 지정하면 저장되고 다음 실행에도 쓰입니다. 폴더가 아니라 실행 파일을 고르세요.';
+
+  @override
+  String get toolPathNotFound => '찾지 못함';
+
+  @override
+  String get toolPathChoose => '찾아서 지정…';
+
+  @override
+  String get toolPathAuto => '자동으로';
+
+  @override
+  String get toolPathCustom => '직접 지정';
+
+  @override
+  String get toolPathFlutter => 'flutter';
+
+  @override
+  String get toolPathAdb => 'adb (Android SDK platform-tools)';
+
+  @override
+  String get checkWindowsDevModeOk => 'Windows 개발자 모드 켜짐 (플러그인 링크를 만들 수 있음)';
+
+  @override
+  String get checkWindowsDevModeWarn =>
+      'Windows 개발자 모드가 꺼져 있습니다 (플러그인 링크를 만들지 못해 빌드가 실패할 수 있음)';
+
+  @override
+  String checkVisualStudioOk(String version) {
+    return 'Visual Studio $version (C++ 도구 있음)';
+  }
+
+  @override
+  String get checkVisualStudioFail =>
+      'Visual Studio의 \'C++를 사용한 데스크톱 개발\'이 없습니다 (Windows 앱 빌드에 필요)';
+
+  @override
+  String get stepsWindowsDevMode =>
+      '1. Windows 설정을 열고 \'개발자용\'(개발자 설정)을 검색해 엽니다\n2. \'개발자 모드\'를 켭니다\n3. 다시 점검을 누릅니다';
+
+  @override
+  String get stepsVisualStudio =>
+      '1. Visual Studio 2022(Community 가능)를 설치합니다\n2. 설치 관리자에서 \'C++를 사용한 데스크톱 개발\'을 선택합니다\n3. 다시 빌드합니다';
+
+  @override
+  String get settingsSectionEnvironment => '환경 점검';
 }

@@ -2155,6 +2155,240 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'실행할 release 결과물이 없습니다. 먼저 빌드하세요'**
   String get homeRunOnlyNeedsBuild;
+
+  /// No description provided for @doctorRun.
+  ///
+  /// In ko, this message translates to:
+  /// **'다시 점검'**
+  String get doctorRun;
+
+  /// No description provided for @doctorRunning.
+  ///
+  /// In ko, this message translates to:
+  /// **'점검 중…'**
+  String get doctorRunning;
+
+  /// No description provided for @doctorNever.
+  ///
+  /// In ko, this message translates to:
+  /// **'아직 점검하지 않았습니다'**
+  String get doctorNever;
+
+  /// No description provided for @doctorCollected.
+  ///
+  /// In ko, this message translates to:
+  /// **'{time}에 점검함'**
+  String doctorCollected(String time);
+
+  /// No description provided for @doctorAllGood.
+  ///
+  /// In ko, this message translates to:
+  /// **'문제가 없습니다'**
+  String get doctorAllGood;
+
+  /// No description provided for @checkFlutterOk.
+  ///
+  /// In ko, this message translates to:
+  /// **'Flutter {version}'**
+  String checkFlutterOk(String version);
+
+  /// No description provided for @checkFlutterRunFail.
+  ///
+  /// In ko, this message translates to:
+  /// **'flutter를 실행했지만 실패했습니다: {error}'**
+  String checkFlutterRunFail(String error);
+
+  /// No description provided for @checkFlutterFail.
+  ///
+  /// In ko, this message translates to:
+  /// **'flutter를 찾지 못했습니다'**
+  String get checkFlutterFail;
+
+  /// No description provided for @checkXcodeOk.
+  ///
+  /// In ko, this message translates to:
+  /// **'Xcode {version}'**
+  String checkXcodeOk(String version);
+
+  /// No description provided for @checkXcodeFail.
+  ///
+  /// In ko, this message translates to:
+  /// **'Xcode를 찾지 못했습니다'**
+  String get checkXcodeFail;
+
+  /// No description provided for @checkAdbOk.
+  ///
+  /// In ko, this message translates to:
+  /// **'adb {version}'**
+  String checkAdbOk(String version);
+
+  /// No description provided for @checkAdbWarn.
+  ///
+  /// In ko, this message translates to:
+  /// **'adb를 찾지 못했습니다 (Android 설치에 필요)'**
+  String get checkAdbWarn;
+
+  /// No description provided for @checkCertificateOk.
+  ///
+  /// In ko, this message translates to:
+  /// **'개발 인증서 {count}개 (개인 키 있음)'**
+  String checkCertificateOk(String count);
+
+  /// No description provided for @checkCertificateFail.
+  ///
+  /// In ko, this message translates to:
+  /// **'사용할 수 있는 Apple Development 인증서가 없음'**
+  String get checkCertificateFail;
+
+  /// No description provided for @checkCertExpiryOk.
+  ///
+  /// In ko, this message translates to:
+  /// **'{name} · {days}일 남음'**
+  String checkCertExpiryOk(String name, String days);
+
+  /// No description provided for @checkCertExpiryWarn.
+  ///
+  /// In ko, this message translates to:
+  /// **'{name} · {days}일 뒤 만료'**
+  String checkCertExpiryWarn(String name, String days);
+
+  /// No description provided for @checkCertExpiryFail.
+  ///
+  /// In ko, this message translates to:
+  /// **'{name} · 만료됨'**
+  String checkCertExpiryFail(String name);
+
+  /// No description provided for @stepsCertificate.
+  ///
+  /// In ko, this message translates to:
+  /// **'1. Xcode → Settings → Accounts에서 Apple ID로 로그인합니다\n2. Manage Certificates → + → Apple Development을 추가합니다\n3. 다시 점검을 누릅니다'**
+  String get stepsCertificate;
+
+  /// No description provided for @stepsFlutterMissing.
+  ///
+  /// In ko, this message translates to:
+  /// **'1. flutter.dev에서 Flutter SDK를 설치합니다\n2. flutter/bin을 PATH에 추가합니다 (~/.zshrc)\n3. 앱을 다시 열고 점검을 누릅니다'**
+  String get stepsFlutterMissing;
+
+  /// No description provided for @stepsFlutterMissingWindows.
+  ///
+  /// In ko, this message translates to:
+  /// **'1. flutter.dev에서 Flutter SDK를 설치합니다\n2. flutter\\bin 폴더를 PATH에 추가하거나, 위의 \'도구 경로 지정\'에서 flutter.bat을 직접 고릅니다\n3. 다시 점검을 누릅니다'**
+  String get stepsFlutterMissingWindows;
+
+  /// No description provided for @stepsXcodeMissing.
+  ///
+  /// In ko, this message translates to:
+  /// **'1. App Store에서 Xcode를 설치합니다\n2. 터미널에서 sudo xcode-select -s /Applications/Xcode.app 를 실행합니다\n3. Xcode를 한 번 열어 라이선스에 동의합니다'**
+  String get stepsXcodeMissing;
+
+  /// No description provided for @stepsAdbMissing.
+  ///
+  /// In ko, this message translates to:
+  /// **'1. Android SDK platform-tools를 설치합니다 (Android Studio SDK Manager)\n2. platform-tools 폴더를 PATH에 추가합니다\n3. 다시 점검을 누릅니다'**
+  String get stepsAdbMissing;
+
+  /// No description provided for @stepsCertExpiry.
+  ///
+  /// In ko, this message translates to:
+  /// **'1. Xcode → Settings → Accounts → Manage Certificates에서 새 Apple Development 인증서를 만듭니다\n2. 다시 점검을 누릅니다'**
+  String get stepsCertExpiry;
+
+  /// No description provided for @toolPathsOpen.
+  ///
+  /// In ko, this message translates to:
+  /// **'도구 경로 지정…'**
+  String get toolPathsOpen;
+
+  /// No description provided for @toolPathsTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'도구 경로'**
+  String get toolPathsTitle;
+
+  /// No description provided for @toolPathsHelp.
+  ///
+  /// In ko, this message translates to:
+  /// **'PATH에서 찾지 못하는 도구는 직접 지정할 수 있습니다. 한 번 지정하면 저장되고 다음 실행에도 쓰입니다. 폴더가 아니라 실행 파일을 고르세요.'**
+  String get toolPathsHelp;
+
+  /// No description provided for @toolPathNotFound.
+  ///
+  /// In ko, this message translates to:
+  /// **'찾지 못함'**
+  String get toolPathNotFound;
+
+  /// No description provided for @toolPathChoose.
+  ///
+  /// In ko, this message translates to:
+  /// **'찾아서 지정…'**
+  String get toolPathChoose;
+
+  /// No description provided for @toolPathAuto.
+  ///
+  /// In ko, this message translates to:
+  /// **'자동으로'**
+  String get toolPathAuto;
+
+  /// No description provided for @toolPathCustom.
+  ///
+  /// In ko, this message translates to:
+  /// **'직접 지정'**
+  String get toolPathCustom;
+
+  /// No description provided for @toolPathFlutter.
+  ///
+  /// In ko, this message translates to:
+  /// **'flutter'**
+  String get toolPathFlutter;
+
+  /// No description provided for @toolPathAdb.
+  ///
+  /// In ko, this message translates to:
+  /// **'adb (Android SDK platform-tools)'**
+  String get toolPathAdb;
+
+  /// No description provided for @checkWindowsDevModeOk.
+  ///
+  /// In ko, this message translates to:
+  /// **'Windows 개발자 모드 켜짐 (플러그인 링크를 만들 수 있음)'**
+  String get checkWindowsDevModeOk;
+
+  /// No description provided for @checkWindowsDevModeWarn.
+  ///
+  /// In ko, this message translates to:
+  /// **'Windows 개발자 모드가 꺼져 있습니다 (플러그인 링크를 만들지 못해 빌드가 실패할 수 있음)'**
+  String get checkWindowsDevModeWarn;
+
+  /// No description provided for @checkVisualStudioOk.
+  ///
+  /// In ko, this message translates to:
+  /// **'Visual Studio {version} (C++ 도구 있음)'**
+  String checkVisualStudioOk(String version);
+
+  /// No description provided for @checkVisualStudioFail.
+  ///
+  /// In ko, this message translates to:
+  /// **'Visual Studio의 \'C++를 사용한 데스크톱 개발\'이 없습니다 (Windows 앱 빌드에 필요)'**
+  String get checkVisualStudioFail;
+
+  /// No description provided for @stepsWindowsDevMode.
+  ///
+  /// In ko, this message translates to:
+  /// **'1. Windows 설정을 열고 \'개발자용\'(개발자 설정)을 검색해 엽니다\n2. \'개발자 모드\'를 켭니다\n3. 다시 점검을 누릅니다'**
+  String get stepsWindowsDevMode;
+
+  /// No description provided for @stepsVisualStudio.
+  ///
+  /// In ko, this message translates to:
+  /// **'1. Visual Studio 2022(Community 가능)를 설치합니다\n2. 설치 관리자에서 \'C++를 사용한 데스크톱 개발\'을 선택합니다\n3. 다시 빌드합니다'**
+  String get stepsVisualStudio;
+
+  /// No description provided for @settingsSectionEnvironment.
+  ///
+  /// In ko, this message translates to:
+  /// **'환경 점검'**
+  String get settingsSectionEnvironment;
 }
 
 class _AppLocalizationsDelegate

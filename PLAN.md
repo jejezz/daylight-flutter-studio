@@ -15,6 +15,7 @@
 - Run 패널(Flutty Dock 복사): 기기·Debug/Release·빌드·설치, 성공하면 검증 기록(`<git-common-dir>/dock-verify/<sha>.json`), "확인함/문제 있음".
 - Git 패널(Branch Dock 복사): 상태, 가져오기/받기/올리기, PR 만들기·병합, PR head 기준 검증 판정, 변경 파일을 눌러 변경점 보기.
 - 병합 관문: 확인된 커밋만 병합(기본 차단), 예외는 "검증 없이 병합…". 설정 → 병합 관문에서 경고만/끔.
+- 설정 → 환경 점검(이 컴퓨터 전체): flutter·adb·Xcode(Mac)·Windows 개발자 모드·Visual Studio 점검, Mac 서명 인증서·만료일, 도구(flutter·adb) 위치 직접 지정(저장). 프로젝트·기기별 문제(연결·개발자 모드·Team ID 등)는 Run 패널이 막는 항목·실패 힌트로 알려 준다. Flutty Dock의 서명·점검 탭은 따로 가져오지 않았다(서명 상세 보기는 필요해지면).
 - 설정(톱니, Ctrl+,): 밝기·색 구성, 편집기 글자 크기, 병합 관문. 모든 색·글꼴은 `lib/theme/`에만(테스트가 강제).
 
 - 규약(conventions-v1) 적용: 정보 창·오픈소스 라이선스·macOS 앱 메뉴, 한국어/영어(앱 바 `테마|언어|정보`), Saturn 팔레트·SeoulNamsan, 고양이 아이콘, 릴리스 워크플로(`release.yml`, macOS·Windows)와 Windows 설치기, `scripts/bump-version.sh`.

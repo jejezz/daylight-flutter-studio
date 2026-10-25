@@ -1,5 +1,8 @@
+import 'dart:io' show Platform;
+
 import 'package:flutter/material.dart';
 
+import '../doctor/environment_controller.dart';
 import '../l10n/app_localizations.dart';
 import '../settings/gate_settings.dart';
 import '../settings/editor_settings.dart';
@@ -10,23 +13,27 @@ import '../theme/studio_icons.dart';
 import '../theme/editor_theme.dart';
 import '../theme/editor_zoom.dart';
 import '../theme/theme_controller.dart';
+import 'environment_section.dart';
 
 /// 설정 화면의 구역. 왼쪽 목록에 이 순서로 나온다.
 enum SettingsSection {
   appearance,
   editor,
-  gate;
+  gate,
+  environment;
 
   IconData icon(StudioIcons icons) => switch (this) {
     appearance => icons.palette,
     editor => icons.editNote,
     gate => icons.shield,
+    environment => icons.build,
   };
 
   String label(AppLocalizations l10n) => switch (this) {
     appearance => l10n.settingsSectionAppearance,
     editor => l10n.settingsSectionEditor,
     gate => l10n.settingsSectionGate,
+    environment => l10n.settingsSectionEnvironment,
   };
 }
 
@@ -35,12 +42,13 @@ Future<void> showSettingsDialog(
   BuildContext context, {
   required ThemeController theme,
   GateSettings? gate,
+  EnvironmentController? environment,
   SettingsSection initial = SettingsSection.appearance,
 }) {
   return showDialog<void>(
     context: context,
     builder: (context) =>
-        SettingsDialog(theme: theme, gate: gate, initial: initial),
+        SettingsDialog(theme: theme, gate: gate, environment: environment, initial: initial),
   );
 }
 
@@ -49,11 +57,13 @@ class SettingsDialog extends StatefulWidget {
     super.key,
     required this.theme,
     this.gate,
+    this.environment,
     this.initial = SettingsSection.appearance,
   });
 
   final ThemeController theme;
   final GateSettings? gate;
+  final EnvironmentController? environment;
   final SettingsSection initial;
 
   @override
@@ -81,7 +91,8 @@ class _SettingsDialogState extends State<SettingsDialog> {
               child: ListView(
                 children: [
                   for (final s in SettingsSection.values)
-                    if (s != SettingsSection.gate || widget.gate != null)
+                    if ((s != SettingsSection.gate || widget.gate != null) &&
+                        (s != SettingsSection.environment || widget.environment != null))
                       ListTile(
                         selected: s == _section,
                         selectedTileColor: scheme.secondaryContainer,
@@ -102,6 +113,11 @@ class _SettingsDialogState extends State<SettingsDialog> {
                   ),
                   SettingsSection.editor => const _EditorSection(),
                   SettingsSection.gate => _GateSection(gate: widget.gate!),
+                  SettingsSection.environment => EnvironmentSection(
+                    controller: widget.environment!,
+                    hostIsMac: Platform.isMacOS,
+                    hostIsWindows: Platform.isWindows,
+                  ),
                 },
               ),
             ),

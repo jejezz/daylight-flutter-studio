@@ -15,6 +15,8 @@ import '../studio/dart_formatter.dart';
 import '../studio/git_base.dart';
 import '../studio/studio_controller.dart';
 import '../app_identity.dart';
+import '../doctor/diagnostics.dart';
+import '../doctor/environment_controller.dart';
 import '../l10n/app_localizations.dart';
 import '../settings/settings_menus.dart';
 import '../theme/app_theme.dart';
@@ -56,6 +58,10 @@ class _StudioScreenState extends State<StudioScreen>
     formatOnSave: () => EditorSettingsScope.maybeOf(context)?.formatOnSave ?? false,
   );
   late final DartAnalyzer _analyzer = DartAnalyzer(_runner);
+  late final EnvironmentController _env = EnvironmentController(
+    runner: _runner,
+    service: ProcessDiagnosticsService(_runner),
+  );
   late final ProblemsController _problems = ProblemsController(
     analyze: _analyzer.run,
     pubGet: _analyzer.pubGet,
@@ -85,7 +91,9 @@ class _StudioScreenState extends State<StudioScreen>
     _git.addListener(_onGitChanged);
     _run.addListener(_onRunChanged);
     _gate.restore();
-    _run.init();
+    _env.onToolPathsChanged = () => _run.refreshDevices();
+    // 저장해 둔 도구 위치를 먼저 실행기에 넣어야 기기 목록이 같은 flutter·adb를 쓴다.
+    _env.restore().then((_) => _run.init());
   }
 
   @override
@@ -105,6 +113,7 @@ class _StudioScreenState extends State<StudioScreen>
     _git.removeListener(_onGitChanged);
     _run.removeListener(_onRunChanged);
     _gate.dispose();
+    _env.dispose();
     _controller.removeListener(_onStudioChanged);
     _controller.dispose();
     _run.dispose();
@@ -151,7 +160,7 @@ class _StudioScreenState extends State<StudioScreen>
   }
 
   Future<void> _openSettings() =>
-      showSettingsDialog(context, theme: widget.theme, gate: _gate);
+      showSettingsDialog(context, theme: widget.theme, gate: _gate, environment: _env);
 
   Future<void> _quickOpen() async {
     final root = _controller.root;

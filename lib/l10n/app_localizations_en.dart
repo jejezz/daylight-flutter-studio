@@ -1177,4 +1177,153 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get homeRunOnlyNeedsBuild => 'No release build to run. Build first';
+
+  @override
+  String get doctorRun => 'Check again';
+
+  @override
+  String get doctorRunning => 'Checking…';
+
+  @override
+  String get doctorNever => 'Not checked yet';
+
+  @override
+  String doctorCollected(String time) {
+    return 'Checked at $time';
+  }
+
+  @override
+  String get doctorAllGood => 'No problems found';
+
+  @override
+  String checkFlutterOk(String version) {
+    return 'Flutter $version';
+  }
+
+  @override
+  String checkFlutterRunFail(String error) {
+    return 'flutter ran but failed: $error';
+  }
+
+  @override
+  String get checkFlutterFail => 'flutter wasn\'t found';
+
+  @override
+  String checkXcodeOk(String version) {
+    return 'Xcode $version';
+  }
+
+  @override
+  String get checkXcodeFail => 'Xcode wasn\'t found';
+
+  @override
+  String checkAdbOk(String version) {
+    return 'adb $version';
+  }
+
+  @override
+  String get checkAdbWarn => 'adb wasn\'t found (needed to install on Android)';
+
+  @override
+  String checkCertificateOk(String count) {
+    return '$count development certificate(s) with a private key';
+  }
+
+  @override
+  String get checkCertificateFail => 'No usable Apple Development certificate';
+
+  @override
+  String checkCertExpiryOk(String name, String days) {
+    return '$name · $days days left';
+  }
+
+  @override
+  String checkCertExpiryWarn(String name, String days) {
+    return '$name · expires in $days days';
+  }
+
+  @override
+  String checkCertExpiryFail(String name) {
+    return '$name · expired';
+  }
+
+  @override
+  String get stepsCertificate =>
+      '1. Xcode → Settings → Accounts: sign in with your Apple ID\n2. Manage Certificates → + → add Apple Development\n3. Press Check again';
+
+  @override
+  String get stepsFlutterMissing =>
+      '1. Install the Flutter SDK from flutter.dev\n2. Add flutter/bin to PATH (~/.zshrc)\n3. Reopen the app and press Check again';
+
+  @override
+  String get stepsFlutterMissingWindows =>
+      '1. Install the Flutter SDK from flutter.dev\n2. Add the flutter\\bin folder to PATH, or pick flutter.bat with \"Set tool paths…\" above\n3. Press Check again';
+
+  @override
+  String get stepsXcodeMissing =>
+      '1. Install Xcode from the App Store\n2. In a terminal run sudo xcode-select -s /Applications/Xcode.app\n3. Open Xcode once and accept the license';
+
+  @override
+  String get stepsAdbMissing =>
+      '1. Install the Android SDK platform-tools (Android Studio SDK Manager)\n2. Add the platform-tools folder to PATH\n3. Press Check again';
+
+  @override
+  String get stepsCertExpiry =>
+      '1. Xcode → Settings → Accounts → Manage Certificates: create a new Apple Development certificate\n2. Press Check again';
+
+  @override
+  String get toolPathsOpen => 'Set tool paths…';
+
+  @override
+  String get toolPathsTitle => 'Tool paths';
+
+  @override
+  String get toolPathsHelp =>
+      'Point the app at tools it can\'t find on PATH. The choice is saved and used the next time too. Pick the executable file, not the folder.';
+
+  @override
+  String get toolPathNotFound => 'Not found';
+
+  @override
+  String get toolPathChoose => 'Locate…';
+
+  @override
+  String get toolPathAuto => 'Automatic';
+
+  @override
+  String get toolPathCustom => 'Custom';
+
+  @override
+  String get toolPathFlutter => 'flutter';
+
+  @override
+  String get toolPathAdb => 'adb (Android SDK platform-tools)';
+
+  @override
+  String get checkWindowsDevModeOk =>
+      'Windows Developer Mode is on (plugin links can be created)';
+
+  @override
+  String get checkWindowsDevModeWarn =>
+      'Windows Developer Mode is off (builds can fail because plugin links can\'t be created)';
+
+  @override
+  String checkVisualStudioOk(String version) {
+    return 'Visual Studio $version (C++ tools found)';
+  }
+
+  @override
+  String get checkVisualStudioFail =>
+      'Visual Studio\'s \'Desktop development with C++\' is missing (needed to build the Windows app)';
+
+  @override
+  String get stepsWindowsDevMode =>
+      '1. Open Windows Settings and search for \'For developers\'\n2. Turn on \'Developer Mode\'\n3. Press Check again';
+
+  @override
+  String get stepsVisualStudio =>
+      '1. Install Visual Studio 2022 (Community is fine)\n2. In the installer pick \'Desktop development with C++\'\n3. Build again';
+
+  @override
+  String get settingsSectionEnvironment => 'Environment check';
 }
