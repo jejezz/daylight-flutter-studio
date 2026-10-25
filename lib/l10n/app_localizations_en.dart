@@ -790,4 +790,82 @@ class AppLocalizationsEn extends AppLocalizations {
   String gitFailedExit(int code) {
     return 'Failed (exit code $code)';
   }
+
+  @override
+  String get findHint => 'Find';
+
+  @override
+  String get findReplaceHint => 'Replace with';
+
+  @override
+  String get findNoResults => 'No results';
+
+  @override
+  String findCount(int current, int total) {
+    return '$current/$total';
+  }
+
+  @override
+  String get findMatchCase => 'Match case';
+
+  @override
+  String get findRegex => 'Regular expression';
+
+  @override
+  String get findPrevious => 'Previous (Shift+Enter)';
+
+  @override
+  String get findNext => 'Next (Enter)';
+
+  @override
+  String get findClose => 'Close find (Esc)';
+
+  @override
+  String get findToggleReplace => 'Show/hide replace';
+
+  @override
+  String get findReplaceOne => 'Replace';
+
+  @override
+  String get findReplaceAll => 'Replace all';
+
+  @override
+  String get quickOpenHint => 'Open by file name (Ctrl+P)';
+
+  @override
+  String get quickOpenNoMatch => 'No matching files';
+
+  @override
+  String get quickOpenLoading => 'Reading the file list…';
+
+  @override
+  String get searchTitle => 'Find in project';
+
+  @override
+  String get searchHint => 'Text to find (Enter to search)';
+
+  @override
+  String get searchSearching => 'Searching…';
+
+  @override
+  String get searchNoResults => 'No results';
+
+  @override
+  String searchResultCount(int count) {
+    return '$count matches';
+  }
+
+  @override
+  String searchTruncated(int count) {
+    return 'Stopped at $count matches. Narrow your search.';
+  }
+
+  @override
+  String get searchInvalidPattern => 'The regular expression is invalid';
+
+  @override
+  String get studioQuickOpenTooltip => 'Open file (Ctrl+P)';
+
+  @override
+  String get studioSearchTooltip => 'Find in project (Ctrl+Shift+F)';
 }

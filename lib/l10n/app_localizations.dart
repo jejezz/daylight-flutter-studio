@@ -1459,6 +1459,150 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'실패했습니다 (종료 코드 {code})'**
   String gitFailedExit(int code);
+
+  /// No description provided for @findHint.
+  ///
+  /// In ko, this message translates to:
+  /// **'찾기'**
+  String get findHint;
+
+  /// No description provided for @findReplaceHint.
+  ///
+  /// In ko, this message translates to:
+  /// **'바꿀 내용'**
+  String get findReplaceHint;
+
+  /// No description provided for @findNoResults.
+  ///
+  /// In ko, this message translates to:
+  /// **'결과 없음'**
+  String get findNoResults;
+
+  /// No description provided for @findCount.
+  ///
+  /// In ko, this message translates to:
+  /// **'{current}/{total}'**
+  String findCount(int current, int total);
+
+  /// No description provided for @findMatchCase.
+  ///
+  /// In ko, this message translates to:
+  /// **'대소문자 구분'**
+  String get findMatchCase;
+
+  /// No description provided for @findRegex.
+  ///
+  /// In ko, this message translates to:
+  /// **'정규식'**
+  String get findRegex;
+
+  /// No description provided for @findPrevious.
+  ///
+  /// In ko, this message translates to:
+  /// **'이전 (Shift+Enter)'**
+  String get findPrevious;
+
+  /// No description provided for @findNext.
+  ///
+  /// In ko, this message translates to:
+  /// **'다음 (Enter)'**
+  String get findNext;
+
+  /// No description provided for @findClose.
+  ///
+  /// In ko, this message translates to:
+  /// **'찾기 닫기 (Esc)'**
+  String get findClose;
+
+  /// No description provided for @findToggleReplace.
+  ///
+  /// In ko, this message translates to:
+  /// **'바꾸기 보기/숨기기'**
+  String get findToggleReplace;
+
+  /// No description provided for @findReplaceOne.
+  ///
+  /// In ko, this message translates to:
+  /// **'바꾸기'**
+  String get findReplaceOne;
+
+  /// No description provided for @findReplaceAll.
+  ///
+  /// In ko, this message translates to:
+  /// **'모두 바꾸기'**
+  String get findReplaceAll;
+
+  /// No description provided for @quickOpenHint.
+  ///
+  /// In ko, this message translates to:
+  /// **'파일 이름으로 열기 (Ctrl+P)'**
+  String get quickOpenHint;
+
+  /// No description provided for @quickOpenNoMatch.
+  ///
+  /// In ko, this message translates to:
+  /// **'맞는 파일이 없습니다'**
+  String get quickOpenNoMatch;
+
+  /// No description provided for @quickOpenLoading.
+  ///
+  /// In ko, this message translates to:
+  /// **'파일 목록을 읽는 중…'**
+  String get quickOpenLoading;
+
+  /// No description provided for @searchTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'프로젝트에서 찾기'**
+  String get searchTitle;
+
+  /// No description provided for @searchHint.
+  ///
+  /// In ko, this message translates to:
+  /// **'찾을 글 (Enter로 검색)'**
+  String get searchHint;
+
+  /// No description provided for @searchSearching.
+  ///
+  /// In ko, this message translates to:
+  /// **'찾는 중…'**
+  String get searchSearching;
+
+  /// No description provided for @searchNoResults.
+  ///
+  /// In ko, this message translates to:
+  /// **'결과가 없습니다'**
+  String get searchNoResults;
+
+  /// No description provided for @searchResultCount.
+  ///
+  /// In ko, this message translates to:
+  /// **'{count}곳'**
+  String searchResultCount(int count);
+
+  /// No description provided for @searchTruncated.
+  ///
+  /// In ko, this message translates to:
+  /// **'{count}곳에서 멈췄습니다. 더 좁혀서 찾아 보세요.'**
+  String searchTruncated(int count);
+
+  /// No description provided for @searchInvalidPattern.
+  ///
+  /// In ko, this message translates to:
+  /// **'정규식이 올바르지 않습니다'**
+  String get searchInvalidPattern;
+
+  /// No description provided for @studioQuickOpenTooltip.
+  ///
+  /// In ko, this message translates to:
+  /// **'파일 열기 (Ctrl+P)'**
+  String get studioQuickOpenTooltip;
+
+  /// No description provided for @studioSearchTooltip.
+  ///
+  /// In ko, this message translates to:
+  /// **'프로젝트에서 찾기 (Ctrl+Shift+F)'**
+  String get studioSearchTooltip;
 }
 
 class _AppLocalizationsDelegate

@@ -13,6 +13,7 @@ import '../theme/editor_zoom.dart';
 import '../problems/problems_controller.dart';
 import 'change_gutter.dart';
 import 'diff_view.dart';
+import 'find_panel.dart';
 import 'markdown_view.dart';
 import 'problem_gutter.dart';
 
@@ -150,6 +151,7 @@ class _CodeViewState extends State<_CodeView> {
         controller: tab.controller,
         scrollController: _scroll,
         wordWrap: false,
+        findBuilder: (context, find, readOnly) => FindPanel(controller: find, readOnly: readOnly),
         padding: EdgeInsets.all(t.spaceSm),
         chunkAnalyzer: tab.language.isDart ? const DartChunkAnalyzer() : const DefaultCodeChunkAnalyzer(),
         style: buildEditorStyle(context, languageId: tab.language.id, mode: mode),

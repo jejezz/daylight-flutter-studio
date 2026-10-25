@@ -25,6 +25,9 @@ import 'editor_pane.dart';
 import 'git_panel.dart';
 import 'problems_panel.dart';
 import 'run_panel.dart';
+import '../studio/project_index.dart';
+import 'project_search.dart';
+import 'quick_open.dart';
 import 'settings_dialog.dart';
 import 'tree_pane.dart';
 
@@ -148,6 +151,24 @@ class _StudioScreenState extends State<StudioScreen>
   Future<void> _openSettings() =>
       showSettingsDialog(context, theme: widget.theme, gate: _gate);
 
+  Future<void> _quickOpen() async {
+    final root = _controller.root;
+    if (root == null) return;
+    final path = await showQuickOpen(context, root: root, files: listProjectFiles(root));
+    if (path != null) await _controller.openFile(path);
+  }
+
+  Future<void> _searchProject() async {
+    final root = _controller.root;
+    if (root == null) return;
+    await showProjectSearch(
+      context,
+      root: root,
+      files: listProjectFiles(root),
+      onOpen: (path, line, column) => _controller.openAt(path, line, column),
+    );
+  }
+
   Future<void> _pickProject() async {
     final dir = await getDirectoryPath(confirmButtonText: AppLocalizations.of(context).studioOpenProject);
     if (dir != null) await _controller.openProject(dir);
@@ -166,6 +187,10 @@ class _StudioScreenState extends State<StudioScreen>
                 _openSettings,
             const SingleActivator(LogicalKeyboardKey.comma, meta: true):
                 _openSettings,
+            const SingleActivator(LogicalKeyboardKey.keyP, control: true): _quickOpen,
+            const SingleActivator(LogicalKeyboardKey.keyP, meta: true): _quickOpen,
+            const SingleActivator(LogicalKeyboardKey.keyF, control: true, shift: true): _searchProject,
+            const SingleActivator(LogicalKeyboardKey.keyF, meta: true, shift: true): _searchProject,
           },
           child: Focus(
             autofocus: true,
@@ -183,6 +208,18 @@ class _StudioScreenState extends State<StudioScreen>
                     icon: const Icon(Icons.folder_open, size: 18),
                     label: Text(AppLocalizations.of(context).studioOpenProject),
                   ),
+                  if (root != null) ...[
+                    IconButton(
+                      tooltip: AppLocalizations.of(context).studioQuickOpenTooltip,
+                      icon: const Icon(Icons.search),
+                      onPressed: _quickOpen,
+                    ),
+                    IconButton(
+                      tooltip: AppLocalizations.of(context).studioSearchTooltip,
+                      icon: const Icon(Icons.manage_search),
+                      onPressed: _searchProject,
+                    ),
+                  ],
                   IconButton(
                     tooltip: AppLocalizations.of(context).studioSettingsTooltip,
                     icon: const Icon(Icons.settings_outlined),

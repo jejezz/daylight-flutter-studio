@@ -767,4 +767,82 @@ class AppLocalizationsKo extends AppLocalizations {
   String gitFailedExit(int code) {
     return '실패했습니다 (종료 코드 $code)';
   }
+
+  @override
+  String get findHint => '찾기';
+
+  @override
+  String get findReplaceHint => '바꿀 내용';
+
+  @override
+  String get findNoResults => '결과 없음';
+
+  @override
+  String findCount(int current, int total) {
+    return '$current/$total';
+  }
+
+  @override
+  String get findMatchCase => '대소문자 구분';
+
+  @override
+  String get findRegex => '정규식';
+
+  @override
+  String get findPrevious => '이전 (Shift+Enter)';
+
+  @override
+  String get findNext => '다음 (Enter)';
+
+  @override
+  String get findClose => '찾기 닫기 (Esc)';
+
+  @override
+  String get findToggleReplace => '바꾸기 보기/숨기기';
+
+  @override
+  String get findReplaceOne => '바꾸기';
+
+  @override
+  String get findReplaceAll => '모두 바꾸기';
+
+  @override
+  String get quickOpenHint => '파일 이름으로 열기 (Ctrl+P)';
+
+  @override
+  String get quickOpenNoMatch => '맞는 파일이 없습니다';
+
+  @override
+  String get quickOpenLoading => '파일 목록을 읽는 중…';
+
+  @override
+  String get searchTitle => '프로젝트에서 찾기';
+
+  @override
+  String get searchHint => '찾을 글 (Enter로 검색)';
+
+  @override
+  String get searchSearching => '찾는 중…';
+
+  @override
+  String get searchNoResults => '결과가 없습니다';
+
+  @override
+  String searchResultCount(int count) {
+    return '$count곳';
+  }
+
+  @override
+  String searchTruncated(int count) {
+    return '$count곳에서 멈췄습니다. 더 좁혀서 찾아 보세요.';
+  }
+
+  @override
+  String get searchInvalidPattern => '정규식이 올바르지 않습니다';
+
+  @override
+  String get studioQuickOpenTooltip => '파일 열기 (Ctrl+P)';
+
+  @override
+  String get studioSearchTooltip => '프로젝트에서 찾기 (Ctrl+Shift+F)';
 }
