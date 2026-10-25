@@ -85,7 +85,7 @@ void main() {
     late EditorZoom zoom;
 
     Widget app() => MaterialApp(
-      theme: AppTheme.build(StudioPalette.indigo, Brightness.light),
+      theme: AppTheme.build(StudioPalette.saturn, Brightness.light),
       builder: (context, child) => EditorZoomScope(zoom: zoom, child: child!),
       home: Scaffold(
         body: ListenableBuilder(

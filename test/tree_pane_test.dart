@@ -26,7 +26,7 @@ void main() {
   });
 
   Widget app() => MaterialApp(
-    theme: AppTheme.build(StudioPalette.indigo, Brightness.light),
+    theme: AppTheme.build(StudioPalette.saturn, Brightness.light),
     // 실제 화면의 트리 영역과 같은 너비 (스크린샷의 260px대).
     home: Scaffold(body: SizedBox(width: 260, height: 600, child: TreePane(controller: c))),
   );

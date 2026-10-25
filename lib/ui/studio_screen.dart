@@ -14,7 +14,11 @@ import '../problems/problems_controller.dart';
 import '../studio/dart_formatter.dart';
 import '../studio/git_base.dart';
 import '../studio/studio_controller.dart';
+import '../app_identity.dart';
+import '../l10n/app_localizations.dart';
+import '../settings/settings_menus.dart';
 import '../theme/app_theme.dart';
+import '../window/focus_tint.dart';
 import '../theme/theme_controller.dart';
 import '../verify/verify_store.dart';
 import 'editor_pane.dart';
@@ -26,9 +30,12 @@ import 'tree_pane.dart';
 
 /// 프로젝트 트리 | 편집기 | Dock 패널 (3단) + 하단 상태 막대.
 class StudioScreen extends StatefulWidget {
-  const StudioScreen({super.key, required this.theme});
+  const StudioScreen({super.key, required this.theme, this.onAbout});
 
   final ThemeController theme;
+
+  /// 정보 창을 여는 동작 (앱 바 오른쪽 `테마 | 언어 | 정보`). 없으면 정보 단추를 두지 않는다.
+  final VoidCallback? onAbout;
 
   @override
   State<StudioScreen> createState() => _StudioScreenState();
@@ -164,9 +171,10 @@ class _StudioScreenState extends State<StudioScreen>
             autofocus: true,
             child: Scaffold(
               appBar: AppBar(
+                flexibleSpace: const FocusTint(),
                 title: Text(
                   root == null
-                      ? 'Daylight Flutter Studio'
+                      ? AppIdentity.displayName
                       : root.split(RegExp(r'[/\\]')).last,
                 ),
                 actions: [
@@ -180,6 +188,14 @@ class _StudioScreenState extends State<StudioScreen>
                     icon: const Icon(Icons.settings_outlined),
                     onPressed: _openSettings,
                   ),
+                  const ThemeMenuButton(),
+                  const LanguageMenuButton(),
+                  if (widget.onAbout != null)
+                    IconButton(
+                      tooltip: AppLocalizations.of(context).aboutTooltip,
+                      icon: const Icon(Icons.info_outline_rounded),
+                      onPressed: widget.onAbout,
+                    ),
                   SizedBox(width: t.spaceSm),
                 ],
               ),

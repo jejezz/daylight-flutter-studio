@@ -278,7 +278,7 @@ void main() {
       await c.refreshVerdict();
       await tester.pumpWidget(
         MaterialApp(
-          theme: AppTheme.build(StudioPalette.indigo, Brightness.light),
+          theme: AppTheme.build(StudioPalette.saturn, Brightness.light),
           home: Scaffold(body: GitPanel(controller: c)),
         ),
       );
@@ -410,7 +410,7 @@ void main() {
     });
 
     Widget app({GateSettings? g}) => MaterialApp(
-      theme: AppTheme.build(StudioPalette.indigo, Brightness.light),
+      theme: AppTheme.build(StudioPalette.saturn, Brightness.light),
       home: Builder(
         builder: (context) => Scaffold(
           body: Center(

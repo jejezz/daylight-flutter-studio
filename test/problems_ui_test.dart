@@ -27,7 +27,7 @@ void main() {
   String file(String name) => '${pkg.path}${_sep}lib$_sep$name';
 
   Widget app(Widget body) => MaterialApp(
-    theme: AppTheme.build(StudioPalette.indigo, Brightness.light),
+    theme: AppTheme.build(StudioPalette.saturn, Brightness.light),
     home: Scaffold(body: body),
   );
 
@@ -169,7 +169,7 @@ void main() {
       await tester.pumpWidget(editor());
       await tester.pump(const Duration(milliseconds: 100));
 
-      final tokens = AppTheme.build(StudioPalette.indigo, Brightness.light).extension<StudioTokens>()!;
+      final tokens = AppTheme.build(StudioPalette.saturn, Brightness.light).extension<StudioTokens>()!;
       final gutter = tester.renderObject(find.descendant(of: find.byType(ProblemGutter), matching: find.byType(CustomPaint)).last);
       expect(gutter, paints..circle(color: tokens.danger)..circle(color: tokens.warning));
       await unmount(tester);
