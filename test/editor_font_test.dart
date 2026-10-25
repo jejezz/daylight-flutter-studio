@@ -6,8 +6,16 @@ import 'package:daylight_flutter_studio/theme/editor_zoom.dart';
 import 'package:daylight_flutter_studio/theme/theme_controller.dart';
 import 'package:daylight_flutter_studio/ui/settings_dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:re_editor/re_editor.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+CodeEditorStyle buildEditorStyleForTest(WidgetTester tester) {
+  late CodeEditorStyle style;
+  final context = tester.element(find.byType(AlertDialog));
+  style = buildEditorStyle(context, languageId: 'dart');
+  return style;
+}
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -92,6 +100,25 @@ void main() {
     await tester.tap(find.byTooltip('기본 줄 간격으로'));
     await tester.pump();
     expect(editor.lineHeight, isNull);
+  });
+
+  testWidgets('Text로 그린 편집기 글자는 주변 글자 모양을 물려받지 않아 편집기와 같다', (tester) async {
+    await editor.setFontName('Fira Code');
+    await tester.pumpWidget(
+      app(
+        (context) => AlertDialog(
+          content: Text('code', style: editorTextStyle(context), strutStyle: editorStrutStyle(context)),
+        ),
+      ),
+    );
+    final span = tester.widget<RichText>(find.descendant(of: find.text('code'), matching: find.byType(RichText))).text as TextSpan;
+    expect(span.style!.letterSpacing, 0);
+    expect(span.style!.fontWeight, FontWeight.w400);
+    expect(span.style!.fontFamily, contains('Fira Code'));
+    final style = buildEditorStyleForTest(tester);
+    expect(style.fontFamily, span.style!.fontFamily);
+    expect(style.fontHeight, span.style!.height);
+    expect(style.fontSize, span.style!.fontSize);
   });
 
   test('글꼴·줄 간격은 저장되고 다시 읽힌다', () async {

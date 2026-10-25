@@ -167,10 +167,11 @@ class _RowView extends StatelessWidget {
       DiffRowKind.removed => (t.danger.withValues(alpha: 0.14), '−', t.danger),
       _ => (null, ' ', scheme.outline),
     };
+    final strut = editorStrutStyle(context);
     final numStyle = style.copyWith(color: scheme.outline);
     Widget number(int? n) => SizedBox(
       width: numWidth,
-      child: Text(n?.toString() ?? '', textAlign: TextAlign.right, style: numStyle),
+      child: Text(n?.toString() ?? '', textAlign: TextAlign.right, strutStyle: strut, style: numStyle),
     );
 
     return Container(
@@ -183,9 +184,9 @@ class _RowView extends StatelessWidget {
           SizedBox(width: t.spaceXs),
           number(row.newNo),
           SizedBox(width: t.spaceSm),
-          Text(marker, style: style.copyWith(color: markerColor, fontWeight: FontWeight.bold)),
+          Text(marker, strutStyle: strut, style: style.copyWith(color: markerColor, fontWeight: FontWeight.bold)),
           SizedBox(width: t.spaceSm),
-          Expanded(child: Text(row.text.isEmpty ? ' ' : row.text, style: style.copyWith(color: scheme.onSurface))),
+          Expanded(child: Text(row.text.isEmpty ? ' ' : row.text, strutStyle: strut, style: style.copyWith(color: scheme.onSurface))),
         ],
       ),
     );
