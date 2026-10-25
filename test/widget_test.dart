@@ -6,6 +6,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
   test('worktree list --porcelain 출력을 읽는다', () {
     const out = 'worktree C:/repo\nHEAD abc\nbranch refs/heads/main\n\n'
         'worktree C:/repo/.claude/worktrees/fix-a\nHEAD def\nbranch refs/heads/claude/fix-a\n\n'

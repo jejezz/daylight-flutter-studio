@@ -28,7 +28,7 @@ class StudioScreen extends StatefulWidget {
   State<StudioScreen> createState() => _StudioScreenState();
 }
 
-class _StudioScreenState extends State<StudioScreen> {
+class _StudioScreenState extends State<StudioScreen> with WidgetsBindingObserver {
   late final CommandLog _log = CommandLog();
   late final CommandRunner _runner = CommandRunner(_log);
   late final StudioController _controller = StudioController(formatDart: DartFormatter(_runner).format);
@@ -45,13 +45,25 @@ class _StudioScreenState extends State<StudioScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _controller.addListener(_onStudioChanged);
     _controller.restore();
+    _controller.startWatching();
     _run.init();
   }
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    // 다른 창(Claude Code, 터미널)에서 돌아오면 바로 디스크 변경을 확인하고 트리를 새로 읽는다.
+    if (state == AppLifecycleState.resumed) {
+      _controller.checkExternalChanges();
+      _controller.refreshTree();
+    }
+  }
+
+  @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _controller.removeListener(_onStudioChanged);
     _controller.dispose();
     _run.dispose();
@@ -174,11 +186,20 @@ class _TreePane extends StatelessWidget {
               onChanged: (w) => w == null ? null : controller.switchWorktree(w),
             ),
           ),
+        Align(
+          alignment: Alignment.centerRight,
+          child: IconButton(
+            tooltip: '트리 새로 고침',
+            icon: const Icon(Icons.refresh, size: 16),
+            onPressed: controller.refreshTree,
+          ),
+        ),
         Expanded(
           child: FileTree(
             key: ValueKey(root),
             root: root,
             activePath: controller.activeTab?.path,
+            revision: controller.treeRevision,
             onOpenFile: controller.openFile,
           ),
         ),

@@ -4,10 +4,13 @@ import 'package:flutter/material.dart';
 
 /// 폴더를 펼칠 때 내용을 읽는 파일 트리.
 class FileTree extends StatelessWidget {
-  const FileTree({super.key, required this.root, required this.onOpenFile, this.activePath});
+  const FileTree({super.key, required this.root, required this.onOpenFile, this.activePath, this.revision = 0});
 
   final String root;
   final String? activePath;
+
+  /// 올라가면 펼쳐진 폴더의 내용을 다시 읽는다.
+  final int revision;
   final void Function(String path) onOpenFile;
 
   @override
@@ -20,6 +23,7 @@ class FileTree extends StatelessWidget {
           path: root,
           depth: 0,
           initiallyExpanded: true,
+          revision: revision,
           activePath: activePath,
           onOpenFile: onOpenFile,
         ),
@@ -39,12 +43,14 @@ class _DirNode extends StatefulWidget {
     required this.depth,
     required this.activePath,
     required this.onOpenFile,
+    required this.revision,
     this.initiallyExpanded = false,
   });
 
   final String path;
   final int depth;
   final bool initiallyExpanded;
+  final int revision;
   final String? activePath;
   final void Function(String path) onOpenFile;
 
@@ -63,6 +69,12 @@ class _DirNodeState extends State<_DirNode> {
     if (_expanded) _load();
   }
 
+  @override
+  void didUpdateWidget(_DirNode old) {
+    super.didUpdateWidget(old);
+    if (old.revision != widget.revision && _expanded) _load();
+  }
+
   Future<void> _load() async {
     try {
       final list = await Directory(widget.path).list(followLinks: false).toList();
@@ -72,7 +84,12 @@ class _DirNodeState extends State<_DirNode> {
         if (ad != bd) return ad ? -1 : 1;
         return _baseName(a.path).toLowerCase().compareTo(_baseName(b.path).toLowerCase());
       });
-      if (mounted) setState(() => _children = list);
+      if (mounted) {
+        setState(() {
+          _children = list;
+          _error = null;
+        });
+      }
     } on FileSystemException catch (e) {
       if (mounted) setState(() => _error = e.message);
     }
@@ -117,6 +134,7 @@ class _DirNodeState extends State<_DirNode> {
                 key: ValueKey(e.path),
                 path: e.path,
                 depth: widget.depth + 1,
+                revision: widget.revision,
                 activePath: widget.activePath,
                 onOpenFile: widget.onOpenFile,
               )

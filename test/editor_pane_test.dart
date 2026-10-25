@@ -122,6 +122,33 @@ void main() {
     await _unmount(tester);
   });
 
+  testWidgets('수정 중에 디스크가 바뀌면 배너가 뜨고, 다시 읽기로 디스크 글을 가져온다', (tester) async {
+    final f = write('a.dart', _dart);
+    await tester.runAsync(() => c.openFile(f.path));
+    await tester.pumpWidget(_app(c));
+    await tester.pump();
+
+    final tab = c.activeTab!;
+    tab.controller.text = '// my edit\n';
+    f.writeAsStringSync('// claude edit\n');
+    f.setLastModifiedSync(DateTime.now().add(const Duration(seconds: 5)));
+    await tester.runAsync(c.checkExternalChanges);
+    await tester.pump();
+
+    expect(find.textContaining('디스크의 파일이 바뀌었습니다'), findsOneWidget);
+    expect(tab.controller.text, '// my edit\n');
+
+    expect(find.textContaining('다시 읽기'), findsOneWidget);
+    expect(find.text('내 수정 유지'), findsOneWidget);
+    // 단추가 부르는 동작을 실제 입출력과 함께 돌린다 (가짜 시계 안에서는 파일 읽기가 끝나지 않는다).
+    await tester.runAsync(() => c.reloadFromDisk(tab));
+    await tester.pump();
+
+    expect(find.textContaining('디스크의 파일이 바뀌었습니다'), findsNothing);
+    expect(tab.controller.text, '// claude edit\n');
+    await _unmount(tester);
+  });
+
   testWidgets('다크 테마에서도 편집기가 그려진다', (tester) async {
     final f = write('a.dart', _dart);
     await tester.runAsync(() => c.openFile(f.path));

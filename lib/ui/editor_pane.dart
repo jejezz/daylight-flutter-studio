@@ -23,6 +23,7 @@ class EditorPane extends StatelessWidget {
       children: [
         _TabBar(controller: controller),
         const Divider(),
+        if (tab != null && tab.external != ExternalChange.none) _ExternalBanner(controller: controller, tab: tab),
         if (tab != null) ...[_Toolbar(controller: controller, tab: tab), const Divider()],
         Expanded(
           child: tab == null
@@ -44,6 +45,44 @@ class EditorPane extends StatelessWidget {
                 ),
         ),
       ],
+    );
+  }
+}
+
+/// 열린 파일이 디스크에서 바뀌었을 때, 수정 중인 탭에서 어떻게 할지 고르게 한다.
+class _ExternalBanner extends StatelessWidget {
+  const _ExternalBanner({required this.controller, required this.tab});
+
+  final StudioController controller;
+  final EditorTab tab;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final t = context.tokens;
+    final deleted = tab.external == ExternalChange.deleted;
+    return Container(
+      color: t.warning.withValues(alpha: 0.14),
+      padding: EdgeInsets.symmetric(horizontal: t.spaceMd, vertical: t.spaceXs),
+      child: Row(
+        children: [
+          Icon(Icons.warning_amber_rounded, size: 18, color: t.warning),
+          SizedBox(width: t.spaceSm),
+          Expanded(
+            child: Text(
+              deleted ? '이 파일이 디스크에서 사라졌습니다.' : '디스크의 파일이 바뀌었습니다. 저장하면 그쪽 수정을 덮어씁니다.',
+              style: theme.textTheme.bodySmall,
+            ),
+          ),
+          if (deleted) ...[
+            TextButton(onPressed: () => controller.closeTab(controller.tabs.indexOf(tab)), child: const Text('탭 닫기')),
+            TextButton(onPressed: () => controller.keepMine(tab), child: const Text('그대로 두기')),
+          ] else ...[
+            TextButton(onPressed: () => controller.reloadFromDisk(tab), child: const Text('다시 읽기 (내 수정 버림)')),
+            TextButton(onPressed: () => controller.keepMine(tab), child: const Text('내 수정 유지')),
+          ],
+        ],
+      ),
     );
   }
 }
