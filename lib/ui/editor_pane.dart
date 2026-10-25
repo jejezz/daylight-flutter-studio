@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../studio/studio_controller.dart';
+import '../theme/app_theme.dart';
 
 /// 탭 막대 + 글 편집 영역. Ctrl/Cmd+S로 저장한다.
 class EditorPane extends StatelessWidget {
@@ -32,8 +33,8 @@ class EditorPane extends StatelessWidget {
                     expands: true,
                     textAlignVertical: TextAlignVertical.top,
                     keyboardType: TextInputType.multiline,
-                    style: const TextStyle(fontFamily: 'Consolas', fontFamilyFallback: ['Menlo', 'monospace'], fontSize: 13, height: 1.4),
-                    decoration: const InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.all(12)),
+                    style: context.tokens.editorText,
+                    decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.all(context.tokens.spaceMd)),
                   ),
                 ),
         ),
@@ -66,7 +67,7 @@ class _TabBar extends StatelessWidget {
                 padding: const EdgeInsets.only(left: 12, right: 4),
                 decoration: BoxDecoration(
                   color: active ? theme.colorScheme.surfaceContainerHighest : null,
-                  border: Border(bottom: BorderSide(width: 2, color: active ? theme.colorScheme.primary : Colors.transparent)),
+                  border: Border(bottom: BorderSide(width: 2, color: theme.colorScheme.primary.withValues(alpha: active ? 1 : 0))),
                 ),
                 child: Row(
                   children: [

@@ -108,7 +108,7 @@ class _DirNodeState extends State<_DirNode> {
         if (_expanded && _error != null)
           Padding(
             padding: EdgeInsets.fromLTRB(indent + 20, 2, 8, 2),
-            child: Text(_error!, style: TextStyle(color: theme.colorScheme.error, fontSize: 12)),
+            child: Text(_error!, style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.error)),
           ),
         if (_expanded && _children != null)
           for (final e in _children!)
