@@ -93,6 +93,8 @@ class _StudioScreenState extends State<StudioScreen>
     _run.addListener(_onRunChanged);
     _gate.restore();
     _env.onToolPathsChanged = () => _run.refreshDevices();
+    // clean + pub get이 끝나면 패키지 정보가 새로 생겼으니 문제 탭도 바로 다시 분석한다.
+    _run.onCleaned = _problems.refresh;
     // 저장해 둔 도구 위치를 먼저 실행기에 넣어야 기기 목록이 같은 flutter·adb를 쓴다.
     _env.restore().then((_) => _run.init());
   }
