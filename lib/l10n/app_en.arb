@@ -613,5 +613,113 @@
   },
   "homeActionBuildOnly": "Build only",
   "homeActionRunOnly": "Run only",
-  "homeRunOnlyNeedsBuild": "No release build to run. Build first"
+  "homeRunOnlyNeedsBuild": "No release build to run. Build first",
+  "doctorRun": "Check again",
+  "doctorRunning": "Checking…",
+  "doctorNever": "Not checked yet",
+  "doctorCollected": "Checked at {time}",
+  "@doctorCollected": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "doctorAllGood": "No problems found",
+  "checkFlutterOk": "Flutter {version}",
+  "@checkFlutterOk": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "checkFlutterRunFail": "flutter ran but failed: {error}",
+  "@checkFlutterRunFail": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "checkFlutterFail": "flutter wasn't found",
+  "checkXcodeOk": "Xcode {version}",
+  "@checkXcodeOk": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "checkXcodeFail": "Xcode wasn't found",
+  "checkAdbOk": "adb {version}",
+  "@checkAdbOk": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "checkAdbWarn": "adb wasn't found (needed to install on Android)",
+  "checkCertificateOk": "{count} development certificate(s) with a private key",
+  "@checkCertificateOk": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "checkCertificateFail": "No usable Apple Development certificate",
+  "checkCertExpiryOk": "{name} · {days} days left",
+  "@checkCertExpiryOk": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "days": {
+        "type": "String"
+      }
+    }
+  },
+  "checkCertExpiryWarn": "{name} · expires in {days} days",
+  "@checkCertExpiryWarn": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "days": {
+        "type": "String"
+      }
+    }
+  },
+  "checkCertExpiryFail": "{name} · expired",
+  "@checkCertExpiryFail": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "stepsCertificate": "1. Xcode → Settings → Accounts: sign in with your Apple ID\n2. Manage Certificates → + → add Apple Development\n3. Press Check again",
+  "stepsFlutterMissing": "1. Install the Flutter SDK from flutter.dev\n2. Add flutter/bin to PATH (~/.zshrc)\n3. Reopen the app and press Check again",
+  "stepsFlutterMissingWindows": "1. Install the Flutter SDK from flutter.dev\n2. Add the flutter\\bin folder to PATH, or pick flutter.bat with \"Set tool paths…\" above\n3. Press Check again",
+  "stepsXcodeMissing": "1. Install Xcode from the App Store\n2. In a terminal run sudo xcode-select -s /Applications/Xcode.app\n3. Open Xcode once and accept the license",
+  "stepsAdbMissing": "1. Install the Android SDK platform-tools (Android Studio SDK Manager)\n2. Add the platform-tools folder to PATH\n3. Press Check again",
+  "stepsCertExpiry": "1. Xcode → Settings → Accounts → Manage Certificates: create a new Apple Development certificate\n2. Press Check again",
+  "toolPathsOpen": "Set tool paths…",
+  "toolPathsTitle": "Tool paths",
+  "toolPathsHelp": "Point the app at tools it can't find on PATH. The choice is saved and used the next time too. Pick the executable file, not the folder.",
+  "toolPathNotFound": "Not found",
+  "toolPathChoose": "Locate…",
+  "toolPathAuto": "Automatic",
+  "toolPathCustom": "Custom",
+  "toolPathFlutter": "flutter",
+  "toolPathAdb": "adb (Android SDK platform-tools)",
+  "checkWindowsDevModeOk": "Windows Developer Mode is on (plugin links can be created)",
+  "checkWindowsDevModeWarn": "Windows Developer Mode is off (builds can fail because plugin links can't be created)",
+  "checkVisualStudioOk": "Visual Studio {version} (C++ tools found)",
+  "checkVisualStudioFail": "Visual Studio's 'Desktop development with C++' is missing (needed to build the Windows app)",
+  "stepsWindowsDevMode": "1. Open Windows Settings and search for 'For developers'\n2. Turn on 'Developer Mode'\n3. Press Check again",
+  "stepsVisualStudio": "1. Install Visual Studio 2022 (Community is fine)\n2. In the installer pick 'Desktop development with C++'\n3. Build again",
+  "settingsSectionEnvironment": "Environment check"
 }

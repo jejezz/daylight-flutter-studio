@@ -630,5 +630,120 @@
   },
   "homeActionBuildOnly": "빌드만",
   "homeActionRunOnly": "실행만",
-  "homeRunOnlyNeedsBuild": "실행할 release 결과물이 없습니다. 먼저 빌드하세요"
+  "homeRunOnlyNeedsBuild": "실행할 release 결과물이 없습니다. 먼저 빌드하세요",
+  "doctorRun": "다시 점검",
+  "doctorRunning": "점검 중…",
+  "doctorNever": "아직 점검하지 않았습니다",
+  "doctorCollected": "{time}에 점검함",
+  "@doctorCollected": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "doctorAllGood": "문제가 없습니다",
+  "checkFlutterOk": "Flutter {version}",
+  "@checkFlutterOk": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "checkFlutterRunFail": "flutter를 실행했지만 실패했습니다: {error}",
+  "@checkFlutterRunFail": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "checkFlutterFail": "flutter를 찾지 못했습니다",
+  "checkXcodeOk": "Xcode {version}",
+  "@checkXcodeOk": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "checkXcodeFail": "Xcode를 찾지 못했습니다",
+  "checkAdbOk": "adb {version}",
+  "@checkAdbOk": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "checkAdbWarn": "adb를 찾지 못했습니다 (Android 설치에 필요)",
+  "checkCertificateOk": "개발 인증서 {count}개 (개인 키 있음)",
+  "@checkCertificateOk": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "checkCertificateFail": "사용할 수 있는 Apple Development 인증서가 없음",
+  "checkCertExpiryOk": "{name} · {days}일 남음",
+  "@checkCertExpiryOk": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "days": {
+        "type": "String"
+      }
+    }
+  },
+  "checkCertExpiryWarn": "{name} · {days}일 뒤 만료",
+  "@checkCertExpiryWarn": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "days": {
+        "type": "String"
+      }
+    }
+  },
+  "checkCertExpiryFail": "{name} · 만료됨",
+  "@checkCertExpiryFail": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "stepsCertificate": "1. Xcode → Settings → Accounts에서 Apple ID로 로그인합니다\n2. Manage Certificates → + → Apple Development을 추가합니다\n3. 다시 점검을 누릅니다",
+  "stepsFlutterMissing": "1. flutter.dev에서 Flutter SDK를 설치합니다\n2. flutter/bin을 PATH에 추가합니다 (~/.zshrc)\n3. 앱을 다시 열고 점검을 누릅니다",
+  "stepsFlutterMissingWindows": "1. flutter.dev에서 Flutter SDK를 설치합니다\n2. flutter\\bin 폴더를 PATH에 추가하거나, 위의 '도구 경로 지정'에서 flutter.bat을 직접 고릅니다\n3. 다시 점검을 누릅니다",
+  "stepsXcodeMissing": "1. App Store에서 Xcode를 설치합니다\n2. 터미널에서 sudo xcode-select -s /Applications/Xcode.app 를 실행합니다\n3. Xcode를 한 번 열어 라이선스에 동의합니다",
+  "stepsAdbMissing": "1. Android SDK platform-tools를 설치합니다 (Android Studio SDK Manager)\n2. platform-tools 폴더를 PATH에 추가합니다\n3. 다시 점검을 누릅니다",
+  "stepsCertExpiry": "1. Xcode → Settings → Accounts → Manage Certificates에서 새 Apple Development 인증서를 만듭니다\n2. 다시 점검을 누릅니다",
+  "toolPathsOpen": "도구 경로 지정…",
+  "toolPathsTitle": "도구 경로",
+  "toolPathsHelp": "PATH에서 찾지 못하는 도구는 직접 지정할 수 있습니다. 한 번 지정하면 저장되고 다음 실행에도 쓰입니다. 폴더가 아니라 실행 파일을 고르세요.",
+  "toolPathNotFound": "찾지 못함",
+  "toolPathChoose": "찾아서 지정…",
+  "toolPathAuto": "자동으로",
+  "toolPathCustom": "직접 지정",
+  "toolPathFlutter": "flutter",
+  "toolPathAdb": "adb (Android SDK platform-tools)",
+  "checkWindowsDevModeOk": "Windows 개발자 모드 켜짐 (플러그인 링크를 만들 수 있음)",
+  "checkWindowsDevModeWarn": "Windows 개발자 모드가 꺼져 있습니다 (플러그인 링크를 만들지 못해 빌드가 실패할 수 있음)",
+  "checkVisualStudioOk": "Visual Studio {version} (C++ 도구 있음)",
+  "@checkVisualStudioOk": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "checkVisualStudioFail": "Visual Studio의 'C++를 사용한 데스크톱 개발'이 없습니다 (Windows 앱 빌드에 필요)",
+  "stepsWindowsDevMode": "1. Windows 설정을 열고 '개발자용'(개발자 설정)을 검색해 엽니다\n2. '개발자 모드'를 켭니다\n3. 다시 점검을 누릅니다",
+  "stepsVisualStudio": "1. Visual Studio 2022(Community 가능)를 설치합니다\n2. 설치 관리자에서 'C++를 사용한 데스크톱 개발'을 선택합니다\n3. 다시 빌드합니다",
+  "settingsSectionEnvironment": "환경 점검"
 }
