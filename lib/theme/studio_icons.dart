@@ -99,4 +99,6 @@ class StudioIcons {
   IconData get openInFull => _pick(Icons.open_in_full, Icons.open_in_full_outlined, Icons.open_in_full_rounded);
   IconData get pause => _pick(Icons.pause, Icons.pause_outlined, Icons.pause_rounded);
   IconData get bolt => _pick(Icons.bolt, Icons.bolt_outlined, Icons.bolt_rounded);
+  IconData get arrowDropDown => _pick(Icons.arrow_drop_down, Icons.arrow_drop_down_outlined, Icons.arrow_drop_down_rounded);
+  IconData get history => _pick(Icons.history, Icons.history_outlined, Icons.history_rounded);
 }

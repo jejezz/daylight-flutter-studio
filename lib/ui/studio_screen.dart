@@ -31,6 +31,7 @@ import '../settings/editor_settings.dart';
 import '../studio/project_index.dart';
 import 'project_search.dart';
 import 'quick_open.dart';
+import 'recent_projects.dart';
 import 'settings_dialog.dart';
 import 'tree_pane.dart';
 
@@ -219,6 +220,7 @@ class _StudioScreenState extends State<StudioScreen>
                     icon: Icon(context.icons.folderOpen, size: 18),
                     label: Text(AppLocalizations.of(context).studioOpenProject),
                   ),
+                  RecentProjectsMenu(controller: _controller),
                   if (root != null) ...[
                     IconButton(
                       tooltip: AppLocalizations.of(context).studioQuickOpenTooltip,
@@ -249,10 +251,19 @@ class _StudioScreenState extends State<StudioScreen>
               ),
               body: root == null
                   ? Center(
-                      child: FilledButton.icon(
-                        onPressed: _pickProject,
-                        icon: Icon(context.icons.folderOpen),
-                        label: Text(AppLocalizations.of(context).studioOpenProjectFolder),
+                      child: SingleChildScrollView(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            FilledButton.icon(
+                              onPressed: _pickProject,
+                              icon: Icon(context.icons.folderOpen),
+                              label: Text(AppLocalizations.of(context).studioOpenProjectFolder),
+                            ),
+                            SizedBox(height: t.spaceLg),
+                            RecentProjectsList(controller: _controller),
+                          ],
+                        ),
                       ),
                     )
                   : Column(

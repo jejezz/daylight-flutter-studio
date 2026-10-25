@@ -745,5 +745,10 @@
   "checkVisualStudioFail": "Visual Studio의 'C++를 사용한 데스크톱 개발'이 없습니다 (Windows 앱 빌드에 필요)",
   "stepsWindowsDevMode": "1. Windows 설정을 열고 '개발자용'(개발자 설정)을 검색해 엽니다\n2. '개발자 모드'를 켭니다\n3. 다시 점검을 누릅니다",
   "stepsVisualStudio": "1. Visual Studio 2022(Community 가능)를 설치합니다\n2. 설치 관리자에서 'C++를 사용한 데스크톱 개발'을 선택합니다\n3. 다시 빌드합니다",
-  "settingsSectionEnvironment": "환경 점검"
+  "settingsSectionEnvironment": "환경 점검",
+  "studioRecentProjects": "최근 프로젝트",
+  "studioRecentTooltip": "최근 프로젝트 보기",
+  "studioRecentNone": "최근에 연 프로젝트가 없습니다",
+  "studioRecentClear": "목록 지우기",
+  "studioRecentForget": "목록에서 빼기"
 }

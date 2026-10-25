@@ -135,9 +135,16 @@ class StudioController extends ChangeNotifier {
   final bool Function()? formatOnSave;
 
   static const _lastProjectKey = 'last_project';
+  static const _recentKey = 'recent_projects';
+
+  /// 최근 프로젝트를 몇 개까지 기억할지.
+  static const maxRecent = 8;
   static const maxFileBytes = 2 * 1024 * 1024;
 
   String? root;
+
+  /// 최근에 연 프로젝트 폴더 (가장 최근이 앞). "프로젝트 열기" 메뉴에서 다시 연다.
+  List<String> recentProjects = const [];
   List<Worktree> worktrees = const [];
   final List<EditorTab> tabs = [];
   int activeIndex = -1;
@@ -155,6 +162,9 @@ class StudioController extends ChangeNotifier {
   Future<void> restore() async {
     final prefs = await SharedPreferences.getInstance();
     final last = prefs.getString(_lastProjectKey);
+    recentProjects = prefs.getStringList(_recentKey) ?? const [];
+    // 기록이 생기기 전에 열어 둔 프로젝트도 목록에 넣는다.
+    if (last != null && !recentProjects.any((p) => pathKey(p) == pathKey(last))) recentProjects = [last, ...recentProjects];
     if (last != null && Directory(last).existsSync() && await openProject(last)) await _restoreTabs(last);
   }
 
@@ -201,7 +211,8 @@ class StudioController extends ChangeNotifier {
     }
   }
 
-  Future<bool> openProject(String path) async {
+  /// [remember]가 true면 최근 프로젝트 목록 맨 앞에 올린다 (같은 저장소의 다른 worktree로 옮길 때는 false).
+  Future<bool> openProject(String path, {bool remember = true}) async {
     if (!Directory(path).existsSync()) {
       message = CurrentL10n.value.messageFolderUnavailable(path);
       notifyListeners();
@@ -211,8 +222,39 @@ class StudioController extends ChangeNotifier {
     worktrees = await Worktree.list(path);
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_lastProjectKey, path);
+    if (remember) {
+      recentProjects = [path, ...recentProjects.where((p) => pathKey(p) != pathKey(path))].take(maxRecent).toList();
+      await prefs.setStringList(_recentKey, recentProjects);
+    }
     notifyListeners();
     return true;
+  }
+
+  /// 최근 프로젝트에서 다시 연다. 폴더가 사라졌으면 알리고 목록에서 뺀다.
+  Future<bool> openRecent(String path) async {
+    if (await openProject(path)) return true;
+    await forgetRecent(path);
+    return false;
+  }
+
+  Future<void> forgetRecent(String path) async {
+    recentProjects = [for (final p in recentProjects) if (pathKey(p) != pathKey(path)) p];
+    notifyListeners();
+    try {
+      await (await SharedPreferences.getInstance()).setStringList(_recentKey, recentProjects);
+    } on Object {
+      // 기억해 둔 값은 편의일 뿐이다.
+    }
+  }
+
+  Future<void> clearRecent() async {
+    recentProjects = const [];
+    notifyListeners();
+    try {
+      await (await SharedPreferences.getInstance()).remove(_recentKey);
+    } on Object {
+      // 기억해 둔 값은 편의일 뿐이다.
+    }
   }
 
   /// 다른 worktree의 같은 하위 폴더를 연다. 열린 탭은 그대로 둔다.
@@ -223,7 +265,7 @@ class StudioController extends ChangeNotifier {
     var rel = r.length > from.path.length ? r.substring(from.path.length) : '';
     if (rel.startsWith('/') || rel.startsWith(r'\')) rel = rel.substring(1);
     final next = rel.isEmpty ? target.path : '${target.path}${Platform.pathSeparator}$rel';
-    return openProject(Directory(next).existsSync() ? next : target.path);
+    return openProject(Directory(next).existsSync() ? next : target.path, remember: false);
   }
 
   Future<void> refreshWorktrees() async {

@@ -1326,4 +1326,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsSectionEnvironment => 'Environment check';
+
+  @override
+  String get studioRecentProjects => 'Recent projects';
+
+  @override
+  String get studioRecentTooltip => 'Show recent projects';
+
+  @override
+  String get studioRecentNone => 'No recent projects';
+
+  @override
+  String get studioRecentClear => 'Clear list';
+
+  @override
+  String get studioRecentForget => 'Remove from list';
 }

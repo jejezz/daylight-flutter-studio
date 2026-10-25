@@ -721,5 +721,10 @@
   "checkVisualStudioFail": "Visual Studio's 'Desktop development with C++' is missing (needed to build the Windows app)",
   "stepsWindowsDevMode": "1. Open Windows Settings and search for 'For developers'\n2. Turn on 'Developer Mode'\n3. Press Check again",
   "stepsVisualStudio": "1. Install Visual Studio 2022 (Community is fine)\n2. In the installer pick 'Desktop development with C++'\n3. Build again",
-  "settingsSectionEnvironment": "Environment check"
+  "settingsSectionEnvironment": "Environment check",
+  "studioRecentProjects": "Recent projects",
+  "studioRecentTooltip": "Show recent projects",
+  "studioRecentNone": "No recent projects",
+  "studioRecentClear": "Clear list",
+  "studioRecentForget": "Remove from list"
 }
