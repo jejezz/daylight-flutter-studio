@@ -51,11 +51,11 @@ void main() {
     await tester.pump();
 
     expect(
-      find.byIcon(Icons.palette_outlined),
+      find.byIcon(Icons.palette_rounded),
       findsNothing,
       reason: '테마 메뉴는 설정으로 옮겼다',
     );
-    await tester.tap(find.byIcon(Icons.settings_outlined));
+    await tester.tap(find.byIcon(Icons.settings_rounded));
     await tester.pumpAndSettle();
     expect(find.text('밝기'), findsOneWidget);
     await _drainStartup(tester);

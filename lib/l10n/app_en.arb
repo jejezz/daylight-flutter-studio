@@ -548,5 +548,9 @@
   "releaseTagWithoutVerification": "Tag without verification…",
   "releaseUnverifiedTitle": "This commit has not been checked",
   "releaseUnverifiedBody": "If you push the tag anyway, GitHub builds every OS, and a pushed tag is never moved — a problem means releasing a new PATCH.",
-  "releaseTagAnyway": "Tag anyway"
+  "releaseTagAnyway": "Tag anyway",
+  "settingsIconSet": "Icon style",
+  "settingsIconSetRounded": "Rounded",
+  "settingsIconSetOutlined": "Outlined",
+  "settingsIconSetFilled": "Filled"
 }

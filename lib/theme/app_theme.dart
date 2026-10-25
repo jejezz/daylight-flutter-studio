@@ -10,6 +10,7 @@ library;
 
 import 'package:flutter/material.dart';
 
+import 'studio_icons.dart';
 import 'syntax_theme.dart';
 
 /// 고를 수 있는 색 구성. 기본 [saturn]은 규약 팔레트 그대로이고,
@@ -133,6 +134,7 @@ class StudioTokens extends ThemeExtension<StudioTokens> {
     required this.onWarning,
     required this.danger,
     required this.onDanger,
+    required this.icons,
     required this.editorText,
     required this.logText,
     required this.spaceXs,
@@ -152,6 +154,9 @@ class StudioTokens extends ThemeExtension<StudioTokens> {
   final Color danger;
   final Color onDanger;
 
+  /// 지금 아이콘 세트의 의미 이름 아이콘.
+  final StudioIcons icons;
+
   /// 편집기 글꼴, 명령·로그 출력 글꼴.
   final TextStyle editorText;
   final TextStyle logText;
@@ -165,7 +170,7 @@ class StudioTokens extends ThemeExtension<StudioTokens> {
   final double treeIndent;
   final double rowHeight;
 
-  factory StudioTokens.forBrightness(Brightness b) {
+  factory StudioTokens.forBrightness(Brightness b, {StudioIconSet iconSet = StudioIconSet.rounded}) {
     final dark = b == Brightness.dark;
     return StudioTokens(
       success: dark ? const Color(0xFF6FD08C) : const Color(0xFF1B7F3B),
@@ -174,6 +179,7 @@ class StudioTokens extends ThemeExtension<StudioTokens> {
       onWarning: dark ? const Color(0xFF2B1D00) : const Color(0xFFFFFFFF),
       danger: dark ? const Color(0xFFFF8A80) : const Color(0xFFB3261E),
       onDanger: dark ? const Color(0xFF410002) : const Color(0xFFFFFFFF),
+      icons: StudioIcons(iconSet),
       editorText: AppFonts.mono.copyWith(fontSize: 13, height: 1.45),
       logText: AppFonts.mono.copyWith(fontSize: 12, height: 1.4),
       spaceXs: 4,
@@ -195,6 +201,7 @@ class StudioTokens extends ThemeExtension<StudioTokens> {
     Color? onWarning,
     Color? danger,
     Color? onDanger,
+    StudioIcons? icons,
     TextStyle? editorText,
     TextStyle? logText,
     double? spaceXs,
@@ -212,6 +219,7 @@ class StudioTokens extends ThemeExtension<StudioTokens> {
     onWarning: onWarning ?? this.onWarning,
     danger: danger ?? this.danger,
     onDanger: onDanger ?? this.onDanger,
+    icons: icons ?? this.icons,
     editorText: editorText ?? this.editorText,
     logText: logText ?? this.logText,
     spaceXs: spaceXs ?? this.spaceXs,
@@ -234,6 +242,7 @@ class StudioTokens extends ThemeExtension<StudioTokens> {
       onWarning: Color.lerp(onWarning, other.onWarning, t)!,
       danger: Color.lerp(danger, other.danger, t)!,
       onDanger: Color.lerp(onDanger, other.onDanger, t)!,
+      icons: t < 0.5 ? icons : other.icons,
       editorText: TextStyle.lerp(editorText, other.editorText, t)!,
       logText: TextStyle.lerp(logText, other.logText, t)!,
       spaceXs: _d(spaceXs, other.spaceXs, t),
@@ -251,6 +260,8 @@ class StudioTokens extends ThemeExtension<StudioTokens> {
 }
 
 extension StudioTheme on BuildContext {
+  StudioIcons get icons => tokens.icons;
+
   StudioTokens get tokens => Theme.of(this).extension<StudioTokens>()!;
   SyntaxTokens get syntax => Theme.of(this).extension<SyntaxTokens>()!;
 }
@@ -479,12 +490,12 @@ abstract final class _SaturnTheme {
 
 abstract final class AppTheme {
   /// [palette]·[brightness]에 맞는 전체 테마. 컨트롤 모양은 여기서 한곳에 모아 정한다.
-  static ThemeData build(StudioPalette palette, Brightness brightness) {
+  static ThemeData build(StudioPalette palette, Brightness brightness, {StudioIconSet iconSet = StudioIconSet.rounded}) {
     final saturn = brightness == Brightness.dark
         ? _SaturnTheme.dark(palette)
         : _SaturnTheme.light(palette);
     final scheme = saturn.colorScheme;
-    final tokens = StudioTokens.forBrightness(brightness);
+    final tokens = StudioTokens.forBrightness(brightness, iconSet: iconSet);
     final shape = RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(tokens.radius),
     );

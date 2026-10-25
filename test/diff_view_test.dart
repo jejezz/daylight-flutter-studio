@@ -275,13 +275,13 @@ void main() {
       await tester.pump();
       expect(find.byType(CodeEditor), findsOneWidget);
 
-      await tester.tap(find.byIcon(Icons.difference_outlined));
+      await tester.tap(find.byIcon(Icons.difference_rounded));
       await tester.pump();
       expect(find.byType(DiffView), findsOneWidget);
       expect(find.byType(CodeEditor), findsNothing);
       expect(find.text('TWO'), findsOneWidget);
 
-      await tester.tap(find.byIcon(Icons.difference_outlined));
+      await tester.tap(find.byIcon(Icons.difference_rounded));
       await tester.pump();
       expect(find.byType(CodeEditor), findsOneWidget);
       await unmount(tester);
@@ -337,7 +337,7 @@ void main() {
         ),
       );
       await tester.pump();
-      expect(find.byIcon(Icons.difference_outlined), findsNothing);
+      expect(find.byIcon(Icons.difference_rounded), findsNothing);
       await unmount(tester);
     });
 

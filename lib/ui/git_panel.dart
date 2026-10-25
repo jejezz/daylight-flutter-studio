@@ -111,10 +111,10 @@ class _BranchHeader extends StatelessWidget {
       children: [
         Row(
           children: [
-            const Icon(Icons.account_tree_outlined, size: 18),
+            Icon(context.icons.accountTree, size: 18),
             SizedBox(width: t.spaceSm),
             Expanded(child: Text(s.head ?? l10n.gitDetachedHead, style: theme.textTheme.titleMedium, overflow: TextOverflow.ellipsis)),
-            IconButton(tooltip: l10n.gitRefresh, icon: const Icon(Icons.refresh, size: 18), onPressed: controller.busy ? null : controller.refresh),
+            IconButton(tooltip: l10n.gitRefresh, icon: Icon(context.icons.refresh, size: 18), onPressed: controller.busy ? null : controller.refresh),
           ],
         ),
         if (sync.isNotEmpty) Text(sync, style: theme.textTheme.bodySmall),
@@ -198,18 +198,18 @@ class _Sync extends StatelessWidget {
       spacing: t.spaceSm,
       runSpacing: t.spaceSm,
       children: [
-        OutlinedButton.icon(onPressed: busy ? null : controller.fetch, icon: const Icon(Icons.sync, size: 18), label: Text(l10n.gitFetch)),
+        OutlinedButton.icon(onPressed: busy ? null : controller.fetch, icon: Icon(context.icons.sync, size: 18), label: Text(l10n.gitFetch)),
         if (s.behind > 0)
           OutlinedButton.icon(
             onPressed: busy || !s.clean ? null : controller.pull,
-            icon: const Icon(Icons.download, size: 18),
+            icon: Icon(context.icons.download, size: 18),
             label: Text(l10n.gitPull(s.behind)),
           ),
         if (needsPush)
-          FilledButton.icon(onPressed: busy ? null : controller.push, icon: const Icon(Icons.upload, size: 18), label: Text(l10n.gitPush)),
+          FilledButton.icon(onPressed: busy ? null : controller.push, icon: Icon(context.icons.upload, size: 18), label: Text(l10n.gitPush)),
         OutlinedButton.icon(
           onPressed: busy ? null : () => showReleaseDialog(context, controller),
-          icon: const Icon(Icons.rocket_launch_outlined, size: 18),
+          icon: Icon(context.icons.rocketLaunch, size: 18),
           label: Text(l10n.releaseButton),
         ),
         if (busy) const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2)),
@@ -230,15 +230,15 @@ class _VerifyCard extends StatelessWidget {
     final t = context.tokens;
     final v = controller.verdict;
     final (icon, label, color) = switch (v?.state) {
-      VerifyState.verified => (Icons.verified, l10n.gitVerified, t.success),
-      VerifyState.builtOnly => (Icons.build_circle_outlined, l10n.gitBuiltOnly, t.warning),
-      VerifyState.problem => (Icons.report_problem_outlined, l10n.gitVerifyProblem, t.danger),
+      VerifyState.verified => (context.icons.verified, l10n.gitVerified, t.success),
+      VerifyState.builtOnly => (context.icons.buildCircle, l10n.gitBuiltOnly, t.warning),
+      VerifyState.problem => (context.icons.reportProblem, l10n.gitVerifyProblem, t.danger),
       VerifyState.stale => (
-        Icons.update,
+        context.icons.update,
         v!.commitsSince == null ? l10n.gitStaleSome : l10n.gitStaleCount(v.commitsSince!),
         t.warning,
       ),
-      VerifyState.unverified || null => (Icons.help_outline, l10n.gitUnverified, theme.colorScheme.onSurfaceVariant),
+      VerifyState.unverified || null => (context.icons.help, l10n.gitUnverified, theme.colorScheme.onSurfaceVariant),
     };
     final rec = v?.record;
     return Card(
@@ -292,7 +292,7 @@ class _CreatePr extends StatelessWidget {
         if (!pushed) Text(l10n.gitPushFirst, style: theme.textTheme.bodySmall),
         FilledButton.icon(
           onPressed: controller.busy || !pushed ? null : () => controller.createPr(title.text),
-          icon: const Icon(Icons.call_merge, size: 18),
+          icon: Icon(context.icons.callMerge, size: 18),
           label: Text(l10n.gitCreatePr),
         ),
       ],
@@ -324,9 +324,9 @@ class _MergeButtons extends StatelessWidget {
     }
 
     final (color, icon) = switch (decision.action) {
-      GateAction.allow => (t.success, Icons.verified_outlined),
-      GateAction.confirm => (t.warning, Icons.help_outline),
-      GateAction.block => (t.danger, Icons.block),
+      GateAction.allow => (t.success, context.icons.verified),
+      GateAction.confirm => (t.warning, context.icons.help),
+      GateAction.block => (t.danger, context.icons.block),
     };
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -351,7 +351,7 @@ class _MergeButtons extends StatelessWidget {
               : decision.action == GateAction.confirm
               ? mergeWithConfirm
               : () => controller.merge(method, deleteBranch: deleteBranch),
-          icon: const Icon(Icons.merge, size: 18),
+          icon: Icon(context.icons.merge, size: 18),
           label: Text(blocked ? l10n.gitMergeBlocked : decision.action == GateAction.confirm ? l10n.gitMergeConfirm : l10n.gitMerge),
         ),
         if (blocked)

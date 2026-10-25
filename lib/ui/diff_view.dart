@@ -51,7 +51,7 @@ class _DiffViewState extends State<DiffView> {
     final t = context.tokens;
     final base = widget.tab.baseLines;
     if (base == null) {
-      return _Message(icon: Icons.block, text: l10n.diffNotComparable);
+      return _Message(icon: context.icons.block, text: l10n.diffNotComparable);
     }
     _compute(base);
     final counts = countChanges(_blocks);
@@ -83,7 +83,7 @@ class _DiffViewState extends State<DiffView> {
         const Divider(),
         Expanded(
           child: rows.isEmpty
-              ? _Message(icon: Icons.check_circle_outline, text: l10n.diffSameAsHead)
+              ? _Message(icon: context.icons.checkCircle, text: l10n.diffSameAsHead)
               : ZoomWheel(
                   scrollers: [_scroll],
                   child: SelectionArea(
@@ -153,7 +153,7 @@ class _RowView extends StatelessWidget {
           padding: EdgeInsets.symmetric(vertical: t.spaceXs, horizontal: t.spaceMd),
           child: Row(
             children: [
-              Icon(Icons.unfold_more, size: 16, color: scheme.onSurfaceVariant),
+              Icon(context.icons.unfoldMore, size: 16, color: scheme.onSurfaceVariant),
               SizedBox(width: t.spaceSm),
               Text(l10n.diffHiddenLines(row.hidden), style: theme.textTheme.bodySmall),
             ],

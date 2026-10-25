@@ -5,19 +5,22 @@ import '../settings/gate_settings.dart';
 import '../settings/editor_settings.dart';
 import '../theme/app_theme.dart';
 import '../theme/font_probe.dart';
+import '../theme/studio_icons.dart';
 import '../theme/editor_theme.dart';
 import '../theme/editor_zoom.dart';
 import '../theme/theme_controller.dart';
 
 /// 설정 화면의 구역. 왼쪽 목록에 이 순서로 나온다.
 enum SettingsSection {
-  appearance(Icons.palette_outlined),
-  editor(Icons.edit_note_outlined),
-  gate(Icons.shield_outlined);
+  appearance,
+  editor,
+  gate;
 
-  const SettingsSection(this.icon);
-
-  final IconData icon;
+  IconData icon(StudioIcons icons) => switch (this) {
+    appearance => icons.palette,
+    editor => icons.editNote,
+    gate => icons.shield,
+  };
 
   String label(AppLocalizations l10n) => switch (this) {
     appearance => l10n.settingsSectionAppearance,
@@ -81,7 +84,7 @@ class _SettingsDialogState extends State<SettingsDialog> {
                       ListTile(
                         selected: s == _section,
                         selectedTileColor: scheme.secondaryContainer,
-                        leading: Icon(s.icon, size: 20),
+                        leading: Icon(s.icon(context.icons), size: 20),
                         title: Text(s.label(AppLocalizations.of(context))),
                         onTap: () => setState(() => _section = s),
                       ),
@@ -134,6 +137,12 @@ class _AppearanceSection extends StatelessWidget {
 
   final ThemeController theme;
 
+  static String _iconSetLabel(AppLocalizations l10n, StudioIconSet set) => switch (set) {
+    StudioIconSet.rounded => l10n.settingsIconSetRounded,
+    StudioIconSet.outlined => l10n.settingsIconSetOutlined,
+    StudioIconSet.filled => l10n.settingsIconSetFilled,
+  };
+
   static String _palette(AppLocalizations l10n, StudioPalette p) => switch (p) {
     StudioPalette.saturn => l10n.settingsPaletteSaturn,
     StudioPalette.teal => l10n.settingsPaletteTeal,
@@ -157,17 +166,17 @@ class _AppearanceSection extends StatelessWidget {
             segments: [
               ButtonSegment(
                 value: ThemeMode.system,
-                icon: const Icon(Icons.brightness_auto_outlined, size: 16),
+                icon: Icon(context.icons.brightnessAuto, size: 16),
                 label: Text(l10n.settingsBrightnessSystem),
               ),
               ButtonSegment(
                 value: ThemeMode.light,
-                icon: const Icon(Icons.light_mode_outlined, size: 16),
+                icon: Icon(context.icons.lightMode, size: 16),
                 label: Text(l10n.themeLight),
               ),
               ButtonSegment(
                 value: ThemeMode.dark,
-                icon: const Icon(Icons.dark_mode_outlined, size: 16),
+                icon: Icon(context.icons.darkMode, size: 16),
                 label: Text(l10n.themeDark),
               ),
             ],
@@ -184,12 +193,28 @@ class _AppearanceSection extends StatelessWidget {
                   selected: theme.palette == p,
                   showCheckmark: false,
                   avatar: Icon(
-                    Icons.circle,
+                    context.icons.circle,
                     size: 14,
                     color: p.primaryFor(Theme.of(context).brightness),
                   ),
                   label: Text(_palette(l10n, p)),
                   onSelected: (_) => theme.setPalette(p),
+                ),
+            ],
+          ),
+          SizedBox(height: t.spaceMd),
+          _Heading(l10n.settingsIconSet),
+          Wrap(
+            spacing: t.spaceSm,
+            runSpacing: t.spaceSm,
+            children: [
+              for (final set in StudioIconSet.values)
+                ChoiceChip(
+                  selected: theme.iconSet == set,
+                  showCheckmark: false,
+                  avatar: Icon(StudioIcons(set).folderOpen, size: 16),
+                  label: Text(_iconSetLabel(l10n, set)),
+                  onSelected: (_) => theme.setIconSet(set),
                 ),
             ],
           ),
@@ -277,7 +302,7 @@ class _EditorSection extends StatelessWidget {
               ),
               IconButton(
                 tooltip: l10n.settingsResetZoom,
-                icon: const Icon(Icons.restart_alt, size: 18),
+                icon: Icon(context.icons.restartAlt, size: 18),
                 onPressed: zoom.isDefault ? null : zoom.reset,
               ),
             ],
@@ -447,7 +472,7 @@ class _FontSettingsState extends State<_FontSettings> {
                 ),
                 IconButton(
                   tooltip: l10n.settingsLineHeightReset,
-                  icon: const Icon(Icons.restart_alt, size: 18),
+                  icon: Icon(context.icons.restartAlt, size: 18),
                   onPressed: editor.lineHeight == null
                       ? null
                       : () => editor.setLineHeight(null),

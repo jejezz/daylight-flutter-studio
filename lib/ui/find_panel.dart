@@ -80,7 +80,7 @@ class FindPanel extends StatelessWidget implements PreferredSizeWidget {
               children: [
                 if (!readOnly)
                   toggle(
-                    icon: value.replaceMode ? Icons.keyboard_arrow_down : Icons.keyboard_arrow_right,
+                    icon: value.replaceMode ? context.icons.keyboardArrowDown : context.icons.keyboardArrowRight,
                     tooltip: l10n.findToggleReplace,
                     on: false,
                     onTap: controller.toggleMode,
@@ -92,11 +92,11 @@ class FindPanel extends StatelessWidget implements PreferredSizeWidget {
                   onSubmit: controller.nextMatch,
                 ),
                 SizedBox(width: 72, child: Text(status, style: Theme.of(context).textTheme.bodySmall)),
-                toggle(icon: Icons.text_fields, tooltip: l10n.findMatchCase, on: value.option.caseSensitive, onTap: controller.toggleCaseSensitive),
-                toggle(icon: Icons.code, tooltip: l10n.findRegex, on: value.option.regex, onTap: controller.toggleRegex),
-                toggle(icon: Icons.arrow_upward, tooltip: l10n.findPrevious, on: false, onTap: controller.previousMatch),
-                toggle(icon: Icons.arrow_downward, tooltip: l10n.findNext, on: false, onTap: controller.nextMatch),
-                toggle(icon: Icons.close, tooltip: l10n.findClose, on: false, onTap: controller.close),
+                toggle(icon: context.icons.textFields, tooltip: l10n.findMatchCase, on: value.option.caseSensitive, onTap: controller.toggleCaseSensitive),
+                toggle(icon: context.icons.code, tooltip: l10n.findRegex, on: value.option.regex, onTap: controller.toggleRegex),
+                toggle(icon: context.icons.arrowUpward, tooltip: l10n.findPrevious, on: false, onTap: controller.previousMatch),
+                toggle(icon: context.icons.arrowDownward, tooltip: l10n.findNext, on: false, onTap: controller.nextMatch),
+                toggle(icon: context.icons.close, tooltip: l10n.findClose, on: false, onTap: controller.close),
               ],
             ),
           ),

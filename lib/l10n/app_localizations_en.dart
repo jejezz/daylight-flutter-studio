@@ -989,4 +989,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get releaseTagAnyway => 'Tag anyway';
+
+  @override
+  String get settingsIconSet => 'Icon style';
+
+  @override
+  String get settingsIconSetRounded => 'Rounded';
+
+  @override
+  String get settingsIconSetOutlined => 'Outlined';
+
+  @override
+  String get settingsIconSetFilled => 'Filled';
 }

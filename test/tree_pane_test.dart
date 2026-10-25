@@ -41,7 +41,7 @@ void main() {
     await tester.pump();
 
     final dropdown = tester.getRect(find.byType(DropdownButtonFormField<Worktree>));
-    final refresh = tester.getRect(find.byIcon(Icons.refresh));
+    final refresh = tester.getRect(find.byIcon(Icons.refresh_rounded));
 
     expect(refresh.left, greaterThanOrEqualTo(dropdown.right), reason: '단추는 선택 칸의 오른쪽에 붙는다');
     expect(refresh.center.dy, closeTo(dropdown.center.dy, 8), reason: '같은 줄이라 세로 가운데가 거의 같다');
@@ -56,7 +56,7 @@ void main() {
 
     expect(find.byType(DropdownButtonFormField<Worktree>), findsNothing);
     final title = tester.getRect(find.text('탐색기'));
-    final refresh = tester.getRect(find.byIcon(Icons.refresh));
+    final refresh = tester.getRect(find.byIcon(Icons.refresh_rounded));
     expect(refresh.left, greaterThan(title.right));
     expect(refresh.center.dy, closeTo(title.center.dy, 8));
   });

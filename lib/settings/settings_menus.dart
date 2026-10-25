@@ -8,16 +8,19 @@
 
 import 'package:flutter/material.dart';
 
+import '../theme/app_theme.dart';
+import '../theme/studio_icons.dart';
+
 import '../l10n/app_localizations.dart';
 import 'app_settings.dart';
 
 /// 언어 이름은 그 언어로 쓴다 — 잘못 골라도 읽고 되돌아올 수 있게.
 const _languages = [(Locale('ko'), '한국어'), (Locale('en'), 'English')];
 
-IconData _themeIcon(ThemeMode mode) => switch (mode) {
-  ThemeMode.system => Icons.brightness_auto_rounded,
-  ThemeMode.light => Icons.light_mode_rounded,
-  ThemeMode.dark => Icons.dark_mode_rounded,
+IconData _themeIcon(StudioIcons icons, ThemeMode mode) => switch (mode) {
+  ThemeMode.system => icons.brightnessAuto,
+  ThemeMode.light => icons.lightMode,
+  ThemeMode.dark => icons.darkMode,
 };
 
 String _themeLabel(AppLocalizations l10n, ThemeMode mode) => switch (mode) {
@@ -35,7 +38,7 @@ class ThemeMenuButton extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     return PopupMenuButton<ThemeMode>(
       tooltip: l10n.themeMenuTooltip,
-      icon: Icon(_themeIcon(settings.themeMode)),
+      icon: Icon(_themeIcon(context.icons, settings.themeMode)),
       initialValue: settings.themeMode,
       onSelected: settings.setThemeMode,
       itemBuilder: (_) => [
@@ -61,7 +64,7 @@ class LanguageMenuButton extends StatelessWidget {
     final current = settings.locale?.languageCode ?? '';
     return PopupMenuButton<String>(
       tooltip: l10n.languageMenuTooltip,
-      icon: const Icon(Icons.language_rounded),
+      icon: Icon(context.icons.language),
       initialValue: current,
       onSelected: (code) =>
           settings.setLocale(code.isEmpty ? null : Locale(code)),
@@ -96,7 +99,7 @@ class ThemeSegmentedButton extends StatelessWidget {
         for (final mode in ThemeMode.values)
           ButtonSegment(
             value: mode,
-            icon: Icon(_themeIcon(mode)),
+            icon: Icon(_themeIcon(context.icons, mode)),
             label: Text(_themeLabel(l10n, mode)),
           ),
       ],

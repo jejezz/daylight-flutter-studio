@@ -962,4 +962,16 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get releaseTagAnyway => '그래도 태그';
+
+  @override
+  String get settingsIconSet => '아이콘 모양';
+
+  @override
+  String get settingsIconSetRounded => '둥근';
+
+  @override
+  String get settingsIconSetOutlined => '윤곽선';
+
+  @override
+  String get settingsIconSetFilled => '채움';
 }

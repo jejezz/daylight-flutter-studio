@@ -104,7 +104,7 @@ class _ReleaseDialogState extends State<_ReleaseDialog> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Icon(
-                                c.checks[check] ?? false ? Icons.check_circle : Icons.cancel,
+                                c.checks[check] ?? false ? context.icons.checkCircle : context.icons.cancel,
                                 size: 18,
                                 color: c.checks[check] ?? false ? t.success : t.danger,
                               ),
@@ -121,7 +121,7 @@ class _ReleaseDialogState extends State<_ReleaseDialog> {
                             children: [
                               Expanded(child: SelectableText('scripts/bump-version.sh patch', style: t.logText)),
                               IconButton(
-                                icon: const Icon(Icons.copy, size: 16),
+                                icon: Icon(context.icons.copy, size: 16),
                                 onPressed: () => Clipboard.setData(const ClipboardData(text: 'scripts/bump-version.sh patch')),
                               ),
                             ],

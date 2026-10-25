@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../settings/app_settings.dart';
 import 'app_theme.dart';
+import 'studio_icons.dart';
 
 /// 사용자가 고른 밝기(시스템/라이트/다크)와 색 구성. 저장해 두고 다음 실행에도 쓴다.
 ///
@@ -15,15 +16,17 @@ class ThemeController extends ChangeNotifier {
 
   static const _modeKey = AppSettings.themeModeKey;
   static const _paletteKey = 'theme_palette';
+  static const _iconSetKey = 'theme_icon_set';
 
   final AppSettings? settings;
   ThemeMode _mode = ThemeMode.system;
   StudioPalette palette = StudioPalette.saturn;
+  StudioIconSet iconSet = StudioIconSet.rounded;
 
   ThemeMode get mode => settings?.themeMode ?? _mode;
 
-  ThemeData get light => AppTheme.build(palette, Brightness.light);
-  ThemeData get dark => AppTheme.build(palette, Brightness.dark);
+  ThemeData get light => AppTheme.build(palette, Brightness.light, iconSet: iconSet);
+  ThemeData get dark => AppTheme.build(palette, Brightness.dark, iconSet: iconSet);
 
   @override
   void dispose() {
@@ -41,6 +44,9 @@ class ThemeController extends ChangeNotifier {
       palette =
           StudioPalette.values.asNameMap()[prefs.getString(_paletteKey)] ??
           palette;
+      iconSet =
+          StudioIconSet.values.asNameMap()[prefs.getString(_iconSetKey)] ??
+          iconSet;
       notifyListeners();
     } on Object {
       // 기억해 둔 값은 편의일 뿐이다.
@@ -66,6 +72,16 @@ class ThemeController extends ChangeNotifier {
         _paletteKey,
         value.name,
       );
+    } on Object {
+      // 저장하지 못해도 이번 실행에는 적용된다.
+    }
+  }
+
+  Future<void> setIconSet(StudioIconSet value) async {
+    iconSet = value;
+    notifyListeners();
+    try {
+      await (await SharedPreferences.getInstance()).setString(_iconSetKey, value.name);
     } on Object {
       // 저장하지 못해도 이번 실행에는 적용된다.
     }

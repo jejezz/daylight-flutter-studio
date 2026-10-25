@@ -207,24 +207,24 @@ class _StudioScreenState extends State<StudioScreen>
                 actions: [
                   TextButton.icon(
                     onPressed: _pickProject,
-                    icon: const Icon(Icons.folder_open, size: 18),
+                    icon: Icon(context.icons.folderOpen, size: 18),
                     label: Text(AppLocalizations.of(context).studioOpenProject),
                   ),
                   if (root != null) ...[
                     IconButton(
                       tooltip: AppLocalizations.of(context).studioQuickOpenTooltip,
-                      icon: const Icon(Icons.search),
+                      icon: Icon(context.icons.search),
                       onPressed: _quickOpen,
                     ),
                     IconButton(
                       tooltip: AppLocalizations.of(context).studioSearchTooltip,
-                      icon: const Icon(Icons.manage_search),
+                      icon: Icon(context.icons.manageSearch),
                       onPressed: _searchProject,
                     ),
                   ],
                   IconButton(
                     tooltip: AppLocalizations.of(context).studioSettingsTooltip,
-                    icon: const Icon(Icons.settings_outlined),
+                    icon: Icon(context.icons.settings),
                     onPressed: _openSettings,
                   ),
                   const ThemeMenuButton(),
@@ -232,7 +232,7 @@ class _StudioScreenState extends State<StudioScreen>
                   if (widget.onAbout != null)
                     IconButton(
                       tooltip: AppLocalizations.of(context).aboutTooltip,
-                      icon: const Icon(Icons.info_outline_rounded),
+                      icon: Icon(context.icons.info),
                       onPressed: widget.onAbout,
                     ),
                   SizedBox(width: t.spaceSm),
@@ -242,7 +242,7 @@ class _StudioScreenState extends State<StudioScreen>
                   ? Center(
                       child: FilledButton.icon(
                         onPressed: _pickProject,
-                        icon: const Icon(Icons.folder_open),
+                        icon: Icon(context.icons.folderOpen),
                         label: Text(AppLocalizations.of(context).studioOpenProjectFolder),
                       ),
                     )
@@ -446,7 +446,7 @@ class _StatusBar extends StatelessWidget {
             child: Row(
               children: [
                 Icon(
-                  Icons.account_tree_outlined,
+                  context.icons.accountTree,
                   size: 14,
                   color: theme.colorScheme.primary,
                 ),
@@ -455,7 +455,7 @@ class _StatusBar extends StatelessWidget {
                 if (w?.byClaude ?? false) const Text('  · Claude worktree'),
                 if (run.snapshot != null) Text('  @${run.snapshot!.shortSha}'),
                 SizedBox(width: t.spaceMd),
-                Icon(Icons.verified_outlined, size: 14, color: color),
+                Icon(context.icons.verified, size: 14, color: color),
                 SizedBox(width: t.spaceXs),
                 Text(label, style: TextStyle(color: color)),
                 SizedBox(width: t.spaceMd),
@@ -463,7 +463,7 @@ class _StatusBar extends StatelessWidget {
                   Text(l10n.studioAnalyzing)
                 else if (problems.packageRoot != null && problems.analyzed) ...[
                   Icon(
-                    Icons.error,
+                    context.icons.error,
                     size: 14,
                     color: problems.errors > 0
                         ? t.danger
@@ -473,7 +473,7 @@ class _StatusBar extends StatelessWidget {
                   Text('${problems.errors}'),
                   SizedBox(width: t.spaceSm),
                   Icon(
-                    Icons.warning_amber_rounded,
+                    context.icons.warningAmber,
                     size: 14,
                     color: problems.warnings > 0
                         ? t.warning

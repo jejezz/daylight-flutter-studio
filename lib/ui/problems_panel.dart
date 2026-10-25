@@ -77,7 +77,7 @@ class _Header extends StatelessWidget {
     Widget chip(DiagnosticSeverity s, String label, Color color) => FilterChip(
       selected: shown.contains(s),
       showCheckmark: false,
-      avatar: Icon(Icons.circle, size: 10, color: color),
+      avatar: Icon(context.icons.circle, size: 10, color: color),
       label: Text('$label ${controller.count(s)}'),
       onSelected: (_) => onToggle(s),
     );
@@ -98,7 +98,7 @@ class _Header extends StatelessWidget {
           if (controller.running)
             const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2))
           else
-            IconButton(tooltip: l10n.problemsReanalyze, icon: const Icon(Icons.refresh, size: 18), onPressed: controller.refresh),
+            IconButton(tooltip: l10n.problemsReanalyze, icon: Icon(context.icons.refresh, size: 18), onPressed: controller.refresh),
         ],
       ),
     );
@@ -119,7 +119,7 @@ class _PubGetBanner extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: t.spaceMd, vertical: t.spaceXs),
       child: Row(
         children: [
-          Icon(Icons.warning_amber_rounded, size: 18, color: t.warning),
+          Icon(context.icons.warningAmber, size: 18, color: t.warning),
           SizedBox(width: t.spaceSm),
           Expanded(child: Text(l10n.problemsNoPackageInfo)),
           controller.gettingPackages
@@ -144,7 +144,7 @@ class _ErrorBanner extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: t.spaceMd, vertical: t.spaceXs),
       child: Row(
         children: [
-          Icon(Icons.error_outline, size: 18, color: t.danger),
+          Icon(context.icons.error, size: 18, color: t.danger),
           SizedBox(width: t.spaceSm),
           Expanded(child: Text(message)),
         ],
@@ -166,12 +166,12 @@ class _Empty extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     final t = context.tokens;
     final (icon, text, color) = !controller.analyzed
-        ? (Icons.hourglass_empty, controller.running ? l10n.problemsAnalyzing : l10n.problemsNotAnalyzed, Theme.of(context).colorScheme.outline)
+        ? (context.icons.hourglassEmpty, controller.running ? l10n.problemsAnalyzing : l10n.problemsNotAnalyzed, Theme.of(context).colorScheme.outline)
         : filtered
-        ? (Icons.filter_alt_outlined, l10n.problemsFilteredOut, Theme.of(context).colorScheme.outline)
+        ? (context.icons.filterAlt, l10n.problemsFilteredOut, Theme.of(context).colorScheme.outline)
         : controller.error != null
-        ? (Icons.help_outline, l10n.problemsUnknown, t.warning)
-        : (Icons.check_circle_outline, l10n.problemsNone, t.success);
+        ? (context.icons.help, l10n.problemsUnknown, t.warning)
+        : (context.icons.checkCircle, l10n.problemsNone, t.success);
     return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -202,7 +202,7 @@ class _FileHeader extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: t.spaceMd, vertical: t.spaceXs),
       child: Row(
         children: [
-          const Icon(Icons.insert_drive_file_outlined, size: 14),
+          Icon(context.icons.insertDriveFile, size: 14),
           SizedBox(width: t.spaceSm),
           Expanded(child: Text(rel, style: theme.textTheme.labelMedium, overflow: TextOverflow.ellipsis)),
           Text('$count', style: theme.textTheme.labelMedium),
@@ -223,9 +223,9 @@ class _Row extends StatelessWidget {
     final theme = Theme.of(context);
     final t = context.tokens;
     final (icon, color) = switch (diagnostic.severity) {
-      DiagnosticSeverity.error => (Icons.error, t.danger),
-      DiagnosticSeverity.warning => (Icons.warning_amber_rounded, t.warning),
-      DiagnosticSeverity.info => (Icons.info_outline, theme.colorScheme.primary),
+      DiagnosticSeverity.error => (context.icons.error, t.danger),
+      DiagnosticSeverity.warning => (context.icons.warningAmber, t.warning),
+      DiagnosticSeverity.info => (context.icons.info, theme.colorScheme.primary),
     };
     return Tooltip(
       message: diagnostic.correction.isEmpty ? diagnostic.code : '${diagnostic.code}\n${diagnostic.correction}',
