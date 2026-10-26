@@ -13,278 +13,327 @@ import 'copy_output_button.dart';
 import 'output_viewer.dart';
 import '../verify/verify_store.dart';
 
-/// Run 패널: Flutty Dock처럼 아이콘 탭 둘 — 실행(모드·단계·결과 확인)과 기기(대상 고르기).
-class RunPanel extends StatefulWidget {
+/// Run 패널: 위에 실행 도구 막대(대상 · 모드 · 실행), 아래에 왼쪽 설정(빌드 옵션 · 실행 단계) | 오른쪽 결과(검증 · 출력).
+///
+/// 대상은 도구 막대의 드롭다운에서 고른다. 기기 목록·새로 고침·"기기가 안 보일 때" 안내가 그 안에 있다.
+class RunPanel extends StatelessWidget {
   const RunPanel({super.key, required this.controller, required this.log});
 
   final RunController controller;
   final CommandLog log;
 
-  /// 이 너비 이상이면 두 칸(고르는 것 | 결과)으로 나눈다.
+  /// 이 너비 이상이면 두 칸(설정 | 결과)으로 나눈다.
   static const wideWidth = 760.0;
 
-  /// 두 칸일 때 왼쪽(고르는 것) 칸의 너비.
+  /// 두 칸일 때 왼쪽(설정) 칸의 너비.
   static const wideControlsWidth = 380.0;
-
-  @override
-  State<RunPanel> createState() => _RunPanelState();
-}
-
-class _RunPanelState extends State<RunPanel> with SingleTickerProviderStateMixin {
-  static const _devicesTab = 1;
-
-  late final TabController _tabs = TabController(length: 2, vsync: this);
-
-  RunController get controller => widget.controller;
-  CommandLog get log => widget.log;
-
-  @override
-  void dispose() {
-    _tabs.dispose();
-    super.dispose();
-  }
-
-  Tab _tab(IconData icon, String text) =>
-      Tab(height: 54, iconMargin: const EdgeInsets.only(bottom: 2), icon: Icon(icon, size: 20), text: text);
 
   @override
   Widget build(BuildContext context) {
     final t = context.tokens;
-    final l10n = AppLocalizations.of(context);
-    final icons = context.icons;
     return ListenableBuilder(
       listenable: Listenable.merge([controller, log]),
       builder: (context, _) {
         final project = controller.project;
         if (project == null) {
-          return Center(child: Text(l10n.runNotFlutterProject));
+          return Center(child: Text(AppLocalizations.of(context).runNotFlutterProject));
         }
         final verify = controller.awaitingConfirm || controller.recordSkipped != null || controller.record != null;
-        return Column(
-          children: [
-            TabBar(
-              controller: _tabs,
-              labelPadding: EdgeInsets.zero,
-              tabs: [_tab(icons.playCircle, l10n.runTabRun), _tab(icons.smartphone, l10n.runTabDevices)],
-            ),
-            Expanded(
-              child: TabBarView(
-                controller: _tabs,
-                // 안의 목록을 옆으로 쓸다가 탭이 바뀌지 않게 한다.
-                physics: const NeverScrollableScrollPhysics(),
-                children: [
-                  _runTab(t, verify),
-                  ListView(padding: EdgeInsets.all(t.spaceMd), children: [_Devices(controller: controller)]),
-                ],
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  /// 아래 패널처럼 넓은 곳에서는 왼쪽에 고르는 것(모드·단계), 오른쪽에 결과(검증·출력)를 나란히 둔다.
-  Widget _runTab(StudioTokens t, bool verify) {
-    return LayoutBuilder(
-      builder: (context, box) {
-        final target = _Target(controller: controller, onChange: () => _tabs.animateTo(_devicesTab));
-        if (box.maxWidth < RunPanel.wideWidth) {
-          return ListView(
-            padding: EdgeInsets.all(t.spaceMd),
-            children: [
-              _Header(controller: controller),
-              SizedBox(height: t.spaceSm),
-              target,
-              SizedBox(height: t.spaceMd),
-              _BuildSection(controller: controller),
-              if (verify) ...[SizedBox(height: t.spaceMd), _VerifyCard(controller: controller)],
-              SizedBox(height: t.spaceMd),
+        return LayoutBuilder(
+          builder: (context, box) {
+            final toolbar = Padding(
+              padding: EdgeInsets.fromLTRB(t.spaceMd, t.spaceSm, t.spaceMd, t.spaceSm),
+              child: _Toolbar(controller: controller),
+            );
+            final settings = <Widget>[_Settings(controller: controller)];
+            final results = <Widget>[
+              if (verify) ...[_VerifyCard(controller: controller), SizedBox(height: t.spaceMd)],
               _Output(log: log),
-            ],
-          );
-        }
-        return Row(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            SizedBox(
-              width: RunPanel.wideControlsWidth,
-              child: ListView(
-                padding: EdgeInsets.all(t.spaceMd),
+            ];
+            if (box.maxWidth < wideWidth) {
+              return ListView(
+                padding: EdgeInsets.only(bottom: t.spaceMd),
                 children: [
-                  _Header(controller: controller),
-                  SizedBox(height: t.spaceSm),
-                  target,
-                  SizedBox(height: t.spaceMd),
-                  _BuildSection(controller: controller),
+                  toolbar,
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: t.spaceMd),
+                    child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [...settings, SizedBox(height: t.spaceMd), ...results]),
+                  ),
                 ],
-              ),
-            ),
-            const VerticalDivider(),
-            Expanded(
-              child: ListView(
-                padding: EdgeInsets.all(t.spaceMd),
-                children: [
-                  if (verify) ...[_VerifyCard(controller: controller), SizedBox(height: t.spaceMd)],
-                  _Output(log: log),
-                ],
-              ),
-            ),
-          ],
+              );
+            }
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                toolbar,
+                const Divider(),
+                Expanded(
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      SizedBox(
+                        width: wideControlsWidth,
+                        child: ListView(padding: EdgeInsets.all(t.spaceMd), children: settings),
+                      ),
+                      const VerticalDivider(),
+                      Expanded(child: ListView(padding: EdgeInsets.all(t.spaceMd), children: results)),
+                    ],
+                  ),
+                ),
+              ],
+            );
+          },
         );
       },
     );
   }
 }
 
-/// 실행 탭에서 지금 고른 대상을 한 줄로 보여 주고, 기기 탭으로 가는 길을 둔다.
-class _Target extends StatelessWidget {
-  const _Target({required this.controller, required this.onChange});
+/// 한 줄 실행 도구 막대: 대상 드롭다운 · Debug/Release · 실행(또는 중지) · 보조 단추 · 프로젝트 이름.
+/// 좁으면 다음 줄로 넘어간다.
+class _Toolbar extends StatelessWidget {
+  const _Toolbar({required this.controller});
 
   final RunController controller;
-  final VoidCallback onChange;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final d = controller.device;
-    return Row(
-      children: [
-        Icon(context.icons.smartphone, size: 16),
-        SizedBox(width: context.tokens.spaceSm),
-        Expanded(
-          child: Text(
-            d == null ? l10n.runTargetNone : l10n.runTargetLine(d.name),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-        ),
-        TextButton(onPressed: controller.running ? null : onChange, child: Text(l10n.runTargetChange)),
-      ],
-    );
-  }
-}
-
-class _Header extends StatelessWidget {
-  const _Header({required this.controller});
-
-  final RunController controller;
-
-  @override
-  Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final p = controller.project!;
+    final t = context.tokens;
+    final c = controller;
+    final plan = c.plan;
+    final interactive = plan.steps.isNotEmpty && plan.steps.first.interactive;
+    final p = c.project!;
     final platforms = [
       if (p.hasAndroid) 'Android',
       if (p.hasIos) 'iOS',
       if (p.hasMacos) 'macOS',
       if (p.hasWindows) 'Windows',
     ];
+
+    final runButton = c.running
+        ? OutlinedButton.icon(
+            onPressed: c.cancel,
+            icon: Icon(context.icons.stop, size: 18),
+            label: Text(interactive ? l10n.homeActionStop : l10n.homeActionCancel),
+          )
+        : FilledButton.icon(
+            onPressed: plan.runnable ? c.start : null,
+            icon: Icon(context.icons.playArrow, size: 18),
+            // 데스크톱(이 컴퓨터)은 바로 실행하고, 폰은 설치한다.
+            label: Text(
+              interactive
+                  ? l10n.homeActionRun
+                  : (c.device?.isDesktop ?? false)
+                  ? l10n.homeActionBuildRun
+                  : l10n.homeActionInstall,
+            ),
+          );
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('${p.name}${p.version == null ? '' : '  ${p.version}'}', style: theme.textTheme.titleMedium),
-        Text(platforms.isEmpty ? AppLocalizations.of(context).runNoPlatforms : platforms.join(' · '), style: theme.textTheme.bodySmall),
+        Wrap(
+          spacing: t.spaceSm,
+          runSpacing: t.spaceSm,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          children: [
+            _TargetButton(controller: c),
+            SegmentedButton<BuildMode>(
+              showSelectedIcon: false,
+              segments: [
+                ButtonSegment(value: BuildMode.debug, label: Text(l10n.homeModeDebug)),
+                ButtonSegment(value: BuildMode.release, label: Text(l10n.homeModeRelease)),
+              ],
+              selected: {c.mode},
+              onSelectionChanged: c.running ? null : (s) => c.setMode(s.first),
+            ),
+            runButton,
+            if (c.running && interactive) ...[
+              IconButton.outlined(tooltip: l10n.homeHotReload, icon: Icon(context.icons.bolt), onPressed: () => c.sendKey('r')),
+              IconButton.outlined(tooltip: l10n.homeHotRestart, icon: Icon(context.icons.restartAlt), onPressed: () => c.sendKey('R')),
+              // 창을 닫아도 flutter_tools가 스스로 끝나지 않을 때가 있다 — `q`로 정상 종료하면
+              // 종료 코드 0이 되어 검증 기록(확인함/문제 있음)으로 이어진다. "중지"는 강제 종료라 기록하지 않는다.
+              IconButton.outlined(tooltip: l10n.runQuit, icon: Icon(context.icons.stop), onPressed: () => c.sendKey('q')),
+            ],
+            // release: 빌드와 실행을 따로 할 수 있다. 실행만은 이미 만든 결과물이 있을 때 쓴다.
+            if (plan.splittable && !c.running) ...[
+              OutlinedButton(
+                onPressed: plan.runnable ? () => c.start(phase: RunPhase.build) : null,
+                child: Text(l10n.homeActionBuildOnly),
+              ),
+              _runOnlyButton(c, l10n, plan),
+            ],
+            // debug: 전에 `flutter run`으로 만들어 둔 실행 파일이 있으면 새로 빌드·연결하지 않고 그걸 바로 다시 연다.
+            if (interactive && !c.running && c.artifactReady)
+              OutlinedButton(onPressed: c.relaunchArtifact, child: Text(l10n.homeActionRelaunch)),
+            _CleanButton(controller: c),
+            Text(
+              '${p.name}${p.version == null ? '' : '  ${p.version}'}'
+              '${platforms.isEmpty ? '' : '  ·  ${platforms.join(' · ')}'}',
+              style: theme.textTheme.bodySmall,
+            ),
+          ],
+        ),
+        for (final b in plan.blockers)
+          Padding(
+            padding: EdgeInsets.only(top: t.spaceXs),
+            child: Text(_blockerText(l10n, b), style: TextStyle(color: t.warning)),
+          ),
+        if (c.missingCommand != null)
+          Padding(
+            padding: EdgeInsets.only(top: t.spaceXs),
+            child: Text(l10n.runCommandNotFound(c.missingCommand!), style: TextStyle(color: t.danger)),
+          )
+        else if (c.hint != null)
+          Padding(
+            padding: EdgeInsets.only(top: t.spaceXs),
+            child: Text(_hintText(l10n, c.hint!), style: TextStyle(color: t.danger)),
+          ),
       ],
     );
   }
+
+  static Widget _runOnlyButton(RunController c, AppLocalizations l10n, InstallPlan plan) {
+    final ready = plan.runnable && c.artifactReady;
+    final button = OutlinedButton(
+      onPressed: ready ? () => c.start(phase: RunPhase.run) : null,
+      child: Text((c.device?.isDesktop ?? false) ? l10n.homeActionRunOnly : l10n.homeActionInstallOnly),
+    );
+    // 결과물이 없어서 누를 수 없을 때만 이유를 알려 준다.
+    return plan.runnable && !c.artifactReady ? Tooltip(message: l10n.homeRunOnlyNeedsBuild, child: button) : button;
+  }
 }
 
-/// 기기 탭: 연결된 기기를 카드 안 라디오 목록으로 보여 주고 대상을 고른다 (Flutty Dock의 기기 탭).
-class _Devices extends StatelessWidget {
-  const _Devices({required this.controller});
+/// 대상 드롭다운: 누르면 기기 목록이 팝업으로 열린다. 맨 아래에 "기기 다시 찾기".
+class _TargetButton extends StatelessWidget {
+  const _TargetButton({required this.controller});
 
   final RunController controller;
+
+  static const _refresh = Object();
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final t = context.tokens;
-    final devices = controller.visibleDevices;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Row(
-          children: [
-            Expanded(child: _SectionTitle(l10n.runTarget)),
-            if (controller.loadingDevices)
-              const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
-            else
-              IconButton(
-                tooltip: l10n.runRefreshDevices,
-                visualDensity: VisualDensity.compact,
-                icon: Icon(context.icons.refresh, size: 18),
-                onPressed: controller.running ? null : controller.refreshDevices,
-              ),
-          ],
-        ),
+    final c = controller;
+    final devices = c.visibleDevices;
+    final label = c.device == null ? l10n.runTargetNone : c.device!.name;
+    return PopupMenuButton<Object>(
+      tooltip: l10n.runTarget,
+      enabled: !c.running,
+      position: PopupMenuPosition.under,
+      onSelected: (v) {
+        if (identical(v, _refresh)) {
+          c.refreshDevices();
+        } else if (v is MobileDevice) {
+          c.select(v);
+        }
+      },
+      itemBuilder: (context) => [
         if (devices.isEmpty)
-          Card(
-            child: Padding(
-              padding: EdgeInsets.all(t.spaceMd),
+          PopupMenuItem<Object>(
+            enabled: false,
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 360),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(l10n.runNoDevices, style: theme.textTheme.bodySmall),
+                  Text(l10n.runNoDevices, style: theme.textTheme.titleSmall),
                   SizedBox(height: t.spaceXs),
-                  SelectableText(l10n.runStepsNoDevice, style: theme.textTheme.bodySmall?.copyWith(height: 1.5)),
+                  Text(l10n.runStepsNoDevice, style: theme.textTheme.bodySmall?.copyWith(height: 1.5), softWrap: true),
                 ],
               ),
             ),
-          )
-        else
-          Card(
-            child: RadioGroup<String>(
-              groupValue: controller.selectedId,
-              onChanged: (id) {
-                for (final d in devices) {
-                  if (d.id == id && !controller.running) controller.select(d);
-                }
-              },
-              child: Column(
-                children: [
-                  for (final d in devices)
-                    RadioListTile<String>(
-                      value: d.id,
-                      dense: true,
-                      title: Text(d.name),
-                      subtitle: Text(_describe(l10n, d)),
-                    ),
-                ],
-              ),
+          ),
+        for (final d in devices)
+          CheckedPopupMenuItem<Object>(
+            value: d,
+            checked: d.id == c.selectedId,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [Text(d.name), Text(_describe(l10n, d), style: theme.textTheme.bodySmall)],
+            ),
+          ),
+        const PopupMenuDivider(),
+        PopupMenuItem<Object>(
+          value: _refresh,
+          child: Row(children: [Icon(context.icons.refresh, size: 18), SizedBox(width: t.spaceSm), Text(l10n.runRefreshDevices)]),
+        ),
+      ],
+      child: InputDecorator(
+        decoration: InputDecoration(
+          contentPadding: EdgeInsets.symmetric(horizontal: t.spaceMd, vertical: t.spaceSm),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(t.radius)),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (c.loadingDevices)
+              const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
+            else
+              Icon(context.icons.smartphone, size: 18),
+            SizedBox(width: t.spaceSm),
+            Text(label),
+            SizedBox(width: t.spaceXs),
+            Icon(context.icons.arrowDropDown, size: 20),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// `flutter clean` → `flutter pub get`을 지금 실행하는 단추. 마지막 결과는 단추 옆에 짧게 보인다.
+class _CleanButton extends StatelessWidget {
+  const _CleanButton({required this.controller});
+
+  final RunController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final t = context.tokens;
+    final c = controller;
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Tooltip(
+          message: '${l10n.homeActionClean} — ${l10n.homeCleanHelp}',
+          child: IconButton.outlined(
+            onPressed: c.running || c.cleaning ? null : c.cleanProject,
+            icon: c.cleaning
+                ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
+                : Icon(context.icons.cleaningServices, size: 18),
+          ),
+        ),
+        if (c.cleanResult != null && !c.cleaning)
+          Padding(
+            padding: EdgeInsets.only(left: t.spaceXs),
+            child: Text(
+              c.cleanResult! ? l10n.homeCleanDone : l10n.homeCleanFailed,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(color: c.cleanResult! ? t.success : t.danger),
             ),
           ),
       ],
     );
   }
-
-  static String _describe(AppLocalizations l10n, MobileDevice d) {
-    final platform = switch (d.platform) {
-      DevicePlatform.ios => 'iOS',
-      DevicePlatform.android => 'Android',
-      DevicePlatform.macos => l10n.runPlatformMacos,
-      DevicePlatform.windows => l10n.runPlatformWindows,
-    };
-    final link = switch (d.link) {
-      DeviceLink.usb => 'USB',
-      DeviceLink.wireless => l10n.runLinkWireless,
-      DeviceLink.local => l10n.runLinkLocal,
-    };
-    return '$platform · $link${d.osVersion == null ? '' : ' · ${d.osVersion}'}';
-  }
 }
 
-class _BuildSection extends StatefulWidget {
-  const _BuildSection({required this.controller});
+/// 왼쪽 설정 칸: 빌드 옵션(접힘), iOS Team ID, 실행 단계(접힘).
+class _Settings extends StatefulWidget {
+  const _Settings({required this.controller});
 
   final RunController controller;
 
   @override
-  State<_BuildSection> createState() => _BuildSectionState();
+  State<_Settings> createState() => _SettingsState();
 }
 
-class _BuildSectionState extends State<_BuildSection> {
+class _SettingsState extends State<_Settings> {
   late final _team = TextEditingController(text: widget.controller.teamId ?? '');
 
   @override
@@ -300,44 +349,6 @@ class _BuildSectionState extends State<_BuildSection> {
     StepKind.launch => l10n.homeStepLaunch,
     StepKind.run => l10n.homeStepRun,
   };
-
-  /// `flutter clean` → `flutter pub get`을 지금 실행하는 단추와 마지막 결과.
-  Widget _cleanButton(RunController c, AppLocalizations l10n) {
-    final t = context.tokens;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Tooltip(
-          message: l10n.homeCleanHelp,
-          child: OutlinedButton.icon(
-            onPressed: c.running || c.cleaning ? null : c.cleanProject,
-            icon: c.cleaning
-                ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
-                : Icon(context.icons.cleaningServices, size: 18),
-            label: Text(l10n.homeActionClean),
-          ),
-        ),
-        if (c.cleanResult != null && !c.cleaning)
-          Padding(
-            padding: EdgeInsets.only(top: t.spaceXs),
-            child: Text(
-              c.cleanResult! ? l10n.homeCleanDone : l10n.homeCleanFailed,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(color: c.cleanResult! ? t.success : t.danger),
-            ),
-          ),
-      ],
-    );
-  }
-
-  Widget _runOnlyButton(RunController c, AppLocalizations l10n, InstallPlan plan) {
-    final ready = plan.runnable && c.artifactReady;
-    final button = OutlinedButton(
-      onPressed: ready ? () => c.start(phase: RunPhase.run) : null,
-      child: Text((c.device?.isDesktop ?? false) ? l10n.homeActionRunOnly : l10n.homeActionInstallOnly),
-    );
-    // 결과물이 없어서 누를 수 없을 때만 이유를 알려 준다.
-    return plan.runnable && !c.artifactReady ? Tooltip(message: l10n.homeRunOnlyNeedsBuild, child: button) : button;
-  }
 
   Widget _statusIcon(StepStatus? s) {
     final t = context.tokens;
@@ -359,24 +370,11 @@ class _BuildSectionState extends State<_BuildSection> {
     final t = context.tokens;
     final plan = c.plan;
     final isIos = c.device?.platform == DevicePlatform.ios;
-    final interactive = plan.steps.isNotEmpty && plan.steps.first.interactive;
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _SectionTitle(l10n.homeBuildTitle),
-        SegmentedButton<BuildMode>(
-          segments: [
-            ButtonSegment(value: BuildMode.debug, label: Text(l10n.homeModeDebug)),
-            ButtonSegment(value: BuildMode.release, label: Text(l10n.homeModeRelease)),
-          ],
-          selected: {c.mode},
-          onSelectionChanged: c.running ? null : (s) => c.setMode(s.first),
-        ),
-        if (c.project != null) ...[
-          SizedBox(height: t.spaceXs),
-          // 프로젝트마다 입력 칸을 새로 만든다 (저장된 옵션이 그 프로젝트 것으로 채워지게).
-          BuildOptionsSection(key: ValueKey(c.project!.path), controller: c),
-        ],
+        // 프로젝트마다 입력 칸을 새로 만든다 (저장된 옵션이 그 프로젝트 것으로 채워지게).
+        BuildOptionsSection(key: ValueKey(c.project!.path), controller: c),
         if (isIos) ...[
           SizedBox(height: t.spaceMd),
           TextField(
@@ -391,134 +389,56 @@ class _BuildSectionState extends State<_BuildSection> {
             onChanged: c.setTeamId,
           ),
         ],
-        SizedBox(height: t.spaceMd),
-        for (final b in plan.blockers)
-          Padding(
-            padding: EdgeInsets.only(bottom: t.spaceXs),
-            child: Text(_blockerText(l10n, b), style: TextStyle(color: t.warning)),
-          ),
         if (plan.steps.isNotEmpty) ...[
-          _SectionTitle(l10n.homeStepsTitle),
-          Card(
-            child: Padding(
-              padding: EdgeInsets.all(t.spaceMd),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // 빌드 전에 하는 일이라 목록 맨 위에 둔다. 누르면 바로 실행하고, 안 눌러도 빌드는 된다.
-                  _cleanButton(c, l10n),
-                  Divider(height: t.spaceLg * 2),
-                  for (var i = 0; i < plan.steps.length; i++)
-                    Padding(
-                      padding: EdgeInsets.only(bottom: i == plan.steps.length - 1 ? 0 : t.spaceMd),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(top: 2),
-                            child: _statusIcon(i < c.statuses.length ? c.statuses[i] : null),
-                          ),
-                          SizedBox(width: t.spaceSm),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text('${i + 1}. ${_stepLabel(l10n, plan.steps[i].kind)}', style: theme.textTheme.labelLarge),
-                                CommandText(plan.steps[i].commandLine),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                ],
-              ),
-            ),
-          ),
-        ],
-        SizedBox(height: t.spaceMd),
-        Row(
-          children: [
-            Expanded(
-              child: c.running
-                  ? OutlinedButton(
-                      onPressed: c.cancel,
-                      child: Text(interactive ? l10n.homeActionStop : l10n.homeActionCancel),
-                    )
-                  : FilledButton(
-                      onPressed: plan.runnable ? c.start : null,
-                      // 데스크톱(이 컴퓨터)은 바로 실행하고, 폰은 설치한다.
-                      child: Text(
-                        interactive
-                            ? l10n.homeActionRun
-                            : (c.device?.isDesktop ?? false)
-                            ? l10n.homeActionBuildRun
-                            : l10n.homeActionInstall,
-                      ),
-                    ),
-            ),
-            if (c.running && interactive) ...[
-              SizedBox(width: t.spaceSm),
-              IconButton.outlined(
-                tooltip: l10n.homeHotReload,
-                icon: Icon(context.icons.bolt),
-                onPressed: () => c.sendKey('r'),
-              ),
-              IconButton.outlined(
-                tooltip: l10n.homeHotRestart,
-                icon: Icon(context.icons.restartAlt),
-                onPressed: () => c.sendKey('R'),
-              ),
-              SizedBox(width: t.spaceSm),
-              // 창을 닫아도 flutter_tools가 스스로 끝나지 않을 때가 있다 — `q`로 정상 종료하면
-              // 종료 코드 0이 되어 검증 기록(확인함/문제 있음)으로 이어진다. "중지"는 강제 종료라 기록하지 않는다.
-              IconButton.outlined(
-                tooltip: l10n.runQuit,
-                icon: Icon(context.icons.stop),
-                onPressed: () => c.sendKey('q'),
-              ),
-            ],
-          ],
-        ),
-        // release: 빌드와 실행을 따로 할 수 있다. 실행만은 이미 만든 결과물이 있을 때 쓴다.
-        if (plan.splittable && !c.running) ...[
           SizedBox(height: t.spaceSm),
-          Row(
+          // 실행 중이거나 막 끝났을 때는 진행을 볼 수 있게 펼치고, 평소에는 접어 둔다.
+          ExpansionTile(
+            key: ValueKey('steps-${c.running}'),
+            initiallyExpanded: c.running,
+            tilePadding: EdgeInsets.zero,
+            title: Text(l10n.homeStepsTitle, style: theme.textTheme.titleSmall),
             children: [
-              Expanded(
-                child: OutlinedButton(
-                  onPressed: plan.runnable ? () => c.start(phase: RunPhase.build) : null,
-                  child: Text(l10n.homeActionBuildOnly),
+              for (var i = 0; i < plan.steps.length; i++)
+                Padding(
+                  padding: EdgeInsets.only(bottom: i == plan.steps.length - 1 ? 0 : t.spaceMd),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(padding: const EdgeInsets.only(top: 2), child: _statusIcon(i < c.statuses.length ? c.statuses[i] : null)),
+                      SizedBox(width: t.spaceSm),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('${i + 1}. ${_stepLabel(l10n, plan.steps[i].kind)}', style: theme.textTheme.labelLarge),
+                            CommandText(plan.steps[i].commandLine),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              SizedBox(width: t.spaceSm),
-              Expanded(child: _runOnlyButton(c, l10n, plan)),
             ],
           ),
         ],
-        // debug: 전에 `flutter run`으로 만들어 둔 실행 파일이 있으면 새로 빌드·연결하지 않고 그걸 바로 다시 연다.
-        if (interactive && !c.running && c.artifactReady) ...[
-          SizedBox(height: t.spaceSm),
-          OutlinedButton(onPressed: c.relaunchArtifact, child: Text(l10n.homeActionRelaunch)),
-        ],
-        // 실행할 명령이 없을 때(기기를 아직 못 골랐을 때 등)는 카드가 없으므로 정리 단추만 따로 둔다.
-        if (c.project != null && plan.steps.isEmpty) ...[
-          SizedBox(height: t.spaceSm),
-          _cleanButton(c, l10n),
-        ],
-        if (c.missingCommand != null)
-          Padding(
-            padding: EdgeInsets.only(top: t.spaceSm),
-            child: Text(l10n.runCommandNotFound(c.missingCommand!), style: TextStyle(color: t.danger)),
-          )
-        else if (c.hint != null)
-          Padding(
-            padding: EdgeInsets.only(top: t.spaceSm),
-            child: Text(_hintText(l10n, c.hint!), style: TextStyle(color: t.danger)),
-          ),
       ],
     );
   }
+}
+
+String _describe(AppLocalizations l10n, MobileDevice d) {
+  final platform = switch (d.platform) {
+    DevicePlatform.ios => 'iOS',
+    DevicePlatform.android => 'Android',
+    DevicePlatform.macos => l10n.runPlatformMacos,
+    DevicePlatform.windows => l10n.runPlatformWindows,
+  };
+  final link = switch (d.link) {
+    DeviceLink.usb => 'USB',
+    DeviceLink.wireless => l10n.runLinkWireless,
+    DeviceLink.local => l10n.runLinkLocal,
+  };
+  return '$platform · $link${d.osVersion == null ? '' : ' · ${d.osVersion}'}';
 }
 
 /// 구역 제목 (Flutty Dock의 SectionTitle).

@@ -72,9 +72,7 @@ void main() {
     await tester.pump();
 
     expect(find.byType(VerticalDivider), findsOneWidget);
-    final title = tester.getRect(find.textContaining('demo_app'));
     final divider = tester.getRect(find.byType(VerticalDivider));
-    expect(title.right, lessThanOrEqualTo(RunPanel.wideControlsWidth), reason: '프로젝트 이름은 왼쪽 칸 안');
     expect(divider.left, closeTo(RunPanel.wideControlsWidth, 1));
     expect(tester.takeException(), isNull, reason: '넓은 배치에서도 넘치지 않는다');
   });
@@ -97,20 +95,40 @@ void main() {
     expect(find.textContaining('Flutter'), findsWidgets);
   });
 
-  testWidgets('아이콘 탭 둘: 실행 탭에는 대상 한 줄, 기기 탭에는 기기 목록', (tester) async {
+  testWidgets('도구 막대: 대상 드롭다운에서 기기를 고르고, 실행 단추는 맨 위에 있다', (tester) async {
     controller
-      ..devices = const [MobileDevice(id: 'p1', name: 'Pixel 8', platform: DevicePlatform.android, link: DeviceLink.usb)]
+      ..devices = const [
+        MobileDevice(id: 'p1', name: 'Pixel 8', platform: DevicePlatform.android, link: DeviceLink.usb),
+        MobileDevice(id: 'p2', name: 'Galaxy S24', platform: DevicePlatform.android, link: DeviceLink.usb),
+      ]
       ..selectedId = 'p1';
     await tester.pumpWidget(app(1200));
     await tester.pump();
 
-    expect(find.text('실행'), findsOneWidget);
-    expect(find.text('기기'), findsOneWidget);
-    expect(find.text('대상: Pixel 8'), findsOneWidget);
-    expect(find.text('Android · USB'), findsNothing, reason: '기기 목록은 기기 탭에 있다');
+    expect(find.text('Pixel 8'), findsOneWidget);
+    expect(find.text('Debug'), findsOneWidget);
+    expect(find.byType(TabBar), findsNothing, reason: '탭 줄을 더 두지 않는다');
+    final bar = tester.getRect(find.text('Debug')).top;
+    final run = tester.getRect(find.text('디버그 실행')).top;
+    expect(run, closeTo(bar, 30), reason: '실행 단추는 모드와 같은 줄에 있다');
 
-    await tester.tap(find.text('바꾸기'));
+    await tester.tap(find.text('Pixel 8'));
     await tester.pumpAndSettle();
-    expect(find.text('Android · USB'), findsOneWidget);
+    expect(find.text('Galaxy S24'), findsOneWidget);
+    await tester.tap(find.text('Galaxy S24'));
+    await tester.pumpAndSettle();
+    expect(controller.selectedId, 'p2');
+  });
+
+  testWidgets('기기가 없으면 드롭다운에 연결 안내가 나온다', (tester) async {
+    // 이 컴퓨터(데스크톱) 대상이 목록에 끼지 않도록 Android만 지원하는 프로젝트로 한다.
+    controller.project = const FlutterProject(path: '/p', name: 'demo_app', version: '1.2.3+4', hasIos: false, hasAndroid: true);
+    await tester.pumpWidget(app(1200));
+    await tester.pump();
+    await tester.tap(find.text('대상을 고르지 않았습니다'));
+    await tester.pumpAndSettle();
+    expect(find.text('연결된 기기가 없습니다'), findsOneWidget);
+    expect(find.textContaining('USB 케이블'), findsOneWidget);
+    expect(find.text('기기 다시 찾기'), findsOneWidget);
   });
 }
