@@ -8,6 +8,7 @@ import 'package:daylight_flutter_studio/theme/editor_zoom.dart';
 import 'package:daylight_flutter_studio/theme/theme_controller.dart';
 import 'package:daylight_flutter_studio/ui/bottom_panel.dart';
 import 'package:daylight_flutter_studio/ui/branchdock_dock.dart';
+import 'package:daylight_flutter_studio/ui/run_panel.dart';
 import 'package:daylight_flutter_studio/ui/studio_screen.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -240,6 +241,15 @@ void main() {
       await leave(tester);
     });
 
+    /// 접히면 Run·문제 탭 줄만 아래에 남는다 (내용은 없고, 펼치기 단추가 보인다).
+    void expectCollapsed(WidgetTester tester) {
+      expect(find.byType(BottomPanel), findsOneWidget);
+      expect(find.byType(RunPanel), findsNothing);
+      expect(tester.getSize(find.byType(BottomPanel)).height, BottomPanel.collapsedHeight);
+      expect(find.text('Run'), findsOneWidget);
+      expect(find.byTooltip('아래 패널 펼치기 (Ctrl+J)'), findsWidgets);
+    }
+
     testWidgets('Ctrl+J로 아래 패널을 접고 다시 편다', (tester) async {
       await pumpScreen(tester);
       expect(find.byType(BottomPanel), findsOneWidget);
@@ -252,11 +262,24 @@ void main() {
       }
 
       await ctrlJ();
-      expect(find.byType(BottomPanel), findsNothing);
+      expectCollapsed(tester);
       expect(find.byType(BranchDockDock), findsOneWidget, reason: 'Git 패널은 그대로');
 
       await ctrlJ();
       expect(find.byType(BottomPanel), findsOneWidget);
+      await leave(tester);
+    });
+
+    testWidgets('접힌 막대에서 탭을 누르면 그 탭으로 펼쳐진다', (tester) async {
+      await pumpScreen(tester);
+      await tester.tap(find.byTooltip('아래 패널 접기 (Ctrl+J)').last);
+      await tester.pump();
+      expectCollapsed(tester);
+
+      await tester.tap(find.text('Run'));
+      await tester.pump();
+      expect(find.byType(RunPanel), findsOneWidget);
+      expect(tester.getSize(find.byType(BottomPanel)).height, PanelLayout.defaultBottomHeight);
       await leave(tester);
     });
 
@@ -266,10 +289,10 @@ void main() {
 
       await tester.tap(find.byTooltip('아래 패널 접기 (Ctrl+J)').last);
       await tester.pump();
-      expect(find.byType(BottomPanel), findsNothing);
-      expect(find.byTooltip('아래 패널 펼치기 (Ctrl+J)'), findsOneWidget);
+      expectCollapsed(tester);
+      expect(find.byTooltip('아래 패널 펼치기 (Ctrl+J)'), findsWidgets);
 
-      await tester.tap(find.byTooltip('아래 패널 펼치기 (Ctrl+J)'));
+      await tester.tap(find.byTooltip('아래 패널 펼치기 (Ctrl+J)').first);
       await tester.pump();
       expect(find.byType(BottomPanel), findsOneWidget);
       await leave(tester);
@@ -279,7 +302,7 @@ void main() {
       await pumpScreen(tester);
       await tester.tap(find.byTooltip('아래 패널 접기 (Ctrl+J)').last);
       await tester.pump();
-      expect(find.byType(BottomPanel), findsNothing);
+      expectCollapsed(tester);
 
       await tester.tap(find.byTooltip('문제 탭 열기'));
       // 분석이 도는 중이라 진행 표시줄이 계속 돌아서 pumpAndSettle은 끝나지 않는다.

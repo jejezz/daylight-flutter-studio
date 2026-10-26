@@ -337,27 +337,27 @@ class _StudioScreenState extends State<StudioScreen>
                                           problems: _problems,
                                         ),
                                       ),
-                                      if (_layout.bottomOpen) ...[
+                                      if (_layout.bottomOpen)
                                         _HorizontalSplitter(
                                           onDrag: (dy) => _layout.setBottomHeight(
                                             _layout.bottomHeight - dy,
                                           ),
                                         ),
-                                        SizedBox(
-                                          height: _layout.bottomHeight,
-                                          child: BottomPanel(
-                                            layout: _layout,
-                                            run: _run,
-                                            log: _log,
-                                            problems: _problems,
-                                            onOpenProblem: (d) => _controller.openAt(
-                                              d.file,
-                                              d.line,
-                                              d.column,
-                                            ),
+                                      // 접어도 탭 줄은 아래에 남겨, 접혀 있다는 것과 다시 펴는 길을 보여 준다.
+                                      SizedBox(
+                                        height: _layout.bottomOpen ? _layout.bottomHeight : BottomPanel.collapsedHeight,
+                                        child: BottomPanel(
+                                          layout: _layout,
+                                          run: _run,
+                                          log: _log,
+                                          problems: _problems,
+                                          onOpenProblem: (d) => _controller.openAt(
+                                            d.file,
+                                            d.line,
+                                            d.column,
                                           ),
                                         ),
-                                      ],
+                                      ),
                                     ],
                                   ),
                                 ),
