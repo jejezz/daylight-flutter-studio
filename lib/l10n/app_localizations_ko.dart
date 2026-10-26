@@ -1148,6 +1148,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get homeRunOnlyNeedsBuild => '실행할 release 결과물이 없습니다. 먼저 빌드하세요';
 
   @override
+  String get homeActionRelaunch => '빌드 없이 다시 실행';
+
+  @override
   String get doctorRun => '다시 점검';
 
   @override

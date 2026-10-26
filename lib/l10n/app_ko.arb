@@ -631,6 +631,7 @@
   "homeActionBuildOnly": "빌드만",
   "homeActionRunOnly": "실행만",
   "homeRunOnlyNeedsBuild": "실행할 release 결과물이 없습니다. 먼저 빌드하세요",
+  "homeActionRelaunch": "빌드 없이 다시 실행",
   "doctorRun": "다시 점검",
   "doctorRunning": "점검 중…",
   "doctorNever": "아직 점검하지 않았습니다",

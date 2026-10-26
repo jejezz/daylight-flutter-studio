@@ -614,6 +614,7 @@
   "homeActionBuildOnly": "Build only",
   "homeActionRunOnly": "Run only",
   "homeRunOnlyNeedsBuild": "No release build to run. Build first",
+  "homeActionRelaunch": "Run again without building",
   "doctorRun": "Check again",
   "doctorRunning": "Checking…",
   "doctorNever": "Not checked yet",

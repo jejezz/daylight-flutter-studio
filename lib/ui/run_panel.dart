@@ -359,6 +359,11 @@ class _BuildSectionState extends State<_BuildSection> {
             ],
           ),
         ],
+        // debug: 전에 `flutter run`으로 만들어 둔 실행 파일이 있으면 새로 빌드·연결하지 않고 그걸 바로 다시 연다.
+        if (interactive && !c.running && c.artifactReady) ...[
+          SizedBox(height: t.spaceSm),
+          OutlinedButton(onPressed: c.relaunchArtifact, child: Text(l10n.homeActionRelaunch)),
+        ],
         // 실행할 명령이 없을 때(기기를 아직 못 골랐을 때 등)는 카드가 없으므로 정리 단추만 따로 둔다.
         if (c.project != null && plan.steps.isEmpty) ...[
           SizedBox(height: t.spaceSm),

@@ -24,6 +24,16 @@ void main() {
     expect(plan.steps.single.interactive, isTrue);
   });
 
+  test('Windows debug의 artifact는 Debug 폴더를 가리킨다 (빌드 없이 다시 실행용)', () {
+    final plan = buildInstallPlan(project: _project, device: _windows, mode: BuildMode.debug, teamId: null, hostIsMac: false);
+    expect(plan.artifact, endsWith('runner\\Debug\\demo.exe'));
+  });
+
+  test('Windows release의 artifact는 Release 폴더를 가리킨다', () {
+    final plan = buildInstallPlan(project: _project, device: _windows, mode: BuildMode.release, teamId: null, hostIsMac: false);
+    expect(plan.artifact, endsWith('runner\\Release\\demo.exe'));
+  });
+
   test('Android release는 빌드 → 설치 → 실행 순서', () {
     final plan = buildInstallPlan(project: _project, device: _phone, mode: BuildMode.release, teamId: null, hostIsMac: false);
     expect([for (final s in plan.steps) s.kind], [StepKind.build, StepKind.install, StepKind.launch]);
