@@ -95,6 +95,7 @@ class _StudioScreenState extends State<StudioScreen>
     _run.addListener(_onRunChanged);
     _gate.restore();
     _branches.onChanged = _onBranchChanged;
+    _git.onFilesChanged = _onOperationChanged;
     _layout.restore();
     _env.onToolPathsChanged = () => _run.refreshDevices();
     // clean + pub get이 끝나면 패키지 정보가 새로 생겼으니 문제 탭도 바로 다시 분석한다.
@@ -169,6 +170,16 @@ class _StudioScreenState extends State<StudioScreen>
     _lastHead = head;
     _controller.refreshBases();
     _branches.refresh();
+  }
+
+  /// 병합·rebase를 계속·건너뛰기·중단한 뒤: 파일과 HEAD가 바뀌었으니 화면을 새로 읽는다 (Git 상태는 이미 새로 읽었다).
+  void _onOperationChanged() {
+    _branches.refresh();
+    _controller.checkExternalChanges();
+    _controller.refreshTree();
+    _controller.refreshBases();
+    _run.refreshVerify();
+    _problems.refresh();
   }
 
   /// 브랜치를 전환·만들기·이름 바꾸기·삭제한 뒤: 작업 폴더의 파일과 HEAD가 바뀌었을 수 있으니 화면을 새로 읽는다.

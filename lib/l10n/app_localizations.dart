@@ -2947,6 +2947,258 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'실패했습니다 (종료 코드 {code})'**
   String branchErrGeneric(String code);
+
+  /// No description provided for @mergeMenuItem.
+  ///
+  /// In ko, this message translates to:
+  /// **'현재 브랜치로 병합…'**
+  String get mergeMenuItem;
+
+  /// No description provided for @mergeTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'\'{source}\'을(를) \'{target}\'에 병합'**
+  String mergeTitle(String source, String target);
+
+  /// No description provided for @mergeIncoming.
+  ///
+  /// In ko, this message translates to:
+  /// **'들어올 커밋 {count}개'**
+  String mergeIncoming(String count);
+
+  /// No description provided for @mergeNothing.
+  ///
+  /// In ko, this message translates to:
+  /// **'\'{source}\'에는 \'{target}\'에 없는 커밋이 없습니다. 이미 최신입니다.'**
+  String mergeNothing(String source, String target);
+
+  /// No description provided for @mergeLoadFailed.
+  ///
+  /// In ko, this message translates to:
+  /// **'미리 보기를 읽지 못했습니다'**
+  String get mergeLoadFailed;
+
+  /// No description provided for @mergeModeFastForward.
+  ///
+  /// In ko, this message translates to:
+  /// **'Fast-forward'**
+  String get mergeModeFastForward;
+
+  /// No description provided for @mergeFastForwardWhen.
+  ///
+  /// In ko, this message translates to:
+  /// **'기록을 갈라놓지 않고 브랜치 끝만 앞으로 옮깁니다. 병합 커밋이 생기지 않습니다.'**
+  String get mergeFastForwardWhen;
+
+  /// No description provided for @mergeFastForwardDisabled.
+  ///
+  /// In ko, this message translates to:
+  /// **'두 브랜치가 갈라져 있어 쓸 수 없습니다 (현재 브랜치에도 새 커밋이 있습니다).'**
+  String get mergeFastForwardDisabled;
+
+  /// No description provided for @mergeModeMergeCommit.
+  ///
+  /// In ko, this message translates to:
+  /// **'병합 커밋'**
+  String get mergeModeMergeCommit;
+
+  /// No description provided for @mergeMergeCommitWhen.
+  ///
+  /// In ko, this message translates to:
+  /// **'두 기록을 합치는 커밋을 만듭니다. 어디서 합쳤는지 기록에 남습니다.'**
+  String get mergeMergeCommitWhen;
+
+  /// No description provided for @mergeModeSquash.
+  ///
+  /// In ko, this message translates to:
+  /// **'Squash'**
+  String get mergeModeSquash;
+
+  /// No description provided for @mergeSquashWhen.
+  ///
+  /// In ko, this message translates to:
+  /// **'들어올 커밋을 하나로 묶어 커밋합니다. 기록은 깔끔하지만 원래 커밋은 따로 남지 않습니다.'**
+  String get mergeSquashWhen;
+
+  /// No description provided for @mergeModeRebase.
+  ///
+  /// In ko, this message translates to:
+  /// **'Rebase'**
+  String get mergeModeRebase;
+
+  /// No description provided for @mergeRebaseWhen.
+  ///
+  /// In ko, this message translates to:
+  /// **'현재 브랜치의 커밋을 \'{source}\' 끝에 다시 쌓습니다. 기록은 한 줄이 되지만 커밋이 새로 만들어집니다.'**
+  String mergeRebaseWhen(String source);
+
+  /// No description provided for @mergeMessageLabel.
+  ///
+  /// In ko, this message translates to:
+  /// **'커밋 메시지'**
+  String get mergeMessageLabel;
+
+  /// No description provided for @mergeSquashNote.
+  ///
+  /// In ko, this message translates to:
+  /// **'\'{source}\'의 커밋들이 하나로 묶여 스테이징된 뒤 커밋됩니다. 충돌이 나면 해결한 다음 직접 커밋하세요.'**
+  String mergeSquashNote(String source);
+
+  /// No description provided for @mergeRebaseReplay.
+  ///
+  /// In ko, this message translates to:
+  /// **'다시 쌓일 내 커밋 {count}개'**
+  String mergeRebaseReplay(String count);
+
+  /// No description provided for @mergeRebaseNothing.
+  ///
+  /// In ko, this message translates to:
+  /// **'다시 쌓을 내 커밋이 없습니다. 이미 그 브랜치 위에 있습니다.'**
+  String get mergeRebaseNothing;
+
+  /// No description provided for @mergeRebasePublishedWarning.
+  ///
+  /// In ko, this message translates to:
+  /// **'이 브랜치는 원격에 올라가 있습니다. rebase하면 커밋이 새로 만들어져 다음 push에 강제 push(--force-with-lease)가 필요합니다.'**
+  String get mergeRebasePublishedWarning;
+
+  /// No description provided for @mergeConfirm.
+  ///
+  /// In ko, this message translates to:
+  /// **'병합'**
+  String get mergeConfirm;
+
+  /// No description provided for @mergeConfirmRebase.
+  ///
+  /// In ko, this message translates to:
+  /// **'Rebase'**
+  String get mergeConfirmRebase;
+
+  /// No description provided for @mergeDone.
+  ///
+  /// In ko, this message translates to:
+  /// **'\'{source}\'을(를) \'{target}\'에 병합했습니다'**
+  String mergeDone(String source, String target);
+
+  /// No description provided for @mergeDoneRebase.
+  ///
+  /// In ko, this message translates to:
+  /// **'\'{target}\'을(를) \'{source}\' 위로 rebase했습니다'**
+  String mergeDoneRebase(String target, String source);
+
+  /// No description provided for @mergeErrConflict.
+  ///
+  /// In ko, this message translates to:
+  /// **'충돌이 났습니다. 변경 탭에서 충돌을 해결한 뒤 계속하거나, 중단해서 되돌리세요.'**
+  String get mergeErrConflict;
+
+  /// No description provided for @mergeErrLocalChanges.
+  ///
+  /// In ko, this message translates to:
+  /// **'커밋하지 않은 변경이 병합과 겹칩니다. 커밋하거나 되돌린 뒤 다시 시도하세요.'**
+  String get mergeErrLocalChanges;
+
+  /// No description provided for @mergeErrNotFastForward.
+  ///
+  /// In ko, this message translates to:
+  /// **'fast-forward로 합칠 수 없습니다. 기록이 갈라졌으니 병합 커밋이나 squash를 고르세요.'**
+  String get mergeErrNotFastForward;
+
+  /// No description provided for @mergeBusyOperation.
+  ///
+  /// In ko, this message translates to:
+  /// **'병합·rebase가 진행 중입니다. 먼저 계속하거나 중단하세요.'**
+  String get mergeBusyOperation;
+
+  /// No description provided for @opMerging.
+  ///
+  /// In ko, this message translates to:
+  /// **'병합 중 — 충돌 {count}개'**
+  String opMerging(String count);
+
+  /// No description provided for @opRebasing.
+  ///
+  /// In ko, this message translates to:
+  /// **'rebase 중 — 충돌 {count}개'**
+  String opRebasing(String count);
+
+  /// No description provided for @opCherryPicking.
+  ///
+  /// In ko, this message translates to:
+  /// **'cherry-pick 중 — 충돌 {count}개'**
+  String opCherryPicking(String count);
+
+  /// No description provided for @opReverting.
+  ///
+  /// In ko, this message translates to:
+  /// **'revert 중 — 충돌 {count}개'**
+  String opReverting(String count);
+
+  /// No description provided for @opContinue.
+  ///
+  /// In ko, this message translates to:
+  /// **'계속'**
+  String get opContinue;
+
+  /// No description provided for @opSkip.
+  ///
+  /// In ko, this message translates to:
+  /// **'건너뛰기'**
+  String get opSkip;
+
+  /// No description provided for @opAbort.
+  ///
+  /// In ko, this message translates to:
+  /// **'중단'**
+  String get opAbort;
+
+  /// No description provided for @opContinueBlocked.
+  ///
+  /// In ko, this message translates to:
+  /// **'충돌을 모두 해결하고 스테이지해야 계속할 수 있습니다.'**
+  String get opContinueBlocked;
+
+  /// No description provided for @opAbortTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'작업 중단'**
+  String get opAbortTitle;
+
+  /// No description provided for @opAbortMergeBody.
+  ///
+  /// In ko, this message translates to:
+  /// **'병합을 중단하고 병합 전 상태로 되돌립니다. 충돌을 해결한 내용도 사라집니다.'**
+  String get opAbortMergeBody;
+
+  /// No description provided for @opAbortRebaseBody.
+  ///
+  /// In ko, this message translates to:
+  /// **'rebase를 중단하고 시작하기 전 상태로 되돌립니다. 이미 다시 쌓은 커밋도 사라집니다.'**
+  String get opAbortRebaseBody;
+
+  /// No description provided for @opAbortOtherBody.
+  ///
+  /// In ko, this message translates to:
+  /// **'진행 중인 작업을 중단하고 시작 전 상태로 되돌립니다.'**
+  String get opAbortOtherBody;
+
+  /// No description provided for @opDoneContinue.
+  ///
+  /// In ko, this message translates to:
+  /// **'계속했습니다'**
+  String get opDoneContinue;
+
+  /// No description provided for @opDoneSkip.
+  ///
+  /// In ko, this message translates to:
+  /// **'건너뛰었습니다'**
+  String get opDoneSkip;
+
+  /// No description provided for @opDoneAbort.
+  ///
+  /// In ko, this message translates to:
+  /// **'중단했습니다. 시작 전 상태로 돌아왔습니다.'**
+  String get opDoneAbort;
 }
 
 class _AppLocalizationsDelegate

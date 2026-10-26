@@ -973,5 +973,143 @@
         "type": "String"
       }
     }
-  }
+  },
+  "mergeMenuItem": "Merge into current branch…",
+  "mergeTitle": "Merge '{source}' into '{target}'",
+  "@mergeTitle": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      },
+      "target": {
+        "type": "String"
+      }
+    }
+  },
+  "mergeIncoming": "{count} incoming commits",
+  "@mergeIncoming": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "mergeNothing": "'{source}' has no commits that '{target}' lacks. Already up to date.",
+  "@mergeNothing": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      },
+      "target": {
+        "type": "String"
+      }
+    }
+  },
+  "mergeLoadFailed": "Could not load the preview",
+  "mergeModeFastForward": "Fast-forward",
+  "mergeFastForwardWhen": "Just moves the branch tip forward. No merge commit is created.",
+  "mergeFastForwardDisabled": "Not available: the branches have diverged (the current branch has new commits too).",
+  "mergeModeMergeCommit": "Merge commit",
+  "mergeMergeCommitWhen": "Creates a commit that joins both histories, so the merge point stays visible.",
+  "mergeModeSquash": "Squash",
+  "mergeSquashWhen": "Combines the incoming commits into one. Tidy history, but the original commits are not kept.",
+  "mergeModeRebase": "Rebase",
+  "mergeRebaseWhen": "Replays the current branch's commits on top of '{source}'. History stays linear, but the commits are recreated.",
+  "@mergeRebaseWhen": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "mergeMessageLabel": "Commit message",
+  "mergeSquashNote": "The commits from '{source}' are combined, staged and committed. If there are conflicts, resolve them and commit yourself.",
+  "@mergeSquashNote": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "mergeRebaseReplay": "{count} of your commits will be replayed",
+  "@mergeRebaseReplay": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "mergeRebaseNothing": "You have no commits to replay. You are already on top of that branch.",
+  "mergeRebasePublishedWarning": "This branch is on the remote. Rebasing recreates its commits, so the next push needs a force push (--force-with-lease).",
+  "mergeConfirm": "Merge",
+  "mergeConfirmRebase": "Rebase",
+  "mergeDone": "Merged '{source}' into '{target}'",
+  "@mergeDone": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      },
+      "target": {
+        "type": "String"
+      }
+    }
+  },
+  "mergeDoneRebase": "Rebased '{target}' onto '{source}'",
+  "@mergeDoneRebase": {
+    "placeholders": {
+      "target": {
+        "type": "String"
+      },
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "mergeErrConflict": "There are conflicts. Resolve them in the Changes tab and continue, or abort to go back.",
+  "mergeErrLocalChanges": "Your uncommitted changes overlap with the merge. Commit or discard them and try again.",
+  "mergeErrNotFastForward": "Can't fast-forward: the histories have diverged. Choose a merge commit or squash.",
+  "mergeBusyOperation": "A merge or rebase is in progress. Continue or abort it first.",
+  "opMerging": "Merging — {count} conflicts",
+  "@opMerging": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "opRebasing": "Rebasing — {count} conflicts",
+  "@opRebasing": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "opCherryPicking": "Cherry-picking — {count} conflicts",
+  "@opCherryPicking": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "opReverting": "Reverting — {count} conflicts",
+  "@opReverting": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "opContinue": "Continue",
+  "opSkip": "Skip",
+  "opAbort": "Abort",
+  "opContinueBlocked": "Resolve and stage all conflicts before continuing.",
+  "opAbortTitle": "Abort operation",
+  "opAbortMergeBody": "Aborts the merge and returns to the state before it. Conflict resolutions you made are lost.",
+  "opAbortRebaseBody": "Aborts the rebase and returns to the state before it started. Commits already replayed are discarded.",
+  "opAbortOtherBody": "Aborts the operation in progress and returns to the state before it.",
+  "opDoneContinue": "Continued",
+  "opDoneSkip": "Skipped",
+  "opDoneAbort": "Aborted. Back to the state before it started."
 }

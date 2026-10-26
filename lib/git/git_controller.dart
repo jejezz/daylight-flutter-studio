@@ -9,19 +9,8 @@ import '../github/pull_request.dart';
 import '../settings/gate_settings.dart';
 import '../verify/verify_state.dart';
 import '../verify/verify_store.dart';
+import 'operation.dart';
 import 'status.dart';
-
-/// git rebase 중에는 porcelain의 위/아래(HEAD/incoming)가 병합 때와 뒤바뀐다 — 충돌 해결 시트가
-/// "내 것/들어오는 것" 이름을 맞게 붙이는 데 쓴다.
-Future<bool> _isRebasing(CommandRunner runner, String dir) async {
-  final r = await runner.run(['git', 'rev-parse', '--git-dir'], workingDirectory: dir, quiet: true);
-  if (!r.ok) return false;
-  final gitDir = r.stdout.trim();
-  for (final name in ['rebase-merge', 'rebase-apply']) {
-    if (FileSystemEntity.typeSync('$gitDir/$name') != FileSystemEntityType.notFound) return true;
-  }
-  return false;
-}
 
 enum PrMergeMethod { merge, squash, rebase }
 
@@ -39,6 +28,12 @@ class GitController extends ChangeNotifier {
 
   /// 작업 폴더(worktree)의 최상위 경로 (이 OS의 구분자). 변경 파일의 상대 경로를 절대 경로로 바꿀 때 쓴다.
   String? topLevel;
+
+  /// 끝나지 않은 병합·rebase 등. 있으면 화면이 계속·건너뛰기·중단을 보여 준다.
+  RepoOperation operation = RepoOperation.none;
+
+  /// 병합·rebase를 이어 가거나 멈춰서 작업 폴더의 파일이 바뀌었을 때 부른다 (열린 파일·트리를 새로 읽게 한다).
+  VoidCallback? onFilesChanged;
 
   /// git 저장소가 아니거나 읽지 못하면 null.
   RepoStatus? status;
@@ -96,6 +91,7 @@ class GitController extends ChangeNotifier {
     status = s.ok ? RepoStatus.parse(s.stdout) : null;
     snapshot = status == null ? null : await store.snapshot(d);
     topLevel = status == null ? null : await _topLevel(d);
+    operation = status == null ? RepoOperation.none : await readRepoOperation(runner, d);
     defaultBranchName = await defaultBranch();
     await _loadPr();
     await _judge();
@@ -177,7 +173,7 @@ class GitController extends ChangeNotifier {
   /// 지금 rebase 중인지 (충돌 해결 시트가 "내 것/들어오는 것" 쪽을 맞게 보여 주는 데 쓴다).
   Future<bool> isRebasing() {
     final d = dir;
-    return d == null ? Future.value(false) : _isRebasing(runner, d);
+    return d == null ? Future.value(false) : readRepoOperation(runner, d).then((op) => op == RepoOperation.rebasing);
   }
 
   /// 충돌 구간을 골라 다시 쓴 파일을 `git add`로 해결됨 표시한다. 보통의 스테이지에도 쓴다.
@@ -264,6 +260,32 @@ class GitController extends ChangeNotifier {
       ['gh', 'pr', 'merge', '$number', '--${method.name}', if (deleteBranch) '--delete-branch'],
       done: overridden ? CurrentL10n.value.gitDoneMergedUnverified(number) : CurrentL10n.value.gitDoneMerged(number),
     );
+  }
+
+  /// 끝나지 않은 작업(병합·rebase)을 이어 간다. 충돌이 남아 있으면 git이 거부한다.
+  Future<bool> continueOperation() async {
+    final cmd = OperationCommands.continueWith(operation);
+    if (cmd == null) return false;
+    final ok = await _do(cmd, done: CurrentL10n.value.opDoneContinue);
+    if (ok) onFilesChanged?.call();
+    return ok;
+  }
+
+  /// rebase 중 지금 커밋을 건너뛴다.
+  Future<bool> skipOperation() async {
+    if (operation != RepoOperation.rebasing) return false;
+    final ok = await _do(OperationCommands.rebaseSkip, done: CurrentL10n.value.opDoneSkip);
+    if (ok) onFilesChanged?.call();
+    return ok;
+  }
+
+  /// 작업을 중단하고 시작 전 상태로 되돌린다.
+  Future<bool> abortOperation() async {
+    final cmd = OperationCommands.abort(operation);
+    if (cmd == null) return false;
+    final ok = await _do(cmd, done: CurrentL10n.value.opDoneAbort);
+    if (ok) onFilesChanged?.call();
+    return ok;
   }
 
   Future<bool> _do(List<String> args, {String? stdin, required String done}) async {

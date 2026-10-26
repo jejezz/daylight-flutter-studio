@@ -1657,4 +1657,168 @@ class AppLocalizationsEn extends AppLocalizations {
   String branchErrGeneric(String code) {
     return 'Failed (exit code $code)';
   }
+
+  @override
+  String get mergeMenuItem => 'Merge into current branch…';
+
+  @override
+  String mergeTitle(String source, String target) {
+    return 'Merge \'$source\' into \'$target\'';
+  }
+
+  @override
+  String mergeIncoming(String count) {
+    return '$count incoming commits';
+  }
+
+  @override
+  String mergeNothing(String source, String target) {
+    return '\'$source\' has no commits that \'$target\' lacks. Already up to date.';
+  }
+
+  @override
+  String get mergeLoadFailed => 'Could not load the preview';
+
+  @override
+  String get mergeModeFastForward => 'Fast-forward';
+
+  @override
+  String get mergeFastForwardWhen =>
+      'Just moves the branch tip forward. No merge commit is created.';
+
+  @override
+  String get mergeFastForwardDisabled =>
+      'Not available: the branches have diverged (the current branch has new commits too).';
+
+  @override
+  String get mergeModeMergeCommit => 'Merge commit';
+
+  @override
+  String get mergeMergeCommitWhen =>
+      'Creates a commit that joins both histories, so the merge point stays visible.';
+
+  @override
+  String get mergeModeSquash => 'Squash';
+
+  @override
+  String get mergeSquashWhen =>
+      'Combines the incoming commits into one. Tidy history, but the original commits are not kept.';
+
+  @override
+  String get mergeModeRebase => 'Rebase';
+
+  @override
+  String mergeRebaseWhen(String source) {
+    return 'Replays the current branch\'s commits on top of \'$source\'. History stays linear, but the commits are recreated.';
+  }
+
+  @override
+  String get mergeMessageLabel => 'Commit message';
+
+  @override
+  String mergeSquashNote(String source) {
+    return 'The commits from \'$source\' are combined, staged and committed. If there are conflicts, resolve them and commit yourself.';
+  }
+
+  @override
+  String mergeRebaseReplay(String count) {
+    return '$count of your commits will be replayed';
+  }
+
+  @override
+  String get mergeRebaseNothing =>
+      'You have no commits to replay. You are already on top of that branch.';
+
+  @override
+  String get mergeRebasePublishedWarning =>
+      'This branch is on the remote. Rebasing recreates its commits, so the next push needs a force push (--force-with-lease).';
+
+  @override
+  String get mergeConfirm => 'Merge';
+
+  @override
+  String get mergeConfirmRebase => 'Rebase';
+
+  @override
+  String mergeDone(String source, String target) {
+    return 'Merged \'$source\' into \'$target\'';
+  }
+
+  @override
+  String mergeDoneRebase(String target, String source) {
+    return 'Rebased \'$target\' onto \'$source\'';
+  }
+
+  @override
+  String get mergeErrConflict =>
+      'There are conflicts. Resolve them in the Changes tab and continue, or abort to go back.';
+
+  @override
+  String get mergeErrLocalChanges =>
+      'Your uncommitted changes overlap with the merge. Commit or discard them and try again.';
+
+  @override
+  String get mergeErrNotFastForward =>
+      'Can\'t fast-forward: the histories have diverged. Choose a merge commit or squash.';
+
+  @override
+  String get mergeBusyOperation =>
+      'A merge or rebase is in progress. Continue or abort it first.';
+
+  @override
+  String opMerging(String count) {
+    return 'Merging — $count conflicts';
+  }
+
+  @override
+  String opRebasing(String count) {
+    return 'Rebasing — $count conflicts';
+  }
+
+  @override
+  String opCherryPicking(String count) {
+    return 'Cherry-picking — $count conflicts';
+  }
+
+  @override
+  String opReverting(String count) {
+    return 'Reverting — $count conflicts';
+  }
+
+  @override
+  String get opContinue => 'Continue';
+
+  @override
+  String get opSkip => 'Skip';
+
+  @override
+  String get opAbort => 'Abort';
+
+  @override
+  String get opContinueBlocked =>
+      'Resolve and stage all conflicts before continuing.';
+
+  @override
+  String get opAbortTitle => 'Abort operation';
+
+  @override
+  String get opAbortMergeBody =>
+      'Aborts the merge and returns to the state before it. Conflict resolutions you made are lost.';
+
+  @override
+  String get opAbortRebaseBody =>
+      'Aborts the rebase and returns to the state before it started. Commits already replayed are discarded.';
+
+  @override
+  String get opAbortOtherBody =>
+      'Aborts the operation in progress and returns to the state before it.';
+
+  @override
+  String get opDoneContinue => 'Continued';
+
+  @override
+  String get opDoneSkip => 'Skipped';
+
+  @override
+  String get opDoneAbort => 'Aborted. Back to the state before it started.';
 }

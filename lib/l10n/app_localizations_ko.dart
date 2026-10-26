@@ -1619,4 +1619,162 @@ class AppLocalizationsKo extends AppLocalizations {
   String branchErrGeneric(String code) {
     return '실패했습니다 (종료 코드 $code)';
   }
+
+  @override
+  String get mergeMenuItem => '현재 브랜치로 병합…';
+
+  @override
+  String mergeTitle(String source, String target) {
+    return '\'$source\'을(를) \'$target\'에 병합';
+  }
+
+  @override
+  String mergeIncoming(String count) {
+    return '들어올 커밋 $count개';
+  }
+
+  @override
+  String mergeNothing(String source, String target) {
+    return '\'$source\'에는 \'$target\'에 없는 커밋이 없습니다. 이미 최신입니다.';
+  }
+
+  @override
+  String get mergeLoadFailed => '미리 보기를 읽지 못했습니다';
+
+  @override
+  String get mergeModeFastForward => 'Fast-forward';
+
+  @override
+  String get mergeFastForwardWhen =>
+      '기록을 갈라놓지 않고 브랜치 끝만 앞으로 옮깁니다. 병합 커밋이 생기지 않습니다.';
+
+  @override
+  String get mergeFastForwardDisabled =>
+      '두 브랜치가 갈라져 있어 쓸 수 없습니다 (현재 브랜치에도 새 커밋이 있습니다).';
+
+  @override
+  String get mergeModeMergeCommit => '병합 커밋';
+
+  @override
+  String get mergeMergeCommitWhen => '두 기록을 합치는 커밋을 만듭니다. 어디서 합쳤는지 기록에 남습니다.';
+
+  @override
+  String get mergeModeSquash => 'Squash';
+
+  @override
+  String get mergeSquashWhen =>
+      '들어올 커밋을 하나로 묶어 커밋합니다. 기록은 깔끔하지만 원래 커밋은 따로 남지 않습니다.';
+
+  @override
+  String get mergeModeRebase => 'Rebase';
+
+  @override
+  String mergeRebaseWhen(String source) {
+    return '현재 브랜치의 커밋을 \'$source\' 끝에 다시 쌓습니다. 기록은 한 줄이 되지만 커밋이 새로 만들어집니다.';
+  }
+
+  @override
+  String get mergeMessageLabel => '커밋 메시지';
+
+  @override
+  String mergeSquashNote(String source) {
+    return '\'$source\'의 커밋들이 하나로 묶여 스테이징된 뒤 커밋됩니다. 충돌이 나면 해결한 다음 직접 커밋하세요.';
+  }
+
+  @override
+  String mergeRebaseReplay(String count) {
+    return '다시 쌓일 내 커밋 $count개';
+  }
+
+  @override
+  String get mergeRebaseNothing => '다시 쌓을 내 커밋이 없습니다. 이미 그 브랜치 위에 있습니다.';
+
+  @override
+  String get mergeRebasePublishedWarning =>
+      '이 브랜치는 원격에 올라가 있습니다. rebase하면 커밋이 새로 만들어져 다음 push에 강제 push(--force-with-lease)가 필요합니다.';
+
+  @override
+  String get mergeConfirm => '병합';
+
+  @override
+  String get mergeConfirmRebase => 'Rebase';
+
+  @override
+  String mergeDone(String source, String target) {
+    return '\'$source\'을(를) \'$target\'에 병합했습니다';
+  }
+
+  @override
+  String mergeDoneRebase(String target, String source) {
+    return '\'$target\'을(를) \'$source\' 위로 rebase했습니다';
+  }
+
+  @override
+  String get mergeErrConflict =>
+      '충돌이 났습니다. 변경 탭에서 충돌을 해결한 뒤 계속하거나, 중단해서 되돌리세요.';
+
+  @override
+  String get mergeErrLocalChanges =>
+      '커밋하지 않은 변경이 병합과 겹칩니다. 커밋하거나 되돌린 뒤 다시 시도하세요.';
+
+  @override
+  String get mergeErrNotFastForward =>
+      'fast-forward로 합칠 수 없습니다. 기록이 갈라졌으니 병합 커밋이나 squash를 고르세요.';
+
+  @override
+  String get mergeBusyOperation => '병합·rebase가 진행 중입니다. 먼저 계속하거나 중단하세요.';
+
+  @override
+  String opMerging(String count) {
+    return '병합 중 — 충돌 $count개';
+  }
+
+  @override
+  String opRebasing(String count) {
+    return 'rebase 중 — 충돌 $count개';
+  }
+
+  @override
+  String opCherryPicking(String count) {
+    return 'cherry-pick 중 — 충돌 $count개';
+  }
+
+  @override
+  String opReverting(String count) {
+    return 'revert 중 — 충돌 $count개';
+  }
+
+  @override
+  String get opContinue => '계속';
+
+  @override
+  String get opSkip => '건너뛰기';
+
+  @override
+  String get opAbort => '중단';
+
+  @override
+  String get opContinueBlocked => '충돌을 모두 해결하고 스테이지해야 계속할 수 있습니다.';
+
+  @override
+  String get opAbortTitle => '작업 중단';
+
+  @override
+  String get opAbortMergeBody => '병합을 중단하고 병합 전 상태로 되돌립니다. 충돌을 해결한 내용도 사라집니다.';
+
+  @override
+  String get opAbortRebaseBody =>
+      'rebase를 중단하고 시작하기 전 상태로 되돌립니다. 이미 다시 쌓은 커밋도 사라집니다.';
+
+  @override
+  String get opAbortOtherBody => '진행 중인 작업을 중단하고 시작 전 상태로 되돌립니다.';
+
+  @override
+  String get opDoneContinue => '계속했습니다';
+
+  @override
+  String get opDoneSkip => '건너뛰었습니다';
+
+  @override
+  String get opDoneAbort => '중단했습니다. 시작 전 상태로 돌아왔습니다.';
 }

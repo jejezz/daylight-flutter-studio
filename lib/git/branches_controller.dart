@@ -4,8 +4,25 @@ import '../core/command_runner.dart';
 import '../l10n/current_l10n.dart';
 import '../studio/worktree.dart';
 import 'branch_commands.dart';
+import 'commits.dart';
 import 'error_hints.dart';
+import 'merge_commands.dart';
+import 'operation.dart';
 import 'refs.dart';
+
+/// 병합 시트가 보여 줄 미리 보기.
+class MergePreview {
+  const MergePreview({required this.incoming, required this.canFastForward, required this.replayed});
+
+  /// 현재 브랜치에 없는, 병합으로 들어올 커밋.
+  final List<Commit> incoming;
+
+  /// 현재 브랜치가 상대의 조상이라 fast-forward로 합칠 수 있다.
+  final bool canFastForward;
+
+  /// rebase 때 다시 쌓일 내 커밋 (상대에 없는 현재 브랜치의 커밋).
+  final List<Commit> replayed;
+}
 
 /// 브랜치 탭의 상태: 로컬·원격 브랜치 목록, worktree가 쥔 브랜치, 그리고 만들기·전환·이름 바꾸기·삭제.
 ///
@@ -22,6 +39,9 @@ class BranchesController extends ChangeNotifier {
   List<Worktree> worktrees = const [];
   bool loading = false;
   bool busy = false;
+
+  /// 끝나지 않은 병합·rebase. 진행 중이면 새 병합·rebase·전환을 시작하지 않는다.
+  RepoOperation operation = RepoOperation.none;
 
   /// 마지막 동작의 결과 한 줄과 성공 여부.
   String? message;
@@ -78,6 +98,7 @@ class BranchesController extends ChangeNotifier {
     if (dir != d) return;
     branches = r.ok ? Branch.parse(r.stdout) : const [];
     worktrees = await _listWorktrees(d);
+    operation = await readRepoOperation(runner, d);
     loading = false;
     notifyListeners();
   }
@@ -121,7 +142,42 @@ class BranchesController extends ChangeNotifier {
     );
   }
 
-  Future<bool> _run(List<String> args, {required String done, required List<String> branchNames}) async {
+  // --- 병합·rebase ------------------------------------------------------------
+
+  /// [source]를 현재 브랜치에 합칠 때 보일 미리 보기. 명령은 기록에 남기지 않는다(읽기만).
+  Future<MergePreview> preview(String source) async {
+    final d = dir;
+    if (d == null) return const MergePreview(incoming: [], canFastForward: false, replayed: []);
+    final results = await Future.wait([
+      runner.run(MergeCommands.incoming(source), workingDirectory: d, quiet: true, environment: _env),
+      runner.run(MergeCommands.isAncestor('HEAD', source), workingDirectory: d, quiet: true, environment: _env),
+      runner.run(MergeCommands.replayed(source), workingDirectory: d, quiet: true, environment: _env),
+    ]);
+    return MergePreview(
+      incoming: results[0].ok ? Commit.parse(results[0].stdout) : const [],
+      canFastForward: results[1].ok,
+      replayed: results[2].ok ? Commit.parse(results[2].stdout) : const [],
+    );
+  }
+
+  /// [source]를 현재 브랜치에 합치거나(rebase면 현재 브랜치를 [source] 위로 옮긴다).
+  /// 충돌이 나면 false이고 [errorKind]가 [GitErrorKind.conflict]다 — 작업 폴더에는 충돌 표시가 남아 있다.
+  Future<bool> merge(String source, MergeMode mode, {String message = ''}) {
+    final target = current?.name ?? 'HEAD';
+    return _runAll(
+      MergeCommands.start(source, mode, message: message),
+      done: mode == MergeMode.rebase ? CurrentL10n.value.mergeDoneRebase(target, source) : CurrentL10n.value.mergeDone(source, target),
+      branchNames: [source],
+      merging: true,
+    );
+  }
+
+  Future<bool> _run(List<String> args, {required String done, required List<String> branchNames}) =>
+      _runAll([args], done: done, branchNames: branchNames);
+
+  /// 명령을 차례로 실행하고 하나라도 실패하면 거기서 멈춘다.
+  /// [merging]이면 충돌도 "작업 폴더가 바뀌었다"로 알린다(충돌 표시가 파일에 쓰였다).
+  Future<bool> _runAll(List<List<String>> steps, {required String done, required List<String> branchNames, bool merging = false}) async {
     final d = dir;
     if (d == null || busy) return false;
     busy = true;
@@ -129,25 +185,42 @@ class BranchesController extends ChangeNotifier {
     errorKind = null;
     blockingWorktreePath = null;
     notifyListeners();
-    final r = await runner.run(args, workingDirectory: d, environment: _env);
+    var r = const CommandResult(0, '', '');
+    for (final args in steps) {
+      r = await runner.run(args, workingDirectory: d, environment: _env);
+      if (!r.ok) break;
+    }
     messageOk = r.ok;
     if (r.ok) {
       message = done;
     } else {
       errorKind = classifyError(r.combined, exitCode: r.exitCode);
       if (errorKind == GitErrorKind.branchInOtherWorktree) blockingWorktreePath = worktreePathFromError(r.combined);
-      message = _failure(r, errorKind, branchNames);
+      message = _failure(r, errorKind, branchNames, merging: merging);
     }
     busy = false;
     await refresh();
-    if (r.ok) onChanged?.call();
+    // 병합이 충돌로 멈춰도 작업 폴더 파일에는 충돌 표시가 쓰였으니 화면을 새로 읽게 알린다.
+    if (r.ok || (merging && errorKind == GitErrorKind.conflict)) onChanged?.call();
     return r.ok;
   }
 
   /// 실패를 사용자가 이해할 한 줄로 바꾼다. 모르는 오류는 git의 마지막 줄을 그대로 보여 준다.
-  static String _failure(CommandResult r, GitErrorKind? kind, List<String> names) {
+  static String _failure(CommandResult r, GitErrorKind? kind, List<String> names, {bool merging = false}) {
     final l10n = CurrentL10n.value;
     final name = names.isEmpty ? '' : names.first;
+    if (merging) {
+      switch (kind) {
+        case GitErrorKind.conflict:
+          return l10n.mergeErrConflict;
+        case GitErrorKind.localChangesWouldBeOverwritten:
+          return l10n.mergeErrLocalChanges;
+        case GitErrorKind.notFastForward:
+          return l10n.mergeErrNotFastForward;
+        default:
+          break;
+      }
+    }
     switch (kind) {
       case GitErrorKind.branchInOtherWorktree:
         return l10n.branchErrInOtherWorktree(name, worktreePathFromError(r.combined) ?? '');

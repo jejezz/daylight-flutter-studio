@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 
 import '../git/git_controller.dart';
+import '../git/operation.dart';
 import '../git/status.dart';
 import '../settings/gate_settings.dart';
 import '../l10n/app_localizations.dart';
+import 'branch_dialogs.dart';
 import 'conflict_sheet.dart';
 import 'release_dialog.dart';
 import '../theme/app_theme.dart';
@@ -66,6 +68,8 @@ class _GitPanelState extends State<GitPanel> {
         return ListView(
           padding: EdgeInsets.all(t.spaceMd),
           children: [
+            // 병합·rebase가 끝나지 않았으면 맨 위에 계속·건너뛰기·중단을 둔다 — 다른 일을 하기 전에 먼저 마무리하게.
+            if (c.operation != RepoOperation.none) ...[_OperationBanner(controller: c), SizedBox(height: t.spaceMd)],
             _BranchHeader(controller: c, onOpenDiff: widget.onOpenDiff),
             if (!s.clean) ...[SizedBox(height: t.spaceMd), _CommitBox(controller: c, message: _commitMessage, onCommit: _commit)],
             SizedBox(height: t.spaceMd),
@@ -94,6 +98,81 @@ class _GitPanelState extends State<GitPanel> {
           ],
         );
       },
+    );
+  }
+}
+
+/// 끝나지 않은 병합·rebase: 충돌 개수와 계속·건너뛰기·중단.
+class _OperationBanner extends StatelessWidget {
+  const _OperationBanner({required this.controller});
+
+  final GitController controller;
+
+  Future<void> _abort(BuildContext context) async {
+    final l10n = AppLocalizations.of(context);
+    final op = controller.operation;
+    final ok = await confirmBranchAction(
+      context,
+      title: l10n.opAbortTitle,
+      body: switch (op) {
+        RepoOperation.merging => l10n.opAbortMergeBody,
+        RepoOperation.rebasing => l10n.opAbortRebaseBody,
+        _ => l10n.opAbortOtherBody,
+      },
+      command: OperationCommands.abort(op) ?? const [],
+      confirmLabel: l10n.opAbort,
+    );
+    if (ok) await controller.abortOperation();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final t = context.tokens;
+    final theme = Theme.of(context);
+    final op = controller.operation;
+    final conflicts = controller.status?.conflicts.length ?? 0;
+    final text = switch (op) {
+      RepoOperation.merging => l10n.opMerging('$conflicts'),
+      RepoOperation.rebasing => l10n.opRebasing('$conflicts'),
+      RepoOperation.cherryPicking => l10n.opCherryPicking('$conflicts'),
+      RepoOperation.reverting => l10n.opReverting('$conflicts'),
+      RepoOperation.none => '',
+    };
+    final canContinue = OperationCommands.continueWith(op) != null;
+    final blocked = conflicts > 0;
+    return Container(
+      padding: EdgeInsets.all(t.spaceMd),
+      decoration: BoxDecoration(color: t.warning.withValues(alpha: 0.14), border: Border.all(color: t.warning), borderRadius: BorderRadius.circular(t.radius)),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            children: [
+              Icon(context.icons.callMerge, size: 18, color: t.warning),
+              SizedBox(width: t.spaceSm),
+              Expanded(child: Text(text, style: theme.textTheme.titleSmall)),
+            ],
+          ),
+          if (blocked && canContinue) Padding(padding: EdgeInsets.only(top: t.spaceXs), child: Text(l10n.opContinueBlocked, style: theme.textTheme.bodySmall)),
+          SizedBox(height: t.spaceSm),
+          Wrap(
+            spacing: t.spaceSm,
+            runSpacing: t.spaceXs,
+            children: [
+              if (canContinue)
+                FilledButton(onPressed: controller.busy || blocked ? null : controller.continueOperation, child: Text(l10n.opContinue)),
+              if (op == RepoOperation.rebasing)
+                OutlinedButton(onPressed: controller.busy ? null : controller.skipOperation, child: Text(l10n.opSkip)),
+              OutlinedButton(
+                onPressed: controller.busy ? null : () => _abort(context),
+                style: OutlinedButton.styleFrom(foregroundColor: t.danger),
+                child: Text(l10n.opAbort),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }

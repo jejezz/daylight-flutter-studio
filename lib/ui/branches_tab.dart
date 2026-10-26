@@ -4,11 +4,13 @@ import 'package:intl/intl.dart';
 import '../git/branch_commands.dart';
 import '../git/branches_controller.dart';
 import '../git/error_hints.dart';
+import '../git/operation.dart';
 import '../git/refs.dart';
 import '../l10n/app_localizations.dart';
 import '../studio/worktree.dart';
 import '../theme/app_theme.dart';
 import 'branch_dialogs.dart';
+import 'merge_sheet.dart';
 
 /// 브랜치 탭: 로컬·원격 브랜치를 보고 전환·만들기·이름 바꾸기·삭제를 한다.
 /// 다른 worktree가 쥔 브랜치는 표시하고, 전환·삭제가 막히는 이유를 보여 준다.
@@ -50,6 +52,9 @@ class _BranchesTabState extends State<BranchesTab> {
     if (req == null) return;
     await c.create(req.name, base: req.base, switchAfter: req.switchAfter);
   }
+
+  Future<void> _merge(Branch b) =>
+      showMergeSheet(context, controller: c, source: b);
 
   Future<void> _rename(Branch b) async {
     final to = await showRenameBranchDialog(
@@ -114,6 +119,8 @@ class _BranchesTabState extends State<BranchesTab> {
             ),
           );
         }
+        // 현재 브랜치가 있고 진행 중인 병합·rebase가 없을 때만 병합할 수 있다.
+        final canMerge = c.current != null && c.operation == RepoOperation.none;
         final local = c.local.where(_matches).toList();
         final remote = c.remote.where(_matches).toList();
         return Column(
@@ -177,6 +184,7 @@ class _BranchesTabState extends State<BranchesTab> {
                       busy: c.busy,
                       onSwitch: () => c.switchTo(b),
                       onNewFrom: () => _create(base: b.name),
+                      onMerge: canMerge && !b.current ? () => _merge(b) : null,
                       onRename: () => _rename(b),
                       onDelete: () => _delete(b),
                       onOpenWorktree: widget.onOpenWorktree,
@@ -209,6 +217,7 @@ class _BranchesTabState extends State<BranchesTab> {
                             holder: null,
                             busy: c.busy,
                             onSwitch: () => c.switchTo(b),
+                            onMerge: canMerge ? () => _merge(b) : null,
                             onDeleteRemote: () => _deleteRemote(b),
                           ),
                       ],
@@ -311,6 +320,7 @@ class _BranchRow extends StatelessWidget {
     required this.busy,
     required this.onSwitch,
     this.onNewFrom,
+    this.onMerge,
     this.onRename,
     this.onDelete,
     this.onDeleteRemote,
@@ -324,6 +334,7 @@ class _BranchRow extends StatelessWidget {
   final bool busy;
   final VoidCallback onSwitch;
   final VoidCallback? onNewFrom;
+  final VoidCallback? onMerge;
   final VoidCallback? onRename;
   final VoidCallback? onDelete;
   final VoidCallback? onDeleteRemote;
@@ -438,6 +449,7 @@ class _BranchRow extends StatelessWidget {
               enabled: !busy,
               onSelected: (v) => switch (v) {
                 'new' => onNewFrom?.call(),
+                'merge' => onMerge?.call(),
                 'rename' => onRename?.call(),
                 'delete' => onDelete?.call(),
                 'deleteRemote' => onDeleteRemote?.call(),
@@ -448,6 +460,8 @@ class _BranchRow extends StatelessWidget {
               itemBuilder: (context) => [
                 if (onNewFrom != null)
                   PopupMenuItem(value: 'new', child: Text(l10n.branchNewFrom)),
+                if (onMerge != null)
+                  PopupMenuItem(value: 'merge', child: Text(l10n.mergeMenuItem)),
                 if (onRename != null)
                   PopupMenuItem(
                     value: 'rename',
