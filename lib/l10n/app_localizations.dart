@@ -2156,6 +2156,12 @@ abstract class AppLocalizations {
   /// **'실행할 release 결과물이 없습니다. 먼저 빌드하세요'**
   String get homeRunOnlyNeedsBuild;
 
+  /// No description provided for @homeActionRelaunch.
+  ///
+  /// In ko, this message translates to:
+  /// **'빌드 없이 다시 실행'**
+  String get homeActionRelaunch;
+
   /// No description provided for @doctorRun.
   ///
   /// In ko, this message translates to:

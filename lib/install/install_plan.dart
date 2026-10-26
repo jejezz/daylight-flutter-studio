@@ -181,19 +181,21 @@ InstallPlan buildInstallPlan({
       ]);
     }
   } else if (device.platform == DevicePlatform.windows) {
-    // Windows PC의 데스크톱 빌드. 산출물은 build\windows\<아키텍처>\runner\Release\<BINARY_NAME>.exe.
+    // Windows PC의 데스크톱 빌드. 산출물은 build\windows\<아키텍처>\runner\<Debug|Release>\<BINARY_NAME>.exe.
     // explorer.exe는 실행하고 바로 돌아온다 (앱이 끝날 때까지 이 단계가 붙잡히지 않는다).
     if (!project.hasWindows) blockers.add(Blocker.platformMissing);
+    // flavor가 있으면 산출물이 build\windows\<아키텍처>\<flavor>\runner\<Debug|Release> 아래에 생긴다.
+    final winDir = flavor.isEmpty ? '$dir\\build\\windows\\$windowsArch' : '$dir\\build\\windows\\$windowsArch\\$flavor';
+    final winConfig = mode == BuildMode.debug ? 'Debug' : 'Release';
+    final winExe = project.windowsBinaryName == null ? null : '$winDir\\runner\\$winConfig\\${project.windowsBinaryName}.exe';
+    // debug도 전에 `flutter run`으로 만들어 둔 실행 파일이 있으면 다시 빌드하지 않고 그걸 바로 연다(빌드 없이 다시 실행).
+    artifact = winExe;
     if (mode == BuildMode.debug) {
       steps.add(PlanStep(StepKind.run, ['flutter', 'run', '-d', 'windows', '--debug', ...flags], workingDirectory: dir));
     } else {
-      // flavor가 있으면 산출물이 build\windows\<아키텍처>\<flavor>\runner\Release 아래에 생긴다.
-      final winDir = flavor.isEmpty ? '$dir\\build\\windows\\$windowsArch' : '$dir\\build\\windows\\$windowsArch\\$flavor';
-      final winExe = '$winDir\\runner\\Release\\${project.windowsBinaryName}.exe';
-      if (project.windowsBinaryName != null) artifact = winExe;
       steps.addAll([
         PlanStep(StepKind.build, ['flutter', 'build', 'windows', '--release', ...flags], workingDirectory: dir),
-        if (project.windowsBinaryName != null) PlanStep(StepKind.launch, ['explorer.exe', winExe]),
+        if (winExe != null) PlanStep(StepKind.launch, ['explorer.exe', winExe]),
       ]);
     }
   } else {

@@ -193,10 +193,21 @@ class RunController extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// 빌드 없이 실행할 수 있는지: release 결과물이 이미 있다.
+  /// 빌드 없이 실행할 수 있는지: 결과물(release 산출물 또는 전에 `flutter run`으로 만든 debug 실행 파일)이 이미 있다.
   bool get artifactReady {
     final a = plan.artifact;
     return a != null && FileSystemEntity.typeSync(a) != FileSystemEntityType.notFound;
+  }
+
+  /// 디버그 데스크톱 실행 파일을 새로 빌드하지 않고 그대로 다시 연다 (hot reload 없이, 그냥 실행만).
+  Future<void> relaunchArtifact() async {
+    final a = plan.artifact;
+    if (a == null || running || !artifactReady) return;
+    if (hostIsWindows) {
+      await runner.run(['explorer.exe', a]);
+    } else if (hostIsMac) {
+      await runner.run(['open', a]);
+    }
   }
 
   /// 빌드가 알 수 없는 이유로 깨질 때의 처방: `flutter clean` 다음 `flutter pub get`.

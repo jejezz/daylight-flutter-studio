@@ -1179,6 +1179,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeRunOnlyNeedsBuild => 'No release build to run. Build first';
 
   @override
+  String get homeActionRelaunch => 'Run again without building';
+
+  @override
   String get doctorRun => 'Check again';
 
   @override

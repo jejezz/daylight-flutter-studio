@@ -134,4 +134,37 @@ void main() {
     c.setTeamId('');
     expect(c.effectiveTeamId, isNull);
   });
+
+  test('Windows debug: 전에 flutter run으로 만든 실행 파일이 있으면 새로 빌드하지 않고 그걸 연다', () async {
+    final winDir = await Directory.systemTemp.createTemp('run_controller_win');
+    File('${winDir.path}/pubspec.yaml').writeAsStringSync('name: sample\nversion: 1.0.0+1\ndependencies:\n  flutter:\n    sdk: flutter\n');
+    Directory('${winDir.path}/windows').createSync(recursive: true);
+    File('${winDir.path}/windows/CMakeLists.txt').writeAsStringSync('set(BINARY_NAME "sample")\n');
+    final winRunner = _Runner();
+    final winController = RunController(
+      runner: winRunner,
+      deviceService: _NoDevices(),
+      store: _Store(winRunner),
+      hostIsMac: false,
+      hostIsWindows: true,
+    );
+    await winController.init();
+    await winController.setProjectDir(winDir.path);
+    await winController.setMode(BuildMode.debug);
+    expect(winController.artifactReady, isFalse, reason: '아직 한 번도 안 만들어졌다');
+
+    final exe = winController.plan.artifact!;
+    expect(exe, contains('runner\\Debug\\sample.exe'));
+    File(exe).createSync(recursive: true);
+    await winController.refreshDevices(); // artifact 경로는 바뀌지 않지만 다시 읽어도 됨을 확인
+    expect(winController.artifactReady, isTrue);
+
+    await winController.relaunchArtifact();
+    expect(winRunner.calls, [
+      ['explorer.exe', exe],
+    ]);
+
+    winController.dispose();
+    await winDir.delete(recursive: true);
+  });
 }
