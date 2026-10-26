@@ -28,6 +28,9 @@ class BottomPanel extends StatefulWidget {
   final ProblemsController problems;
   final void Function(Diagnostic diagnostic) onOpenProblem;
 
+  /// 접혔을 때 아래에 남는 막대(탭 줄)의 높이.
+  static const collapsedHeight = 48.0;
+
   @override
   State<BottomPanel> createState() => _BottomPanelState();
 }
@@ -64,6 +67,7 @@ class _BottomPanelState extends State<BottomPanel> with SingleTickerProviderStat
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final open = widget.layout.bottomOpen;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -72,6 +76,10 @@ class _BottomPanelState extends State<BottomPanel> with SingleTickerProviderStat
             Expanded(
               child: TabBar(
                 controller: _tabs,
+                // 접힌 채로 탭을 누르면 그 탭을 펼쳐서 보여 준다.
+                onTap: (i) {
+                  if (!widget.layout.bottomOpen) widget.layout.showBottom(BottomTab.values[i]);
+                },
                 isScrollable: true,
                 tabAlignment: TabAlignment.start,
                 tabs: [
@@ -99,23 +107,24 @@ class _BottomPanelState extends State<BottomPanel> with SingleTickerProviderStat
               ),
             ),
             IconButton(
-              tooltip: l10n.studioBottomPanelHide,
-              icon: Icon(context.icons.expandMore, size: 18),
+              tooltip: open ? l10n.studioBottomPanelHide : l10n.studioBottomPanelShow,
+              icon: Icon(open ? context.icons.expandMore : context.icons.expandLess, size: 18),
               onPressed: widget.layout.toggleBottom,
             ),
           ],
         ),
-        Expanded(
-          child: TabBarView(
-            controller: _tabs,
-            // 탭을 옆으로 쓸어서 바꾸는 동작은 끈다 — 목록·출력을 가로로 스크롤하다 탭이 바뀌면 곤란하다.
-            physics: const NeverScrollableScrollPhysics(),
-            children: [
-              RunPanel(controller: widget.run, log: widget.log),
-              ProblemsPanel(controller: widget.problems, onOpen: widget.onOpenProblem),
-            ],
+        if (open)
+          Expanded(
+            child: TabBarView(
+              controller: _tabs,
+              // 탭을 옆으로 쓸어서 바꾸는 동작은 끈다 — 목록·출력을 가로로 스크롤하다 탭이 바뀌면 곤란하다.
+              physics: const NeverScrollableScrollPhysics(),
+              children: [
+                RunPanel(controller: widget.run, log: widget.log),
+                ProblemsPanel(controller: widget.problems, onOpen: widget.onOpenProblem),
+              ],
+            ),
           ),
-        ),
       ],
     );
   }
