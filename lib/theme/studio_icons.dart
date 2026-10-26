@@ -38,6 +38,7 @@ class StudioIcons {
   IconData get warningAmber => _pick(Icons.warning_amber, Icons.warning_amber_outlined, Icons.warning_amber_rounded);
   IconData get playCircle => _pick(Icons.play_circle, Icons.play_circle_outline, Icons.play_circle_outline_rounded);
   IconData get smartphone => _pick(Icons.smartphone, Icons.smartphone_outlined, Icons.smartphone_rounded);
+  IconData get viewSidebar => _pick(Icons.view_sidebar, Icons.view_sidebar_outlined, Icons.view_sidebar_rounded);
   IconData get refresh => _pick(Icons.refresh, Icons.refresh_outlined, Icons.refresh_rounded);
   IconData get search => _pick(Icons.search, Icons.search_outlined, Icons.search_rounded);
   IconData get help => _pick(Icons.help, Icons.help_outlined, Icons.help_rounded);
