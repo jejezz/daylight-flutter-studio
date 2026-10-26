@@ -819,5 +819,159 @@
     }
   },
   "settingsIndentGuides": "Indent guides",
-  "settingsIndentGuidesNote": "Draws vertical lines in a different color per depth so you can match blocks. Accurate with monospace fonts."
+  "settingsIndentGuidesNote": "Draws vertical lines in a different color per depth so you can match blocks. Accurate with monospace fonts.",
+  "gitTabBranches": "Branches",
+  "branchesLocal": "Local branches",
+  "branchesRemote": "Remote branches",
+  "branchesSearchHint": "Search branches",
+  "branchesNew": "New branch",
+  "branchesRefresh": "Refresh branches",
+  "branchesEmpty": "No branches",
+  "branchesNoMatch": "No branches match",
+  "branchesNotRepo": "The open folder is not a git repository",
+  "branchCurrent": "Current",
+  "branchSwitch": "Switch",
+  "branchTrackSwitch": "Check out as local and switch",
+  "branchNewFrom": "New branch from here",
+  "branchRename": "Rename",
+  "branchDelete": "Delete",
+  "branchDeleteRemote": "Delete remote branch",
+  "branchInWorktree": "In use by another worktree: {path}",
+  "@branchInWorktree": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "branchOpenWorktree": "Open that worktree",
+  "branchGone": "Gone from remote",
+  "branchNoUpstream": "No upstream",
+  "branchCreateTitle": "New branch",
+  "branchNameLabel": "Branch name",
+  "branchBaseLabel": "Base branch",
+  "branchBaseHead": "Current position (HEAD)",
+  "branchSwitchAfter": "Switch to it after creating",
+  "branchCreate": "Create",
+  "branchCommandPreview": "Command to run",
+  "branchNameEmpty": "Enter a name",
+  "branchNameInvalidChar": "Spaces and characters like ~ ^ : ? * [ are not allowed",
+  "branchNameDash": "Cannot start with -",
+  "branchNameSequence": ".. // and parts starting with . are not allowed",
+  "branchNameEdge": "Cannot start with / or end with / or .",
+  "branchNameExists": "That name already exists",
+  "branchRenameTitle": "Rename branch",
+  "branchRenameAction": "Rename",
+  "branchDeleteTitle": "Delete branch",
+  "branchDeleteBody": "Deletes the branch '{name}'. Only branches already merged are removed.",
+  "@branchDeleteBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "branchDeleteNotMergedTitle": "Branch is not merged",
+  "branchDeleteNotMergedBody": "'{name}' has commits that are not on any other branch. Deleting it makes those commits hard to reach.",
+  "@branchDeleteNotMergedBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "branchForceDelete": "Delete anyway (-D)",
+  "branchDeleteRemoteTitle": "Delete remote branch",
+  "branchDeleteRemoteBody": "Deletes '{branch}' from remote {remote}. This affects everyone using that remote.",
+  "@branchDeleteRemoteBody": {
+    "placeholders": {
+      "remote": {
+        "type": "String"
+      },
+      "branch": {
+        "type": "String"
+      }
+    }
+  },
+  "branchDoneSwitch": "Switched to '{name}'",
+  "@branchDoneSwitch": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "branchDoneCreate": "Created branch '{name}'",
+  "@branchDoneCreate": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "branchDoneRename": "Renamed '{from}' to '{to}'",
+  "@branchDoneRename": {
+    "placeholders": {
+      "from": {
+        "type": "String"
+      },
+      "to": {
+        "type": "String"
+      }
+    }
+  },
+  "branchDoneDelete": "Deleted branch '{name}'",
+  "@branchDoneDelete": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "branchDoneDeleteRemote": "Deleted remote branch '{name}'",
+  "@branchDoneDeleteRemote": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "branchErrInOtherWorktree": "'{name}' is in use by another worktree, so it can't be switched to or deleted: {path}",
+  "@branchErrInOtherWorktree": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "branchErrLocalChanges": "You have uncommitted changes that would be overwritten. Commit or discard them and try again.",
+  "branchErrNotMerged": "'{name}' is not fully merged.",
+  "@branchErrNotMerged": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "branchErrExists": "'{name}' already exists.",
+  "@branchErrExists": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "branchErrRemote": "Couldn't reach the remote. Check your sign-in and network.",
+  "branchErrNoGit": "git was not found. Make sure it is installed and on PATH.",
+  "branchErrGeneric": "Failed (exit code {code})",
+  "@branchErrGeneric": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  }
 }

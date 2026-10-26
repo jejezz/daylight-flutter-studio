@@ -83,6 +83,10 @@ class StudioIcons {
   IconData get formatAlignLeft => _pick(Icons.format_align_left, Icons.format_align_left_outlined, Icons.format_align_left_rounded);
   IconData get filterAlt => _pick(Icons.filter_alt, Icons.filter_alt_outlined, Icons.filter_alt_rounded);
   IconData get expandLess => _pick(Icons.expand_less, Icons.expand_less_outlined, Icons.expand_less_rounded);
+  IconData get moreVert => _pick(Icons.more_vert, Icons.more_vert_outlined, Icons.more_vert_rounded);
+  IconData get add => _pick(Icons.add, Icons.add_outlined, Icons.add_rounded);
+  IconData get delete => _pick(Icons.delete, Icons.delete_outlined, Icons.delete_rounded);
+  IconData get cloud => _pick(Icons.cloud, Icons.cloud_outlined, Icons.cloud_rounded);
   IconData get expandMore => _pick(Icons.expand_more, Icons.expand_more_outlined, Icons.expand_more_rounded);
   IconData get edit => _pick(Icons.edit, Icons.edit_outlined, Icons.edit_rounded);
   IconData get editNote => _pick(Icons.edit_note, Icons.edit_note_outlined, Icons.edit_note_rounded);

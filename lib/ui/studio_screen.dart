@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import '../core/command_log.dart';
 import '../core/command_runner.dart';
 import '../devices/device_service.dart';
+import '../git/branches_controller.dart';
 import '../git/git_controller.dart';
 import '../run/run_controller.dart';
 import '../problems/dart_analyzer.dart';
@@ -78,6 +79,7 @@ class _StudioScreenState extends State<StudioScreen>
     store: VerifyStore(_runner),
     gate: _gate,
   );
+  late final BranchesController _branches = BranchesController(runner: _runner);
   double _treeWidth = 260;
   double _dockWidth = 400;
   String? _lastRoot;
@@ -92,6 +94,7 @@ class _StudioScreenState extends State<StudioScreen>
     _git.addListener(_onGitChanged);
     _run.addListener(_onRunChanged);
     _gate.restore();
+    _branches.onChanged = _onBranchChanged;
     _layout.restore();
     _env.onToolPathsChanged = () => _run.refreshDevices();
     // clean + pub get이 끝나면 패키지 정보가 새로 생겼으니 문제 탭도 바로 다시 분석한다.
@@ -108,6 +111,7 @@ class _StudioScreenState extends State<StudioScreen>
       _controller.refreshTree();
       _controller.refreshBases();
       _problems.refreshIfStale(const Duration(seconds: 30));
+      _branches.refresh();
     }
   }
 
@@ -117,6 +121,7 @@ class _StudioScreenState extends State<StudioScreen>
     _git.removeListener(_onGitChanged);
     _run.removeListener(_onRunChanged);
     _gate.dispose();
+    _branches.dispose();
     _layout.dispose();
     _env.dispose();
     _controller.removeListener(_onStudioChanged);
@@ -140,6 +145,7 @@ class _StudioScreenState extends State<StudioScreen>
       _run.setProjectDir(_lastRoot);
       _problems.setProjectDir(_lastRoot);
       _git.setDir(_lastRoot);
+      _branches.setDir(_lastRoot);
     }
   }
 
@@ -162,6 +168,17 @@ class _StudioScreenState extends State<StudioScreen>
     if (head == _lastHead) return;
     _lastHead = head;
     _controller.refreshBases();
+    _branches.refresh();
+  }
+
+  /// 브랜치를 전환·만들기·이름 바꾸기·삭제한 뒤: 작업 폴더의 파일과 HEAD가 바뀌었을 수 있으니 화면을 새로 읽는다.
+  void _onBranchChanged() {
+    _git.refresh();
+    _controller.checkExternalChanges();
+    _controller.refreshTree();
+    _controller.refreshBases();
+    _run.refreshVerify();
+    _problems.refresh();
   }
 
   Future<void> _openSettings() =>
@@ -337,7 +354,12 @@ class _StudioScreenState extends State<StudioScreen>
                                 width: _dockWidth,
                                 child: GitDock(
                                   git: _git,
+                                  branches: _branches,
                                   onOpenDiff: _controller.openDiff,
+                                  onOpenWorktree: (w) => _controller.openProject(
+                                    w.path,
+                                    remember: false,
+                                  ),
                                 ),
                               ),
                             ],

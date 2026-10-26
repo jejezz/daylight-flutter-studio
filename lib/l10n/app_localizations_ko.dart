@@ -1430,4 +1430,193 @@ class AppLocalizationsKo extends AppLocalizations {
   @override
   String get settingsIndentGuidesNote =>
       '들여쓴 줄마다 깊이별로 색이 다른 세로선을 그어 짝을 맞춰 볼 수 있게 합니다. 고정폭 글꼴에서 정확합니다.';
+
+  @override
+  String get gitTabBranches => '브랜치';
+
+  @override
+  String get branchesLocal => '로컬 브랜치';
+
+  @override
+  String get branchesRemote => '원격 브랜치';
+
+  @override
+  String get branchesSearchHint => '브랜치 검색';
+
+  @override
+  String get branchesNew => '새 브랜치';
+
+  @override
+  String get branchesRefresh => '브랜치 목록 새로 고침';
+
+  @override
+  String get branchesEmpty => '브랜치가 없습니다';
+
+  @override
+  String get branchesNoMatch => '검색과 맞는 브랜치가 없습니다';
+
+  @override
+  String get branchesNotRepo => '열린 폴더가 git 저장소가 아닙니다';
+
+  @override
+  String get branchCurrent => '현재';
+
+  @override
+  String get branchSwitch => '전환';
+
+  @override
+  String get branchTrackSwitch => '로컬로 가져와 전환';
+
+  @override
+  String get branchNewFrom => '여기서 새 브랜치';
+
+  @override
+  String get branchRename => '이름 바꾸기';
+
+  @override
+  String get branchDelete => '삭제';
+
+  @override
+  String get branchDeleteRemote => '원격 브랜치 삭제';
+
+  @override
+  String branchInWorktree(String path) {
+    return '다른 worktree에서 사용 중: $path';
+  }
+
+  @override
+  String get branchOpenWorktree => '그 worktree 열기';
+
+  @override
+  String get branchGone => '원격에서 사라짐';
+
+  @override
+  String get branchNoUpstream => '추적 브랜치 없음';
+
+  @override
+  String get branchCreateTitle => '새 브랜치';
+
+  @override
+  String get branchNameLabel => '브랜치 이름';
+
+  @override
+  String get branchBaseLabel => '기준 브랜치';
+
+  @override
+  String get branchBaseHead => '현재 위치(HEAD)';
+
+  @override
+  String get branchSwitchAfter => '만든 뒤 바로 전환';
+
+  @override
+  String get branchCreate => '만들기';
+
+  @override
+  String get branchCommandPreview => '실행될 명령';
+
+  @override
+  String get branchNameEmpty => '이름을 입력하세요';
+
+  @override
+  String get branchNameInvalidChar => '공백이나 ~ ^ : ? * [ 같은 글자는 쓸 수 없습니다';
+
+  @override
+  String get branchNameDash => '-로 시작할 수 없습니다';
+
+  @override
+  String get branchNameSequence => '.. // 또는 .으로 시작하는 부분은 쓸 수 없습니다';
+
+  @override
+  String get branchNameEdge => '/로 시작하거나 /·.로 끝날 수 없습니다';
+
+  @override
+  String get branchNameExists => '이미 있는 이름입니다';
+
+  @override
+  String get branchRenameTitle => '브랜치 이름 바꾸기';
+
+  @override
+  String get branchRenameAction => '이름 바꾸기';
+
+  @override
+  String get branchDeleteTitle => '브랜치 삭제';
+
+  @override
+  String branchDeleteBody(String name) {
+    return '\'$name\' 브랜치를 삭제합니다. 다른 브랜치에 병합된 것만 지워집니다.';
+  }
+
+  @override
+  String get branchDeleteNotMergedTitle => '병합되지 않은 브랜치';
+
+  @override
+  String branchDeleteNotMergedBody(String name) {
+    return '\'$name\'에는 다른 브랜치에 없는 커밋이 있습니다. 지우면 그 커밋에 접근하기 어려워집니다.';
+  }
+
+  @override
+  String get branchForceDelete => '그래도 삭제 (-D)';
+
+  @override
+  String get branchDeleteRemoteTitle => '원격 브랜치 삭제';
+
+  @override
+  String branchDeleteRemoteBody(String remote, String branch) {
+    return '원격 $remote에서 \'$branch\'를 삭제합니다. 같은 원격을 쓰는 다른 사람에게도 영향이 갑니다.';
+  }
+
+  @override
+  String branchDoneSwitch(String name) {
+    return '\'$name\'(으)로 전환했습니다';
+  }
+
+  @override
+  String branchDoneCreate(String name) {
+    return '\'$name\' 브랜치를 만들었습니다';
+  }
+
+  @override
+  String branchDoneRename(String from, String to) {
+    return '\'$from\' → \'$to\'로 이름을 바꿨습니다';
+  }
+
+  @override
+  String branchDoneDelete(String name) {
+    return '\'$name\' 브랜치를 삭제했습니다';
+  }
+
+  @override
+  String branchDoneDeleteRemote(String name) {
+    return '원격 브랜치 \'$name\'을(를) 삭제했습니다';
+  }
+
+  @override
+  String branchErrInOtherWorktree(String name, String path) {
+    return '\'$name\'은(는) 다른 worktree에서 쓰고 있어 전환·삭제할 수 없습니다: $path';
+  }
+
+  @override
+  String get branchErrLocalChanges =>
+      '커밋하지 않은 변경이 있어 전환할 수 없습니다. 커밋하거나 되돌린 뒤 다시 시도하세요.';
+
+  @override
+  String branchErrNotMerged(String name) {
+    return '\'$name\'은(는) 병합되지 않았습니다.';
+  }
+
+  @override
+  String branchErrExists(String name) {
+    return '\'$name\' 이름이 이미 있습니다.';
+  }
+
+  @override
+  String get branchErrRemote => '원격에 연결하지 못했습니다. 로그인과 네트워크를 확인하세요.';
+
+  @override
+  String get branchErrNoGit => 'git을 찾을 수 없습니다. 설치되어 PATH에 있는지 확인하세요.';
+
+  @override
+  String branchErrGeneric(String code) {
+    return '실패했습니다 (종료 코드 $code)';
+  }
 }

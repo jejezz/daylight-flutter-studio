@@ -2623,6 +2623,330 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'들여쓴 줄마다 깊이별로 색이 다른 세로선을 그어 짝을 맞춰 볼 수 있게 합니다. 고정폭 글꼴에서 정확합니다.'**
   String get settingsIndentGuidesNote;
+
+  /// No description provided for @gitTabBranches.
+  ///
+  /// In ko, this message translates to:
+  /// **'브랜치'**
+  String get gitTabBranches;
+
+  /// No description provided for @branchesLocal.
+  ///
+  /// In ko, this message translates to:
+  /// **'로컬 브랜치'**
+  String get branchesLocal;
+
+  /// No description provided for @branchesRemote.
+  ///
+  /// In ko, this message translates to:
+  /// **'원격 브랜치'**
+  String get branchesRemote;
+
+  /// No description provided for @branchesSearchHint.
+  ///
+  /// In ko, this message translates to:
+  /// **'브랜치 검색'**
+  String get branchesSearchHint;
+
+  /// No description provided for @branchesNew.
+  ///
+  /// In ko, this message translates to:
+  /// **'새 브랜치'**
+  String get branchesNew;
+
+  /// No description provided for @branchesRefresh.
+  ///
+  /// In ko, this message translates to:
+  /// **'브랜치 목록 새로 고침'**
+  String get branchesRefresh;
+
+  /// No description provided for @branchesEmpty.
+  ///
+  /// In ko, this message translates to:
+  /// **'브랜치가 없습니다'**
+  String get branchesEmpty;
+
+  /// No description provided for @branchesNoMatch.
+  ///
+  /// In ko, this message translates to:
+  /// **'검색과 맞는 브랜치가 없습니다'**
+  String get branchesNoMatch;
+
+  /// No description provided for @branchesNotRepo.
+  ///
+  /// In ko, this message translates to:
+  /// **'열린 폴더가 git 저장소가 아닙니다'**
+  String get branchesNotRepo;
+
+  /// No description provided for @branchCurrent.
+  ///
+  /// In ko, this message translates to:
+  /// **'현재'**
+  String get branchCurrent;
+
+  /// No description provided for @branchSwitch.
+  ///
+  /// In ko, this message translates to:
+  /// **'전환'**
+  String get branchSwitch;
+
+  /// No description provided for @branchTrackSwitch.
+  ///
+  /// In ko, this message translates to:
+  /// **'로컬로 가져와 전환'**
+  String get branchTrackSwitch;
+
+  /// No description provided for @branchNewFrom.
+  ///
+  /// In ko, this message translates to:
+  /// **'여기서 새 브랜치'**
+  String get branchNewFrom;
+
+  /// No description provided for @branchRename.
+  ///
+  /// In ko, this message translates to:
+  /// **'이름 바꾸기'**
+  String get branchRename;
+
+  /// No description provided for @branchDelete.
+  ///
+  /// In ko, this message translates to:
+  /// **'삭제'**
+  String get branchDelete;
+
+  /// No description provided for @branchDeleteRemote.
+  ///
+  /// In ko, this message translates to:
+  /// **'원격 브랜치 삭제'**
+  String get branchDeleteRemote;
+
+  /// No description provided for @branchInWorktree.
+  ///
+  /// In ko, this message translates to:
+  /// **'다른 worktree에서 사용 중: {path}'**
+  String branchInWorktree(String path);
+
+  /// No description provided for @branchOpenWorktree.
+  ///
+  /// In ko, this message translates to:
+  /// **'그 worktree 열기'**
+  String get branchOpenWorktree;
+
+  /// No description provided for @branchGone.
+  ///
+  /// In ko, this message translates to:
+  /// **'원격에서 사라짐'**
+  String get branchGone;
+
+  /// No description provided for @branchNoUpstream.
+  ///
+  /// In ko, this message translates to:
+  /// **'추적 브랜치 없음'**
+  String get branchNoUpstream;
+
+  /// No description provided for @branchCreateTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'새 브랜치'**
+  String get branchCreateTitle;
+
+  /// No description provided for @branchNameLabel.
+  ///
+  /// In ko, this message translates to:
+  /// **'브랜치 이름'**
+  String get branchNameLabel;
+
+  /// No description provided for @branchBaseLabel.
+  ///
+  /// In ko, this message translates to:
+  /// **'기준 브랜치'**
+  String get branchBaseLabel;
+
+  /// No description provided for @branchBaseHead.
+  ///
+  /// In ko, this message translates to:
+  /// **'현재 위치(HEAD)'**
+  String get branchBaseHead;
+
+  /// No description provided for @branchSwitchAfter.
+  ///
+  /// In ko, this message translates to:
+  /// **'만든 뒤 바로 전환'**
+  String get branchSwitchAfter;
+
+  /// No description provided for @branchCreate.
+  ///
+  /// In ko, this message translates to:
+  /// **'만들기'**
+  String get branchCreate;
+
+  /// No description provided for @branchCommandPreview.
+  ///
+  /// In ko, this message translates to:
+  /// **'실행될 명령'**
+  String get branchCommandPreview;
+
+  /// No description provided for @branchNameEmpty.
+  ///
+  /// In ko, this message translates to:
+  /// **'이름을 입력하세요'**
+  String get branchNameEmpty;
+
+  /// No description provided for @branchNameInvalidChar.
+  ///
+  /// In ko, this message translates to:
+  /// **'공백이나 ~ ^ : ? * [ 같은 글자는 쓸 수 없습니다'**
+  String get branchNameInvalidChar;
+
+  /// No description provided for @branchNameDash.
+  ///
+  /// In ko, this message translates to:
+  /// **'-로 시작할 수 없습니다'**
+  String get branchNameDash;
+
+  /// No description provided for @branchNameSequence.
+  ///
+  /// In ko, this message translates to:
+  /// **'.. // 또는 .으로 시작하는 부분은 쓸 수 없습니다'**
+  String get branchNameSequence;
+
+  /// No description provided for @branchNameEdge.
+  ///
+  /// In ko, this message translates to:
+  /// **'/로 시작하거나 /·.로 끝날 수 없습니다'**
+  String get branchNameEdge;
+
+  /// No description provided for @branchNameExists.
+  ///
+  /// In ko, this message translates to:
+  /// **'이미 있는 이름입니다'**
+  String get branchNameExists;
+
+  /// No description provided for @branchRenameTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'브랜치 이름 바꾸기'**
+  String get branchRenameTitle;
+
+  /// No description provided for @branchRenameAction.
+  ///
+  /// In ko, this message translates to:
+  /// **'이름 바꾸기'**
+  String get branchRenameAction;
+
+  /// No description provided for @branchDeleteTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'브랜치 삭제'**
+  String get branchDeleteTitle;
+
+  /// No description provided for @branchDeleteBody.
+  ///
+  /// In ko, this message translates to:
+  /// **'\'{name}\' 브랜치를 삭제합니다. 다른 브랜치에 병합된 것만 지워집니다.'**
+  String branchDeleteBody(String name);
+
+  /// No description provided for @branchDeleteNotMergedTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'병합되지 않은 브랜치'**
+  String get branchDeleteNotMergedTitle;
+
+  /// No description provided for @branchDeleteNotMergedBody.
+  ///
+  /// In ko, this message translates to:
+  /// **'\'{name}\'에는 다른 브랜치에 없는 커밋이 있습니다. 지우면 그 커밋에 접근하기 어려워집니다.'**
+  String branchDeleteNotMergedBody(String name);
+
+  /// No description provided for @branchForceDelete.
+  ///
+  /// In ko, this message translates to:
+  /// **'그래도 삭제 (-D)'**
+  String get branchForceDelete;
+
+  /// No description provided for @branchDeleteRemoteTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'원격 브랜치 삭제'**
+  String get branchDeleteRemoteTitle;
+
+  /// No description provided for @branchDeleteRemoteBody.
+  ///
+  /// In ko, this message translates to:
+  /// **'원격 {remote}에서 \'{branch}\'를 삭제합니다. 같은 원격을 쓰는 다른 사람에게도 영향이 갑니다.'**
+  String branchDeleteRemoteBody(String remote, String branch);
+
+  /// No description provided for @branchDoneSwitch.
+  ///
+  /// In ko, this message translates to:
+  /// **'\'{name}\'(으)로 전환했습니다'**
+  String branchDoneSwitch(String name);
+
+  /// No description provided for @branchDoneCreate.
+  ///
+  /// In ko, this message translates to:
+  /// **'\'{name}\' 브랜치를 만들었습니다'**
+  String branchDoneCreate(String name);
+
+  /// No description provided for @branchDoneRename.
+  ///
+  /// In ko, this message translates to:
+  /// **'\'{from}\' → \'{to}\'로 이름을 바꿨습니다'**
+  String branchDoneRename(String from, String to);
+
+  /// No description provided for @branchDoneDelete.
+  ///
+  /// In ko, this message translates to:
+  /// **'\'{name}\' 브랜치를 삭제했습니다'**
+  String branchDoneDelete(String name);
+
+  /// No description provided for @branchDoneDeleteRemote.
+  ///
+  /// In ko, this message translates to:
+  /// **'원격 브랜치 \'{name}\'을(를) 삭제했습니다'**
+  String branchDoneDeleteRemote(String name);
+
+  /// No description provided for @branchErrInOtherWorktree.
+  ///
+  /// In ko, this message translates to:
+  /// **'\'{name}\'은(는) 다른 worktree에서 쓰고 있어 전환·삭제할 수 없습니다: {path}'**
+  String branchErrInOtherWorktree(String name, String path);
+
+  /// No description provided for @branchErrLocalChanges.
+  ///
+  /// In ko, this message translates to:
+  /// **'커밋하지 않은 변경이 있어 전환할 수 없습니다. 커밋하거나 되돌린 뒤 다시 시도하세요.'**
+  String get branchErrLocalChanges;
+
+  /// No description provided for @branchErrNotMerged.
+  ///
+  /// In ko, this message translates to:
+  /// **'\'{name}\'은(는) 병합되지 않았습니다.'**
+  String branchErrNotMerged(String name);
+
+  /// No description provided for @branchErrExists.
+  ///
+  /// In ko, this message translates to:
+  /// **'\'{name}\' 이름이 이미 있습니다.'**
+  String branchErrExists(String name);
+
+  /// No description provided for @branchErrRemote.
+  ///
+  /// In ko, this message translates to:
+  /// **'원격에 연결하지 못했습니다. 로그인과 네트워크를 확인하세요.'**
+  String get branchErrRemote;
+
+  /// No description provided for @branchErrNoGit.
+  ///
+  /// In ko, this message translates to:
+  /// **'git을 찾을 수 없습니다. 설치되어 PATH에 있는지 확인하세요.'**
+  String get branchErrNoGit;
+
+  /// No description provided for @branchErrGeneric.
+  ///
+  /// In ko, this message translates to:
+  /// **'실패했습니다 (종료 코드 {code})'**
+  String branchErrGeneric(String code);
 }
 
 class _AppLocalizationsDelegate

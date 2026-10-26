@@ -1464,4 +1464,197 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get settingsIndentGuidesNote =>
       'Draws vertical lines in a different color per depth so you can match blocks. Accurate with monospace fonts.';
+
+  @override
+  String get gitTabBranches => 'Branches';
+
+  @override
+  String get branchesLocal => 'Local branches';
+
+  @override
+  String get branchesRemote => 'Remote branches';
+
+  @override
+  String get branchesSearchHint => 'Search branches';
+
+  @override
+  String get branchesNew => 'New branch';
+
+  @override
+  String get branchesRefresh => 'Refresh branches';
+
+  @override
+  String get branchesEmpty => 'No branches';
+
+  @override
+  String get branchesNoMatch => 'No branches match';
+
+  @override
+  String get branchesNotRepo => 'The open folder is not a git repository';
+
+  @override
+  String get branchCurrent => 'Current';
+
+  @override
+  String get branchSwitch => 'Switch';
+
+  @override
+  String get branchTrackSwitch => 'Check out as local and switch';
+
+  @override
+  String get branchNewFrom => 'New branch from here';
+
+  @override
+  String get branchRename => 'Rename';
+
+  @override
+  String get branchDelete => 'Delete';
+
+  @override
+  String get branchDeleteRemote => 'Delete remote branch';
+
+  @override
+  String branchInWorktree(String path) {
+    return 'In use by another worktree: $path';
+  }
+
+  @override
+  String get branchOpenWorktree => 'Open that worktree';
+
+  @override
+  String get branchGone => 'Gone from remote';
+
+  @override
+  String get branchNoUpstream => 'No upstream';
+
+  @override
+  String get branchCreateTitle => 'New branch';
+
+  @override
+  String get branchNameLabel => 'Branch name';
+
+  @override
+  String get branchBaseLabel => 'Base branch';
+
+  @override
+  String get branchBaseHead => 'Current position (HEAD)';
+
+  @override
+  String get branchSwitchAfter => 'Switch to it after creating';
+
+  @override
+  String get branchCreate => 'Create';
+
+  @override
+  String get branchCommandPreview => 'Command to run';
+
+  @override
+  String get branchNameEmpty => 'Enter a name';
+
+  @override
+  String get branchNameInvalidChar =>
+      'Spaces and characters like ~ ^ : ? * [ are not allowed';
+
+  @override
+  String get branchNameDash => 'Cannot start with -';
+
+  @override
+  String get branchNameSequence =>
+      '.. // and parts starting with . are not allowed';
+
+  @override
+  String get branchNameEdge => 'Cannot start with / or end with / or .';
+
+  @override
+  String get branchNameExists => 'That name already exists';
+
+  @override
+  String get branchRenameTitle => 'Rename branch';
+
+  @override
+  String get branchRenameAction => 'Rename';
+
+  @override
+  String get branchDeleteTitle => 'Delete branch';
+
+  @override
+  String branchDeleteBody(String name) {
+    return 'Deletes the branch \'$name\'. Only branches already merged are removed.';
+  }
+
+  @override
+  String get branchDeleteNotMergedTitle => 'Branch is not merged';
+
+  @override
+  String branchDeleteNotMergedBody(String name) {
+    return '\'$name\' has commits that are not on any other branch. Deleting it makes those commits hard to reach.';
+  }
+
+  @override
+  String get branchForceDelete => 'Delete anyway (-D)';
+
+  @override
+  String get branchDeleteRemoteTitle => 'Delete remote branch';
+
+  @override
+  String branchDeleteRemoteBody(String remote, String branch) {
+    return 'Deletes \'$branch\' from remote $remote. This affects everyone using that remote.';
+  }
+
+  @override
+  String branchDoneSwitch(String name) {
+    return 'Switched to \'$name\'';
+  }
+
+  @override
+  String branchDoneCreate(String name) {
+    return 'Created branch \'$name\'';
+  }
+
+  @override
+  String branchDoneRename(String from, String to) {
+    return 'Renamed \'$from\' to \'$to\'';
+  }
+
+  @override
+  String branchDoneDelete(String name) {
+    return 'Deleted branch \'$name\'';
+  }
+
+  @override
+  String branchDoneDeleteRemote(String name) {
+    return 'Deleted remote branch \'$name\'';
+  }
+
+  @override
+  String branchErrInOtherWorktree(String name, String path) {
+    return '\'$name\' is in use by another worktree, so it can\'t be switched to or deleted: $path';
+  }
+
+  @override
+  String get branchErrLocalChanges =>
+      'You have uncommitted changes that would be overwritten. Commit or discard them and try again.';
+
+  @override
+  String branchErrNotMerged(String name) {
+    return '\'$name\' is not fully merged.';
+  }
+
+  @override
+  String branchErrExists(String name) {
+    return '\'$name\' already exists.';
+  }
+
+  @override
+  String get branchErrRemote =>
+      'Couldn\'t reach the remote. Check your sign-in and network.';
+
+  @override
+  String get branchErrNoGit =>
+      'git was not found. Make sure it is installed and on PATH.';
+
+  @override
+  String branchErrGeneric(String code) {
+    return 'Failed (exit code $code)';
+  }
 }
