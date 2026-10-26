@@ -66,6 +66,7 @@ class StudioIcons {
   IconData get settings => _pick(Icons.settings, Icons.settings_outlined, Icons.settings_rounded);
   IconData get rocketLaunch => _pick(Icons.rocket_launch, Icons.rocket_launch_outlined, Icons.rocket_launch_rounded);
   IconData get radioButtonUnchecked => _pick(Icons.radio_button_unchecked, Icons.radio_button_unchecked_outlined, Icons.radio_button_unchecked_rounded);
+  IconData get radioButtonChecked => _pick(Icons.radio_button_checked, Icons.radio_button_checked_outlined, Icons.radio_button_checked_rounded);
   IconData get playArrow => _pick(Icons.play_arrow, Icons.play_arrow_outlined, Icons.play_arrow_rounded);
   IconData get palette => _pick(Icons.palette, Icons.palette_outlined, Icons.palette_rounded);
   IconData get merge => _pick(Icons.merge, Icons.merge_outlined, Icons.merge_rounded);

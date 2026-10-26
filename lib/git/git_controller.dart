@@ -11,6 +11,18 @@ import '../verify/verify_state.dart';
 import '../verify/verify_store.dart';
 import 'status.dart';
 
+/// git rebase 중에는 porcelain의 위/아래(HEAD/incoming)가 병합 때와 뒤바뀐다 — 충돌 해결 시트가
+/// "내 것/들어오는 것" 이름을 맞게 붙이는 데 쓴다.
+Future<bool> _isRebasing(CommandRunner runner, String dir) async {
+  final r = await runner.run(['git', 'rev-parse', '--git-dir'], workingDirectory: dir, quiet: true);
+  if (!r.ok) return false;
+  final gitDir = r.stdout.trim();
+  for (final name in ['rebase-merge', 'rebase-apply']) {
+    if (FileSystemEntity.typeSync('$gitDir/$name') != FileSystemEntityType.notFound) return true;
+  }
+  return false;
+}
+
 enum PrMergeMethod { merge, squash, rebase }
 
 /// Git 패널의 상태: 작업 폴더의 git 상태, 현재 브랜치의 PR, 그 PR head 커밋의 검증 판정.
@@ -153,6 +165,15 @@ class GitController extends ChangeNotifier {
     }
     return 'main';
   }
+
+  /// 지금 rebase 중인지 (충돌 해결 시트가 "내 것/들어오는 것" 쪽을 맞게 보여 주는 데 쓴다).
+  Future<bool> isRebasing() {
+    final d = dir;
+    return d == null ? Future.value(false) : _isRebasing(runner, d);
+  }
+
+  /// 충돌 구간을 골라 다시 쓴 파일을 `git add`로 해결됨 표시한다.
+  Future<bool> stage(FileChange file) => _do(['git', 'add', '--', file.path], done: CurrentL10n.value.doneConflictResolved(file.fileName));
 
   Future<bool> fetch() => _do(['git', 'fetch', '--prune'], done: CurrentL10n.value.gitDoneFetch);
 

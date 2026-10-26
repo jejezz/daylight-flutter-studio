@@ -60,4 +60,36 @@ void main() {
     expect(c.verdict!.state, VerifyState.stale);
     expect(c.verdict!.commitsSince, 1);
   });
+
+  test('충돌 파일을 읽고(porcelain u), 다시 쓴 뒤 stage하면 해결된다', () async {
+    final repo = await Directory.systemTemp.createTemp('git_controller_conflict');
+    addTearDown(() => repo.delete(recursive: true));
+    final file = File('${repo.path}${Platform.pathSeparator}f.txt');
+    await _git(repo.path, ['init', '-b', 'main']);
+    file.writeAsStringSync('one\ntwo\n');
+    await _git(repo.path, ['add', '-A']);
+    await _git(repo.path, ['commit', '-m', 'init']);
+    await _git(repo.path, ['switch', '-c', 'topic']);
+    file.writeAsStringSync('one\ntopic\n');
+    await _git(repo.path, ['commit', '-am', 'topic']);
+    await _git(repo.path, ['switch', 'main']);
+    file.writeAsStringSync('one\nmain\n');
+    await _git(repo.path, ['commit', '-am', 'main']);
+    final merge = await Process.run('git', ['merge', 'topic'], workingDirectory: repo.path);
+    expect(merge.exitCode, isNot(0), reason: '충돌이 나야 테스트가 의미 있다');
+
+    final runner = CommandRunner(CommandLog());
+    final c = GitController(runner: runner, store: VerifyStore(runner));
+    addTearDown(c.dispose);
+    await c.setDir(repo.path);
+
+    expect(c.status!.conflicts.map((f) => f.path), ['f.txt']);
+    expect(await c.isRebasing(), isFalse, reason: '충돌의 원인이 merge였으니 rebase는 아니다');
+
+    final conflicted = c.status!.conflicts.single;
+    file.writeAsStringSync('one\nresolved\n');
+    expect(await c.stage(conflicted), isTrue);
+    expect(c.status!.conflicts, isEmpty);
+    expect(c.status!.staged.map((f) => f.path), ['f.txt']);
+  });
 }

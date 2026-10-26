@@ -4,6 +4,7 @@ import '../git/git_controller.dart';
 import '../git/status.dart';
 import '../settings/gate_settings.dart';
 import '../l10n/app_localizations.dart';
+import 'conflict_sheet.dart';
 import 'release_dialog.dart';
 import '../theme/app_theme.dart';
 import '../verify/verify_state.dart';
@@ -118,6 +119,7 @@ class _BranchHeader extends StatelessWidget {
           ],
         ),
         if (sync.isNotEmpty) Text(sync, style: theme.textTheme.bodySmall),
+        if (s.conflicts.isNotEmpty) Text(l10n.gitConflicts(s.conflicts.length), style: TextStyle(color: t.warning)),
         if (s.clean)
           Text(l10n.gitClean, style: theme.textTheme.bodySmall)
         else
@@ -157,7 +159,13 @@ class _FileRow extends StatelessWidget {
     final theme = Theme.of(context);
     final deleted = file.index == 'D' || file.worktree == 'D';
     final absolute = file.path.endsWith('/') || deleted ? null : controller.absolutePath(file.path);
-    final open = absolute == null || onOpenDiff == null ? null : () => onOpenDiff!(absolute);
+    final open = absolute == null
+        ? null
+        : file.conflicted
+        ? () => showConflictSheet(context, controller, file)
+        : onOpenDiff == null
+        ? null
+        : () => onOpenDiff!(absolute);
     final color = switch (letter(file)) {
       'A' || '?' => t.success,
       'D' => t.danger,
@@ -165,7 +173,13 @@ class _FileRow extends StatelessWidget {
       _ => theme.colorScheme.primary,
     };
     return Tooltip(
-      message: deleted ? l10n.gitFileDeleted : (open == null ? '' : l10n.gitFileOpenDiff),
+      message: deleted
+          ? l10n.gitFileDeleted
+          : open == null
+          ? ''
+          : file.conflicted
+          ? l10n.gitFileOpenConflict
+          : l10n.gitFileOpenDiff,
       child: InkWell(
         onTap: open,
         child: Padding(
