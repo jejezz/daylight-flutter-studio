@@ -70,8 +70,8 @@ class SyntaxTokens extends ThemeExtension<SyntaxTokens> {
         TextStyle(color: color, fontStyle: italic, fontWeight: weight);
     return {
       'root': TextStyle(color: base),
-      'comment': c(comment, italic: FontStyle.italic),
-      'quote': c(comment, italic: FontStyle.italic),
+      'comment': c(comment),
+      'quote': c(comment),
       'doctag': c(keyword),
       'keyword': c(keyword),
       'formula': c(keyword),
