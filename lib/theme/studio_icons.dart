@@ -133,6 +133,7 @@ class StudioIcons {
   IconData get editNote => _pick(Icons.edit_note, Icons.edit_note_outlined, Icons.edit_note_rounded);
   IconData get download => _pick(Icons.download, Icons.download_outlined, Icons.download_rounded);
   IconData get difference => _pick(Icons.difference, Icons.difference_outlined, Icons.difference_rounded);
+  IconData get chevronLeft => _pick(Icons.chevron_left, Icons.chevron_left_outlined, Icons.chevron_left_rounded);
   IconData get chevronRight => _pick(Icons.chevron_right, Icons.chevron_right_outlined, Icons.chevron_right_rounded);
   IconData get check => _pick(Icons.check, Icons.check_outlined, Icons.check_rounded);
   IconData get cancel => _pick(Icons.cancel, Icons.cancel_outlined, Icons.cancel_rounded);

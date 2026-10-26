@@ -26,6 +26,7 @@ import '../verify/verify_store.dart';
 import 'bottom_panel.dart';
 import 'editor_pane.dart';
 import 'branchdock_dock.dart';
+import 'dock_bars.dart';
 import 'git_merge_gate.dart';
 import '../settings/editor_settings.dart';
 import '../studio/project_index.dart';
@@ -81,6 +82,7 @@ class _StudioScreenState extends State<StudioScreen>
   );
   late final GitMergeGate _mergeGate = GitMergeGate(_git);
   double _treeWidth = 260;
+  final _dockKey = GlobalKey();
   String? _lastRoot;
 
   @override
@@ -362,26 +364,47 @@ class _StudioScreenState extends State<StudioScreen>
                                   ),
                                 ),
                               ),
-                              // 숨겨도 위젯은 그대로 둔다 — 다시 보일 때 저장소를 처음부터 읽지 않는다.
+                              // 열리면 가로 제목 막대 + 내용, 닫히면 세로 제목 막대만 남긴다.
+                              // 닫아도 Dock 위젯은 그대로 둔다 — 다시 열 때 저장소를 처음부터 읽지 않는다.
                               ListenableBuilder(
                                 listenable: _layout,
-                                builder: (context, _) => Offstage(
-                                  offstage: !_layout.dockOpen,
-                                  child: Row(
+                                builder: (context, _) {
+                                  final l10n = AppLocalizations.of(context);
+                                  final open = _layout.dockOpen;
+                                  final dock = SizedBox(
+                                    width: _layout.dockWidth,
+                                    child: BranchDockDock(
+                                      key: _dockKey,
+                                      root: _controller.root,
+                                      gate: _mergeGate,
+                                      onOpenFolder: (path) => _controller.openProject(path, remember: false),
+                                      onHeadChanged: _onBranchChanged,
+                                    ),
+                                  );
+                                  if (!open) {
+                                    return Row(
+                                      children: [
+                                        Offstage(child: dock),
+                                        CollapsedDockBar(title: 'GIT', openTooltip: l10n.studioDockShow, onOpen: _layout.toggleDock),
+                                      ],
+                                    );
+                                  }
+                                  return Row(
                                     children: [
                                       _Splitter(onDrag: (dx) => _layout.setDockWidth(_layout.dockWidth - dx)),
                                       SizedBox(
                                         width: _layout.dockWidth,
-                                        child: BranchDockDock(
-                                          root: _controller.root,
-                                          gate: _mergeGate,
-                                          onOpenFolder: (path) => _controller.openProject(path, remember: false),
-                                          onHeadChanged: _onBranchChanged,
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                                          children: [
+                                            DockHeader(title: 'GIT', closeTooltip: l10n.studioDockHide, onClose: _layout.toggleDock),
+                                            Expanded(child: dock),
+                                          ],
                                         ),
                                       ),
                                     ],
-                                  ),
-                                ),
+                                  );
+                                },
                               ),
                             ],
                           ),

@@ -7,6 +7,7 @@ import 'package:daylight_flutter_studio/theme/app_theme.dart';
 import 'package:daylight_flutter_studio/theme/editor_zoom.dart';
 import 'package:daylight_flutter_studio/theme/theme_controller.dart';
 import 'package:daylight_flutter_studio/ui/bottom_panel.dart';
+import 'package:daylight_flutter_studio/ui/dock_bars.dart';
 import 'package:daylight_flutter_studio/ui/branchdock_dock.dart';
 import 'package:daylight_flutter_studio/ui/run_panel.dart';
 import 'package:daylight_flutter_studio/ui/studio_screen.dart';
@@ -225,10 +226,36 @@ void main() {
       final dock = find.byType(BranchDockDock);
       expect(tester.getSize(dock).width, PanelLayout.defaultDockWidth);
 
-      await tester.tap(find.byTooltip('Git 패널 숨기기 (Ctrl+Alt+B)'));
+      expect(find.byType(DockHeader), findsOneWidget, reason: '열려 있으면 가로 제목 막대');
+      expect(find.byType(CollapsedDockBar), findsNothing);
+
+      // 제목 막대의 닫기 단추로 닫는다.
+      await tester.tap(find.descendant(of: find.byType(DockHeader), matching: find.byTooltip('Git 패널 숨기기 (Ctrl+Alt+B)')));
       await tester.pump();
-      expect(find.byType(BranchDockDock, skipOffstage: true), findsNothing, reason: '숨기면 화면에서 빠진다');
+      expect(find.byType(BranchDockDock), findsNothing, reason: '닫으면 화면에서 빠진다');
       expect(find.byType(BranchDockDock, skipOffstage: false), findsOneWidget, reason: '상태는 그대로 둔다');
+      expect(find.byType(DockHeader), findsNothing);
+      final bar = find.byType(CollapsedDockBar);
+      expect(bar, findsOneWidget, reason: '닫히면 세로 제목 막대가 남는다');
+      expect(tester.getSize(bar).width, DockBars.collapsedWidth);
+      for (final ch in ['G', 'I', 'T']) {
+        expect(find.descendant(of: bar, matching: find.text(ch)), findsOneWidget, reason: '글자를 세로로 쌓는다');
+      }
+
+      // 세로 막대를 눌러 다시 연다.
+      await tester.tap(bar);
+      await tester.pump();
+      expect(find.byType(DockHeader), findsOneWidget);
+      expect(find.byType(CollapsedDockBar), findsNothing);
+
+      // 단축키로도 닫고 다시 연다.
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.altLeft);
+      await tester.sendKeyEvent(LogicalKeyboardKey.keyB);
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.altLeft);
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+      await tester.pump();
+      expect(find.byType(CollapsedDockBar), findsOneWidget);
 
       await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
       await tester.sendKeyDownEvent(LogicalKeyboardKey.altLeft);
@@ -237,7 +264,7 @@ void main() {
       await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
       await tester.pump();
       expect(find.byType(BranchDockDock), findsOneWidget);
-      expect(find.byTooltip('Git 패널 숨기기 (Ctrl+Alt+B)'), findsOneWidget);
+      expect(find.byType(DockHeader), findsOneWidget);
       await leave(tester);
     });
 
