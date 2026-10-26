@@ -1,6 +1,10 @@
 import 'package:file_selector/file_selector.dart';
+import 'package:desktop_drop/desktop_drop.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:re_editor/re_editor.dart';
+import 'package:window_manager/window_manager.dart';
 
 import '../core/command_log.dart';
 import '../core/command_runner.dart';
@@ -20,6 +24,7 @@ import '../doctor/environment_controller.dart';
 import '../l10n/app_localizations.dart';
 import '../settings/settings_menus.dart';
 import '../theme/app_theme.dart';
+import '../theme/editor_zoom.dart';
 import '../window/focus_tint.dart';
 import '../theme/theme_controller.dart';
 import '../verify/verify_store.dart';
@@ -27,6 +32,7 @@ import 'bottom_panel.dart';
 import 'editor_pane.dart';
 import 'branchdock_dock.dart';
 import 'dock_bars.dart';
+import 'studio_menus.dart';
 import 'git_merge_gate.dart';
 import '../settings/editor_settings.dart';
 import '../studio/project_index.dart';
@@ -83,6 +89,7 @@ class _StudioScreenState extends State<StudioScreen>
   late final GitMergeGate _mergeGate = GitMergeGate(_git);
   double _treeWidth = 260;
   final _dockKey = GlobalKey();
+  bool _dragging = false;
   String? _lastRoot;
 
   @override
@@ -210,6 +217,127 @@ class _StudioScreenState extends State<StudioScreen>
     );
   }
 
+  /// 활성 탭의 편집 동작. 탭이 없으면 아무것도 하지 않는다.
+  void _edit(void Function(CodeLineEditingController c) action) {
+    final tab = _controller.activeTab;
+    if (tab != null) action(tab.controller);
+  }
+
+  /// 편집기가 직접 처리하는 동작(찾기·바꾸기)은 편집기에 포커스가 있을 때의 인텐트로 보낸다.
+  void _editorIntent(Intent intent) {
+    final ctx = FocusManager.instance.primaryFocus?.context;
+    if (ctx != null) Actions.maybeInvoke(ctx, intent);
+  }
+
+  Future<void> _closeActiveTab() async {
+    final i = _controller.activeIndex;
+    if (i >= 0 && i < _controller.tabs.length) await closeTabWithPrompt(context, _controller, i);
+  }
+
+  List<MenuSpec> _menus(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final mac = defaultTargetPlatform == TargetPlatform.macOS;
+    SingleActivator key(LogicalKeyboardKey k, {bool shift = false, bool alt = false}) =>
+        SingleActivator(k, control: !mac, meta: mac, shift: shift, alt: alt);
+    final hasTab = _controller.activeTab != null;
+    final hasProject = _controller.root != null;
+    final zoom = EditorZoomScope.maybeOf(context);
+    return [
+      MenuSpec(l10n.menuFile, [
+        MenuAction(l10n.menuOpenProject, onPressed: _pickProject, shortcut: key(LogicalKeyboardKey.keyO)),
+        SubMenu(l10n.menuRecentProjects, [
+          if (_controller.recentProjects.isEmpty) MenuAction(l10n.menuNoRecent),
+          for (final p in _controller.recentProjects)
+            MenuAction(p.split(RegExp(r'[/\\]')).where((s) => s.isNotEmpty).last, onPressed: () => _controller.openProject(p)),
+        ]),
+        const MenuDivider(),
+        MenuAction(l10n.commonSave, onPressed: hasTab ? () => _controller.save(_controller.activeTab!) : null, shortcut: key(LogicalKeyboardKey.keyS)),
+        MenuAction(l10n.menuSaveAll, onPressed: hasTab ? _controller.saveAll : null),
+        MenuAction(l10n.menuCloseTab, onPressed: hasTab ? _closeActiveTab : null, shortcut: key(LogicalKeyboardKey.keyW)),
+        const MenuDivider(),
+        MenuAction(l10n.menuQuickOpen, onPressed: hasProject ? _quickOpen : null, shortcut: key(LogicalKeyboardKey.keyP)),
+        MenuAction(l10n.menuSettings, onPressed: _openSettings, shortcut: key(LogicalKeyboardKey.comma)),
+        // macOS의 종료는 앱 메뉴에 있다.
+        if (!mac) ...[const MenuDivider(), MenuAction(l10n.menuExit, onPressed: () => windowManager.close())],
+      ]),
+      MenuSpec(l10n.menuEdit, [
+        MenuAction(l10n.menuUndo, onPressed: hasTab ? () => _edit((c) => c.undo()) : null, shortcut: key(LogicalKeyboardKey.keyZ), nativeShortcut: false),
+        MenuAction(
+          l10n.menuRedo,
+          onPressed: hasTab ? () => _edit((c) => c.redo()) : null,
+          shortcut: mac ? key(LogicalKeyboardKey.keyZ, shift: true) : key(LogicalKeyboardKey.keyY),
+          nativeShortcut: false,
+        ),
+        const MenuDivider(),
+        MenuAction(l10n.menuCut, onPressed: hasTab ? () => _edit((c) => c.cut()) : null, shortcut: key(LogicalKeyboardKey.keyX), nativeShortcut: false),
+        MenuAction(l10n.menuCopy, onPressed: hasTab ? () => _edit((c) => c.copy()) : null, shortcut: key(LogicalKeyboardKey.keyC), nativeShortcut: false),
+        MenuAction(l10n.menuPaste, onPressed: hasTab ? () => _edit((c) => c.paste()) : null, shortcut: key(LogicalKeyboardKey.keyV), nativeShortcut: false),
+        MenuAction(l10n.menuSelectAll, onPressed: hasTab ? () => _edit((c) => c.selectAll()) : null, shortcut: key(LogicalKeyboardKey.keyA), nativeShortcut: false),
+        const MenuDivider(),
+        MenuAction(l10n.menuFind, onPressed: hasTab ? () => _editorIntent(const CodeShortcutFindIntent()) : null, shortcut: key(LogicalKeyboardKey.keyF), nativeShortcut: false),
+        MenuAction(l10n.menuReplace, onPressed: hasTab ? () => _editorIntent(const CodeShortcutReplaceIntent()) : null, shortcut: key(LogicalKeyboardKey.keyH), nativeShortcut: false),
+        MenuAction(l10n.menuFindInProject, onPressed: hasProject ? _searchProject : null, shortcut: key(LogicalKeyboardKey.keyF, shift: true)),
+        const MenuDivider(),
+        MenuAction(
+          l10n.menuFormat,
+          onPressed: hasTab && _controller.canFormat(_controller.activeTab!) ? _controller.formatActive : null,
+          shortcut: SingleActivator(LogicalKeyboardKey.keyL, control: !mac, meta: mac, alt: true),
+        ),
+      ]),
+      MenuSpec(l10n.menuView, [
+        MenuAction(l10n.menuBottomPanel, onPressed: _layout.toggleBottom, shortcut: key(LogicalKeyboardKey.keyJ)),
+        MenuAction(l10n.menuGitDock, onPressed: _layout.toggleDock, shortcut: SingleActivator(LogicalKeyboardKey.keyB, control: !mac, meta: mac, alt: true)),
+        const MenuDivider(),
+        MenuAction(l10n.menuZoomIn, onPressed: zoom?.zoomIn, shortcut: key(LogicalKeyboardKey.equal)),
+        MenuAction(l10n.menuZoomOut, onPressed: zoom?.zoomOut, shortcut: key(LogicalKeyboardKey.minus)),
+        MenuAction(l10n.menuZoomReset, onPressed: zoom?.reset, shortcut: key(LogicalKeyboardKey.digit0)),
+      ]),
+      if (widget.onAbout != null)
+        MenuSpec(l10n.menuHelp, [MenuAction(l10n.aboutMenuItem(AppIdentity.displayName), onPressed: widget.onAbout)]),
+    ];
+  }
+
+  /// macOS는 화면 맨 위 시스템 메뉴 막대로 보낸다 (그림은 `AppMenuBar`가 그린다).
+  void _publishMenus(List<MenuSpec> menus) {
+    final host = StudioMenuHost.maybeOf(context);
+    if (host == null) return;
+    final platform = toPlatformMenus(menus);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      host.value = platform;
+    });
+  }
+
+  /// 파일·폴더를 창에 끌어다 놓으면 연다 (폴더는 프로젝트로, 파일은 편집기 탭으로).
+  Widget _dropTarget({required Widget child}) {
+    final theme = Theme.of(context);
+    return DropTarget(
+      onDragEntered: (_) => setState(() => _dragging = true),
+      onDragExited: (_) => setState(() => _dragging = false),
+      onDragDone: (d) {
+        setState(() => _dragging = false);
+        _controller.openDropped([for (final f in d.files) f.path]);
+      },
+      child: Stack(
+        children: [
+          Positioned.fill(child: child),
+          if (_dragging)
+            Positioned.fill(
+              child: IgnorePointer(
+                child: Container(
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.primary.withValues(alpha: 0.08),
+                    border: Border.all(color: theme.colorScheme.primary, width: 2),
+                  ),
+                  child: Text(AppLocalizations.of(context).studioDropHint, style: theme.textTheme.titleMedium?.copyWith(color: theme.colorScheme.primary)),
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
   Future<void> _pickProject() async {
     final dir = await getDirectoryPath(confirmButtonText: AppLocalizations.of(context).studioOpenProject);
     if (dir != null) await _controller.openProject(dir);
@@ -222,6 +350,9 @@ class _StudioScreenState extends State<StudioScreen>
       listenable: _controller,
       builder: (context, _) {
         final root = _controller.root;
+        final menus = _menus(context);
+        final mac = defaultTargetPlatform == TargetPlatform.macOS;
+        if (mac) _publishMenus(menus);
         return CallbackShortcuts(
           bindings: {
             const SingleActivator(LogicalKeyboardKey.comma, control: true):
@@ -232,6 +363,10 @@ class _StudioScreenState extends State<StudioScreen>
             const SingleActivator(LogicalKeyboardKey.keyJ, meta: true): _layout.toggleBottom,
             const SingleActivator(LogicalKeyboardKey.keyB, control: true, alt: true): _layout.toggleDock,
             const SingleActivator(LogicalKeyboardKey.keyB, meta: true, alt: true): _layout.toggleDock,
+            const SingleActivator(LogicalKeyboardKey.keyO, control: true): _pickProject,
+            const SingleActivator(LogicalKeyboardKey.keyO, meta: true): _pickProject,
+            const SingleActivator(LogicalKeyboardKey.keyW, control: true): _closeActiveTab,
+            const SingleActivator(LogicalKeyboardKey.keyW, meta: true): _closeActiveTab,
             const SingleActivator(LogicalKeyboardKey.keyP, control: true): _quickOpen,
             const SingleActivator(LogicalKeyboardKey.keyP, meta: true): _quickOpen,
             const SingleActivator(LogicalKeyboardKey.keyF, control: true, shift: true): _searchProject,
@@ -242,6 +377,13 @@ class _StudioScreenState extends State<StudioScreen>
             child: Scaffold(
               appBar: AppBar(
                 flexibleSpace: const FocusTint(),
+                // Windows·Linux는 창 안 메뉴 막대, macOS는 화면 맨 위의 시스템 메뉴 막대.
+                bottom: mac
+                    ? null
+                    : PreferredSize(
+                        preferredSize: const Size.fromHeight(32),
+                        child: Align(alignment: Alignment.centerLeft, child: StudioMenuBar(menus: menus)),
+                      ),
                 title: Text(
                   root == null
                       ? AppIdentity.displayName
@@ -294,7 +436,8 @@ class _StudioScreenState extends State<StudioScreen>
                   SizedBox(width: t.spaceSm),
                 ],
               ),
-              body: root == null
+              body: _dropTarget(
+                child: root == null
                   ? Center(
                       child: SingleChildScrollView(
                         child: Column(
@@ -418,6 +561,7 @@ class _StudioScreenState extends State<StudioScreen>
                         ),
                       ],
                     ),
+              ),
             ),
           ),
         );

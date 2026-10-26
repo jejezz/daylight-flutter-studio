@@ -16,17 +16,29 @@ import '../app_identity.dart';
 import '../l10n/app_localizations.dart';
 
 class AppMenuBar extends StatelessWidget {
-  const AppMenuBar({super.key, required this.onAbout, required this.child});
+  const AppMenuBar({super.key, required this.onAbout, required this.child, this.extraMenus});
 
   /// 보통 `() => showAppAboutDialog(navigatorKey.currentContext!, …)`.
   final VoidCallback onAbout;
 
   final Widget child;
 
+  /// 앱 메뉴와 Window 메뉴 사이에 끼울 메뉴(파일·편집 …). 화면이 만들어 넘긴다.
+  final ValueListenable<List<PlatformMenu>>? extraMenus;
+
   @override
   Widget build(BuildContext context) {
     if (defaultTargetPlatform != TargetPlatform.macOS) return child;
     final l10n = AppLocalizations.of(context);
+    final extra = extraMenus;
+    if (extra == null) return _bar(l10n, const []);
+    return ValueListenableBuilder<List<PlatformMenu>>(
+      valueListenable: extra,
+      builder: (context, menus, _) => _bar(l10n, menus),
+    );
+  }
+
+  Widget _bar(AppLocalizations l10n, List<PlatformMenu> extra) {
     return PlatformMenuBar(
       menus: [
         PlatformMenu(
@@ -69,6 +81,7 @@ class AppMenuBar extends StatelessWidget {
             ),
           ],
         ),
+        ...extra,
         const PlatformMenu(
           label: 'Window',
           menus: [

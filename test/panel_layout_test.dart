@@ -277,6 +277,19 @@ void main() {
       expect(find.byTooltip('아래 패널 펼치기 (Ctrl+J)'), findsWidgets);
     }
 
+    testWidgets('앱 바 아래에 파일·편집·보기·도움말 메뉴 막대가 있다', (tester) async {
+      await pumpScreen(tester);
+      for (final m in ['파일', '편집', '보기', '도움말']) {
+        expect(find.text(m), findsOneWidget, reason: m);
+      }
+      await tester.tap(find.text('파일'));
+      await tester.pumpAndSettle();
+      expect(find.text('프로젝트 열기…'), findsOneWidget);
+      expect(find.text('Ctrl+O'), findsOneWidget);
+      expect(find.text('종료'), findsOneWidget);
+      await leave(tester);
+    });
+
     testWidgets('Ctrl+J로 아래 패널을 접고 다시 편다', (tester) async {
       await pumpScreen(tester);
       expect(find.byType(BottomPanel), findsOneWidget);

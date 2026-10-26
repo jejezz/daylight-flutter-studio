@@ -159,4 +159,30 @@ void main() {
     expect(tester.takeException(), isNull);
     await _unmount(tester);
   });
+
+  testWidgets('탭을 끌어서 순서를 바꾼다', (tester) async {
+    final files = [write('a.txt', 'a'), write('b.txt', 'b'), write('c.txt', 'c')];
+    await tester.runAsync(() async {
+      for (final f in files) {
+        await c.openFile(f.path);
+      }
+    });
+    await tester.pumpWidget(_app(c));
+    await tester.pump();
+    expect(c.tabs.map((t) => t.name), ['a.txt', 'b.txt', 'c.txt']);
+
+    // c 탭을 잡아 a 탭 앞까지 끈다.
+    final from = tester.getCenter(find.text('c.txt'));
+    final to = tester.getCenter(find.text('a.txt')) - const Offset(120, 0);
+    final gesture = await tester.startGesture(from);
+    await tester.pump(const Duration(milliseconds: 50));
+    await gesture.moveTo(to, timeStamp: const Duration(milliseconds: 100));
+    await tester.pump(const Duration(milliseconds: 100));
+    await gesture.up();
+    await tester.pumpAndSettle();
+
+    expect(c.tabs.map((t) => t.name), ['c.txt', 'a.txt', 'b.txt']);
+    expect(c.activeTab?.name, 'c.txt', reason: '보던 탭은 그대로');
+    await _unmount(tester);
+  });
 }

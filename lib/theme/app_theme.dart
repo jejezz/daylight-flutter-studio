@@ -481,6 +481,27 @@ abstract final class _SaturnTheme {
           side: BorderSide(color: scheme.outline),
         ),
       ),
+      // 창 안 메뉴 막대(Windows·Linux): 앱 바와 같은 바탕에 얹고, 펼친 메뉴는 팝업과 같은 모양.
+      menuBarTheme: MenuBarThemeData(
+        style: MenuStyle(
+          backgroundColor: const WidgetStatePropertyAll(Colors.transparent),
+          elevation: const WidgetStatePropertyAll(0),
+          shadowColor: const WidgetStatePropertyAll(Colors.transparent),
+          shape: const WidgetStatePropertyAll(RoundedRectangleBorder()),
+          padding: const WidgetStatePropertyAll(EdgeInsets.zero),
+        ),
+      ),
+      menuTheme: MenuThemeData(
+        style: MenuStyle(
+          backgroundColor: WidgetStatePropertyAll(scheme.surfaceContainerHighest),
+          shape: WidgetStatePropertyAll(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(AppRadius.button),
+              side: BorderSide(color: scheme.outline),
+            ),
+          ),
+        ),
+      ),
       // 액션 글자색이 배경과 구분되도록 명시 (dove-zip의 "복사" 버튼 문제).
       snackBarTheme: SnackBarThemeData(
         backgroundColor: scheme.surfaceContainerHighest,

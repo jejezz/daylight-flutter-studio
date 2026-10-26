@@ -283,13 +283,18 @@ class _TabBar extends StatelessWidget {
     final theme = Theme.of(context);
     return SizedBox(
       height: 36,
-      child: ListView.builder(
+      // 탭을 끌어서 순서를 바꾼다 (데스크톱은 탭 어디를 잡아도 끌린다).
+      child: ReorderableListView.builder(
         scrollDirection: Axis.horizontal,
+        buildDefaultDragHandles: true,
         itemCount: controller.tabs.length,
+        onReorderItem: controller.moveTab,
+        proxyDecorator: (child, index, animation) => Material(type: MaterialType.transparency, child: child),
         itemBuilder: (context, i) {
           final t = controller.tabs[i];
           final active = i == controller.activeIndex;
           return Tooltip(
+            key: ValueKey(t.path),
             message: t.path,
             child: InkWell(
               onTap: () => controller.selectTab(i),
@@ -307,7 +312,7 @@ class _TabBar extends StatelessWidget {
                       visualDensity: VisualDensity.compact,
                       tooltip: l10n.commonClose,
                       icon: Icon(context.icons.close),
-                      onPressed: () => _close(context, i),
+                      onPressed: () => closeTabWithPrompt(context, controller, i),
                     ),
                   ],
                 ),
@@ -318,27 +323,28 @@ class _TabBar extends StatelessWidget {
       ),
     );
   }
+}
 
-  Future<void> _close(BuildContext context, int i) async {
-    final l10n = AppLocalizations.of(context);
-    final t = controller.tabs[i];
-    if (!t.dirty) return controller.closeTab(i);
-    final choice = await showDialog<String>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(l10n.editorSavePromptTitle(t.name)),
-        content: Text(l10n.editorSavePromptBody),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context, 'cancel'), child: Text(l10n.commonCancel)),
-          TextButton(onPressed: () => Navigator.pop(context, 'discard'), child: Text(l10n.editorDontSave)),
-          FilledButton(onPressed: () => Navigator.pop(context, 'save'), child: Text(l10n.commonSave)),
-        ],
-      ),
-    );
-    if (choice == 'save') {
-      if (await controller.save(t)) controller.closeTab(i);
-    } else if (choice == 'discard') {
-      controller.closeTab(i);
-    }
+/// 탭을 닫는다. 고친 내용이 있으면 저장할지 묻는다.
+Future<void> closeTabWithPrompt(BuildContext context, StudioController controller, int i) async {
+  final l10n = AppLocalizations.of(context);
+  final t = controller.tabs[i];
+  if (!t.dirty) return controller.closeTab(i);
+  final choice = await showDialog<String>(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: Text(l10n.editorSavePromptTitle(t.name)),
+      content: Text(l10n.editorSavePromptBody),
+      actions: [
+        TextButton(onPressed: () => Navigator.pop(context, 'cancel'), child: Text(l10n.commonCancel)),
+        TextButton(onPressed: () => Navigator.pop(context, 'discard'), child: Text(l10n.editorDontSave)),
+        FilledButton(onPressed: () => Navigator.pop(context, 'save'), child: Text(l10n.commonSave)),
+      ],
+    ),
+  );
+  if (choice == 'save') {
+    if (await controller.save(t)) controller.closeTab(i);
+  } else if (choice == 'discard') {
+    controller.closeTab(i);
   }
 }

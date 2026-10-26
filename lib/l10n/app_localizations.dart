@@ -8431,6 +8431,174 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'Git 패널 보이기 (Ctrl+Alt+B)'**
   String get studioDockShow;
+
+  /// No description provided for @menuFile.
+  ///
+  /// In ko, this message translates to:
+  /// **'파일'**
+  String get menuFile;
+
+  /// No description provided for @menuEdit.
+  ///
+  /// In ko, this message translates to:
+  /// **'편집'**
+  String get menuEdit;
+
+  /// No description provided for @menuView.
+  ///
+  /// In ko, this message translates to:
+  /// **'보기'**
+  String get menuView;
+
+  /// No description provided for @menuHelp.
+  ///
+  /// In ko, this message translates to:
+  /// **'도움말'**
+  String get menuHelp;
+
+  /// No description provided for @menuOpenProject.
+  ///
+  /// In ko, this message translates to:
+  /// **'프로젝트 열기…'**
+  String get menuOpenProject;
+
+  /// No description provided for @menuRecentProjects.
+  ///
+  /// In ko, this message translates to:
+  /// **'최근 프로젝트'**
+  String get menuRecentProjects;
+
+  /// No description provided for @menuNoRecent.
+  ///
+  /// In ko, this message translates to:
+  /// **'(없음)'**
+  String get menuNoRecent;
+
+  /// No description provided for @menuSaveAll.
+  ///
+  /// In ko, this message translates to:
+  /// **'모두 저장'**
+  String get menuSaveAll;
+
+  /// No description provided for @menuCloseTab.
+  ///
+  /// In ko, this message translates to:
+  /// **'탭 닫기'**
+  String get menuCloseTab;
+
+  /// No description provided for @menuQuickOpen.
+  ///
+  /// In ko, this message translates to:
+  /// **'파일로 이동…'**
+  String get menuQuickOpen;
+
+  /// No description provided for @menuSettings.
+  ///
+  /// In ko, this message translates to:
+  /// **'설정…'**
+  String get menuSettings;
+
+  /// No description provided for @menuExit.
+  ///
+  /// In ko, this message translates to:
+  /// **'종료'**
+  String get menuExit;
+
+  /// No description provided for @menuUndo.
+  ///
+  /// In ko, this message translates to:
+  /// **'실행 취소'**
+  String get menuUndo;
+
+  /// No description provided for @menuRedo.
+  ///
+  /// In ko, this message translates to:
+  /// **'다시 실행'**
+  String get menuRedo;
+
+  /// No description provided for @menuCut.
+  ///
+  /// In ko, this message translates to:
+  /// **'잘라내기'**
+  String get menuCut;
+
+  /// No description provided for @menuCopy.
+  ///
+  /// In ko, this message translates to:
+  /// **'복사'**
+  String get menuCopy;
+
+  /// No description provided for @menuPaste.
+  ///
+  /// In ko, this message translates to:
+  /// **'붙여넣기'**
+  String get menuPaste;
+
+  /// No description provided for @menuSelectAll.
+  ///
+  /// In ko, this message translates to:
+  /// **'전체 선택'**
+  String get menuSelectAll;
+
+  /// No description provided for @menuFind.
+  ///
+  /// In ko, this message translates to:
+  /// **'찾기…'**
+  String get menuFind;
+
+  /// No description provided for @menuReplace.
+  ///
+  /// In ko, this message translates to:
+  /// **'바꾸기…'**
+  String get menuReplace;
+
+  /// No description provided for @menuFindInProject.
+  ///
+  /// In ko, this message translates to:
+  /// **'프로젝트에서 찾기…'**
+  String get menuFindInProject;
+
+  /// No description provided for @menuFormat.
+  ///
+  /// In ko, this message translates to:
+  /// **'코드 정렬'**
+  String get menuFormat;
+
+  /// No description provided for @menuBottomPanel.
+  ///
+  /// In ko, this message translates to:
+  /// **'아래 패널'**
+  String get menuBottomPanel;
+
+  /// No description provided for @menuGitDock.
+  ///
+  /// In ko, this message translates to:
+  /// **'Git 패널'**
+  String get menuGitDock;
+
+  /// No description provided for @menuZoomIn.
+  ///
+  /// In ko, this message translates to:
+  /// **'글자 크게'**
+  String get menuZoomIn;
+
+  /// No description provided for @menuZoomOut.
+  ///
+  /// In ko, this message translates to:
+  /// **'글자 작게'**
+  String get menuZoomOut;
+
+  /// No description provided for @menuZoomReset.
+  ///
+  /// In ko, this message translates to:
+  /// **'글자 크기 기본'**
+  String get menuZoomReset;
+
+  /// No description provided for @studioDropHint.
+  ///
+  /// In ko, this message translates to:
+  /// **'여기에 놓으면 엽니다'**
+  String get studioDropHint;
 }
 
 class _AppLocalizationsDelegate

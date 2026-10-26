@@ -391,6 +391,40 @@ class StudioController extends ChangeNotifier {
     }
   }
 
+  /// 탭을 끌어서 순서를 바꾼다. [newIndex]는 옮긴 뒤의 자리다 (`onReorderItem`이 넘겨 주는 값).
+  /// 보고 있던 탭은 그대로 보고 있는다.
+  void moveTab(int oldIndex, int newIndex) {
+    if (oldIndex < 0 || oldIndex >= tabs.length) return;
+    newIndex = newIndex.clamp(0, tabs.length - 1);
+    if (newIndex == oldIndex) return;
+    final active = activeTab;
+    tabs.insert(newIndex, tabs.removeAt(oldIndex));
+    if (active != null) activeIndex = tabs.indexOf(active);
+    notifyListeners();
+    unawaited(_persistTabs());
+  }
+
+  /// 창에 끌어다 놓은 것을 연다. 폴더가 있으면 그 폴더를 프로젝트로 열고, 아니면 파일을 편집기 탭으로 연다.
+  Future<void> openDropped(List<String> paths) async {
+    final dir = paths.where((p) => FileSystemEntity.isDirectorySync(p)).firstOrNull;
+    if (dir != null) {
+      await openProject(dir);
+      return;
+    }
+    for (final p in paths) {
+      if (FileSystemEntity.isFileSync(p)) await openFile(p);
+    }
+  }
+
+  /// 고친 탭을 모두 저장한다. 하나라도 저장하지 못하면 false.
+  Future<bool> saveAll() async {
+    var ok = true;
+    for (final t in List.of(tabs)) {
+      if (t.dirty && !await save(t)) ok = false;
+    }
+    return ok;
+  }
+
   void selectTab(int index) {
     activeIndex = index;
     notifyListeners();
