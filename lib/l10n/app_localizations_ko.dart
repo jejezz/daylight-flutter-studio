@@ -4928,4 +4928,10 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get runTargetNone => '대상을 고르지 않았습니다';
+
+  @override
+  String get studioDockHide => 'Git 패널 숨기기 (Ctrl+Alt+B)';
+
+  @override
+  String get studioDockShow => 'Git 패널 보이기 (Ctrl+Alt+B)';
 }

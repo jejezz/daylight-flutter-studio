@@ -8419,6 +8419,18 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'대상을 고르지 않았습니다'**
   String get runTargetNone;
+
+  /// No description provided for @studioDockHide.
+  ///
+  /// In ko, this message translates to:
+  /// **'Git 패널 숨기기 (Ctrl+Alt+B)'**
+  String get studioDockHide;
+
+  /// No description provided for @studioDockShow.
+  ///
+  /// In ko, this message translates to:
+  /// **'Git 패널 보이기 (Ctrl+Alt+B)'**
+  String get studioDockShow;
 }
 
 class _AppLocalizationsDelegate

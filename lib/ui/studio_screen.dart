@@ -81,7 +81,6 @@ class _StudioScreenState extends State<StudioScreen>
   );
   late final GitMergeGate _mergeGate = GitMergeGate(_git);
   double _treeWidth = 260;
-  double _dockWidth = 400;
   String? _lastRoot;
 
   @override
@@ -229,6 +228,8 @@ class _StudioScreenState extends State<StudioScreen>
                 _openSettings,
             const SingleActivator(LogicalKeyboardKey.keyJ, control: true): _layout.toggleBottom,
             const SingleActivator(LogicalKeyboardKey.keyJ, meta: true): _layout.toggleBottom,
+            const SingleActivator(LogicalKeyboardKey.keyB, control: true, alt: true): _layout.toggleDock,
+            const SingleActivator(LogicalKeyboardKey.keyB, meta: true, alt: true): _layout.toggleDock,
             const SingleActivator(LogicalKeyboardKey.keyP, control: true): _quickOpen,
             const SingleActivator(LogicalKeyboardKey.keyP, meta: true): _quickOpen,
             const SingleActivator(LogicalKeyboardKey.keyF, control: true, shift: true): _searchProject,
@@ -263,6 +264,18 @@ class _StudioScreenState extends State<StudioScreen>
                       onPressed: _searchProject,
                     ),
                   ],
+                  if (root != null)
+                    ListenableBuilder(
+                      listenable: _layout,
+                      builder: (context, _) => IconButton(
+                        tooltip: _layout.dockOpen
+                            ? AppLocalizations.of(context).studioDockHide
+                            : AppLocalizations.of(context).studioDockShow,
+                        isSelected: _layout.dockOpen,
+                        icon: Icon(context.icons.viewSidebar),
+                        onPressed: _layout.toggleDock,
+                      ),
+                    ),
                   IconButton(
                     tooltip: AppLocalizations.of(context).studioSettingsTooltip,
                     icon: Icon(context.icons.settings),
@@ -349,21 +362,25 @@ class _StudioScreenState extends State<StudioScreen>
                                   ),
                                 ),
                               ),
-                              _Splitter(
-                                onDrag: (dx) => setState(
-                                  () => _dockWidth = (_dockWidth - dx).clamp(
-                                    300,
-                                    700,
+                              // 숨겨도 위젯은 그대로 둔다 — 다시 보일 때 저장소를 처음부터 읽지 않는다.
+                              ListenableBuilder(
+                                listenable: _layout,
+                                builder: (context, _) => Offstage(
+                                  offstage: !_layout.dockOpen,
+                                  child: Row(
+                                    children: [
+                                      _Splitter(onDrag: (dx) => _layout.setDockWidth(_layout.dockWidth - dx)),
+                                      SizedBox(
+                                        width: _layout.dockWidth,
+                                        child: BranchDockDock(
+                                          root: _controller.root,
+                                          gate: _mergeGate,
+                                          onOpenFolder: (path) => _controller.openProject(path, remember: false),
+                                          onHeadChanged: _onBranchChanged,
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ),
-                              ),
-                              SizedBox(
-                                width: _dockWidth,
-                                child: BranchDockDock(
-                                  root: _controller.root,
-                                  gate: _mergeGate,
-                                  onOpenFolder: (path) => _controller.openProject(path, remember: false),
-                                  onHeadChanged: _onBranchChanged,
                                 ),
                               ),
                             ],

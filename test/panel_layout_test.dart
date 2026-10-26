@@ -82,6 +82,39 @@ void main() {
       expect(b.bottomTab, BottomTab.problems);
     });
 
+    test('Git Dock: 기본은 열려 있고, 너비는 최소·최대 안으로 맞춘다', () {
+      final l = PanelLayout();
+      addTearDown(l.dispose);
+      expect(l.dockOpen, isTrue);
+      expect(l.dockWidth, PanelLayout.defaultDockWidth);
+      l.setDockWidth(100);
+      expect(l.dockWidth, PanelLayout.minDockWidth, reason: '너무 좁으면 단추가 찌그러진다');
+      l.setDockWidth(5000);
+      expect(l.dockWidth, PanelLayout.maxDockWidth);
+    });
+
+    test('Git Dock: 숨김·너비를 저장하고 다시 읽는다', () async {
+      final a = PanelLayout();
+      a.toggleDock();
+      a.setDockWidth(500);
+      a.dispose();
+      await Future<void>.delayed(const Duration(milliseconds: 50));
+
+      final b = PanelLayout();
+      addTearDown(b.dispose);
+      await b.restore();
+      expect(b.dockOpen, isFalse);
+      expect(b.dockWidth, 500);
+    });
+
+    test('Git Dock: 저장된 너비가 최소보다 좁으면 최소로 올린다', () async {
+      SharedPreferences.setMockInitialValues({'layout_dock_width': 200.0});
+      final l = PanelLayout();
+      addTearDown(l.dispose);
+      await l.restore();
+      expect(l.dockWidth, PanelLayout.minDockWidth);
+    });
+
     test('깨진 저장 값은 기본 배치로 둔다', () async {
       SharedPreferences.setMockInitialValues({'layout_bottom_tab': 'nonsense', 'layout_bottom_height': 1.0});
       final l = PanelLayout();
@@ -183,6 +216,27 @@ void main() {
       expect(b.right, lessThanOrEqualTo(g.left + 1));
       expect(b.top, greaterThan(g.top + 100), reason: '아래 패널은 화면 아래쪽');
       expect(g.height, greaterThan(b.height), reason: 'Git 패널은 전체 높이를 쓴다');
+      await leave(tester);
+    });
+
+    testWidgets('앱 바의 단추와 Ctrl+Alt+B로 Git Dock을 숨기고 다시 보인다', (tester) async {
+      await pumpScreen(tester);
+      final dock = find.byType(BranchDockDock);
+      expect(tester.getSize(dock).width, PanelLayout.defaultDockWidth);
+
+      await tester.tap(find.byTooltip('Git 패널 숨기기 (Ctrl+Alt+B)'));
+      await tester.pump();
+      expect(find.byType(BranchDockDock, skipOffstage: true), findsNothing, reason: '숨기면 화면에서 빠진다');
+      expect(find.byType(BranchDockDock, skipOffstage: false), findsOneWidget, reason: '상태는 그대로 둔다');
+
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.altLeft);
+      await tester.sendKeyEvent(LogicalKeyboardKey.keyB);
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.altLeft);
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+      await tester.pump();
+      expect(find.byType(BranchDockDock), findsOneWidget);
+      expect(find.byTooltip('Git 패널 숨기기 (Ctrl+Alt+B)'), findsOneWidget);
       await leave(tester);
     });
 

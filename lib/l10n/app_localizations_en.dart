@@ -5195,4 +5195,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get runTargetNone => 'No target selected';
+
+  @override
+  String get studioDockHide => 'Hide Git panel (Ctrl+Alt+B)';
+
+  @override
+  String get studioDockShow => 'Show Git panel (Ctrl+Alt+B)';
 }
