@@ -13,6 +13,7 @@ import 'settings/app_settings.dart';
 import 'settings/editor_settings.dart';
 import 'theme/editor_zoom.dart';
 import 'theme/theme_controller.dart';
+import 'ui/studio_menus.dart';
 import 'ui/studio_screen.dart';
 
 final bool _isDesktop =
@@ -54,6 +55,7 @@ class _StudioAppState extends State<StudioApp> with WidgetsBindingObserver {
   late final _theme = ThemeController(widget.settings);
   final _zoom = EditorZoom();
   final _editor = EditorSettings();
+  final _menus = ValueNotifier<List<PlatformMenu>>(const []);
 
   @override
   void initState() {
@@ -73,6 +75,7 @@ class _StudioAppState extends State<StudioApp> with WidgetsBindingObserver {
     _theme.dispose();
     _zoom.dispose();
     _editor.dispose();
+    _menus.dispose();
     super.dispose();
   }
 
@@ -119,12 +122,16 @@ class _StudioAppState extends State<StudioApp> with WidgetsBindingObserver {
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
           localeResolutionCallback: AppSettings.resolveLocale,
-          builder: (context, child) => AppMenuBar(
-            onAbout: _showAbout,
-            child: L10nBridge(
-              child: EditorSettingsScope(
-                settings: _editor,
-                child: EditorZoomScope(zoom: _zoom, child: child!),
+          builder: (context, child) => StudioMenuHost(
+            menus: _menus,
+            child: AppMenuBar(
+              onAbout: _showAbout,
+              extraMenus: _menus,
+              child: L10nBridge(
+                child: EditorSettingsScope(
+                  settings: _editor,
+                  child: EditorZoomScope(zoom: _zoom, child: child!),
+                ),
               ),
             ),
           ),

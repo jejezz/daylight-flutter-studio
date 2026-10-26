@@ -374,12 +374,17 @@ void main() {
         tester.widget<FilledButton>(find.ancestor(of: find.text('병합하기'), matching: find.byType(FilledButton)));
 
     /// 병합 명령은 실제 입출력(저장소 읽기)을 거치므로 실제 시간을 흘려 기다린다.
-    Future<void> settle(WidgetTester tester) async {
-      for (var i = 0; i < 10; i++) {
+    /// 전체 테스트가 함께 돌 때는 느려질 수 있어, 고정 시간이 아니라 [until]이 될 때까지(최대 10초) 기다린다.
+    Future<void> settle(WidgetTester tester, {bool Function()? until}) async {
+      for (var i = 0; i < 100; i++) {
         await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 100)));
         await tester.pump(const Duration(milliseconds: 100));
+        if (until != null ? until() : i >= 9) break;
       }
     }
+
+    /// 병합 명령(gh 병합 → 기본 브랜치 전환 → pull)이 모두 끝났는가 — 끝나기 전에 화면을 내리면 타이머가 남는다.
+    bool merged() => bdRunner.merge != null && !repo.busy;
 
     Future<void> leave(WidgetTester tester) async {
       await tester.pumpWidget(const SizedBox());
@@ -415,7 +420,7 @@ void main() {
       await tester.tap(find.text('검증 없이 병합…'));
       await settle(tester);
       await tester.tap(find.text('그래도 병합'));
-      await settle(tester);
+      await settle(tester, until: merged);
 
       expect(bdRunner.merge, ['gh', 'pr', 'merge', '7', '--merge', '--delete-branch']);
       await leave(tester);
@@ -429,7 +434,7 @@ void main() {
       expect(mergeButton(tester).onPressed, isNotNull);
 
       await tester.tap(find.text('병합하기'));
-      await settle(tester);
+      await settle(tester, until: merged);
       expect(bdRunner.merge, isNotNull);
       expect(find.text('확인하지 않은 커밋입니다'), findsNothing, reason: '확인된 커밋은 묻지 않는다');
       await leave(tester);
@@ -447,7 +452,7 @@ void main() {
       expect(bdRunner.merge, isNull, reason: '확인 전에는 병합하지 않는다');
 
       await tester.tap(find.text('그래도 병합'));
-      await settle(tester);
+      await settle(tester, until: merged);
       expect(bdRunner.merge, isNotNull);
       await leave(tester);
     });
@@ -458,7 +463,7 @@ void main() {
       expect(find.textContaining('확인하지 않았습니다'), findsNothing);
       expect(find.text('검증 없이 병합…'), findsNothing);
       await tester.tap(find.text('병합하기'));
-      await settle(tester);
+      await settle(tester, until: merged);
       expect(bdRunner.merge, isNotNull);
       await leave(tester);
     });

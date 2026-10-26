@@ -4934,4 +4934,88 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get studioDockShow => 'Git 패널 보이기 (Ctrl+Alt+B)';
+
+  @override
+  String get menuFile => '파일';
+
+  @override
+  String get menuEdit => '편집';
+
+  @override
+  String get menuView => '보기';
+
+  @override
+  String get menuHelp => '도움말';
+
+  @override
+  String get menuOpenProject => '프로젝트 열기…';
+
+  @override
+  String get menuRecentProjects => '최근 프로젝트';
+
+  @override
+  String get menuNoRecent => '(없음)';
+
+  @override
+  String get menuSaveAll => '모두 저장';
+
+  @override
+  String get menuCloseTab => '탭 닫기';
+
+  @override
+  String get menuQuickOpen => '파일로 이동…';
+
+  @override
+  String get menuSettings => '설정…';
+
+  @override
+  String get menuExit => '종료';
+
+  @override
+  String get menuUndo => '실행 취소';
+
+  @override
+  String get menuRedo => '다시 실행';
+
+  @override
+  String get menuCut => '잘라내기';
+
+  @override
+  String get menuCopy => '복사';
+
+  @override
+  String get menuPaste => '붙여넣기';
+
+  @override
+  String get menuSelectAll => '전체 선택';
+
+  @override
+  String get menuFind => '찾기…';
+
+  @override
+  String get menuReplace => '바꾸기…';
+
+  @override
+  String get menuFindInProject => '프로젝트에서 찾기…';
+
+  @override
+  String get menuFormat => '코드 정렬';
+
+  @override
+  String get menuBottomPanel => '아래 패널';
+
+  @override
+  String get menuGitDock => 'Git 패널';
+
+  @override
+  String get menuZoomIn => '글자 크게';
+
+  @override
+  String get menuZoomOut => '글자 작게';
+
+  @override
+  String get menuZoomReset => '글자 크기 기본';
+
+  @override
+  String get studioDropHint => '여기에 놓으면 엽니다';
 }

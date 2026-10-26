@@ -5201,4 +5201,88 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get studioDockShow => 'Show Git panel (Ctrl+Alt+B)';
+
+  @override
+  String get menuFile => 'File';
+
+  @override
+  String get menuEdit => 'Edit';
+
+  @override
+  String get menuView => 'View';
+
+  @override
+  String get menuHelp => 'Help';
+
+  @override
+  String get menuOpenProject => 'Open Project…';
+
+  @override
+  String get menuRecentProjects => 'Recent Projects';
+
+  @override
+  String get menuNoRecent => '(none)';
+
+  @override
+  String get menuSaveAll => 'Save All';
+
+  @override
+  String get menuCloseTab => 'Close Tab';
+
+  @override
+  String get menuQuickOpen => 'Go to File…';
+
+  @override
+  String get menuSettings => 'Settings…';
+
+  @override
+  String get menuExit => 'Exit';
+
+  @override
+  String get menuUndo => 'Undo';
+
+  @override
+  String get menuRedo => 'Redo';
+
+  @override
+  String get menuCut => 'Cut';
+
+  @override
+  String get menuCopy => 'Copy';
+
+  @override
+  String get menuPaste => 'Paste';
+
+  @override
+  String get menuSelectAll => 'Select All';
+
+  @override
+  String get menuFind => 'Find…';
+
+  @override
+  String get menuReplace => 'Replace…';
+
+  @override
+  String get menuFindInProject => 'Find in Project…';
+
+  @override
+  String get menuFormat => 'Format Code';
+
+  @override
+  String get menuBottomPanel => 'Bottom Panel';
+
+  @override
+  String get menuGitDock => 'Git Panel';
+
+  @override
+  String get menuZoomIn => 'Zoom In';
+
+  @override
+  String get menuZoomOut => 'Zoom Out';
+
+  @override
+  String get menuZoomReset => 'Reset Zoom';
+
+  @override
+  String get studioDropHint => 'Drop here to open';
 }
