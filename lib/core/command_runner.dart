@@ -26,7 +26,15 @@ class RunHandle {
 
   void cancel() {
     _cancelled = true;
-    _process?.kill();
+    final p = _process;
+    if (p == null) return;
+    if (Platform.isWindows) {
+      // Windows에서 `flutter`는 Git Bash를 거쳐 실행된다(gitBashPath) — 이 프로세스를 죽여도
+      // 그 밑에서 뜬 flutter_tools·실제 앱 창은 자식으로 남는다. `/T`로 트리 전체를 끝낸다.
+      Process.run('taskkill', ['/PID', '${p.pid}', '/T', '/F']);
+    } else {
+      p.kill();
+    }
   }
 
   /// 실행 중인 프로세스의 표준 입력으로 글자를 보낸다 (`flutter run`의 `r`, `R`, `q`).
