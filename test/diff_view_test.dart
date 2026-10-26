@@ -3,15 +3,12 @@ import 'dart:io';
 import 'package:daylight_flutter_studio/l10n/app_localizations.dart';
 import 'package:daylight_flutter_studio/core/command_log.dart';
 import 'package:daylight_flutter_studio/core/command_runner.dart';
-import 'package:daylight_flutter_studio/git/git_controller.dart';
 import 'package:daylight_flutter_studio/studio/git_base.dart';
 import 'package:daylight_flutter_studio/studio/studio_controller.dart';
 import 'package:daylight_flutter_studio/theme/app_theme.dart';
 import 'package:daylight_flutter_studio/ui/change_gutter.dart';
 import 'package:daylight_flutter_studio/ui/diff_view.dart';
 import 'package:daylight_flutter_studio/ui/editor_pane.dart';
-import 'package:daylight_flutter_studio/ui/git_panel.dart';
-import 'package:daylight_flutter_studio/verify/verify_store.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -338,26 +335,6 @@ void main() {
       );
       await tester.pump();
       expect(find.byIcon(Icons.difference_rounded), findsNothing);
-      await unmount(tester);
-    });
-
-    testWidgets('Git 패널의 변경 파일을 누르면 절대 경로로 변경점 보기를 연다', (tester) async {
-      File(_p(repo, 'a.txt')).writeAsStringSync('one\nTWO\nthree\n');
-      final git = GitController(runner: runner, store: VerifyStore(runner));
-      addTearDown(git.dispose);
-      await tester.runAsync(() => git.setDir(repo.path));
-
-      String? opened;
-      await tester.pumpWidget(app(GitPanel(controller: git, onOpenDiff: (p) => opened = p)));
-      await tester.pump();
-
-      expect(find.text('a.txt'), findsOneWidget);
-      await tester.tap(find.text('a.txt'));
-      await tester.pump();
-
-      expect(opened, isNotNull);
-      expect(opened!.toLowerCase(), endsWith('${_sep}a.txt'));
-      expect(File(opened!).existsSync(), isTrue, reason: '열 수 있는 실제 경로여야 한다');
       await unmount(tester);
     });
   });

@@ -4918,4 +4918,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get bdUpdateQuitAndInstall => '종료하고 설치';
+
+  @override
+  String get bdDockNoFolder => '열린 프로젝트 폴더가 없습니다';
 }

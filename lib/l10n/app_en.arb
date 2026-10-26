@@ -2136,5 +2136,6 @@
       }
     }
   },
-  "bdUpdateQuitAndInstall": "Quit and install"
+  "bdUpdateQuitAndInstall": "Quit and install",
+  "bdDockNoFolder": "No project folder is open"
 }

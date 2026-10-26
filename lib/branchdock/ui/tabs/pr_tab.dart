@@ -10,7 +10,9 @@ import '../../l10n/app_localizations.dart';
 import '../../repo/repo_controller.dart';
 import '../../theme/app_theme.dart';
 import '../action_sheet.dart';
+import '../../../settings/gate_settings.dart';
 import '../help/concepts.dart';
+import '../merge_gate.dart';
 import '../markdown_editor.dart';
 import '../repo_actions.dart';
 import '../repo_scope.dart';
@@ -157,11 +159,29 @@ class _PrCardState extends State<PrCard> {
   PrMergeMethod _method = PrMergeMethod.merge;
   bool _deleteBranch = true;
 
+  /// 병합한다. 관문이 있으면 병합 직전에 다시 판정하고, 막히거나 확인이 필요하면 사용자 확인을 받는다.
+  /// 막힌 경우에는 [force] (명시적 "검증 없이 병합")일 때만 확인 창까지 간다.
+  Future<void> _merge(PullRequest pr, List<List<String>> commands, {bool force = false}) async {
+    final l10n = AppLocalizations.of(context);
+    final gate = MergeGateScope.maybeOf(context);
+    if (gate != null && gate.active) {
+      final d = await gate.judge();
+      if (!mounted) return;
+      if (d.action != GateAction.allow) {
+        if (d.action == GateAction.block && !force) return;
+        if (!await gate.confirmOverride(context, d.message) || !mounted) return;
+      }
+    }
+    final ok = await RepoActions.report(context, widget.repo.executeAll(commands), done: l10n.bdDonePrMerged(pr.number));
+    if (ok) widget.onChanged();
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final pr = widget.pr;
+    final gate = MergeGateScope.maybeOf(context);
     final c = pr.checks;
     final repo = widget.repo;
 
@@ -323,18 +343,38 @@ class _PrCardState extends State<PrCard> {
                   title: Text(l10n.bdPrDeleteBranch),
                 ),
                 CommandPreview(commands: mergeCommands),
+                // Studio 병합 관문: 검증 기록이 없거나 낡았으면 막거나 확인을 받는다.
+                if (gate != null && gate.active) ...[
+                  const SizedBox(height: AppSpacing.sm),
+                  gate.buildVerifyCard(context),
+                  const SizedBox(height: AppSpacing.sm),
+                  Text(
+                    gate.decision.message,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: toneColor(
+                        context,
+                        switch (gate.decision.action) {
+                          GateAction.allow => Tone.success,
+                          GateAction.confirm => Tone.warning,
+                          GateAction.block => Tone.danger,
+                        },
+                      ),
+                    ),
+                  ),
+                ],
                 const SizedBox(height: AppSpacing.sm),
                 PrMergeButton(
-                  enabled: !repo.busy && !pr.draft && !pr.conflicting,
-                  onMerge: () async {
-                    final ok = await RepoActions.report(
-                      context,
-                      repo.executeAll(mergeCommands),
-                      done: l10n.bdDonePrMerged(pr.number),
-                    );
-                    if (ok) widget.onChanged();
-                  },
+                  enabled: !repo.busy && !pr.draft && !pr.conflicting && gate?.decision.action != GateAction.block,
+                  onMerge: () => _merge(pr, mergeCommands),
                 ),
+                if (gate != null && gate.active && gate.decision.action == GateAction.block)
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton(
+                      onPressed: repo.busy || pr.draft || pr.conflicting ? null : () => _merge(pr, mergeCommands, force: true),
+                      child: Text(l10n.gitMergeUnverified, style: TextStyle(color: toneColor(context, Tone.danger))),
+                    ),
+                  ),
               ],
             ],
           ),

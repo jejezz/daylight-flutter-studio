@@ -5185,4 +5185,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get bdUpdateQuitAndInstall => 'Quit and install';
+
+  @override
+  String get bdDockNoFolder => 'No project folder is open';
 }

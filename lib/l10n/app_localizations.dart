@@ -8401,6 +8401,12 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'종료하고 설치'**
   String get bdUpdateQuitAndInstall;
+
+  /// No description provided for @bdDockNoFolder.
+  ///
+  /// In ko, this message translates to:
+  /// **'열린 프로젝트 폴더가 없습니다'**
+  String get bdDockNoFolder;
 }
 
 class _AppLocalizationsDelegate
