@@ -126,6 +126,31 @@
       }
     }
   },
+  "gitStage": "스테이지",
+  "gitUnstage": "스테이지 해제",
+  "gitStageAll": "모두 스테이지",
+  "gitUnstageAll": "모두 해제",
+  "gitDoneStaged": "스테이지함",
+  "gitDoneUnstaged": "스테이지 해제함",
+  "gitDoneCommit": "커밋함",
+  "gitCommitMessageHint": "커밋 메시지",
+  "gitCommitAll": "커밋",
+  "gitCommitStaged": "커밋 ({count})",
+  "@gitCommitStaged": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "gitOnDefaultBranch": "기본 브랜치({branch})에서는 PR을 만들 수 없습니다. 새 브랜치에서 작업하세요.",
+  "@gitOnDefaultBranch": {
+    "placeholders": {
+      "branch": {
+        "type": "String"
+      }
+    }
+  },
   "conflictSheetTitle": "{name} 충돌 해결",
   "@conflictSheetTitle": {
     "placeholders": {

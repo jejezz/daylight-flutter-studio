@@ -109,6 +109,31 @@
       }
     }
   },
+  "gitStage": "Stage",
+  "gitUnstage": "Unstage",
+  "gitStageAll": "Stage all",
+  "gitUnstageAll": "Unstage all",
+  "gitDoneStaged": "Staged",
+  "gitDoneUnstaged": "Unstaged",
+  "gitDoneCommit": "Committed",
+  "gitCommitMessageHint": "Commit message",
+  "gitCommitAll": "Commit",
+  "gitCommitStaged": "Commit ({count})",
+  "@gitCommitStaged": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "gitOnDefaultBranch": "Can't create a PR from the default branch ({branch}). Work on a new branch instead.",
+  "@gitOnDefaultBranch": {
+    "placeholders": {
+      "branch": {
+        "type": "String"
+      }
+    }
+  },
   "conflictSheetTitle": "Resolve conflicts in {name}",
   "@conflictSheetTitle": {
     "placeholders": {

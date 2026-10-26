@@ -283,6 +283,43 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get gitStage => 'Stage';
+
+  @override
+  String get gitUnstage => 'Unstage';
+
+  @override
+  String get gitStageAll => 'Stage all';
+
+  @override
+  String get gitUnstageAll => 'Unstage all';
+
+  @override
+  String get gitDoneStaged => 'Staged';
+
+  @override
+  String get gitDoneUnstaged => 'Unstaged';
+
+  @override
+  String get gitDoneCommit => 'Committed';
+
+  @override
+  String get gitCommitMessageHint => 'Commit message';
+
+  @override
+  String get gitCommitAll => 'Commit';
+
+  @override
+  String gitCommitStaged(int count) {
+    return 'Commit ($count)';
+  }
+
+  @override
+  String gitOnDefaultBranch(String branch) {
+    return 'Can\'t create a PR from the default branch ($branch). Work on a new branch instead.';
+  }
+
+  @override
   String conflictSheetTitle(String name) {
     return 'Resolve conflicts in $name';
   }

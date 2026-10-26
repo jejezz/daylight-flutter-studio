@@ -92,4 +92,56 @@ void main() {
     expect(c.status!.conflicts, isEmpty);
     expect(c.status!.staged.map((f) => f.path), ['f.txt']);
   });
+
+  test('커밋: 스테이지된 것이 없으면 전부 스테이지한 뒤 커밋한다', () async {
+    final repo = await Directory.systemTemp.createTemp('git_controller_commit');
+    addTearDown(() => repo.delete(recursive: true));
+    await _git(repo.path, ['init', '-b', 'main']);
+    File('${repo.path}${Platform.pathSeparator}a.txt').writeAsStringSync('a');
+    await _git(repo.path, ['add', '-A']);
+    await _git(repo.path, ['commit', '-m', 'init']);
+    File('${repo.path}${Platform.pathSeparator}a.txt').writeAsStringSync('b');
+    File('${repo.path}${Platform.pathSeparator}new.txt').writeAsStringSync('new');
+
+    final runner = CommandRunner(CommandLog());
+    final c = GitController(runner: runner, store: VerifyStore(runner));
+    addTearDown(c.dispose);
+    await c.setDir(repo.path);
+
+    expect(c.onDefaultBranch, isTrue, reason: '원격이 없으면 main을 기본 브랜치로 본다');
+    expect(c.status!.staged, isEmpty);
+    expect(await c.commit(''), isFalse, reason: '빈 메시지로는 커밋하지 않는다');
+    expect(await c.commit('두 번째'), isTrue);
+    expect(c.status!.clean, isTrue);
+    expect(await c.lastCommitSubject(), '두 번째');
+  });
+
+  test('스테이지·해제: 파일 하나만 콕 집어 올렸다 내렸다 한다', () async {
+    final repo = await Directory.systemTemp.createTemp('git_controller_stage');
+    addTearDown(() => repo.delete(recursive: true));
+    await _git(repo.path, ['init', '-b', 'main']);
+    File('${repo.path}${Platform.pathSeparator}a.txt').writeAsStringSync('a');
+    await _git(repo.path, ['add', '-A']);
+    await _git(repo.path, ['commit', '-m', 'init']);
+    File('${repo.path}${Platform.pathSeparator}a.txt').writeAsStringSync('b');
+    File('${repo.path}${Platform.pathSeparator}b.txt').writeAsStringSync('b');
+
+    final runner = CommandRunner(CommandLog());
+    final c = GitController(runner: runner, store: VerifyStore(runner));
+    addTearDown(c.dispose);
+    await c.setDir(repo.path);
+
+    final a = c.status!.files.firstWhere((f) => f.path == 'a.txt');
+    expect(await c.stage(a, done: 'ok'), isTrue);
+    expect(c.status!.staged.map((f) => f.path), ['a.txt']);
+
+    final staged = c.status!.files.firstWhere((f) => f.path == 'a.txt');
+    expect(await c.unstage(staged), isTrue);
+    expect(c.status!.staged, isEmpty);
+
+    expect(await c.stageAll(), isTrue);
+    expect(c.status!.staged.map((f) => f.path).toSet(), {'a.txt', 'b.txt'});
+    expect(await c.unstageAll(), isTrue);
+    expect(c.status!.staged, isEmpty);
+  });
 }
