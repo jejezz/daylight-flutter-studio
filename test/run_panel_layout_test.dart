@@ -96,4 +96,21 @@ void main() {
     expect(find.byType(VerticalDivider), findsNothing);
     expect(find.textContaining('Flutter'), findsWidgets);
   });
+
+  testWidgets('아이콘 탭 둘: 실행 탭에는 대상 한 줄, 기기 탭에는 기기 목록', (tester) async {
+    controller
+      ..devices = const [MobileDevice(id: 'p1', name: 'Pixel 8', platform: DevicePlatform.android, link: DeviceLink.usb)]
+      ..selectedId = 'p1';
+    await tester.pumpWidget(app(1200));
+    await tester.pump();
+
+    expect(find.text('실행'), findsOneWidget);
+    expect(find.text('기기'), findsOneWidget);
+    expect(find.text('대상: Pixel 8'), findsOneWidget);
+    expect(find.text('Android · USB'), findsNothing, reason: '기기 목록은 기기 탭에 있다');
+
+    await tester.tap(find.text('바꾸기'));
+    await tester.pumpAndSettle();
+    expect(find.text('Android · USB'), findsOneWidget);
+  });
 }

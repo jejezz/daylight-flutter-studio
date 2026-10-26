@@ -5188,4 +5188,25 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get bdDockNoFolder => 'No project folder is open';
+
+  @override
+  String get runTabRun => 'Run';
+
+  @override
+  String get runTabDevices => 'Devices';
+
+  @override
+  String get runStepsNoDevice =>
+      '1. Connect the phone with a USB cable (a charge-only cable won\'t work)\n2. Unlock it, then tap \'Trust This Computer\' on an iPhone or \'Allow USB debugging\' on Android\n3. Press refresh above';
+
+  @override
+  String runTargetLine(String name) {
+    return 'Target: $name';
+  }
+
+  @override
+  String get runTargetChange => 'Change';
+
+  @override
+  String get runTargetNone => 'No target selected';
 }

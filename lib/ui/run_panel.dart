@@ -13,8 +13,8 @@ import 'copy_output_button.dart';
 import 'output_viewer.dart';
 import '../verify/verify_store.dart';
 
-/// Run 패널: 대상 기기·모드를 고르고, 실행될 명령을 보며 빌드·설치하고, 결과를 눈으로 확인해 기록한다.
-class RunPanel extends StatelessWidget {
+/// Run 패널: Flutty Dock처럼 아이콘 탭 둘 — 실행(모드·단계·결과 확인)과 기기(대상 고르기).
+class RunPanel extends StatefulWidget {
   const RunPanel({super.key, required this.controller, required this.log});
 
   final RunController controller;
@@ -27,65 +27,140 @@ class RunPanel extends StatelessWidget {
   static const wideControlsWidth = 380.0;
 
   @override
+  State<RunPanel> createState() => _RunPanelState();
+}
+
+class _RunPanelState extends State<RunPanel> with SingleTickerProviderStateMixin {
+  static const _devicesTab = 1;
+
+  late final TabController _tabs = TabController(length: 2, vsync: this);
+
+  RunController get controller => widget.controller;
+  CommandLog get log => widget.log;
+
+  @override
+  void dispose() {
+    _tabs.dispose();
+    super.dispose();
+  }
+
+  Tab _tab(IconData icon, String text) =>
+      Tab(height: 54, iconMargin: const EdgeInsets.only(bottom: 2), icon: Icon(icon, size: 20), text: text);
+
+  @override
   Widget build(BuildContext context) {
     final t = context.tokens;
+    final l10n = AppLocalizations.of(context);
+    final icons = context.icons;
     return ListenableBuilder(
       listenable: Listenable.merge([controller, log]),
       builder: (context, _) {
         final project = controller.project;
         if (project == null) {
-          return Center(child: Text(AppLocalizations.of(context).runNotFlutterProject));
+          return Center(child: Text(l10n.runNotFlutterProject));
         }
         final verify = controller.awaitingConfirm || controller.recordSkipped != null || controller.record != null;
-        // 아래 패널처럼 넓은 곳에서는 왼쪽에 고르는 것(기기·빌드), 오른쪽에 결과(검증·출력)를 나란히 둔다.
-        return LayoutBuilder(
-          builder: (context, box) {
-            if (box.maxWidth < wideWidth) {
-              return ListView(
+        return Column(
+          children: [
+            TabBar(
+              controller: _tabs,
+              labelPadding: EdgeInsets.zero,
+              tabs: [_tab(icons.playCircle, l10n.runTabRun), _tab(icons.smartphone, l10n.runTabDevices)],
+            ),
+            Expanded(
+              child: TabBarView(
+                controller: _tabs,
+                // 안의 목록을 옆으로 쓸다가 탭이 바뀌지 않게 한다.
+                physics: const NeverScrollableScrollPhysics(),
+                children: [
+                  _runTab(t, verify),
+                  ListView(padding: EdgeInsets.all(t.spaceMd), children: [_Devices(controller: controller)]),
+                ],
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  /// 아래 패널처럼 넓은 곳에서는 왼쪽에 고르는 것(모드·단계), 오른쪽에 결과(검증·출력)를 나란히 둔다.
+  Widget _runTab(StudioTokens t, bool verify) {
+    return LayoutBuilder(
+      builder: (context, box) {
+        final target = _Target(controller: controller, onChange: () => _tabs.animateTo(_devicesTab));
+        if (box.maxWidth < RunPanel.wideWidth) {
+          return ListView(
+            padding: EdgeInsets.all(t.spaceMd),
+            children: [
+              _Header(controller: controller),
+              SizedBox(height: t.spaceSm),
+              target,
+              SizedBox(height: t.spaceMd),
+              _BuildSection(controller: controller),
+              if (verify) ...[SizedBox(height: t.spaceMd), _VerifyCard(controller: controller)],
+              SizedBox(height: t.spaceMd),
+              _Output(log: log),
+            ],
+          );
+        }
+        return Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            SizedBox(
+              width: RunPanel.wideControlsWidth,
+              child: ListView(
                 padding: EdgeInsets.all(t.spaceMd),
                 children: [
                   _Header(controller: controller),
-                  SizedBox(height: t.spaceMd),
-                  _Devices(controller: controller),
+                  SizedBox(height: t.spaceSm),
+                  target,
                   SizedBox(height: t.spaceMd),
                   _BuildSection(controller: controller),
-                  if (verify) ...[SizedBox(height: t.spaceMd), _VerifyCard(controller: controller)],
-                  SizedBox(height: t.spaceMd),
+                ],
+              ),
+            ),
+            const VerticalDivider(),
+            Expanded(
+              child: ListView(
+                padding: EdgeInsets.all(t.spaceMd),
+                children: [
+                  if (verify) ...[_VerifyCard(controller: controller), SizedBox(height: t.spaceMd)],
                   _Output(log: log),
                 ],
-              );
-            }
-            return Row(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                SizedBox(
-                  width: wideControlsWidth,
-                  child: ListView(
-                    padding: EdgeInsets.all(t.spaceMd),
-                    children: [
-                      _Header(controller: controller),
-                      SizedBox(height: t.spaceMd),
-                      _Devices(controller: controller),
-                      SizedBox(height: t.spaceMd),
-                      _BuildSection(controller: controller),
-                    ],
-                  ),
-                ),
-                const VerticalDivider(),
-                Expanded(
-                  child: ListView(
-                    padding: EdgeInsets.all(t.spaceMd),
-                    children: [
-                      if (verify) ...[_VerifyCard(controller: controller), SizedBox(height: t.spaceMd)],
-                      _Output(log: log),
-                    ],
-                  ),
-                ),
-              ],
-            );
-          },
+              ),
+            ),
+          ],
         );
       },
+    );
+  }
+}
+
+/// 실행 탭에서 지금 고른 대상을 한 줄로 보여 주고, 기기 탭으로 가는 길을 둔다.
+class _Target extends StatelessWidget {
+  const _Target({required this.controller, required this.onChange});
+
+  final RunController controller;
+  final VoidCallback onChange;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final d = controller.device;
+    return Row(
+      children: [
+        Icon(context.icons.smartphone, size: 16),
+        SizedBox(width: context.tokens.spaceSm),
+        Expanded(
+          child: Text(
+            d == null ? l10n.runTargetNone : l10n.runTargetLine(d.name),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+        TextButton(onPressed: controller.running ? null : onChange, child: Text(l10n.runTargetChange)),
+      ],
     );
   }
 }
@@ -115,6 +190,7 @@ class _Header extends StatelessWidget {
   }
 }
 
+/// 기기 탭: 연결된 기기를 카드 안 라디오 목록으로 보여 주고 대상을 고른다 (Flutty Dock의 기기 탭).
 class _Devices extends StatelessWidget {
   const _Devices({required this.controller});
 
@@ -122,41 +198,63 @@ class _Devices extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
+    final t = context.tokens;
     final devices = controller.visibleDevices;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Row(
           children: [
-            Text(AppLocalizations.of(context).runTarget, style: theme.textTheme.titleSmall),
-            const Spacer(),
+            Expanded(child: _SectionTitle(l10n.runTarget)),
             if (controller.loadingDevices)
               const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
             else
-              IconButton(tooltip: AppLocalizations.of(context).runRefreshDevices, icon: Icon(context.icons.refresh, size: 18), onPressed: controller.running ? null : controller.refreshDevices),
+              IconButton(
+                tooltip: l10n.runRefreshDevices,
+                visualDensity: VisualDensity.compact,
+                icon: Icon(context.icons.refresh, size: 18),
+                onPressed: controller.running ? null : controller.refreshDevices,
+              ),
           ],
         ),
-        if (devices.isEmpty) Text(AppLocalizations.of(context).runNoDevices),
-        RadioGroup<String>(
-          groupValue: controller.selectedId,
-          onChanged: (id) {
-            for (final d in devices) {
-              if (d.id == id && !controller.running) controller.select(d);
-            }
-          },
-          child: Column(
-            children: [
-              for (final d in devices)
-                RadioListTile<String>(
-                  value: d.id,
-                  title: Text(d.name),
-                  subtitle: Text(_describe(AppLocalizations.of(context), d)),
-                  contentPadding: EdgeInsets.zero,
-                ),
-            ],
+        if (devices.isEmpty)
+          Card(
+            child: Padding(
+              padding: EdgeInsets.all(t.spaceMd),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(l10n.runNoDevices, style: theme.textTheme.bodySmall),
+                  SizedBox(height: t.spaceXs),
+                  SelectableText(l10n.runStepsNoDevice, style: theme.textTheme.bodySmall?.copyWith(height: 1.5)),
+                ],
+              ),
+            ),
+          )
+        else
+          Card(
+            child: RadioGroup<String>(
+              groupValue: controller.selectedId,
+              onChanged: (id) {
+                for (final d in devices) {
+                  if (d.id == id && !controller.running) controller.select(d);
+                }
+              },
+              child: Column(
+                children: [
+                  for (final d in devices)
+                    RadioListTile<String>(
+                      value: d.id,
+                      dense: true,
+                      title: Text(d.name),
+                      subtitle: Text(_describe(l10n, d)),
+                    ),
+                ],
+              ),
+            ),
           ),
-        ),
       ],
     );
   }
