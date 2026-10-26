@@ -283,18 +283,20 @@ class _TabBar extends StatelessWidget {
     final theme = Theme.of(context);
     return SizedBox(
       height: 36,
-      // 탭을 끌어서 순서를 바꾼다 (데스크톱은 탭 어디를 잡아도 끌린다).
+      // 탭을 끌어서 순서를 바꾼다. 탭 어디를 잡아도 끌리고, 기본 끌기 손잡이(탭 글자 위에 겹쳐 보이는 줄)는 그리지 않는다.
       child: ReorderableListView.builder(
         scrollDirection: Axis.horizontal,
-        buildDefaultDragHandles: true,
+        buildDefaultDragHandles: false,
         itemCount: controller.tabs.length,
         onReorderItem: controller.moveTab,
         proxyDecorator: (child, index, animation) => Material(type: MaterialType.transparency, child: child),
         itemBuilder: (context, i) {
           final t = controller.tabs[i];
           final active = i == controller.activeIndex;
-          return Tooltip(
+          return ReorderableDragStartListener(
             key: ValueKey(t.path),
+            index: i,
+            child: Tooltip(
             message: t.path,
             child: InkWell(
               onTap: () => controller.selectTab(i),
@@ -317,6 +319,7 @@ class _TabBar extends StatelessWidget {
                   ],
                 ),
               ),
+            ),
             ),
           );
         },

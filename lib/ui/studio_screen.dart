@@ -382,7 +382,11 @@ class _StudioScreenState extends State<StudioScreen>
                     ? null
                     : PreferredSize(
                         preferredSize: const Size.fromHeight(32),
-                        child: Align(alignment: Alignment.centerLeft, child: StudioMenuBar(menus: menus)),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          // 창 가장자리에 붙지 않게 트리 칸의 안쪽 여백과 맞춘다.
+                          child: Padding(padding: EdgeInsets.only(left: t.spaceMd), child: StudioMenuBar(menus: menus)),
+                        ),
                       ),
                 title: Text(
                   root == null
