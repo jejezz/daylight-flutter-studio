@@ -50,6 +50,10 @@ class GitController extends ChangeNotifier {
   /// PR의 head 커밋. 병합되는 것은 이 커밋이다.
   String? prHeadSha;
 
+  /// 기본 브랜치 이름 (원격 HEAD 기준, 모르면 'main'). `refresh()`마다 다시 읽는다 —
+  /// 지금 브랜치가 기본 브랜치 자신이면 PR 만들기를 보여 주지 않는 데 쓴다.
+  String defaultBranchName = 'main';
+
   /// `gh`를 실행할 수 없다.
   bool ghMissing = false;
 
@@ -61,6 +65,9 @@ class GitController extends ChangeNotifier {
   bool messageOk = true;
 
   static const _prFields = '${PullRequest.jsonFields},headRefOid';
+
+  /// 지금 브랜치가 기본 브랜치 자신이다 — 여기서는 PR을 만들 수 없다(자기 자신에게 PR).
+  bool get onDefaultBranch => status?.head != null && status!.head == defaultBranchName;
 
   /// 로컬 HEAD와 PR head가 다르다 — 아직 push하지 않았거나 원격이 앞서 있다.
   bool get localDiffersFromPr {
@@ -89,6 +96,7 @@ class GitController extends ChangeNotifier {
     status = s.ok ? RepoStatus.parse(s.stdout) : null;
     snapshot = status == null ? null : await store.snapshot(d);
     topLevel = status == null ? null : await _topLevel(d);
+    defaultBranchName = await defaultBranch();
     await _loadPr();
     await _judge();
     notifyListeners();
@@ -172,8 +180,33 @@ class GitController extends ChangeNotifier {
     return d == null ? Future.value(false) : _isRebasing(runner, d);
   }
 
-  /// 충돌 구간을 골라 다시 쓴 파일을 `git add`로 해결됨 표시한다.
-  Future<bool> stage(FileChange file) => _do(['git', 'add', '--', file.path], done: CurrentL10n.value.doneConflictResolved(file.fileName));
+  /// 충돌 구간을 골라 다시 쓴 파일을 `git add`로 해결됨 표시한다. 보통의 스테이지에도 쓴다.
+  Future<bool> stage(FileChange file, {String? done}) =>
+      _do(['git', 'add', '--', file.path], done: done ?? CurrentL10n.value.doneConflictResolved(file.fileName));
+
+  Future<bool> unstage(FileChange file) => _doSteps([
+    ['git', 'restore', '--staged', '--', file.path],
+  ], done: CurrentL10n.value.gitDoneUnstaged);
+
+  Future<bool> stageAll() => _doSteps([
+    ['git', 'add', '-A'],
+  ], done: CurrentL10n.value.gitDoneStaged);
+
+  Future<bool> unstageAll() => _doSteps([
+    ['git', 'restore', '--staged', '--', '.'],
+  ], done: CurrentL10n.value.gitDoneUnstaged);
+
+  /// 스테이지된 변경이 없으면 먼저 전부 스테이지한 뒤 커밋한다(Branch Dock과 같은 편의).
+  Future<bool> commit(String message) {
+    final s = status;
+    final text = message.trim();
+    if (s == null || text.isEmpty || s.clean) return Future.value(false);
+    final stageAll = s.staged.isEmpty;
+    return _doSteps([
+      if (stageAll) ['git', 'add', '-A'],
+      ['git', 'commit', '-m', text],
+    ], done: CurrentL10n.value.gitDoneCommit);
+  }
 
   Future<bool> fetch() => _do(['git', 'fetch', '--prune'], done: CurrentL10n.value.gitDoneFetch);
 
@@ -241,6 +274,25 @@ class GitController extends ChangeNotifier {
     notifyListeners();
     final r = await runner.run(args, workingDirectory: d, stdin: stdin);
     ghMissing = r.exitCode == 127 && args.first == 'gh';
+    messageOk = r.ok;
+    message = r.ok ? done : _failure(r);
+    busy = false;
+    await refresh();
+    return r.ok;
+  }
+
+  /// [steps]를 순서대로 실행하고 하나라도 실패하면 거기서 멈춘다 (예: 스테이지 → 커밋).
+  Future<bool> _doSteps(List<List<String>> steps, {required String done}) async {
+    final d = dir;
+    if (d == null || busy || steps.isEmpty) return false;
+    busy = true;
+    message = null;
+    notifyListeners();
+    var r = const CommandResult(0, '', '');
+    for (final args in steps) {
+      r = await runner.run(args, workingDirectory: d);
+      if (!r.ok) break;
+    }
     messageOk = r.ok;
     message = r.ok ? done : _failure(r);
     busy = false;

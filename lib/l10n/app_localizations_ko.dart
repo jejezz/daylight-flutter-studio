@@ -271,6 +271,43 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
+  String get gitStage => '스테이지';
+
+  @override
+  String get gitUnstage => '스테이지 해제';
+
+  @override
+  String get gitStageAll => '모두 스테이지';
+
+  @override
+  String get gitUnstageAll => '모두 해제';
+
+  @override
+  String get gitDoneStaged => '스테이지함';
+
+  @override
+  String get gitDoneUnstaged => '스테이지 해제함';
+
+  @override
+  String get gitDoneCommit => '커밋함';
+
+  @override
+  String get gitCommitMessageHint => '커밋 메시지';
+
+  @override
+  String get gitCommitAll => '커밋';
+
+  @override
+  String gitCommitStaged(int count) {
+    return '커밋 ($count)';
+  }
+
+  @override
+  String gitOnDefaultBranch(String branch) {
+    return '기본 브랜치($branch)에서는 PR을 만들 수 없습니다. 새 브랜치에서 작업하세요.';
+  }
+
+  @override
   String conflictSheetTitle(String name) {
     return '$name 충돌 해결';
   }

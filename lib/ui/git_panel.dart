@@ -25,6 +25,7 @@ class GitPanel extends StatefulWidget {
 
 class _GitPanelState extends State<GitPanel> {
   final _title = TextEditingController();
+  final _commitMessage = TextEditingController();
   PrMergeMethod _method = PrMergeMethod.merge;
   bool _deleteBranch = true;
   String? _titleFor;
@@ -34,7 +35,12 @@ class _GitPanelState extends State<GitPanel> {
   @override
   void dispose() {
     _title.dispose();
+    _commitMessage.dispose();
     super.dispose();
+  }
+
+  Future<void> _commit() async {
+    if (await c.commit(_commitMessage.text)) _commitMessage.clear();
   }
 
   /// 브랜치가 바뀌면 PR 제목 기본값을 마지막 커밋 제목으로 다시 채운다.
@@ -61,6 +67,7 @@ class _GitPanelState extends State<GitPanel> {
           padding: EdgeInsets.all(t.spaceMd),
           children: [
             _BranchHeader(controller: c, onOpenDiff: widget.onOpenDiff),
+            if (!s.clean) ...[SizedBox(height: t.spaceMd), _CommitBox(controller: c, message: _commitMessage, onCommit: _commit)],
             SizedBox(height: t.spaceMd),
             _Sync(controller: c),
             if (c.message != null) ...[
@@ -72,6 +79,8 @@ class _GitPanelState extends State<GitPanel> {
             SizedBox(height: t.spaceMd),
             if (c.ghMissing)
               Text(AppLocalizations.of(context).gitNoGh, style: TextStyle(color: t.warning))
+            else if (c.pr == null && c.onDefaultBranch)
+              Text(AppLocalizations.of(context).gitOnDefaultBranch(c.defaultBranchName), style: Theme.of(context).textTheme.bodySmall)
             else if (c.pr == null)
               _CreatePr(controller: c, title: _title)
             else
@@ -128,6 +137,14 @@ class _BranchHeader extends StatelessWidget {
             tilePadding: EdgeInsets.zero,
             title: Text(l10n.gitChangedFiles(s.changedCount), style: theme.textTheme.bodyMedium),
             children: [
+              Row(
+                children: [
+                  if (s.unstaged.isNotEmpty || s.untracked.isNotEmpty)
+                    TextButton(onPressed: controller.busy ? null : controller.stageAll, child: Text(l10n.gitStageAll)),
+                  if (s.staged.isNotEmpty)
+                    TextButton(onPressed: controller.busy ? null : controller.unstageAll, child: Text(l10n.gitUnstageAll)),
+                ],
+              ),
               for (final f in s.files.take(60)) _FileRow(file: f, controller: controller, onOpenDiff: onOpenDiff),
               if (s.files.length > 60) Text(l10n.gitMoreFiles(s.files.length - 60)),
             ],
@@ -186,12 +203,71 @@ class _FileRow extends StatelessWidget {
           padding: EdgeInsets.symmetric(vertical: t.spaceXs / 2),
           child: Row(
             children: [
+              if (file.conflicted)
+                const SizedBox(width: 18)
+              else
+                Tooltip(
+                  message: file.staged ? l10n.gitUnstage : l10n.gitStage,
+                  child: InkWell(
+                    onTap: controller.busy ? null : () => file.staged ? controller.unstage(file) : controller.stage(file, done: l10n.gitDoneStaged),
+                    child: SizedBox(
+                      width: 18,
+                      height: 18,
+                      child: Icon(
+                        file.staged ? context.icons.checkBox : context.icons.checkBoxOutlineBlank,
+                        size: 16,
+                        color: file.staged ? theme.colorScheme.primary : theme.colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ),
+                ),
+              SizedBox(width: t.spaceXs),
               SizedBox(width: 18, child: Text(letter(file), style: t.logText.copyWith(color: color))),
               Expanded(child: Text(file.path, style: t.logText, overflow: TextOverflow.ellipsis)),
             ],
           ),
         ),
       ),
+    );
+  }
+}
+
+/// 커밋 메시지 칸과 커밋 단추. 스테이지된 것이 없으면 전부 스테이지한 뒤 커밋한다.
+class _CommitBox extends StatelessWidget {
+  const _CommitBox({required this.controller, required this.message, required this.onCommit});
+
+  final GitController controller;
+  final TextEditingController message;
+  final VoidCallback onCommit;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final t = context.tokens;
+    final s = controller.status!;
+    final label = s.staged.isNotEmpty ? l10n.gitCommitStaged(s.staged.length) : l10n.gitCommitAll;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        TextField(
+          controller: message,
+          enabled: !controller.busy,
+          minLines: 1,
+          maxLines: 4,
+          decoration: InputDecoration(hintText: l10n.gitCommitMessageHint),
+          onSubmitted: (_) => onCommit(),
+        ),
+        SizedBox(height: t.spaceSm),
+        // 입력칸 글자가 바뀔 때도 단추의 활성 여부가 바로 따라오게 message도 듣는다.
+        AnimatedBuilder(
+          animation: message,
+          builder: (context, _) => FilledButton.icon(
+            onPressed: controller.busy || message.text.trim().isEmpty ? null : onCommit,
+            icon: Icon(context.icons.checkCircle, size: 18),
+            label: Text(label),
+          ),
+        ),
+      ],
     );
   }
 }

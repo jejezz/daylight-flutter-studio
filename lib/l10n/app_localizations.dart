@@ -584,6 +584,72 @@ abstract class AppLocalizations {
   /// **'충돌 {count}개 — 파일을 눌러 해결하세요'**
   String gitConflicts(int count);
 
+  /// No description provided for @gitStage.
+  ///
+  /// In ko, this message translates to:
+  /// **'스테이지'**
+  String get gitStage;
+
+  /// No description provided for @gitUnstage.
+  ///
+  /// In ko, this message translates to:
+  /// **'스테이지 해제'**
+  String get gitUnstage;
+
+  /// No description provided for @gitStageAll.
+  ///
+  /// In ko, this message translates to:
+  /// **'모두 스테이지'**
+  String get gitStageAll;
+
+  /// No description provided for @gitUnstageAll.
+  ///
+  /// In ko, this message translates to:
+  /// **'모두 해제'**
+  String get gitUnstageAll;
+
+  /// No description provided for @gitDoneStaged.
+  ///
+  /// In ko, this message translates to:
+  /// **'스테이지함'**
+  String get gitDoneStaged;
+
+  /// No description provided for @gitDoneUnstaged.
+  ///
+  /// In ko, this message translates to:
+  /// **'스테이지 해제함'**
+  String get gitDoneUnstaged;
+
+  /// No description provided for @gitDoneCommit.
+  ///
+  /// In ko, this message translates to:
+  /// **'커밋함'**
+  String get gitDoneCommit;
+
+  /// No description provided for @gitCommitMessageHint.
+  ///
+  /// In ko, this message translates to:
+  /// **'커밋 메시지'**
+  String get gitCommitMessageHint;
+
+  /// No description provided for @gitCommitAll.
+  ///
+  /// In ko, this message translates to:
+  /// **'커밋'**
+  String get gitCommitAll;
+
+  /// No description provided for @gitCommitStaged.
+  ///
+  /// In ko, this message translates to:
+  /// **'커밋 ({count})'**
+  String gitCommitStaged(int count);
+
+  /// No description provided for @gitOnDefaultBranch.
+  ///
+  /// In ko, this message translates to:
+  /// **'기본 브랜치({branch})에서는 PR을 만들 수 없습니다. 새 브랜치에서 작업하세요.'**
+  String gitOnDefaultBranch(String branch);
+
   /// No description provided for @conflictSheetTitle.
   ///
   /// In ko, this message translates to:
