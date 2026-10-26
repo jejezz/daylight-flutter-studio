@@ -4921,4 +4921,25 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get bdDockNoFolder => '열린 프로젝트 폴더가 없습니다';
+
+  @override
+  String get runTabRun => '실행';
+
+  @override
+  String get runTabDevices => '기기';
+
+  @override
+  String get runStepsNoDevice =>
+      '1. USB 케이블로 폰을 연결합니다 (충전 전용 케이블은 안 됩니다)\n2. 잠금을 풀고, iPhone은 \'이 컴퓨터를 신뢰\', Android는 \'USB 디버깅 허용\'을 누릅니다\n3. 위의 새로 고침을 누릅니다';
+
+  @override
+  String runTargetLine(String name) {
+    return '대상: $name';
+  }
+
+  @override
+  String get runTargetChange => '바꾸기';
+
+  @override
+  String get runTargetNone => '대상을 고르지 않았습니다';
 }

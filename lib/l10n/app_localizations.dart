@@ -8407,6 +8407,42 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'열린 프로젝트 폴더가 없습니다'**
   String get bdDockNoFolder;
+
+  /// No description provided for @runTabRun.
+  ///
+  /// In ko, this message translates to:
+  /// **'실행'**
+  String get runTabRun;
+
+  /// No description provided for @runTabDevices.
+  ///
+  /// In ko, this message translates to:
+  /// **'기기'**
+  String get runTabDevices;
+
+  /// No description provided for @runStepsNoDevice.
+  ///
+  /// In ko, this message translates to:
+  /// **'1. USB 케이블로 폰을 연결합니다 (충전 전용 케이블은 안 됩니다)\n2. 잠금을 풀고, iPhone은 \'이 컴퓨터를 신뢰\', Android는 \'USB 디버깅 허용\'을 누릅니다\n3. 위의 새로 고침을 누릅니다'**
+  String get runStepsNoDevice;
+
+  /// No description provided for @runTargetLine.
+  ///
+  /// In ko, this message translates to:
+  /// **'대상: {name}'**
+  String runTargetLine(String name);
+
+  /// No description provided for @runTargetChange.
+  ///
+  /// In ko, this message translates to:
+  /// **'바꾸기'**
+  String get runTargetChange;
+
+  /// No description provided for @runTargetNone.
+  ///
+  /// In ko, this message translates to:
+  /// **'대상을 고르지 않았습니다'**
+  String get runTargetNone;
 }
 
 class _AppLocalizationsDelegate
