@@ -259,6 +259,22 @@ class StudioTokens extends ThemeExtension<StudioTokens> {
   static double _d(double a, double b, double t) => a + (b - a) * t;
 }
 
+/// 고정폭 글자(명령·해시·로그). 글꼴 계열은 테마의 로그 글꼴을 따르고 크기만 호출하는 쪽이 정한다.
+extension MonoText on BuildContext {
+  TextStyle mono(double size, {Color? color, FontWeight? fontWeight, double? height}) =>
+      tokens.logText.copyWith(fontSize: size, color: color, fontWeight: fontWeight, height: height);
+
+  /// 파일 이름·브랜치 이름·커밋 제목처럼 앱이 통제하지 않는 글자 (한글 대체 글꼴 포함).
+  TextStyle userText(double size, {Color? color, FontWeight? fontWeight, double? height, TextDecoration? decoration}) =>
+      AppFonts.userContent.copyWith(fontSize: size, color: color, fontWeight: fontWeight, height: height, decoration: decoration);
+}
+
+/// 커밋 그래프에서 줄마다 구분하는 색 중, 테마 색(primary·success·warning·danger)이 아닌 둘.
+abstract final class GraphPalette {
+  static const purple = Color(0xFFB07CFF);
+  static const teal = Color(0xFF3CC8C8);
+}
+
 extension StudioTheme on BuildContext {
   StudioIcons get icons => tokens.icons;
 
