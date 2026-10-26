@@ -332,6 +332,14 @@ class _BuildSectionState extends State<_BuildSection> {
                 icon: Icon(context.icons.restartAlt),
                 onPressed: () => c.sendKey('R'),
               ),
+              SizedBox(width: t.spaceSm),
+              // 창을 닫아도 flutter_tools가 스스로 끝나지 않을 때가 있다 — `q`로 정상 종료하면
+              // 종료 코드 0이 되어 검증 기록(확인함/문제 있음)으로 이어진다. "중지"는 강제 종료라 기록하지 않는다.
+              IconButton.outlined(
+                tooltip: l10n.runQuit,
+                icon: Icon(context.icons.stop),
+                onPressed: () => c.sendKey('q'),
+              ),
             ],
           ],
         ),
