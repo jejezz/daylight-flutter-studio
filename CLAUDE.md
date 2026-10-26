@@ -12,7 +12,7 @@ https://github.com/jejezz/application-release-templates/tree/main/conventions
 - 표시 이름 `Daylight Flutter Studio`, 패키지 `daylight_flutter_studio`, 식별자 `art.zoomon.daylightflutterstudio` (macOS Debug 빌드는 `.dev`).
 - 이름에 "Flutter"가 들어 있다. 개인용으로 운영하는 동안은 두되, 공개 배포 전에 이름을 다시 정한다 (Flutter 상표).
 - 기존 앱 flutty-dock-flutter, branch-dock-flutter는 **수정하지 않는다.** 필요한 코드는 이 프로젝트로 복사해서 쓴다.
-- 기능 범위와 순서는 [PLAN.md](PLAN.md). **이어서 작업할 때는 PLAN.md의 "현재 상태와 다음 할 일"부터 읽는다** (구현된 것, 알려진 한계, 작업 방식, 테스트 요령).
+- 앞으로 할 일은 [PLAN.md](PLAN.md), 이미 구현된 것은 [docs/IMPLEMENTED.md](docs/IMPLEMENTED.md). **이어서 작업할 때는 두 문서를 먼저 읽는다** (IMPLEMENTED.md에 구조, 알려진 한계, 작업 방식, 테스트 요령이 있다). 기능이 구현·병합되면 PLAN.md에서 지우고 IMPLEMENTED.md에 옮긴다.
 - 작업은 브랜치 → 커밋 → 사용자 확인 후 로컬 `main` 병합. push는 요청받을 때만.
 
 ## 테마 규칙 (모든 컨트롤은 테마로 바꿀 수 있어야 한다)
@@ -28,4 +28,5 @@ https://github.com/jejezz/application-release-templates/tree/main/conventions
 
 - `lib/core`, `lib/devices`, `lib/flutter`, `lib/install`(plan·build_options)은 flutty-dock-flutter에서 복사한 것이다.
   이쪽에서 고쳐 가며 쓰고 원본에는 되돌리지 않는다.
+- `lib/branchdock/`은 branch-dock-flutter의 Git 기능을 통째로 옮긴 것이다(문구는 `bd` 접두어, 아이콘은 `context.icons`). 이 앱 전용 연결점은 `MergeGateScope`와 `onHeadChanged`뿐이고, 같은 방식으로 고쳐 쓰며 원본에는 되돌리지 않는다.
 - 검증 기록(`lib/verify/verify_store.dart`)의 파일 형식은 Branch Dock 쪽 병합 관문과 공유한다. 바꾸면 `VerifyRecord.version`을 올린다.
