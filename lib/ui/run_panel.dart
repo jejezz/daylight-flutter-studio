@@ -20,6 +20,12 @@ class RunPanel extends StatelessWidget {
   final RunController controller;
   final CommandLog log;
 
+  /// 이 너비 이상이면 두 칸(고르는 것 | 결과)으로 나눈다.
+  static const wideWidth = 760.0;
+
+  /// 두 칸일 때 왼쪽(고르는 것) 칸의 너비.
+  static const wideControlsWidth = 380.0;
+
   @override
   Widget build(BuildContext context) {
     final t = context.tokens;
@@ -30,21 +36,54 @@ class RunPanel extends StatelessWidget {
         if (project == null) {
           return Center(child: Text(AppLocalizations.of(context).runNotFlutterProject));
         }
-        return ListView(
-          padding: EdgeInsets.all(t.spaceMd),
-          children: [
-            _Header(controller: controller),
-            SizedBox(height: t.spaceMd),
-            _Devices(controller: controller),
-            SizedBox(height: t.spaceMd),
-            _BuildSection(controller: controller),
-            if (controller.awaitingConfirm || controller.recordSkipped != null || controller.record != null) ...[
-              SizedBox(height: t.spaceMd),
-              _VerifyCard(controller: controller),
-            ],
-            SizedBox(height: t.spaceMd),
-            _Output(log: log),
-          ],
+        final verify = controller.awaitingConfirm || controller.recordSkipped != null || controller.record != null;
+        // 아래 패널처럼 넓은 곳에서는 왼쪽에 고르는 것(기기·빌드), 오른쪽에 결과(검증·출력)를 나란히 둔다.
+        return LayoutBuilder(
+          builder: (context, box) {
+            if (box.maxWidth < wideWidth) {
+              return ListView(
+                padding: EdgeInsets.all(t.spaceMd),
+                children: [
+                  _Header(controller: controller),
+                  SizedBox(height: t.spaceMd),
+                  _Devices(controller: controller),
+                  SizedBox(height: t.spaceMd),
+                  _BuildSection(controller: controller),
+                  if (verify) ...[SizedBox(height: t.spaceMd), _VerifyCard(controller: controller)],
+                  SizedBox(height: t.spaceMd),
+                  _Output(log: log),
+                ],
+              );
+            }
+            return Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                SizedBox(
+                  width: wideControlsWidth,
+                  child: ListView(
+                    padding: EdgeInsets.all(t.spaceMd),
+                    children: [
+                      _Header(controller: controller),
+                      SizedBox(height: t.spaceMd),
+                      _Devices(controller: controller),
+                      SizedBox(height: t.spaceMd),
+                      _BuildSection(controller: controller),
+                    ],
+                  ),
+                ),
+                const VerticalDivider(),
+                Expanded(
+                  child: ListView(
+                    padding: EdgeInsets.all(t.spaceMd),
+                    children: [
+                      if (verify) ...[_VerifyCard(controller: controller), SizedBox(height: t.spaceMd)],
+                      _Output(log: log),
+                    ],
+                  ),
+                ),
+              ],
+            );
+          },
         );
       },
     );

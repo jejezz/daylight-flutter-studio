@@ -82,6 +82,7 @@ class StudioIcons {
   IconData get hourglassEmpty => _pick(Icons.hourglass_empty, Icons.hourglass_empty_outlined, Icons.hourglass_empty_rounded);
   IconData get formatAlignLeft => _pick(Icons.format_align_left, Icons.format_align_left_outlined, Icons.format_align_left_rounded);
   IconData get filterAlt => _pick(Icons.filter_alt, Icons.filter_alt_outlined, Icons.filter_alt_rounded);
+  IconData get expandLess => _pick(Icons.expand_less, Icons.expand_less_outlined, Icons.expand_less_rounded);
   IconData get expandMore => _pick(Icons.expand_more, Icons.expand_more_outlined, Icons.expand_more_rounded);
   IconData get edit => _pick(Icons.edit, Icons.edit_outlined, Icons.edit_rounded);
   IconData get editNote => _pick(Icons.edit_note, Icons.edit_note_outlined, Icons.edit_note_rounded);

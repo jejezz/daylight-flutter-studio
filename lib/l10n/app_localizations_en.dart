@@ -495,6 +495,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get studioProblemsTab => 'Problems';
 
   @override
+  String get gitTabChanges => 'Changes';
+
+  @override
+  String get studioBottomPanelHide => 'Hide bottom panel (Ctrl+J)';
+
+  @override
+  String get studioBottomPanelShow => 'Show bottom panel (Ctrl+J)';
+
+  @override
+  String get studioShowProblems => 'Open Problems';
+
+  @override
   String get studioVerifyConfirmed => 'Verified';
 
   @override

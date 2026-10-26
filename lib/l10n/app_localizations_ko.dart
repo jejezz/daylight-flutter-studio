@@ -479,6 +479,18 @@ class AppLocalizationsKo extends AppLocalizations {
   String get studioProblemsTab => '문제';
 
   @override
+  String get gitTabChanges => '변경';
+
+  @override
+  String get studioBottomPanelHide => '아래 패널 접기 (Ctrl+J)';
+
+  @override
+  String get studioBottomPanelShow => '아래 패널 펼치기 (Ctrl+J)';
+
+  @override
+  String get studioShowProblems => '문제 탭 열기';
+
+  @override
   String get studioVerifyConfirmed => '검증됨';
 
   @override

@@ -950,6 +950,30 @@ abstract class AppLocalizations {
   /// **'문제'**
   String get studioProblemsTab;
 
+  /// No description provided for @gitTabChanges.
+  ///
+  /// In ko, this message translates to:
+  /// **'변경'**
+  String get gitTabChanges;
+
+  /// No description provided for @studioBottomPanelHide.
+  ///
+  /// In ko, this message translates to:
+  /// **'아래 패널 접기 (Ctrl+J)'**
+  String get studioBottomPanelHide;
+
+  /// No description provided for @studioBottomPanelShow.
+  ///
+  /// In ko, this message translates to:
+  /// **'아래 패널 펼치기 (Ctrl+J)'**
+  String get studioBottomPanelShow;
+
+  /// No description provided for @studioShowProblems.
+  ///
+  /// In ko, this message translates to:
+  /// **'문제 탭 열기'**
+  String get studioShowProblems;
+
   /// No description provided for @studioVerifyConfirmed.
   ///
   /// In ko, this message translates to:

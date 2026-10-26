@@ -9,7 +9,7 @@ import '../git/git_controller.dart';
 import '../run/run_controller.dart';
 import '../problems/dart_analyzer.dart';
 import '../settings/gate_settings.dart';
-import '../problems/diagnostic.dart';
+import '../settings/panel_layout.dart';
 import '../problems/problems_controller.dart';
 import '../studio/dart_formatter.dart';
 import '../studio/git_base.dart';
@@ -23,10 +23,9 @@ import '../theme/app_theme.dart';
 import '../window/focus_tint.dart';
 import '../theme/theme_controller.dart';
 import '../verify/verify_store.dart';
+import 'bottom_panel.dart';
 import 'editor_pane.dart';
-import 'git_panel.dart';
-import 'problems_panel.dart';
-import 'run_panel.dart';
+import 'git_dock.dart';
 import '../settings/editor_settings.dart';
 import '../studio/project_index.dart';
 import 'project_search.dart';
@@ -73,6 +72,7 @@ class _StudioScreenState extends State<StudioScreen>
     store: VerifyStore(_runner),
   );
   final GateSettings _gate = GateSettings();
+  final PanelLayout _layout = PanelLayout();
   late final GitController _git = GitController(
     runner: _runner,
     store: VerifyStore(_runner),
@@ -92,6 +92,7 @@ class _StudioScreenState extends State<StudioScreen>
     _git.addListener(_onGitChanged);
     _run.addListener(_onRunChanged);
     _gate.restore();
+    _layout.restore();
     _env.onToolPathsChanged = () => _run.refreshDevices();
     // clean + pub get이 끝나면 패키지 정보가 새로 생겼으니 문제 탭도 바로 다시 분석한다.
     _run.onCleaned = _problems.refresh;
@@ -116,6 +117,7 @@ class _StudioScreenState extends State<StudioScreen>
     _git.removeListener(_onGitChanged);
     _run.removeListener(_onRunChanged);
     _gate.dispose();
+    _layout.dispose();
     _env.dispose();
     _controller.removeListener(_onStudioChanged);
     _controller.dispose();
@@ -201,6 +203,8 @@ class _StudioScreenState extends State<StudioScreen>
                 _openSettings,
             const SingleActivator(LogicalKeyboardKey.comma, meta: true):
                 _openSettings,
+            const SingleActivator(LogicalKeyboardKey.keyJ, control: true): _layout.toggleBottom,
+            const SingleActivator(LogicalKeyboardKey.keyJ, meta: true): _layout.toggleBottom,
             const SingleActivator(LogicalKeyboardKey.keyP, control: true): _quickOpen,
             const SingleActivator(LogicalKeyboardKey.keyP, meta: true): _quickOpen,
             const SingleActivator(LogicalKeyboardKey.keyF, control: true, shift: true): _searchProject,
@@ -286,9 +290,39 @@ class _StudioScreenState extends State<StudioScreen>
                                 ),
                               ),
                               Expanded(
-                                child: EditorPane(
-                                  controller: _controller,
-                                  problems: _problems,
+                                child: ListenableBuilder(
+                                  listenable: _layout,
+                                  builder: (context, _) => Column(
+                                    children: [
+                                      Expanded(
+                                        child: EditorPane(
+                                          controller: _controller,
+                                          problems: _problems,
+                                        ),
+                                      ),
+                                      if (_layout.bottomOpen) ...[
+                                        _HorizontalSplitter(
+                                          onDrag: (dy) => _layout.setBottomHeight(
+                                            _layout.bottomHeight - dy,
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          height: _layout.bottomHeight,
+                                          child: BottomPanel(
+                                            layout: _layout,
+                                            run: _run,
+                                            log: _log,
+                                            problems: _problems,
+                                            onOpenProblem: (d) => _controller.openAt(
+                                              d.file,
+                                              d.line,
+                                              d.column,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ],
+                                  ),
                                 ),
                               ),
                               _Splitter(
@@ -301,17 +335,9 @@ class _StudioScreenState extends State<StudioScreen>
                               ),
                               SizedBox(
                                 width: _dockWidth,
-                                child: _DockPane(
-                                  run: _run,
+                                child: GitDock(
                                   git: _git,
-                                  log: _log,
-                                  problems: _problems,
                                   onOpenDiff: _controller.openDiff,
-                                  onOpenProblem: (d) => _controller.openAt(
-                                    d.file,
-                                    d.line,
-                                    d.column,
-                                  ),
                                 ),
                               ),
                             ],
@@ -322,6 +348,7 @@ class _StudioScreenState extends State<StudioScreen>
                           controller: _controller,
                           run: _run,
                           problems: _problems,
+                          layout: _layout,
                         ),
                       ],
                     ),
@@ -355,76 +382,24 @@ class _Splitter extends StatelessWidget {
   }
 }
 
-/// Run(Flutty Dock)·Git(Branch Dock) 패널.
-class _DockPane extends StatelessWidget {
-  const _DockPane({
-    required this.run,
-    required this.git,
-    required this.log,
-    required this.problems,
-    required this.onOpenDiff,
-    required this.onOpenProblem,
-  });
+/// 편집기와 아래 패널 사이의 가로 구분선. 위아래로 끌어 아래 패널 높이를 바꾼다.
+class _HorizontalSplitter extends StatelessWidget {
+  const _HorizontalSplitter({required this.onDrag});
 
-  final ProblemsController problems;
-  final void Function(Diagnostic diagnostic) onOpenProblem;
-  final RunController run;
-  final void Function(String absolutePath) onOpenDiff;
-  final GitController git;
-  final CommandLog log;
+  final void Function(double dy) onDrag;
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 3,
-      child: Column(
-        children: [
-          TabBar(
-            tabs: [
-              const Tab(text: 'Run'),
-              const Tab(text: 'Git'),
-              // 오류가 있으면 탭 이름에 개수를 붙여 다른 탭을 보고 있어도 알아챌 수 있게 한다.
-              ListenableBuilder(
-                listenable: problems,
-                builder: (context, _) {
-                  final errors = problems.errors;
-                  final warnings = problems.warnings;
-                  final badge = errors > 0
-                      ? ' $errors'
-                      : (warnings > 0 ? ' $warnings' : '');
-                  final color = errors > 0
-                      ? context.tokens.danger
-                      : context.tokens.warning;
-                  return Tab(
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(AppLocalizations.of(context).studioProblemsTab),
-                        if (badge.isNotEmpty)
-                          Text(
-                            badge,
-                            style: TextStyle(
-                              color: color,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                      ],
-                    ),
-                  );
-                },
-              ),
-            ],
-          ),
-          Expanded(
-            child: TabBarView(
-              children: [
-                RunPanel(controller: run, log: log),
-                GitPanel(controller: git, onOpenDiff: onOpenDiff),
-                ProblemsPanel(controller: problems, onOpen: onOpenProblem),
-              ],
-            ),
-          ),
-        ],
+    final w = context.tokens.splitterWidth;
+    return MouseRegion(
+      cursor: SystemMouseCursors.resizeRow,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onVerticalDragUpdate: (d) => onDrag(d.delta.dy),
+        child: SizedBox(
+          height: w,
+          child: Divider(height: w),
+        ),
       ),
     );
   }
@@ -435,11 +410,13 @@ class _StatusBar extends StatelessWidget {
     required this.controller,
     required this.run,
     required this.problems,
+    required this.layout,
   });
 
   final StudioController controller;
   final RunController run;
   final ProblemsController problems;
+  final PanelLayout layout;
 
   @override
   Widget build(BuildContext context) {
@@ -449,7 +426,7 @@ class _StatusBar extends StatelessWidget {
     final w = controller.currentWorktree;
     final tab = controller.activeTab;
     return ListenableBuilder(
-      listenable: Listenable.merge([run, problems]),
+      listenable: Listenable.merge([run, problems, layout]),
       builder: (context, _) {
         final rec = run.record;
         final (label, color) = switch (rec?.status) {
@@ -481,31 +458,64 @@ class _StatusBar extends StatelessWidget {
                 SizedBox(width: t.spaceXs),
                 Text(label, style: TextStyle(color: color)),
                 SizedBox(width: t.spaceMd),
-                if (problems.running)
-                  Text(l10n.studioAnalyzing)
-                else if (problems.packageRoot != null && problems.analyzed) ...[
-                  Icon(
-                    context.icons.error,
-                    size: 14,
-                    color: problems.errors > 0
-                        ? t.danger
-                        : theme.colorScheme.outline,
+                // 문제 개수를 누르면 아래 패널이 열리고 문제 탭이 보인다.
+                Tooltip(
+                  message: l10n.studioShowProblems,
+                  child: InkWell(
+                    onTap: () => layout.showBottom(BottomTab.problems),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (problems.running)
+                          Text(l10n.studioAnalyzing)
+                        else if (problems.packageRoot != null &&
+                            problems.analyzed) ...[
+                          Icon(
+                            context.icons.error,
+                            size: 14,
+                            color: problems.errors > 0
+                                ? t.danger
+                                : theme.colorScheme.outline,
+                          ),
+                          SizedBox(width: t.spaceXs),
+                          Text('${problems.errors}'),
+                          SizedBox(width: t.spaceSm),
+                          Icon(
+                            context.icons.warningAmber,
+                            size: 14,
+                            color: problems.warnings > 0
+                                ? t.warning
+                                : theme.colorScheme.outline,
+                          ),
+                          SizedBox(width: t.spaceXs),
+                          Text('${problems.warnings}'),
+                        ] else
+                          Icon(
+                            context.icons.error,
+                            size: 14,
+                            color: theme.colorScheme.outline,
+                          ),
+                      ],
+                    ),
                   ),
-                  SizedBox(width: t.spaceXs),
-                  Text('${problems.errors}'),
-                  SizedBox(width: t.spaceSm),
-                  Icon(
-                    context.icons.warningAmber,
-                    size: 14,
-                    color: problems.warnings > 0
-                        ? t.warning
-                        : theme.colorScheme.outline,
-                  ),
-                  SizedBox(width: t.spaceXs),
-                  Text('${problems.warnings}'),
-                ],
+                ),
                 const Spacer(),
                 if (tab != null) Text(tab.dirty ? l10n.studioDirty : l10n.studioSaved),
+                SizedBox(width: t.spaceSm),
+                Tooltip(
+                  message: layout.bottomOpen
+                      ? l10n.studioBottomPanelHide
+                      : l10n.studioBottomPanelShow,
+                  child: InkWell(
+                    onTap: layout.toggleBottom,
+                    child: Icon(
+                      layout.bottomOpen
+                          ? context.icons.expandMore
+                          : context.icons.expandLess,
+                      size: 18,
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
