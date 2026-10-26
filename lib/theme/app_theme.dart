@@ -503,12 +503,12 @@ abstract final class AppTheme {
       visualDensity: VisualDensity.compact,
       extensions: [tokens, SyntaxTokens.forBrightness(brightness)],
       tabBarTheme: TabBarThemeData(
-        labelColor: scheme.onSecondaryContainer,
+        labelColor: scheme.primary,
         unselectedLabelColor: scheme.onSurfaceVariant,
-        // 밑줄 대신 고른 탭 전체를 채우는 알약 모양 표시.
-        indicator: BoxDecoration(color: scheme.secondaryContainer, borderRadius: BorderRadius.circular(tokens.radius)),
+        // 밑줄이 글자 폭이 아니라 탭(칸) 전체 너비로 깔리게 한다.
+        indicator: UnderlineTabIndicator(borderSide: BorderSide(width: 2, color: scheme.primary)),
         indicatorSize: TabBarIndicatorSize.tab,
-        dividerColor: Colors.transparent,
+        dividerColor: scheme.outlineVariant,
         labelStyle: saturn.textTheme.labelLarge,
         unselectedLabelStyle: saturn.textTheme.labelLarge,
       ),
