@@ -76,6 +76,14 @@ Claude Code는 worktree에서 작업하고 사용자는 main만 쓴다. 그러�
 - 트리 위쪽에 worktree 선택기를 둔다. Claude worktree(`.claude/worktrees/`)는 표시로 구분하고 미검증이면 점을 붙인다.
 - 편집기는 일부러 단순하게 둔다: 열기·수정·저장·찾기·diff 읽기. 자동완성 등은 만들지 않는다.
 
+### Git 패널 = Branch Dock 그대로 (2026-10-26 방향 전환)
+
+직접 다시 만드는 대신 Branch Dock의 코드를 `lib/branchdock/`로 통째로 옮겨 쓴다(Studio 규칙에 맞게 문구 `bd` 접두어, `context.icons`, `context.mono`).
+`lib/ui/branchdock_dock.dart`가 셸이다: 상태 헤더 → 다음 할 일 배너 → 아이콘 탭(변경·브랜치·태그·원격·릴리스·PR·기록, CI 없음) → 내용 → 명령 막대.
+열린 프로젝트 폴더가 바뀌면 `RepoController`를 다시 연다. Studio 전용은 `MergeGateScope`(PR 카드의 검증 관문·검증 카드)와 HEAD 변경 알림(`onHeadChanged`)뿐이다.
+옛 `GitPanel`·`BranchesTab`·병합 시트·`BranchesController`는 지웠다. `GitController`는 검증 판정(관문)만 맡는다.
+알려진 한계: 변경 파일을 눌러도 Studio 편집기의 변경점 보기가 열리지 않는다(Branch Dock의 diff 화면을 쓴다) — 필요하면 `ChangesTab`에 연결 지점을 둔다.
+
 ### Git 패널 확장 계획 (Branch Dock 기능을 가져오는 순서)
 
 탭마다 브랜치 하나, 병합해 가며 확인한다. 아직 없는 것: **태그** → **원격** → **기록**(로그·그래프) → **PR 목록·리뷰** → **릴리스 마법사 나머지**(PR 생성·병합·노트·CI 감시) → **Actions** → **실수 복구**(reflog) → **worktree 만들기·지우기** → **개념 도움말**.

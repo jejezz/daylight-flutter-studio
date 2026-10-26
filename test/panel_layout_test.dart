@@ -7,7 +7,7 @@ import 'package:daylight_flutter_studio/theme/app_theme.dart';
 import 'package:daylight_flutter_studio/theme/editor_zoom.dart';
 import 'package:daylight_flutter_studio/theme/theme_controller.dart';
 import 'package:daylight_flutter_studio/ui/bottom_panel.dart';
-import 'package:daylight_flutter_studio/ui/git_dock.dart';
+import 'package:daylight_flutter_studio/ui/branchdock_dock.dart';
 import 'package:daylight_flutter_studio/ui/studio_screen.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -137,7 +137,7 @@ void main() {
       await tester.pumpWidget(app());
       // 마지막 프로젝트를 여는 일(설정 읽기, git worktree list)은 실제 입출력이라,
       // 실제 시간을 흘리고 화면을 다시 그리기를 프로젝트가 열릴 때까지 되풀이한다.
-      for (var i = 0; i < 40 && find.byType(GitDock).evaluate().isEmpty; i++) {
+      for (var i = 0; i < 40 && find.byType(BranchDockDock).evaluate().isEmpty; i++) {
         await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 100)));
         // 가짜 시계 안에 만들어진 타이머도 돌도록 시간을 함께 흘린다.
         await tester.pump(const Duration(milliseconds: 200));
@@ -155,13 +155,19 @@ void main() {
     testWidgets('Git은 오른쪽 자기 탭 줄을 갖고, Run·문제는 아래 패널에 있다', (tester) async {
       await pumpScreen(tester);
 
-      final git = find.byType(GitDock);
+      final git = find.byType(BranchDockDock);
+      // 저장소를 여는 일(PATH 확인, git)은 실제 입출력이라 안내가 나올 때까지 기다린다.
+      final init = find.text('이 폴더를 git 저장소로 만들기');
+      for (var i = 0; i < 60 && init.evaluate().isEmpty; i++) {
+        await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 100)));
+        await tester.pump(const Duration(milliseconds: 200));
+      }
       final bottom = find.byType(BottomPanel);
       expect(git, findsOneWidget);
       expect(bottom, findsOneWidget);
 
-      // Git 패널의 탭 줄에는 "변경"만 있고 Run·문제 탭은 없다.
-      expect(find.descendant(of: git, matching: find.text('변경')), findsOneWidget);
+      // Git 패널은 자기 내용(여기서는 저장소가 아닌 폴더의 안내)만 갖고 Run·문제 탭은 없다.
+      expect(find.descendant(of: git, matching: find.text('이 폴더를 git 저장소로 만들기')), findsOneWidget);
       expect(find.descendant(of: git, matching: find.text('Run')), findsNothing);
       expect(find.descendant(of: git, matching: find.text('문제')), findsNothing);
 
@@ -193,7 +199,7 @@ void main() {
 
       await ctrlJ();
       expect(find.byType(BottomPanel), findsNothing);
-      expect(find.byType(GitDock), findsOneWidget, reason: 'Git 패널은 그대로');
+      expect(find.byType(BranchDockDock), findsOneWidget, reason: 'Git 패널은 그대로');
 
       await ctrlJ();
       expect(find.byType(BottomPanel), findsOneWidget);

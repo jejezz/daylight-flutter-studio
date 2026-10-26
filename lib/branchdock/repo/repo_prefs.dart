@@ -1,0 +1,109 @@
+// branch-dock-flutter/lib/repo/repo_prefs.dart 에서 옮김 (Studio 규칙: bd 접두어 문구, context.icons, context.mono).
+import 'dart:io';
+import 'dart:ui';
+
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../git/commands.dart';
+import '../release/version_files.dart';
+
+/// 저장소별 기억할 값과 앱 설정 (PLAN.md §5 저장).
+class RepoPrefs {
+  RepoPrefs(this._prefs);
+
+  static Future<RepoPrefs> load() async => RepoPrefs(await SharedPreferences.getInstance());
+
+  final SharedPreferences _prefs;
+
+  static const _recentKey = 'recent_repos';
+  static const _editorKey = 'editor_command';
+  static const _boundsKey = 'window_bounds';
+  static const _pixelBoundsKey = 'window_bounds_px';
+  static const maxRecent = 10;
+
+  List<String> get recent => _prefs.getStringList(_recentKey) ?? const [];
+
+  Future<void> addRecent(String path) async {
+    final list = [path, ...recent.where((p) => p != path)].take(maxRecent).toList();
+    await _prefs.setStringList(_recentKey, list);
+  }
+
+  Future<void> removeRecent(String path) =>
+      _prefs.setStringList(_recentKey, recent.where((p) => p != path).toList());
+
+  /// 이미 사라진 폴더를 최근 목록에서 뺀다. 저장소별로 기억한 값도 함께 지운다.
+  Future<void> pruneMissingRecent() async {
+    final missing = recent.where((p) => !Directory(p).existsSync()).toList();
+    if (missing.isEmpty) return;
+    await _prefs.setStringList(_recentKey, recent.where((p) => !missing.contains(p)).toList());
+    for (final path in missing) {
+      for (final key in _prefs.getKeys().where((k) => k.endsWith(':$path')).toList()) {
+        await _prefs.remove(key);
+      }
+    }
+  }
+
+  PullMode pullMode(String repo) =>
+      PullMode.values.asNameMap()[_prefs.getString('pull_mode:$repo')] ?? PullMode.merge;
+
+  Future<void> setPullMode(String repo, PullMode mode) => _prefs.setString('pull_mode:$repo', mode.name);
+
+  /// 자동 fetch (PLAN.md 3.3 P1). 기본은 켬.
+  bool get autoFetch => _prefs.getBool('auto_fetch') ?? true;
+  Future<void> setAutoFetch(bool value) => _prefs.setBool('auto_fetch', value);
+
+  /// Push할 때 태그도 함께 (--follow-tags). 저장소별, 기본은 끔.
+  bool followTags(String repo) => _prefs.getBool('push_follow_tags:$repo') ?? false;
+  Future<void> setFollowTags(String repo, bool value) => _prefs.setBool('push_follow_tags:$repo', value);
+
+  /// 저장소별로 정한 버전 파일 (PLAN.md 3.8.2a). 없으면 자동 감지.
+  CustomVersionFile? customVersionFile(String repo) {
+    final v = _prefs.getStringList('version_file:$repo');
+    return v == null || v.length != 2 ? null : CustomVersionFile(v[0], v[1]);
+  }
+
+  Future<void> setCustomVersionFile(String repo, CustomVersionFile? f) => f == null
+      ? _prefs.remove('version_file:$repo')
+      : _prefs.setStringList('version_file:$repo', [f.path, f.pattern]);
+
+  int lastTab(String repo) => _prefs.getInt('last_tab:$repo') ?? 0;
+  Future<void> setLastTab(String repo, int tab) => _prefs.setInt('last_tab:$repo', tab);
+
+  /// 파일을 여는 편집기 명령(예: `code`). 비어 있으면 OS 기본 앱.
+  String get editorCommand => _prefs.getString(_editorKey) ?? '';
+  Future<void> setEditorCommand(String command) => _prefs.setString(_editorKey, command.trim());
+
+  /// 직접 지정한 git / gh 실행 파일 (PLAN.md 3.14). null이면 PATH에서 찾는다.
+  String? toolPath(String tool) => _prefs.getString('tool_path:$tool');
+  Future<void> setToolPath(String tool, String? path) => path == null || path.trim().isEmpty
+      ? _prefs.remove('tool_path:$tool')
+      : _prefs.setString('tool_path:$tool', path.trim());
+
+  /// 창 크기·위치 (UI_UX.md §2: 필수).
+  Rect? get windowBounds {
+    final v = _prefs.getStringList(_boundsKey);
+    if (v == null || v.length != 4) return null;
+    final n = v.map(double.tryParse).toList();
+    if (n.contains(null)) return null;
+    return Rect.fromLTWH(n[0]!, n[1]!, n[2]!, n[3]!);
+  }
+
+  Future<void> setWindowBounds(Rect r) =>
+      _prefs.setStringList(_boundsKey, [r.left, r.top, r.width, r.height].map((d) => d.toStringAsFixed(0)).toList());
+
+  /// Windows용: 배율이 다른 모니터 사이에서도 어긋나지 않도록 물리 픽셀로 저장한다.
+  Rect? get windowPixelBounds => _readRect(_pixelBoundsKey);
+
+  Future<void> setWindowPixelBounds(Rect r) => _writeRect(_pixelBoundsKey, r);
+
+  Rect? _readRect(String key) {
+    final v = _prefs.getStringList(key);
+    if (v == null || v.length != 4) return null;
+    final n = v.map(double.tryParse).toList();
+    if (n.contains(null)) return null;
+    return Rect.fromLTWH(n[0]!, n[1]!, n[2]!, n[3]!);
+  }
+
+  Future<void> _writeRect(String key, Rect r) =>
+      _prefs.setStringList(key, [r.left, r.top, r.width, r.height].map((d) => d.toStringAsFixed(0)).toList());
+}

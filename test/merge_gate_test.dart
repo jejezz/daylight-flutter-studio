@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:daylight_flutter_studio/l10n/app_localizations.dart';
 import 'package:daylight_flutter_studio/core/command_log.dart';
 import 'package:daylight_flutter_studio/core/command_runner.dart';
@@ -6,13 +8,23 @@ import 'package:daylight_flutter_studio/github/pull_request.dart';
 import 'package:daylight_flutter_studio/settings/gate_settings.dart';
 import 'package:daylight_flutter_studio/theme/app_theme.dart';
 import 'package:daylight_flutter_studio/theme/theme_controller.dart';
-import 'package:daylight_flutter_studio/ui/git_panel.dart';
+import 'package:daylight_flutter_studio/branchdock/core/command_log.dart' as bd;
+import 'package:daylight_flutter_studio/branchdock/core/command_runner.dart' as bd;
+import 'package:daylight_flutter_studio/branchdock/github/models.dart' as bd;
+import 'package:daylight_flutter_studio/branchdock/repo/environment.dart';
+import 'package:daylight_flutter_studio/branchdock/repo/repo_controller.dart' as bd;
+import 'package:daylight_flutter_studio/branchdock/ui/merge_gate.dart';
+import 'package:daylight_flutter_studio/branchdock/ui/repo_scope.dart';
+import 'package:daylight_flutter_studio/branchdock/ui/tabs/pr_tab.dart';
+import 'package:daylight_flutter_studio/ui/git_merge_gate.dart';
 import 'package:daylight_flutter_studio/ui/settings_dialog.dart';
 import 'package:daylight_flutter_studio/verify/verify_state.dart';
 import 'package:daylight_flutter_studio/verify/verify_store.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'branchdock/support.dart';
 
 const _sha = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
 
@@ -45,6 +57,32 @@ class FakeRunner extends CommandRunner {
       'git symbolic-ref --short' => const CommandResult(1, '', ''),
       _ => const CommandResult(0, '', ''),
     };
+  }
+}
+
+/// PR 카드가 쓰는 Branch Dock 실행기: git은 실제로 돌리고, gh는 병합 명령만 기록하며 성공으로 답한다.
+class _BdRunner extends bd.CommandRunner {
+  _BdRunner() : super(log: bd.CommandLog(), path: Platform.environment['PATH'] ?? '');
+
+  final ghCalls = <List<String>>[];
+
+  List<String>? get merge => ghCalls.where((c) => c.length > 2 && c[1] == 'pr' && c[2] == 'merge').firstOrNull;
+
+  @override
+  Future<bd.CommandResult> run(
+    List<String> args, {
+    required String workingDirectory,
+    bool quiet = false,
+    bd.CancelToken? cancel,
+    String? stdin,
+  }) {
+    if (args.first == 'gh') {
+      ghCalls.add(args);
+      return Future.value(const bd.CommandResult(0, '', ''));
+    }
+    // 병합 뒤의 pull은 실제 원격이 없으니 성공으로 답한다.
+    if (args.length > 1 && args[1] == 'pull') return Future.value(const bd.CommandResult(0, '', ''));
+    return super.run(args, workingDirectory: workingDirectory, quiet: quiet, cancel: cancel, stdin: stdin);
   }
 }
 
@@ -254,17 +292,42 @@ void main() {
     });
   });
 
-  group('Git 패널', () {
+  group('PR 카드의 병합 관문', () {
     late FakeRunner runner;
     late FakeStore store;
     late GateSettings gate;
     late GitController c;
+    late GitMergeGate mergeGate;
+    late _BdRunner bdRunner;
+    late Directory tmp;
+    late bd.RepoController repo;
 
     setUp(() async {
       SharedPreferences.setMockInitialValues({});
       runner = FakeRunner();
       store = FakeStore(runner);
       gate = GateSettings();
+      // PR 카드가 쓰는 저장소는 실제 임시 저장소다 (gh 병합 명령만 가로챈다).
+      tmp = Directory.systemTemp.createTempSync('gate_card');
+      Future<void> git(List<String> args) async {
+        final r = await Process.run('git', args, workingDirectory: tmp.path);
+        if (r.exitCode != 0) fail('git ${args.join(' ')}: ${r.stderr}');
+      }
+
+      await git(['init', '-q', '-b', 'main']);
+      for (final cfg in [['user.email', 't@e.com'], ['user.name', 'T'], ['commit.gpgsign', 'false']]) {
+        await git(['config', ...cfg]);
+      }
+      File('${tmp.path}/a.txt').writeAsStringSync('a\n');
+      await git(['add', '-A']);
+      await git(['commit', '-q', '-m', 'init']);
+      bdRunner = _BdRunner();
+      repo = (await bd.RepoController.open(bdRunner, tmp.path)).$1!;
+    });
+
+    tearDown(() async {
+      repo.dispose();
+      await safeDelete(tmp);
     });
 
     Future<void> show(WidgetTester tester, {GateMode mode = GateMode.block, List<VerifyRecord> records = const []}) async {
@@ -277,121 +340,149 @@ void main() {
         ..pr = _pr
         ..prHeadSha = _sha;
       await c.refreshVerdict();
+      mergeGate = GitMergeGate(c);
+      addTearDown(mergeGate.dispose);
       await tester.pumpWidget(
-        MaterialApp(localizationsDelegates: AppLocalizations.localizationsDelegates, supportedLocales: AppLocalizations.supportedLocales, locale: const Locale('ko'), 
+        MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          locale: const Locale('ko'),
           theme: AppTheme.build(StudioPalette.saturn, Brightness.light),
-          home: Scaffold(body: GitPanel(controller: c)),
+          home: Scaffold(
+            body: RepoScope(
+              repo: repo,
+              environment: const EnvironmentStatus(),
+              child: MergeGateScope(
+                gate: mergeGate,
+                child: SingleChildScrollView(
+                  child: PrCard(
+                    pr: const bd.PullRequest(number: 7, title: 'Add thing', url: 'u', state: bd.PrState.open, headRef: 'feat', baseRef: 'main'),
+                    repo: repo,
+                    activity: const [],
+                    onChanged: () {},
+                  ),
+                ),
+              ),
+            ),
+          ),
         ),
       );
       await tester.pump();
     }
 
-    FilledButton mergeButton(WidgetTester tester, String label) =>
-        tester.widget<FilledButton>(find.ancestor(of: find.text(label), matching: find.byType(FilledButton)));
+    FilledButton mergeButton(WidgetTester tester) =>
+        tester.widget<FilledButton>(find.ancestor(of: find.text('병합하기'), matching: find.byType(FilledButton)));
 
-    Future<void> scrollTo(WidgetTester tester, Finder f) async {
-      await tester.scrollUntilVisible(f, 200, scrollable: find.byType(Scrollable).first);
-      await tester.pump();
+    /// 병합 명령은 실제 입출력(저장소 읽기)을 거치므로 실제 시간을 흘려 기다린다.
+    Future<void> settle(WidgetTester tester) async {
+      for (var i = 0; i < 10; i++) {
+        await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 100)));
+        await tester.pump(const Duration(milliseconds: 100));
+      }
+    }
+
+    Future<void> leave(WidgetTester tester) async {
+      await tester.pumpWidget(const SizedBox());
+      await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 300)));
     }
 
     testWidgets('차단: 단추가 비활성이고 이유와 예외 단추가 보인다', (tester) async {
       await show(tester);
-      await scrollTo(tester, find.text('PR 병합 (검증 필요)'));
 
-      expect(mergeButton(tester, 'PR 병합 (검증 필요)').onPressed, isNull);
+      expect(mergeButton(tester).onPressed, isNull);
       expect(find.textContaining('로컬에서 확인하지 않았습니다'), findsWidgets);
       expect(find.text('검증 없이 병합…'), findsOneWidget);
+      await leave(tester);
     });
 
     testWidgets('차단: 예외 단추 → 확인창에서 취소하면 병합하지 않는다', (tester) async {
       await show(tester);
-      await scrollTo(tester, find.text('검증 없이 병합…'));
 
       await tester.tap(find.text('검증 없이 병합…'));
-      await tester.pumpAndSettle();
+      await settle(tester);
       expect(find.text('확인하지 않은 커밋입니다'), findsOneWidget);
       expect(find.textContaining('모든 OS 빌드'), findsOneWidget);
 
       await tester.tap(find.text('취소'));
-      await tester.pumpAndSettle();
-      expect(runner.merge, isNull);
+      await settle(tester);
+      expect(bdRunner.merge, isNull);
+      await leave(tester);
     });
 
     testWidgets('차단: 예외 단추 → "그래도 병합"을 눌러야 병합한다', (tester) async {
       await show(tester);
-      await scrollTo(tester, find.text('검증 없이 병합…'));
 
       await tester.tap(find.text('검증 없이 병합…'));
-      await tester.pumpAndSettle();
+      await settle(tester);
       await tester.tap(find.text('그래도 병합'));
-      await tester.pumpAndSettle();
+      await settle(tester);
 
-      expect(runner.merge, ['gh', 'pr', 'merge', '7', '--merge', '--delete-branch']);
+      expect(bdRunner.merge, ['gh', 'pr', 'merge', '7', '--merge', '--delete-branch']);
+      await leave(tester);
     });
 
     testWidgets('검증됨: 평소처럼 바로 병합하고 예외 단추는 없다', (tester) async {
       await show(tester, records: [_rec(VerifyStatus.confirmed)]);
-      await scrollTo(tester, find.text('PR 병합'));
 
-      expect(find.text('검증됨 — 병합할 수 있습니다'), findsOneWidget);
+      expect(find.text('검증됨 — 병합할 수 있습니다'), findsWidgets);
       expect(find.text('검증 없이 병합…'), findsNothing);
-      expect(mergeButton(tester, 'PR 병합').onPressed, isNotNull);
+      expect(mergeButton(tester).onPressed, isNotNull);
 
-      await tester.tap(find.text('PR 병합'));
-      await tester.pumpAndSettle();
-      expect(runner.merge, isNotNull);
+      await tester.tap(find.text('병합하기'));
+      await settle(tester);
+      expect(bdRunner.merge, isNotNull);
       expect(find.text('확인하지 않은 커밋입니다'), findsNothing, reason: '확인된 커밋은 묻지 않는다');
+      await leave(tester);
     });
 
     testWidgets('경고만: 단추는 눌리고 확인창을 거친다', (tester) async {
       await show(tester, mode: GateMode.warn);
-      await scrollTo(tester, find.text('PR 병합…'));
 
-      expect(mergeButton(tester, 'PR 병합…').onPressed, isNotNull);
+      expect(mergeButton(tester).onPressed, isNotNull);
       expect(find.text('검증 없이 병합…'), findsNothing);
 
-      await tester.tap(find.text('PR 병합…'));
-      await tester.pumpAndSettle();
+      await tester.tap(find.text('병합하기'));
+      await settle(tester);
       expect(find.text('확인하지 않은 커밋입니다'), findsOneWidget);
-      expect(runner.merge, isNull, reason: '확인 전에는 병합하지 않는다');
+      expect(bdRunner.merge, isNull, reason: '확인 전에는 병합하지 않는다');
 
       await tester.tap(find.text('그래도 병합'));
-      await tester.pumpAndSettle();
-      expect(runner.merge, isNotNull);
+      await settle(tester);
+      expect(bdRunner.merge, isNotNull);
+      await leave(tester);
     });
 
     testWidgets('끔: 관문 문구 없이 평소 단추', (tester) async {
       await show(tester, mode: GateMode.off);
-      await scrollTo(tester, find.text('PR 병합'));
 
       expect(find.textContaining('확인하지 않았습니다'), findsNothing);
       expect(find.text('검증 없이 병합…'), findsNothing);
-      await tester.tap(find.text('PR 병합'));
-      await tester.pumpAndSettle();
-      expect(runner.merge, isNotNull);
+      await tester.tap(find.text('병합하기'));
+      await settle(tester);
+      expect(bdRunner.merge, isNotNull);
+      await leave(tester);
     });
 
-    testWidgets('설정에서 모드를 바꾸면 패널이 바로 따라 바뀐다', (tester) async {
+    testWidgets('설정에서 모드를 바꾸면 카드가 바로 따라 바뀐다', (tester) async {
       await show(tester);
-      await scrollTo(tester, find.text('PR 병합 (검증 필요)'));
-      expect(find.text('PR 병합 (검증 필요)'), findsOneWidget);
+      expect(mergeButton(tester).onPressed, isNull);
 
       await gate.setMode(GateMode.off);
-      await tester.pump();
-      expect(find.text('PR 병합 (검증 필요)'), findsNothing);
-      expect(find.text('PR 병합'), findsOneWidget);
+      await settle(tester);
+      expect(mergeButton(tester).onPressed, isNotNull);
+      expect(find.text('검증 없이 병합…'), findsNothing);
+      await leave(tester);
     });
 
     testWidgets('확인함을 누른 기록이 들어오면 막혔던 단추가 풀린다', (tester) async {
       await show(tester);
-      await scrollTo(tester, find.text('PR 병합 (검증 필요)'));
-      expect(mergeButton(tester, 'PR 병합 (검증 필요)').onPressed, isNull);
+      expect(mergeButton(tester).onPressed, isNull);
 
       store.records = [_rec(VerifyStatus.confirmed)];
-      await c.refreshVerdict();
+      await tester.runAsync(c.refreshVerdict);
       await tester.pump();
-      expect(find.text('PR 병합'), findsOneWidget);
-      expect(mergeButton(tester, 'PR 병합').onPressed, isNotNull);
+      expect(mergeButton(tester).onPressed, isNotNull);
+      await leave(tester);
     });
   });
 

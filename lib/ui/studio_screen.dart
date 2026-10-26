@@ -5,7 +5,6 @@ import 'package:flutter/services.dart';
 import '../core/command_log.dart';
 import '../core/command_runner.dart';
 import '../devices/device_service.dart';
-import '../git/branches_controller.dart';
 import '../git/git_controller.dart';
 import '../run/run_controller.dart';
 import '../problems/dart_analyzer.dart';
@@ -26,7 +25,8 @@ import '../theme/theme_controller.dart';
 import '../verify/verify_store.dart';
 import 'bottom_panel.dart';
 import 'editor_pane.dart';
-import 'git_dock.dart';
+import 'branchdock_dock.dart';
+import 'git_merge_gate.dart';
 import '../settings/editor_settings.dart';
 import '../studio/project_index.dart';
 import 'project_search.dart';
@@ -79,7 +79,7 @@ class _StudioScreenState extends State<StudioScreen>
     store: VerifyStore(_runner),
     gate: _gate,
   );
-  late final BranchesController _branches = BranchesController(runner: _runner);
+  late final GitMergeGate _mergeGate = GitMergeGate(_git);
   double _treeWidth = 260;
   double _dockWidth = 400;
   String? _lastRoot;
@@ -94,7 +94,6 @@ class _StudioScreenState extends State<StudioScreen>
     _git.addListener(_onGitChanged);
     _run.addListener(_onRunChanged);
     _gate.restore();
-    _branches.onChanged = _onBranchChanged;
     _git.onFilesChanged = _onOperationChanged;
     _layout.restore();
     _env.onToolPathsChanged = () => _run.refreshDevices();
@@ -112,7 +111,6 @@ class _StudioScreenState extends State<StudioScreen>
       _controller.refreshTree();
       _controller.refreshBases();
       _problems.refreshIfStale(const Duration(seconds: 30));
-      _branches.refresh();
     }
   }
 
@@ -121,8 +119,9 @@ class _StudioScreenState extends State<StudioScreen>
     WidgetsBinding.instance.removeObserver(this);
     _git.removeListener(_onGitChanged);
     _run.removeListener(_onRunChanged);
+    // 관문 어댑터는 설정(_gate)과 Git 컨트롤러를 듣고 있으므로 그것들보다 먼저 정리한다.
+    _mergeGate.dispose();
     _gate.dispose();
-    _branches.dispose();
     _layout.dispose();
     _env.dispose();
     _controller.removeListener(_onStudioChanged);
@@ -146,7 +145,6 @@ class _StudioScreenState extends State<StudioScreen>
       _run.setProjectDir(_lastRoot);
       _problems.setProjectDir(_lastRoot);
       _git.setDir(_lastRoot);
-      _branches.setDir(_lastRoot);
     }
   }
 
@@ -169,12 +167,10 @@ class _StudioScreenState extends State<StudioScreen>
     if (head == _lastHead) return;
     _lastHead = head;
     _controller.refreshBases();
-    _branches.refresh();
   }
 
   /// 병합·rebase를 계속·건너뛰기·중단한 뒤: 파일과 HEAD가 바뀌었으니 화면을 새로 읽는다 (Git 상태는 이미 새로 읽었다).
   void _onOperationChanged() {
-    _branches.refresh();
     _controller.checkExternalChanges();
     _controller.refreshTree();
     _controller.refreshBases();
@@ -363,14 +359,11 @@ class _StudioScreenState extends State<StudioScreen>
                               ),
                               SizedBox(
                                 width: _dockWidth,
-                                child: GitDock(
-                                  git: _git,
-                                  branches: _branches,
-                                  onOpenDiff: _controller.openDiff,
-                                  onOpenWorktree: (w) => _controller.openProject(
-                                    w.path,
-                                    remember: false,
-                                  ),
+                                child: BranchDockDock(
+                                  root: _controller.root,
+                                  gate: _mergeGate,
+                                  onOpenFolder: (path) => _controller.openProject(path, remember: false),
+                                  onHeadChanged: _onBranchChanged,
                                 ),
                               ),
                             ],
