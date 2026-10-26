@@ -275,6 +275,65 @@ class AppLocalizationsEn extends AppLocalizations {
   String get gitFileOpenDiff => 'Click to view changes';
 
   @override
+  String get gitFileOpenConflict => 'Click to resolve conflict';
+
+  @override
+  String gitConflicts(int count) {
+    return '$count conflicts — click a file to resolve';
+  }
+
+  @override
+  String conflictSheetTitle(String name) {
+    return 'Resolve conflicts in $name';
+  }
+
+  @override
+  String get conflictUnreadable =>
+      'Can\'t read this file (it may be binary or deleted). Fix it directly in the editor.';
+
+  @override
+  String get conflictBroken =>
+      'The conflict markers aren\'t intact, so this app can\'t read them. Fix the file directly in the editor.';
+
+  @override
+  String get conflictNone =>
+      'This file has no conflict markers. If you\'ve already fixed it, close this and refresh the status.';
+
+  @override
+  String conflictBlockTitle(int index, int total) {
+    return 'Conflict $index/$total';
+  }
+
+  @override
+  String get conflictSideMine => 'Mine';
+
+  @override
+  String get conflictSideIncoming => 'Incoming';
+
+  @override
+  String get conflictKeepBoth => 'Keep both (mine, then incoming)';
+
+  @override
+  String get conflictEmptySide => '(empty)';
+
+  @override
+  String conflictPickHint(int left) {
+    return 'Pick a side for each conflict. $left left.';
+  }
+
+  @override
+  String get conflictApply => 'Apply and mark resolved';
+
+  @override
+  String get conflictApplyNote =>
+      'Rewrites the file with your picks and runs git add. To edit by hand instead, open it in the editor.';
+
+  @override
+  String doneConflictResolved(String name) {
+    return '$name: conflict resolved';
+  }
+
+  @override
   String get gitFetch => 'Fetch';
 
   @override

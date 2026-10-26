@@ -263,6 +263,63 @@ class AppLocalizationsKo extends AppLocalizations {
   String get gitFileOpenDiff => '눌러서 변경점 보기';
 
   @override
+  String get gitFileOpenConflict => '눌러서 충돌 해결';
+
+  @override
+  String gitConflicts(int count) {
+    return '충돌 $count개 — 파일을 눌러 해결하세요';
+  }
+
+  @override
+  String conflictSheetTitle(String name) {
+    return '$name 충돌 해결';
+  }
+
+  @override
+  String get conflictUnreadable =>
+      '파일을 읽을 수 없습니다(이진 파일이거나 삭제된 파일일 수 있습니다). 편집기에서 직접 고치세요.';
+
+  @override
+  String get conflictBroken => '충돌 표시가 온전하지 않아 앱에서 읽을 수 없습니다. 편집기에서 직접 고쳐 주세요.';
+
+  @override
+  String get conflictNone => '이 파일에는 충돌 표시가 없습니다. 이미 고쳤다면 닫고 상태를 다시 확인하세요.';
+
+  @override
+  String conflictBlockTitle(int index, int total) {
+    return '충돌 $index/$total';
+  }
+
+  @override
+  String get conflictSideMine => '내 것';
+
+  @override
+  String get conflictSideIncoming => '들어오는 것';
+
+  @override
+  String get conflictKeepBoth => '둘 다 유지 (위, 아래 순서)';
+
+  @override
+  String get conflictEmptySide => '(비어 있음)';
+
+  @override
+  String conflictPickHint(int left) {
+    return '구간마다 어느 쪽을 쓸지 골라 주세요. $left개 남았습니다.';
+  }
+
+  @override
+  String get conflictApply => '적용하고 해결됨 표시';
+
+  @override
+  String get conflictApplyNote =>
+      '고른 대로 파일을 다시 쓰고 git add 합니다. 직접 고쳐 쓰려면 편집기로 여세요.';
+
+  @override
+  String doneConflictResolved(String name) {
+    return '$name: 충돌 해결됨';
+  }
+
+  @override
   String get gitFetch => '가져오기';
 
   @override

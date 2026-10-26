@@ -100,6 +100,59 @@
   },
   "gitFileDeleted": "Deleted file",
   "gitFileOpenDiff": "Click to view changes",
+  "gitFileOpenConflict": "Click to resolve conflict",
+  "gitConflicts": "{count} conflicts — click a file to resolve",
+  "@gitConflicts": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "conflictSheetTitle": "Resolve conflicts in {name}",
+  "@conflictSheetTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "conflictUnreadable": "Can't read this file (it may be binary or deleted). Fix it directly in the editor.",
+  "conflictBroken": "The conflict markers aren't intact, so this app can't read them. Fix the file directly in the editor.",
+  "conflictNone": "This file has no conflict markers. If you've already fixed it, close this and refresh the status.",
+  "conflictBlockTitle": "Conflict {index}/{total}",
+  "@conflictBlockTitle": {
+    "placeholders": {
+      "index": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "conflictSideMine": "Mine",
+  "conflictSideIncoming": "Incoming",
+  "conflictKeepBoth": "Keep both (mine, then incoming)",
+  "conflictEmptySide": "(empty)",
+  "conflictPickHint": "Pick a side for each conflict. {left} left.",
+  "@conflictPickHint": {
+    "placeholders": {
+      "left": {
+        "type": "int"
+      }
+    }
+  },
+  "conflictApply": "Apply and mark resolved",
+  "conflictApplyNote": "Rewrites the file with your picks and runs git add. To edit by hand instead, open it in the editor.",
+  "doneConflictResolved": "{name}: conflict resolved",
+  "@doneConflictResolved": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "gitFetch": "Fetch",
   "gitPull": "Pull (↓{behind})",
   "@gitPull": {

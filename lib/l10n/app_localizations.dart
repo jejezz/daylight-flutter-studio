@@ -572,6 +572,96 @@ abstract class AppLocalizations {
   /// **'눌러서 변경점 보기'**
   String get gitFileOpenDiff;
 
+  /// No description provided for @gitFileOpenConflict.
+  ///
+  /// In ko, this message translates to:
+  /// **'눌러서 충돌 해결'**
+  String get gitFileOpenConflict;
+
+  /// No description provided for @gitConflicts.
+  ///
+  /// In ko, this message translates to:
+  /// **'충돌 {count}개 — 파일을 눌러 해결하세요'**
+  String gitConflicts(int count);
+
+  /// No description provided for @conflictSheetTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'{name} 충돌 해결'**
+  String conflictSheetTitle(String name);
+
+  /// No description provided for @conflictUnreadable.
+  ///
+  /// In ko, this message translates to:
+  /// **'파일을 읽을 수 없습니다(이진 파일이거나 삭제된 파일일 수 있습니다). 편집기에서 직접 고치세요.'**
+  String get conflictUnreadable;
+
+  /// No description provided for @conflictBroken.
+  ///
+  /// In ko, this message translates to:
+  /// **'충돌 표시가 온전하지 않아 앱에서 읽을 수 없습니다. 편집기에서 직접 고쳐 주세요.'**
+  String get conflictBroken;
+
+  /// No description provided for @conflictNone.
+  ///
+  /// In ko, this message translates to:
+  /// **'이 파일에는 충돌 표시가 없습니다. 이미 고쳤다면 닫고 상태를 다시 확인하세요.'**
+  String get conflictNone;
+
+  /// No description provided for @conflictBlockTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'충돌 {index}/{total}'**
+  String conflictBlockTitle(int index, int total);
+
+  /// No description provided for @conflictSideMine.
+  ///
+  /// In ko, this message translates to:
+  /// **'내 것'**
+  String get conflictSideMine;
+
+  /// No description provided for @conflictSideIncoming.
+  ///
+  /// In ko, this message translates to:
+  /// **'들어오는 것'**
+  String get conflictSideIncoming;
+
+  /// No description provided for @conflictKeepBoth.
+  ///
+  /// In ko, this message translates to:
+  /// **'둘 다 유지 (위, 아래 순서)'**
+  String get conflictKeepBoth;
+
+  /// No description provided for @conflictEmptySide.
+  ///
+  /// In ko, this message translates to:
+  /// **'(비어 있음)'**
+  String get conflictEmptySide;
+
+  /// No description provided for @conflictPickHint.
+  ///
+  /// In ko, this message translates to:
+  /// **'구간마다 어느 쪽을 쓸지 골라 주세요. {left}개 남았습니다.'**
+  String conflictPickHint(int left);
+
+  /// No description provided for @conflictApply.
+  ///
+  /// In ko, this message translates to:
+  /// **'적용하고 해결됨 표시'**
+  String get conflictApply;
+
+  /// No description provided for @conflictApplyNote.
+  ///
+  /// In ko, this message translates to:
+  /// **'고른 대로 파일을 다시 쓰고 git add 합니다. 직접 고쳐 쓰려면 편집기로 여세요.'**
+  String get conflictApplyNote;
+
+  /// No description provided for @doneConflictResolved.
+  ///
+  /// In ko, this message translates to:
+  /// **'{name}: 충돌 해결됨'**
+  String doneConflictResolved(String name);
+
   /// No description provided for @gitFetch.
   ///
   /// In ko, this message translates to:
