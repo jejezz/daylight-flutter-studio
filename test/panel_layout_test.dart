@@ -282,6 +282,7 @@ void main() {
       for (final m in ['파일', '편집', '보기', '도움말']) {
         expect(find.text(m), findsOneWidget, reason: m);
       }
+      expect(tester.getTopLeft(find.text('파일')).dx, greaterThanOrEqualTo(8), reason: '메뉴 막대가 창 가장자리에 붙지 않는다');
       await tester.tap(find.text('파일'));
       await tester.pumpAndSettle();
       expect(find.text('프로젝트 열기…'), findsOneWidget);

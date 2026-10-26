@@ -170,6 +170,7 @@ void main() {
     await tester.pumpWidget(_app(c));
     await tester.pump();
     expect(c.tabs.map((t) => t.name), ['a.txt', 'b.txt', 'c.txt']);
+    expect(find.byIcon(Icons.drag_handle), findsNothing, reason: '탭 글자 위에 끌기 손잡이를 그리지 않는다');
 
     // c 탭을 잡아 a 탭 앞까지 끈다.
     final from = tester.getCenter(find.text('c.txt'));
