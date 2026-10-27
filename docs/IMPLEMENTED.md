@@ -1,6 +1,6 @@
 # 구현된 것
 
-기준: 2026-10-27, 로컬 `main`. `flutter analyze` 새 문제 없음, 테스트 480개 통과
+기준: 2026-10-27, 로컬 `main`. `flutter analyze` 새 문제 없음, 테스트 482개 통과
 (`test/release_test.dart`·`test/branchdock/`의 실제 git 테스트 몇 개는 전체를 한꺼번에 돌리면 Windows 파일 잠금으로
 간간이 실패한다 — 알려진 한계, 따로 돌리면 통과한다).
 앞으로 할 일은 [PLAN.md](../PLAN.md)에 있다. 이 문서는 **이미 만들어진 것**과 그 구조·작업 방식을 적는다.

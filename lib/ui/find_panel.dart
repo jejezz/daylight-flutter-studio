@@ -16,6 +16,9 @@ class FindPanel extends StatelessWidget implements PreferredSizeWidget {
 
   static const _rowHeight = 40.0;
 
+  /// 찾기 줄 맨 앞의 바꾸기 토글 폭. 바꾸기 줄의 빈 자리도 같은 폭이어야 두 입력칸의 글이 같은 자리에서 시작한다.
+  static const _leadWidth = 40.0;
+
   bool get _replacing => !readOnly && (controller.value?.replaceMode ?? false);
 
   @override
@@ -79,11 +82,14 @@ class FindPanel extends StatelessWidget implements PreferredSizeWidget {
             child: Row(
               children: [
                 if (!readOnly)
-                  toggle(
-                    icon: value.replaceMode ? context.icons.keyboardArrowDown : context.icons.keyboardArrowRight,
-                    tooltip: l10n.findToggleReplace,
-                    on: false,
-                    onTap: controller.toggleMode,
+                  SizedBox(
+                    width: _leadWidth,
+                    child: toggle(
+                      icon: value.replaceMode ? context.icons.keyboardArrowDown : context.icons.keyboardArrowRight,
+                      tooltip: l10n.findToggleReplace,
+                      on: false,
+                      onTap: controller.toggleMode,
+                    ),
                   ),
                 field(
                   controller.findInputController,
@@ -105,7 +111,7 @@ class FindPanel extends StatelessWidget implements PreferredSizeWidget {
               height: _rowHeight,
               child: Row(
                 children: [
-                  SizedBox(width: 40 + t.spaceXs),
+                  const SizedBox(width: _leadWidth),
                   field(controller.replaceInputController, controller.replaceInputFocusNode, l10n.findReplaceHint, onSubmit: controller.replaceMatch),
                   TextButton(onPressed: controller.replaceMatch, child: Text(l10n.findReplaceOne)),
                   TextButton(onPressed: controller.replaceAllMatches, child: Text(l10n.findReplaceAll)),
