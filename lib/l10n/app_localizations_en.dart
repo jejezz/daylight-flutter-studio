@@ -495,6 +495,40 @@ class AppLocalizationsEn extends AppLocalizations {
   String get studioProblemsTab => 'Problems';
 
   @override
+  String get studioTerminalTab => 'Terminal';
+
+  @override
+  String get terminalNew => 'New Terminal';
+
+  @override
+  String get terminalCloseTooltip => 'Close Terminal';
+
+  @override
+  String get terminalEmpty => 'No terminal is open';
+
+  @override
+  String get terminalEmptyHint => 'Click + to open a new terminal';
+
+  @override
+  String get terminalLoadingShells => 'Finding shells…';
+
+  @override
+  String get terminalNoShells => 'No shell was found';
+
+  @override
+  String terminalExited(String shell, int code) {
+    return '$shell exited (code $code)';
+  }
+
+  @override
+  String get terminalRestart => 'Restart';
+
+  @override
+  String terminalStartError(String error) {
+    return 'Couldn\'t start the shell: $error';
+  }
+
+  @override
   String get gitTabChanges => 'Changes';
 
   @override
@@ -1014,6 +1048,29 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsPreview => 'Preview';
+
+  @override
+  String get settingsSectionTerminal => 'Terminal';
+
+  @override
+  String get settingsTerminalShareFont => 'Share font with editor';
+
+  @override
+  String get settingsTerminalShareFontNote =>
+      'Turn off to pick a separate font and size for the terminal. Colors always follow the current theme.';
+
+  @override
+  String get settingsTerminalFont => 'Terminal font';
+
+  @override
+  String get settingsTerminalFontSize => 'Font size';
+
+  @override
+  String get settingsTerminalScrollback => 'Scrollback lines';
+
+  @override
+  String get settingsTerminalScrollbackNote =>
+      'Doesn\'t apply to terminal tabs already open — only to ones opened from now on.';
 
   @override
   String get releaseButton => 'Release…';

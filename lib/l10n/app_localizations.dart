@@ -950,6 +950,66 @@ abstract class AppLocalizations {
   /// **'문제'**
   String get studioProblemsTab;
 
+  /// No description provided for @studioTerminalTab.
+  ///
+  /// In ko, this message translates to:
+  /// **'터미널'**
+  String get studioTerminalTab;
+
+  /// No description provided for @terminalNew.
+  ///
+  /// In ko, this message translates to:
+  /// **'새 터미널'**
+  String get terminalNew;
+
+  /// No description provided for @terminalCloseTooltip.
+  ///
+  /// In ko, this message translates to:
+  /// **'터미널 닫기'**
+  String get terminalCloseTooltip;
+
+  /// No description provided for @terminalEmpty.
+  ///
+  /// In ko, this message translates to:
+  /// **'열린 터미널이 없습니다'**
+  String get terminalEmpty;
+
+  /// No description provided for @terminalEmptyHint.
+  ///
+  /// In ko, this message translates to:
+  /// **'+ 를 눌러 새 터미널을 엽니다'**
+  String get terminalEmptyHint;
+
+  /// No description provided for @terminalLoadingShells.
+  ///
+  /// In ko, this message translates to:
+  /// **'셸을 찾는 중…'**
+  String get terminalLoadingShells;
+
+  /// No description provided for @terminalNoShells.
+  ///
+  /// In ko, this message translates to:
+  /// **'쓸 수 있는 셸을 찾지 못했습니다'**
+  String get terminalNoShells;
+
+  /// No description provided for @terminalExited.
+  ///
+  /// In ko, this message translates to:
+  /// **'{shell} 종료됨 (코드 {code})'**
+  String terminalExited(String shell, int code);
+
+  /// No description provided for @terminalRestart.
+  ///
+  /// In ko, this message translates to:
+  /// **'다시 시작'**
+  String get terminalRestart;
+
+  /// No description provided for @terminalStartError.
+  ///
+  /// In ko, this message translates to:
+  /// **'셸을 시작하지 못했습니다: {error}'**
+  String terminalStartError(String error);
+
   /// No description provided for @gitTabChanges.
   ///
   /// In ko, this message translates to:
@@ -1849,6 +1909,48 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'미리보기'**
   String get settingsPreview;
+
+  /// No description provided for @settingsSectionTerminal.
+  ///
+  /// In ko, this message translates to:
+  /// **'터미널'**
+  String get settingsSectionTerminal;
+
+  /// No description provided for @settingsTerminalShareFont.
+  ///
+  /// In ko, this message translates to:
+  /// **'편집기 글꼴과 같이 쓰기'**
+  String get settingsTerminalShareFont;
+
+  /// No description provided for @settingsTerminalShareFontNote.
+  ///
+  /// In ko, this message translates to:
+  /// **'끄면 터미널만의 글꼴과 크기를 따로 고를 수 있습니다. 색은 설정 없이 늘 현재 테마를 따릅니다.'**
+  String get settingsTerminalShareFontNote;
+
+  /// No description provided for @settingsTerminalFont.
+  ///
+  /// In ko, this message translates to:
+  /// **'터미널 글꼴'**
+  String get settingsTerminalFont;
+
+  /// No description provided for @settingsTerminalFontSize.
+  ///
+  /// In ko, this message translates to:
+  /// **'글자 크기'**
+  String get settingsTerminalFontSize;
+
+  /// No description provided for @settingsTerminalScrollback.
+  ///
+  /// In ko, this message translates to:
+  /// **'스크롤백 줄 수'**
+  String get settingsTerminalScrollback;
+
+  /// No description provided for @settingsTerminalScrollbackNote.
+  ///
+  /// In ko, this message translates to:
+  /// **'이미 열려 있는 터미널 탭에는 적용되지 않고, 새로 여는 탭부터 적용됩니다.'**
+  String get settingsTerminalScrollbackNote;
 
   /// No description provided for @releaseButton.
   ///

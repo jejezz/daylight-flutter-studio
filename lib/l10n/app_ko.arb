@@ -273,6 +273,33 @@
   "studioOpenProjectFolder": "프로젝트 폴더 열기",
   "studioSettingsTooltip": "설정 (Ctrl+,)",
   "studioProblemsTab": "문제",
+  "studioTerminalTab": "터미널",
+  "terminalNew": "새 터미널",
+  "terminalCloseTooltip": "터미널 닫기",
+  "terminalEmpty": "열린 터미널이 없습니다",
+  "terminalEmptyHint": "+ 를 눌러 새 터미널을 엽니다",
+  "terminalLoadingShells": "셸을 찾는 중…",
+  "terminalNoShells": "쓸 수 있는 셸을 찾지 못했습니다",
+  "terminalExited": "{shell} 종료됨 (코드 {code})",
+  "@terminalExited": {
+    "placeholders": {
+      "shell": {
+        "type": "String"
+      },
+      "code": {
+        "type": "int"
+      }
+    }
+  },
+  "terminalRestart": "다시 시작",
+  "terminalStartError": "셸을 시작하지 못했습니다: {error}",
+  "@terminalStartError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "gitTabChanges": "변경",
   "studioBottomPanelHide": "아래 패널 접기 (Ctrl+J)",
   "studioBottomPanelShow": "아래 패널 펼치기 (Ctrl+J)",
@@ -594,6 +621,13 @@
   "settingsLineHeightReset": "기본 줄 간격으로",
   "settingsEditorFontMissing": "이 글꼴은 이 컴퓨터에 설치되어 있지 않은 것 같습니다. Menlo 등 대체 글꼴로 보입니다.",
   "settingsPreview": "미리보기",
+  "settingsSectionTerminal": "터미널",
+  "settingsTerminalShareFont": "편집기 글꼴과 같이 쓰기",
+  "settingsTerminalShareFontNote": "끄면 터미널만의 글꼴과 크기를 따로 고를 수 있습니다. 색은 설정 없이 늘 현재 테마를 따릅니다.",
+  "settingsTerminalFont": "터미널 글꼴",
+  "settingsTerminalFontSize": "글자 크기",
+  "settingsTerminalScrollback": "스크롤백 줄 수",
+  "settingsTerminalScrollbackNote": "이미 열려 있는 터미널 탭에는 적용되지 않고, 새로 여는 탭부터 적용됩니다.",
   "releaseButton": "릴리스…",
   "releaseTitle": "릴리스 태그",
   "releaseNotReady": "점검을 통과하지 못해 태그를 달지 않았습니다.",

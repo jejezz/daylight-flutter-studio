@@ -479,6 +479,40 @@ class AppLocalizationsKo extends AppLocalizations {
   String get studioProblemsTab => '문제';
 
   @override
+  String get studioTerminalTab => '터미널';
+
+  @override
+  String get terminalNew => '새 터미널';
+
+  @override
+  String get terminalCloseTooltip => '터미널 닫기';
+
+  @override
+  String get terminalEmpty => '열린 터미널이 없습니다';
+
+  @override
+  String get terminalEmptyHint => '+ 를 눌러 새 터미널을 엽니다';
+
+  @override
+  String get terminalLoadingShells => '셸을 찾는 중…';
+
+  @override
+  String get terminalNoShells => '쓸 수 있는 셸을 찾지 못했습니다';
+
+  @override
+  String terminalExited(String shell, int code) {
+    return '$shell 종료됨 (코드 $code)';
+  }
+
+  @override
+  String get terminalRestart => '다시 시작';
+
+  @override
+  String terminalStartError(String error) {
+    return '셸을 시작하지 못했습니다: $error';
+  }
+
+  @override
   String get gitTabChanges => '변경';
 
   @override
@@ -989,6 +1023,29 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get settingsPreview => '미리보기';
+
+  @override
+  String get settingsSectionTerminal => '터미널';
+
+  @override
+  String get settingsTerminalShareFont => '편집기 글꼴과 같이 쓰기';
+
+  @override
+  String get settingsTerminalShareFontNote =>
+      '끄면 터미널만의 글꼴과 크기를 따로 고를 수 있습니다. 색은 설정 없이 늘 현재 테마를 따릅니다.';
+
+  @override
+  String get settingsTerminalFont => '터미널 글꼴';
+
+  @override
+  String get settingsTerminalFontSize => '글자 크기';
+
+  @override
+  String get settingsTerminalScrollback => '스크롤백 줄 수';
+
+  @override
+  String get settingsTerminalScrollbackNote =>
+      '이미 열려 있는 터미널 탭에는 적용되지 않고, 새로 여는 탭부터 적용됩니다.';
 
   @override
   String get releaseButton => '릴리스…';

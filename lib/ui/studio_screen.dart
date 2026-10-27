@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:file_selector/file_selector.dart';
 import 'package:desktop_drop/desktop_drop.dart';
 import 'package:flutter/foundation.dart';
@@ -14,10 +16,12 @@ import '../run/run_controller.dart';
 import '../problems/dart_analyzer.dart';
 import '../settings/gate_settings.dart';
 import '../settings/panel_layout.dart';
+import '../settings/terminal_settings.dart';
 import '../problems/problems_controller.dart';
 import '../studio/dart_formatter.dart';
 import '../studio/git_base.dart';
 import '../studio/studio_controller.dart';
+import '../terminal/terminal_sessions_controller.dart';
 import '../app_identity.dart';
 import '../doctor/diagnostics.dart';
 import '../doctor/environment_controller.dart';
@@ -81,6 +85,10 @@ class _StudioScreenState extends State<StudioScreen>
   );
   final GateSettings _gate = GateSettings();
   final PanelLayout _layout = PanelLayout();
+  final TerminalSettings _terminalSettings = TerminalSettings();
+  late final TerminalSessionsController _terminal = TerminalSessionsController(
+    scrollback: () => _terminalSettings.scrollback,
+  );
   late final GitController _git = GitController(
     runner: _runner,
     store: VerifyStore(_runner),
@@ -104,6 +112,8 @@ class _StudioScreenState extends State<StudioScreen>
     _gate.restore();
     _git.onFilesChanged = _onOperationChanged;
     _layout.restore();
+    _terminalSettings.restore();
+    unawaited(_terminal.loadShells());
     _env.onToolPathsChanged = () => _run.refreshDevices();
     // clean + pub get이 끝나면 패키지 정보가 새로 생겼으니 문제 탭도 바로 다시 분석한다.
     _run.onCleaned = _problems.refresh;
@@ -131,6 +141,8 @@ class _StudioScreenState extends State<StudioScreen>
     _mergeGate.dispose();
     _gate.dispose();
     _layout.dispose();
+    _terminal.dispose();
+    _terminalSettings.dispose();
     _env.dispose();
     _controller.removeListener(_onStudioChanged);
     _controller.dispose();
@@ -197,7 +209,7 @@ class _StudioScreenState extends State<StudioScreen>
   }
 
   Future<void> _openSettings() =>
-      showSettingsDialog(context, theme: widget.theme, gate: _gate, environment: _env);
+      showSettingsDialog(context, theme: widget.theme, gate: _gate, environment: _env, terminal: _terminalSettings);
 
   Future<void> _quickOpen() async {
     final root = _controller.root;
@@ -505,6 +517,9 @@ class _StudioScreenState extends State<StudioScreen>
                                             d.line,
                                             d.column,
                                           ),
+                                          terminal: _terminal,
+                                          terminalSettings: _terminalSettings,
+                                          projectRoot: root,
                                         ),
                                       ),
                                     ],

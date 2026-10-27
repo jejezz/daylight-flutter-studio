@@ -48,6 +48,12 @@ dependencies:
   markdown: ^7.3.1
   url_launcher: ^6.3.3
   desktop_drop: ^0.8.4
+  # 드래그 선택 중 스크롤돼도 시작점이 안 옮겨가게 고친 복사본 (packages/xterm2/PATCHES.md)
+  xterm2:
+    path: packages/xterm2
+  # Windows 결함을 고친 복사본 (packages/flutter_pty/PATCHES.md)
+  flutter_pty:
+    path: packages/flutter_pty
 
 dev_dependencies:
   flutter_test:

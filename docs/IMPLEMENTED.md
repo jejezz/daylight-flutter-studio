@@ -1,6 +1,8 @@
 # 구현된 것
 
-기준: 2026-10-26, 로컬 `main`. `flutter analyze` 새 문제 없음, 테스트 436개 통과.
+기준: 2026-10-27, 로컬 `main`. `flutter analyze` 새 문제 없음, 테스트 451개 통과
+(`test/release_test.dart`·`test/branchdock/`의 실제 git 테스트 몇 개는 전체를 한꺼번에 돌리면 Windows 파일 잠금으로
+간간이 실패한다 — 알려진 한계, 따로 돌리면 통과한다).
 앞으로 할 일은 [PLAN.md](../PLAN.md)에 있다. 이 문서는 **이미 만들어진 것**과 그 구조·작업 방식을 적는다.
 
 ## 왜 만들었나
@@ -18,7 +20,7 @@ Claude Code는 worktree에서 작업하고 사용자는 main만 쓴다. 그러�
 ┌ 프로젝트 트리 ┬ 편집기(탭) ───────────────┬ GIT ▸ ───────────────┐
 │ 폴더·파일      │ 편집, 변경점 보기, 찾기    │ 상태 헤더·다음 할 일   │
 │ worktree 구분  ├────────────────────────────┤ [변경|브랜치|태그|원격 │
-│               │ Run | 문제 (접으면 막대만 남음)│  |릴리스|PR|기록]    │
+│               │ Run|문제|터미널(접으면 막대만)│  |릴리스|PR|기록]    │
 │               │ [대상▾][Debug|Release][▶]   │ 내용 · 명령 막대      │
 └───────────────┴────────────────────────────┴──────────────────────┘
  상태 막대: 브랜치·검증 상태·문제 개수(누르면 문제 탭)·아래 패널 접기
@@ -49,6 +51,28 @@ Claude Code는 worktree에서 작업하고 사용자는 main만 쓴다. 그러�
 막지 않을 수 없는 이유와 실패 힌트는 막대 바로 아래에 붙는다. 그 아래는 폭 760px 이상이면 왼쪽(빌드 옵션 · iOS Team ID · 실행 단계, 접힘) | 오른쪽(검증 카드 · 출력), 좁으면 한 줄로 쌓는다.
 빌드 옵션은 flavor·진입 파일·dart-define 파일·앱 ID·추가 인자이고 프로젝트마다 저장한다. 출력은 전체 화면 뷰어와 복사를 지원한다.
 Flutty Dock의 서명·점검 탭은 설정 → 환경 점검에 있고, Git 탭은 Branch Dock 패널이 대신하며, 기기 탭은 대상 드롭다운으로 합쳤다.
+
+## 터미널 패널
+
+아래 패널의 세 번째 탭. Claude Code 등을 같은 창에서 이어 쓰는 것이 목적이고, 로컬 셸(PowerShell 7·Windows
+PowerShell·cmd·Git Bash·WSL 배포판, macOS/Linux는 로그인 셸과 `/etc/shells`)만 다룬다 — SSH·시리얼·파일 끌어놓기·
+기록(logging)은 daylight-terminal-flutter에 있지만 여기엔 없다.
+
+- **코드 출처**: daylight-terminal-flutter(xterm2 기반)에서 로컬 셸 부분만 가져와 줄였다(원본은 수정하지 않는다).
+  `lib/terminal/`(모델·셸 찾기·pty 연결·세션·세션 목록 컨트롤러), `lib/ui/terminal_pane.dart`(xterm2 `TerminalView` 한 칸),
+  `lib/ui/terminal_panel.dart`(세션 탭 줄 + "+"), `lib/theme/terminal_theme.dart`(글꼴·색), `lib/settings/terminal_settings.dart`.
+  렌더링·pty는 각각 `packages/xterm2`·`packages/flutter_pty`(둘 다 Windows 결함을 고친 복사본, `PATCHES.md` 참고) 그대로 쓴다.
+- **세션**: 탭(세션) 여러 개를 둘 수 있다. 세션은 `TerminalSessionsController`(StudioScreen 쪽, 위젯 트리 밖)가 쥐고 있어서
+  아래 패널을 접어도, 다른 바깥 탭(Run·문제)을 보고 있어도 셸은 계속 돈다. "+"는 설치된 셸 중 고르거나(하나뿐이면 바로) 연다.
+- **작업 폴더**: 새 세션은 그 순간 열려 있는 프로젝트/worktree 폴더에서 시작한다. 프로젝트·worktree를 바꿔도 이미 연 세션은
+  자기 폴더에 그대로 머문다(자동으로 따라가지 않는다) — 새 세션을 열어야 새 폴더에서 시작한다.
+  셸이 끝나면 탭은 남고 종료 코드와 "다시 시작" 단추를 보여 준다(같은 폴더에서 다시 띈다).
+- **글꼴·색**: 색은 늘 현재 테마(`ColorScheme`·`SyntaxTokens`)에서 읽고 따로 고르는 색 구성표는 없다. 글꼴은 설정 →
+  터미널에서 "편집기 글꼴과 같이 쓰기"(기본 켜짐, 편집기의 글꼴·배율을 그대로 따른다)를 끄면 터미널만의 글꼴·크기를 고를 수 있다.
+  스크롤백 줄 수도 거기서 바꾸지만 새로 여는 탭부터 적용된다(xterm2는 만들 때만 정할 수 있다).
+- **키보드**: `Ctrl/⌘+,`(설정)·`Ctrl/⌘+J`(아래 패널 접기)·`Ctrl/⌘+Alt+B`(Git Dock)·`Ctrl/⌘+Shift+F`(프로젝트에서 찾기)는
+  터미널에 포커스가 있어도 앱 단축키로 간다. `Ctrl/⌘+W`·`+O`·`+P`는 셸의 줄 편집(단어 지우기·이전 명령 등)에서 쓰므로 가로채지
+  않는다 — 터미널에 포커스가 있는 동안은 탭 닫기·프로젝트 열기·빠른 열기를 키보드로 할 수 없다(단추·메뉴를 쓴다).
 
 ## 검증 기록과 병합 관문
 
@@ -96,8 +120,10 @@ macOS 앱 샌드박스는 **꺼져 있다**(폴더 선택·git·flutter 실행�
 
 - `lib/branchdock/`: branch-dock-flutter에서 옮긴 Git 기능 전체(자기 `core`·`git`·`github`·`repo`·`release`·`ui`). `lib/ui/branchdock_dock.dart`가 셸.
 - `lib/core`, `lib/devices`, `lib/flutter`, `lib/install`, `lib/doctor`: flutty-dock-flutter에서 복사해 이쪽에서 고쳐 쓴 것. `lib/run/run_controller.dart`가 Run 상태.
+- `lib/terminal/`: daylight-terminal-flutter에서 로컬 셸 부분만 가져와 줄인 것. `lib/ui/terminal_pane.dart`·`terminal_panel.dart`가 화면.
+  `packages/xterm2`·`packages/flutter_pty`는 그 앱의 패치된 복사본을 그대로 옮겨 온 것(각 폴더의 `PATCHES.md`).
 - `lib/studio/`(프로젝트·탭·편집기 상태), `lib/ui/`(화면), `lib/problems/`, `lib/diff/`, `lib/verify/`(검증 기록), `lib/settings/`, `lib/theme/`.
-- 원본 앱(flutty-dock-flutter, branch-dock-flutter)은 수정하지 않는다. 필요한 코드는 복사해 온다.
+- 원본 앱(flutty-dock-flutter, branch-dock-flutter, daylight-terminal-flutter)은 수정하지 않는다. 필요한 코드는 복사해 온다.
 
 ## 작업 방식 (사용자 선호)
 
@@ -109,6 +135,7 @@ macOS 앱 샌드박스는 **꺼져 있다**(폴더 선택·git·flutter 실행�
   - 편집기를 쓰는 테스트는 `debugDefaultTargetPlatformOverride = TargetPlatform.windows`를 쓰되 **테스트 본문이 끝나기 전에** 되돌리고, 끝에서 트리를 내린다(타이머 정리). re_editor의 접기 계산(isolate)은 테스트에서 결과가 오지 않아 같은 분석기를 직접 넣는다.
   - 실제 git이 필요한 테스트는 임시 저장소를 만들고, Windows에서는 줄 끝(CRLF)과 임시 폴더 삭제 잠금을 고려한다(`test/branchdock/support.dart`의 `safeDelete`).
   - Branch Dock 이식 테스트는 `test/branchdock/`에 있다.
+  - 터미널 테스트(`test/terminal/`)는 네이티브 flutter_pty 없이 `PtyFactory`를 가짜(`helpers/fake_pty.dart`)로 바꿔 끼운다.
 
 ## 다른 PC에서 시작하기
 
@@ -124,3 +151,5 @@ macOS 앱 샌드박스는 **꺼져 있다**(폴더 선택·git·flutter 실행�
 - 편집 메뉴의 찾기·바꾸기는 메뉴를 닫은 뒤 포커스가 편집기로 돌아와야 동작한다. macOS 메뉴는 코드와 변환 테스트만 있고 실제 Mac에서는 확인하지 않았다.
 - 파일 끌어다 놓기는 컨트롤러 동작만 테스트했다(실제 OS에서 끄는 동작은 직접 확인 필요).
 - 앱 이름에 "Flutter"가 들어 있어 공개 배포 전에 다시 정해야 한다(Flutter 상표).
+- 터미널 패널은 Windows/macOS에서 실제 셸로 직접 켜 보고 확인하지 않았다(네이티브 flutter_pty 빌드가 필요해 Flutty Dock으로 빌드해야 한다). 탐색기·파일 끌어놓기, 로그 기록, ANSI 제거 같은 daylight-terminal-flutter의 기능은 가져오지 않았다.
+- 앱을 끌 때(⌘Q 등) 위젯 dispose가 보장되지 않아, 열린 터미널의 셸 프로세스가 남을 수 있다 — 종료 전에 정리하는 장치는 아직 없다.

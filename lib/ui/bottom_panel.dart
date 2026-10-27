@@ -6,9 +6,12 @@ import '../problems/diagnostic.dart';
 import '../problems/problems_controller.dart';
 import '../run/run_controller.dart';
 import '../settings/panel_layout.dart';
+import '../settings/terminal_settings.dart';
+import '../terminal/terminal_sessions_controller.dart';
 import '../theme/app_theme.dart';
 import 'problems_panel.dart';
 import 'run_panel.dart';
+import 'terminal_panel.dart';
 
 /// 편집기 아래의 패널: Run과 문제. 넓고 낮은 모양이라 목록·출력을 가로로 길게 볼 수 있다.
 /// 선택된 탭은 [PanelLayout]이 쥐고 있어서, 상태 막대의 문제 개수를 눌러도 이 패널이 문제 탭으로 바뀐다.
@@ -20,6 +23,9 @@ class BottomPanel extends StatefulWidget {
     required this.log,
     required this.problems,
     required this.onOpenProblem,
+    required this.terminal,
+    required this.terminalSettings,
+    required this.projectRoot,
   });
 
   final PanelLayout layout;
@@ -27,6 +33,9 @@ class BottomPanel extends StatefulWidget {
   final CommandLog log;
   final ProblemsController problems;
   final void Function(Diagnostic diagnostic) onOpenProblem;
+  final TerminalSessionsController terminal;
+  final TerminalSettings terminalSettings;
+  final String projectRoot;
 
   /// 접혔을 때 아래에 남는 막대(탭 줄)의 높이.
   static const collapsedHeight = 48.0;
@@ -103,6 +112,12 @@ class _BottomPanelState extends State<BottomPanel> with SingleTickerProviderStat
                       );
                     },
                   ),
+                  Tab(
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [Icon(context.icons.terminal, size: 14), SizedBox(width: context.tokens.spaceXs), Text(l10n.studioTerminalTab)],
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -122,6 +137,7 @@ class _BottomPanelState extends State<BottomPanel> with SingleTickerProviderStat
               children: [
                 RunPanel(controller: widget.run, log: widget.log),
                 ProblemsPanel(controller: widget.problems, onOpen: widget.onOpenProblem),
+                TerminalPanel(controller: widget.terminal, settings: widget.terminalSettings, projectRoot: widget.projectRoot),
               ],
             ),
           ),

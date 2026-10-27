@@ -256,6 +256,33 @@
   "studioOpenProjectFolder": "Open project folder",
   "studioSettingsTooltip": "Settings (Ctrl+,)",
   "studioProblemsTab": "Problems",
+  "studioTerminalTab": "Terminal",
+  "terminalNew": "New Terminal",
+  "terminalCloseTooltip": "Close Terminal",
+  "terminalEmpty": "No terminal is open",
+  "terminalEmptyHint": "Click + to open a new terminal",
+  "terminalLoadingShells": "Finding shells…",
+  "terminalNoShells": "No shell was found",
+  "terminalExited": "{shell} exited (code {code})",
+  "@terminalExited": {
+    "placeholders": {
+      "shell": {
+        "type": "String"
+      },
+      "code": {
+        "type": "int"
+      }
+    }
+  },
+  "terminalRestart": "Restart",
+  "terminalStartError": "Couldn't start the shell: {error}",
+  "@terminalStartError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "gitTabChanges": "Changes",
   "studioBottomPanelHide": "Hide bottom panel (Ctrl+J)",
   "studioBottomPanelShow": "Show bottom panel (Ctrl+J)",
@@ -577,6 +604,13 @@
   "settingsLineHeightReset": "Reset line spacing",
   "settingsEditorFontMissing": "This font doesn't seem to be installed on this computer. A fallback such as Menlo is shown instead.",
   "settingsPreview": "Preview",
+  "settingsSectionTerminal": "Terminal",
+  "settingsTerminalShareFont": "Share font with editor",
+  "settingsTerminalShareFontNote": "Turn off to pick a separate font and size for the terminal. Colors always follow the current theme.",
+  "settingsTerminalFont": "Terminal font",
+  "settingsTerminalFontSize": "Font size",
+  "settingsTerminalScrollback": "Scrollback lines",
+  "settingsTerminalScrollbackNote": "Doesn't apply to terminal tabs already open — only to ones opened from now on.",
   "releaseButton": "Release…",
   "releaseTitle": "Release tag",
   "releaseNotReady": "Checks did not pass, so no tag was created.",

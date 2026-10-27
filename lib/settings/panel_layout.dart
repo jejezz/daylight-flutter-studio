@@ -5,7 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// 아래 패널의 탭.
-enum BottomTab { run, problems }
+enum BottomTab { run, problems, terminal }
 
 class PanelLayout extends ChangeNotifier {
   static const defaultBottomHeight = 280.0;
