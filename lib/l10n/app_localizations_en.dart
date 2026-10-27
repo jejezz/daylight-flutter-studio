@@ -1030,14 +1030,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsEditorFont => 'Editor font';
 
   @override
-  String get settingsEditorFontHint => 'Font name (empty for default)';
+  String get settingsEditorFontHint => 'Search fonts';
 
   @override
   String get settingsEditorFontDefault => 'Default';
 
   @override
   String get settingsEditorFontNote =>
-      'Only fonts installed on this computer appear as buttons. Type the name of any other font.';
+      'Type to filter. Only fonts installed on this computer can be picked.';
 
   @override
   String get settingsLineHeight => 'Line spacing';
@@ -1065,6 +1065,12 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get settingsUiFontScaleNote =>
       'Rows, tabs and toolbars keep their size — only the text grows or shrinks.';
+
+  @override
+  String get settingsUiFontPreview => 'A beautiful day — Daylight Studio 123';
+
+  @override
+  String get settingsTerminalFontPreview => '\$ echo Hello 안녕하세요 123';
 
   @override
   String get settingsSectionTerminal => 'Terminal';

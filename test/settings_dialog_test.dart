@@ -1,8 +1,11 @@
 import 'package:daylight_flutter_studio/l10n/app_localizations.dart';
 import 'package:daylight_flutter_studio/theme/app_theme.dart';
 import 'package:daylight_flutter_studio/theme/editor_zoom.dart';
+import 'package:daylight_flutter_studio/theme/font_probe.dart';
+import 'package:daylight_flutter_studio/theme/font_scan.dart';
 import 'package:daylight_flutter_studio/theme/theme_controller.dart';
 import 'package:daylight_flutter_studio/ui/settings_dialog.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -17,6 +20,10 @@ void main() {
     SharedPreferences.setMockInitialValues({});
     theme = ThemeController();
     zoom = EditorZoom();
+    // 실제 설치된 글꼴을 다 훑으면(특히 UI 글꼴) 목록이 길어져 선택한 항목이 화면 밖으로 밀려날 수 있다
+    // — 테스트에서는 작은 목록으로 고정한다.
+    FontProbe.isInstalled = (family) => true;
+    proportionalFontLoader = () async => ['Segoe UI'];
   });
 
   tearDown(() {
@@ -101,17 +108,46 @@ void main() {
     expect(theme.palette, StudioPalette.highContrast);
   });
 
-  testWidgets('UI 글꼴 이름을 적으면 바로 적용되고, 지우면 기본으로 돌아간다', (tester) async {
+  testWidgets('UI 글꼴을 고르면 바로 적용되고, 기본으로 되돌릴 수 있다', (tester) async {
     await open(tester);
     expect(theme.uiFontFamily, isNull);
 
-    await tester.enterText(find.byType(TextField).first, 'Segoe UI');
-    await tester.pump();
+    final dropdown = find.byType(DropdownMenu<String?>);
+    await tester.ensureVisible(dropdown);
+    await tester.tap(dropdown);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Segoe UI').last);
+    await tester.pumpAndSettle();
     expect(theme.uiFontFamily, 'Segoe UI');
 
-    await tester.enterText(find.byType(TextField).first, '');
-    await tester.pump();
+    await tester.tap(dropdown);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('기본').last);
+    await tester.pumpAndSettle();
     expect(theme.uiFontFamily, isNull);
+  });
+
+  testWidgets('글꼴 목록을 훑는(마우스를 올린) 동안 미리보기가 그 글꼴로 바로 바뀐다', (tester) async {
+    await open(tester);
+    final dropdown = find.byType(DropdownMenu<String?>);
+    await tester.ensureVisible(dropdown);
+    await tester.tap(dropdown);
+    await tester.pumpAndSettle();
+
+    final preview = find.textContaining('Daylight Studio');
+    final before = tester.widget<Text>(preview).style?.fontFamily;
+
+    final gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
+    addTearDown(gesture.removePointer);
+    await gesture.addPointer(location: Offset.zero);
+    await gesture.moveTo(tester.getCenter(find.text('Segoe UI').last));
+    await tester.pumpAndSettle();
+    expect(tester.widget<Text>(preview).style?.fontFamily, 'Segoe UI');
+    expect(theme.uiFontFamily, isNull); // 마우스만 올렸을 뿐 고른 것은 아니다
+
+    await gesture.moveTo(Offset.zero); // 목록을 벗어난다
+    await tester.pumpAndSettle();
+    expect(tester.widget<Text>(preview).style?.fontFamily, before);
   });
 
   testWidgets('UI 글꼴 배율 슬라이더로 바꾸고 100%로 되돌린다', (tester) async {

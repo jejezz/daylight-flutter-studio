@@ -8,6 +8,7 @@ import '../settings/gate_settings.dart';
 import '../settings/editor_settings.dart';
 import '../settings/terminal_settings.dart';
 import '../theme/app_theme.dart';
+import '../theme/font_preview.dart';
 import '../theme/font_probe.dart';
 import '../theme/font_scan.dart';
 import '../theme/studio_icons.dart';
@@ -83,7 +84,6 @@ class _SettingsDialogState extends State<SettingsDialog> {
   @override
   Widget build(BuildContext context) {
     final t = context.tokens;
-    final scheme = Theme.of(context).colorScheme;
     return AlertDialog(
       title: Text(AppLocalizations.of(context).settingsTitle),
       contentPadding: EdgeInsets.fromLTRB(0, t.spaceSm, t.spaceLg, 0),
@@ -101,11 +101,10 @@ class _SettingsDialogState extends State<SettingsDialog> {
                     if ((s != SettingsSection.terminal || widget.terminal != null) &&
                         (s != SettingsSection.gate || widget.gate != null) &&
                         (s != SettingsSection.environment || widget.environment != null))
-                      ListTile(
+                      _SectionTile(
                         selected: s == _section,
-                        selectedTileColor: scheme.secondaryContainer,
-                        leading: Icon(s.icon(context.icons), size: 20),
-                        title: Text(s.label(AppLocalizations.of(context))),
+                        icon: s.icon(context.icons),
+                        label: s.label(AppLocalizations.of(context)),
                         onTap: () => setState(() => _section = s),
                       ),
                 ],
@@ -154,6 +153,163 @@ class _Heading extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.only(top: t.spaceMd, bottom: t.spaceSm),
       child: Text(text, style: Theme.of(context).textTheme.titleSmall),
+    );
+  }
+}
+
+/// 설정 왼쪽 구역 목록의 줄 하나. 고른 구역은 배경을 채우는 대신 왼쪽에 굵은 선을 그어 표시한다 —
+/// 배경을 채우면 글자색과 겹칠 수 있어서다(고대비 테마에서 실제로 그랬다). 탭 줄의 밑줄과 같은 생각이다.
+class _SectionTile extends StatelessWidget {
+  const _SectionTile({required this.selected, required this.icon, required this.label, required this.onTap});
+
+  final bool selected;
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+
+  static const _barWidth = 3.0;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final t = context.tokens;
+    final color = selected ? scheme.primary : scheme.onSurfaceVariant;
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        padding: EdgeInsets.symmetric(vertical: t.spaceSm, horizontal: t.spaceMd),
+        decoration: BoxDecoration(
+          // 선택 안 됐을 때도 같은 폭을 비워 둬서, 고를 때 글자가 옆으로 밀리지 않게 한다.
+          border: Border(left: BorderSide(width: _barWidth, color: selected ? scheme.primary : scheme.primary.withValues(alpha: 0))),
+        ),
+        child: Row(
+          children: [
+            Icon(icon, size: 20, color: color),
+            SizedBox(width: t.spaceSm),
+            Expanded(
+              child: Text(
+                label,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: color, fontWeight: selected ? FontWeight.w700 : FontWeight.w400),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// 글꼴 이름을 고르는 콤보 상자(입력해서 걸러 찾기) + 고른 글꼴로 보여 주는 미리보기 한 줄.
+/// 설치된 글꼴이 수백 개여도(특히 UI 글꼴처럼 고정폭이 아닌 것까지 다 보여 줄 때) 단추를 쭉 늘어놓지 않는다.
+class _FontPicker extends StatefulWidget {
+  const _FontPicker({
+    required this.value,
+    required this.onChanged,
+    required this.loader,
+    required this.presets,
+    required this.missingText,
+    this.previewText,
+  });
+
+  final String? value;
+  final ValueChanged<String?> onChanged;
+  final Future<List<String>> Function() loader;
+  final List<String> presets;
+
+  /// 저장된 글꼴이 이 컴퓨터에 없을 때 보여 줄 경고.
+  final String missingText;
+
+  /// 없으면(예: 편집기 글꼴 — 코드 미리보기가 따로 있다) 미리보기 글을 보여 주지 않는다.
+  final String? previewText;
+
+  @override
+  State<_FontPicker> createState() => _FontPickerState();
+}
+
+class _FontPickerState extends State<_FontPicker> {
+  late final Future<List<String>> _fonts = _load();
+
+  /// 목록을 훑는(마우스를 올린) 동안만 쓰는 값 — 고르지 않아도 미리보기가 그 글꼴로 바뀐다.
+  /// 목록을 벗어나면(또는 실제로 고르면) 다시 null로 돌아가 저장된 값을 보여 준다.
+  String? _hovered;
+
+  Future<List<String>> _load() async {
+    final found = <String>{...await widget.loader(), ...widget.presets};
+    final installed = found.where(FontProbe.isInstalled).toList()..sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
+    // 저장된 글꼴이 지금은 없어도(지웠거나 다른 컴퓨터에서 썼던 이름) 목록에 그대로 두어 보여 준다
+    // — 아래 경고와 함께 "무엇이 저장되어 있는지"는 알 수 있게.
+    final current = widget.value;
+    if (current != null && !installed.contains(current)) installed.insert(0, current);
+    return installed;
+  }
+
+  void _setHovered(String? family) {
+    if (_hovered != family) setState(() => _hovered = family);
+  }
+
+  /// 목록 항목 하나 — 마우스를 올리면(훑어보는 동안) 아래 미리보기가 바로 그 글꼴로 바뀐다.
+  DropdownMenuEntry<String?> _entry(String? value, String label) => DropdownMenuEntry(
+    value: value,
+    label: label,
+    style: value == null ? null : fontMenuEntryStyle(value),
+    labelWidget: MouseRegion(
+      onEnter: (_) => _setHovered(value),
+      onExit: (_) => _setHovered(null),
+      child: Text(label),
+    ),
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final t = context.tokens;
+    final theme = Theme.of(context);
+    final missing = widget.value != null && !FontProbe.isInstalled(widget.value!);
+    final previewed = _hovered ?? widget.value;
+    return FutureBuilder<List<String>>(
+      future: _fonts,
+      builder: (context, snapshot) {
+        final fonts = snapshot.data ?? const <String>[];
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            DropdownMenu<String?>(
+              expandedInsets: EdgeInsets.zero,
+              // enableFilter(걸러서 줄이기)는 다시 열었을 때 방금 고른 글꼴 이름으로 목록이 걸러져 "기본"
+              // 같은 다른 항목이 숨는다 — 대신 기본 enableSearch로 입력한 글자와 가까운 항목을 찾아간다.
+              hintText: l10n.settingsEditorFontHint,
+              textStyle: fontPreviewStyle(widget.value),
+              initialSelection: widget.value,
+              dropdownMenuEntries: [
+                _entry(null, l10n.settingsEditorFontDefault),
+                for (final f in fonts) _entry(f, f),
+              ],
+              onSelected: (value) {
+                _setHovered(null);
+                widget.onChanged(value);
+              },
+            ),
+            SizedBox(height: t.spaceXs),
+            if (missing)
+              Text(widget.missingText, style: TextStyle(color: t.warning))
+            else
+              Text(l10n.settingsEditorFontNote, style: theme.textTheme.bodySmall),
+            if (widget.previewText != null) ...[
+              SizedBox(height: t.spaceSm),
+              Container(
+                width: double.infinity,
+                padding: EdgeInsets.all(t.spaceMd),
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.surfaceContainerLowest,
+                  border: Border.all(color: theme.colorScheme.outlineVariant),
+                  borderRadius: BorderRadius.circular(t.radius),
+                ),
+                child: Text(widget.previewText!, style: fontPreviewSampleStyle(previewed)),
+              ),
+            ],
+          ],
+        );
+      },
     );
   }
 }
@@ -260,79 +416,31 @@ class _AppearanceSection extends StatelessWidget {
 
 /// UI 글꼴 이름과 글자 크기 배율. 이 설정 화면 자체가 바로 바뀐 글꼴로 다시 그려지므로 따로 미리보기를
 /// 두지 않는다(편집기 글꼴은 편집기만의 글꼴이라 미리보기가 따로 필요하다).
-class _UiFontSettings extends StatefulWidget {
+class _UiFontSettings extends StatelessWidget {
   const _UiFontSettings({required this.theme});
 
   final ThemeController theme;
 
   @override
-  State<_UiFontSettings> createState() => _UiFontSettingsState();
-}
-
-class _UiFontSettingsState extends State<_UiFontSettings> {
-  late final _name = TextEditingController(text: widget.theme.uiFontFamily ?? '');
-
-  /// 이 컴퓨터에 설치된 글꼴(고정폭이 아닌 것도 포함) 중 Flutter가 실제로 쓸 수 있는 것.
-  late final Future<List<String>> _fonts = _loadFonts();
-
-  Future<List<String>> _loadFonts() async {
-    final found = <String>{...await proportionalFontLoader(), ...ThemeController.presetUiFonts};
-    return found.where(FontProbe.isInstalled).toList()..sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
-  }
-
-  @override
-  void dispose() {
-    _name.dispose();
-    super.dispose();
-  }
-
-  void _pick(String? family) {
-    _name.text = family ?? '';
-    widget.theme.setUiFontFamily(family);
-  }
-
-  @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final t = context.tokens;
-    final theme = widget.theme;
     return ListenableBuilder(
       listenable: theme,
       builder: (context, _) {
-        final name = theme.uiFontFamily;
         final percent = (theme.uiFontScale * 100).round();
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _Heading(l10n.settingsUiFont),
-            TextField(
-              controller: _name,
-              decoration: InputDecoration(hintText: l10n.settingsEditorFontHint),
+            _FontPicker(
+              value: theme.uiFontFamily,
               onChanged: theme.setUiFontFamily,
+              loader: proportionalFontLoader,
+              presets: ThemeController.presetUiFonts,
+              missingText: l10n.settingsUiFontMissing,
+              previewText: l10n.settingsUiFontPreview,
             ),
-            SizedBox(height: t.spaceSm),
-            FutureBuilder<List<String>>(
-              future: _fonts,
-              builder: (context, snapshot) => Wrap(
-                spacing: t.spaceSm,
-                runSpacing: t.spaceXs,
-                children: [
-                  ChoiceChip(
-                    selected: name == null,
-                    showCheckmark: false,
-                    label: Text(l10n.settingsEditorFontDefault),
-                    onSelected: (_) => _pick(null),
-                  ),
-                  for (final f in snapshot.data ?? const <String>[])
-                    ChoiceChip(selected: name == f, showCheckmark: false, label: Text(f), onSelected: (_) => _pick(f)),
-                ],
-              ),
-            ),
-            SizedBox(height: t.spaceXs),
-            if (name != null && !FontProbe.isInstalled(name))
-              Text(l10n.settingsUiFontMissing, style: TextStyle(color: t.warning))
-            else
-              Text(l10n.settingsEditorFontNote, style: Theme.of(context).textTheme.bodySmall),
             SizedBox(height: t.spaceMd),
             _Heading(l10n.settingsUiFontScale),
             Row(
@@ -486,40 +594,15 @@ class _EditorSection extends StatelessWidget {
   }
 }
 
-class _TerminalSection extends StatefulWidget {
+class _TerminalSection extends StatelessWidget {
   const _TerminalSection({required this.settings});
 
   final TerminalSettings settings;
 
   @override
-  State<_TerminalSection> createState() => _TerminalSectionState();
-}
-
-class _TerminalSectionState extends State<_TerminalSection> {
-  late final _name = TextEditingController(text: widget.settings.fontName ?? '');
-  late final Future<List<String>> _fonts = _loadFonts();
-
-  Future<List<String>> _loadFonts() async {
-    final found = <String>{...await monospaceFontLoader(), ...EditorSettings.presetFonts};
-    return found.where(FontProbe.isInstalled).toList()..sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
-  }
-
-  @override
-  void dispose() {
-    _name.dispose();
-    super.dispose();
-  }
-
-  void _pickFont(String? family) {
-    _name.text = family ?? '';
-    widget.settings.setFontName(family);
-  }
-
-  @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final t = context.tokens;
-    final settings = widget.settings;
     return ListenableBuilder(
       listenable: settings,
       builder: (context, _) => Column(
@@ -535,28 +618,13 @@ class _TerminalSectionState extends State<_TerminalSection> {
           if (!settings.shareEditorFont) ...[
             SizedBox(height: t.spaceMd),
             _Heading(l10n.settingsTerminalFont),
-            TextField(
-              controller: _name,
-              decoration: InputDecoration(hintText: l10n.settingsEditorFontHint),
+            _FontPicker(
+              value: settings.fontName,
               onChanged: settings.setFontName,
-            ),
-            SizedBox(height: t.spaceSm),
-            FutureBuilder<List<String>>(
-              future: _fonts,
-              builder: (context, snapshot) => Wrap(
-                spacing: t.spaceSm,
-                runSpacing: t.spaceXs,
-                children: [
-                  ChoiceChip(
-                    selected: settings.fontName == null,
-                    showCheckmark: false,
-                    label: Text(l10n.settingsEditorFontDefault),
-                    onSelected: (_) => _pickFont(null),
-                  ),
-                  for (final f in snapshot.data ?? const <String>[])
-                    ChoiceChip(selected: settings.fontName == f, showCheckmark: false, label: Text(f), onSelected: (_) => _pickFont(f)),
-                ],
-              ),
+              loader: monospaceFontLoader,
+              presets: EditorSettings.presetFonts,
+              missingText: l10n.settingsEditorFontMissing,
+              previewText: l10n.settingsTerminalFontPreview,
             ),
             SizedBox(height: t.spaceMd),
             _Heading(l10n.settingsTerminalFontSize),
@@ -628,93 +696,32 @@ class _Preview extends StatelessWidget {
 }
 
 /// 편집기 글꼴 이름과 줄 간격. 위의 미리보기가 바로 따라 바뀐다.
-class _FontSettings extends StatefulWidget {
+class _FontSettings extends StatelessWidget {
   const _FontSettings({required this.editor});
 
   final EditorSettings editor;
 
   @override
-  State<_FontSettings> createState() => _FontSettingsState();
-}
-
-class _FontSettingsState extends State<_FontSettings> {
-  late final _name = TextEditingController(text: widget.editor.fontName ?? '');
-
-  /// 이 컴퓨터에 설치된 고정폭 글꼴 중 Flutter가 실제로 쓸 수 있는 것.
-  late final Future<List<String>> _fonts = _loadFonts();
-
-  Future<List<String>> _loadFonts() async {
-    final found = <String>{...await monospaceFontLoader(), ...EditorSettings.presetFonts};
-    return found.where(FontProbe.isInstalled).toList()..sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
-  }
-
-  @override
-  void dispose() {
-    _name.dispose();
-    super.dispose();
-  }
-
-  void _pick(String? family) {
-    _name.text = family ?? '';
-    widget.editor.setFontName(family);
-  }
-
-  @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final t = context.tokens;
-    final editor = widget.editor;
     return ListenableBuilder(
       listenable: editor,
       builder: (context, _) {
         final lineHeight = editor.lineHeight ?? t.editorText.height ?? 1.45;
-        final name = editor.fontName;
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(height: t.spaceMd),
             _Heading(l10n.settingsEditorFont),
-            TextField(
-              controller: _name,
-              decoration: InputDecoration(
-                hintText: l10n.settingsEditorFontHint,
-              ),
+            // 코드 미리보기는 아래 _Preview가 따로 보여 주므로 여기서는 미리보기 글을 두지 않는다.
+            _FontPicker(
+              value: editor.fontName,
               onChanged: editor.setFontName,
+              loader: monospaceFontLoader,
+              presets: EditorSettings.presetFonts,
+              missingText: l10n.settingsEditorFontMissing,
             ),
-            SizedBox(height: t.spaceSm),
-            FutureBuilder<List<String>>(
-              future: _fonts,
-              builder: (context, snapshot) => Wrap(
-                spacing: t.spaceSm,
-                runSpacing: t.spaceXs,
-                children: [
-                  ChoiceChip(
-                    selected: editor.fontName == null,
-                    showCheckmark: false,
-                    label: Text(l10n.settingsEditorFontDefault),
-                    onSelected: (_) => _pick(null),
-                  ),
-                  for (final f in snapshot.data ?? const <String>[])
-                    ChoiceChip(
-                      selected: editor.fontName == f,
-                      showCheckmark: false,
-                      label: Text(f),
-                      onSelected: (_) => _pick(f),
-                    ),
-                ],
-              ),
-            ),
-            SizedBox(height: t.spaceXs),
-            if (name != null && !FontProbe.isInstalled(name))
-              Text(
-                l10n.settingsEditorFontMissing,
-                style: TextStyle(color: t.warning),
-              )
-            else
-              Text(
-                l10n.settingsEditorFontNote,
-                style: Theme.of(context).textTheme.bodySmall,
-              ),
             SizedBox(height: t.spaceMd),
             _Heading(l10n.settingsLineHeight),
             Row(

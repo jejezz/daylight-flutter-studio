@@ -698,7 +698,9 @@ abstract final class AppTheme {
           borderRadius: BorderRadius.circular(tokens.radius / 2),
         ),
       ),
-      listTileTheme: ListTileThemeData(shape: shape, dense: true),
+      // 기본값(colorScheme.primary)은 고대비에서 글자가 선택 배경(secondaryContainer, primary와 같은 색)에
+      // 묻혀 버린다 — Chip의 선택된 글자(onSecondaryContainer)와 같은 색 규칙으로 맞춘다.
+      listTileTheme: ListTileThemeData(shape: shape, dense: true, selectedColor: scheme.onSecondaryContainer),
       scrollbarTheme: const ScrollbarThemeData(
         thumbVisibility: WidgetStatePropertyAll(false),
       ),

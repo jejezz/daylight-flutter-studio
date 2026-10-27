@@ -1005,14 +1005,14 @@ class AppLocalizationsKo extends AppLocalizations {
   String get settingsEditorFont => '편집기 글꼴';
 
   @override
-  String get settingsEditorFontHint => '글꼴 이름 (비우면 기본)';
+  String get settingsEditorFontHint => '글꼴 검색';
 
   @override
   String get settingsEditorFontDefault => '기본';
 
   @override
   String get settingsEditorFontNote =>
-      '이 컴퓨터에 설치된 글꼴만 단추로 보입니다. 다른 글꼴은 이름을 그대로 적으세요.';
+      '입력해서 걸러 찾을 수 있습니다. 이 컴퓨터에 설치된 글꼴만 고를 수 있습니다.';
 
   @override
   String get settingsLineHeight => '줄 간격';
@@ -1040,6 +1040,12 @@ class AppLocalizationsKo extends AppLocalizations {
   @override
   String get settingsUiFontScaleNote =>
       '트리·탭·도구 막대 같은 칸 크기는 그대로 두고 글자만 커지거나 작아집니다.';
+
+  @override
+  String get settingsUiFontPreview => '아름다운 날 Daylight Studio 123';
+
+  @override
+  String get settingsTerminalFontPreview => '\$ echo 안녕하세요 Hello 123';
 
   @override
   String get settingsSectionTerminal => '터미널';
