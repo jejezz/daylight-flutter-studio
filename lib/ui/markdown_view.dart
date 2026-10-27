@@ -39,7 +39,7 @@ class _MarkdownViewState extends State<MarkdownView> {
     final scheme = theme.colorScheme;
     final zoom = EditorZoomScope.scaleOf(context);
     final sheet = MarkdownStyleSheet.fromTheme(theme).copyWith(
-      code: t.editorText.copyWith(backgroundColor: scheme.surfaceContainerHighest, color: scheme.onSurface),
+      code: followEditorFont(context, t.editorText).copyWith(backgroundColor: scheme.surfaceContainerHighest, color: scheme.onSurface),
       codeblockPadding: EdgeInsets.all(t.spaceMd),
       codeblockDecoration: BoxDecoration(
         color: scheme.surfaceContainerLowest,

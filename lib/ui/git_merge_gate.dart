@@ -80,7 +80,7 @@ class VerifyCard extends StatelessWidget {
                 Expanded(child: Text(label, style: TextStyle(color: color))),
               ],
             ),
-            if (rec != null) Text('${rec.target} · ${rec.mode} · ${rec.sha.substring(0, 7)}', style: t.logText),
+            if (rec != null) Text('${rec.target} · ${rec.mode} · ${rec.sha.substring(0, 7)}', style: context.logText),
             if (rec != null && rec.note.isNotEmpty) Text(rec.note),
             if (controller.localDiffersFromPr)
               Text(l10n.gitHeadDiffers, style: theme.textTheme.bodySmall),

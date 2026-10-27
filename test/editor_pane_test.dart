@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:daylight_flutter_studio/l10n/app_localizations.dart';
+import 'package:daylight_flutter_studio/settings/editor_settings.dart';
 import 'package:daylight_flutter_studio/studio/dart_chunk_analyzer.dart';
 import 'package:daylight_flutter_studio/studio/fold_plan.dart';
 import 'package:daylight_flutter_studio/studio/studio_controller.dart';
@@ -203,6 +204,35 @@ void main() {
       await _unmount(tester);
     });
   }
+
+  testWidgets('합자를 끄면 편집기 본문 글자 모양까지 글꼴 기능 끄기가 전해진다 (고친 re_editor)', (tester) async {
+    final f = write('a.txt', 'a != b -> c' + String.fromCharCode(10));
+    await tester.runAsync(() => c.openFile(f.path));
+    final settings = EditorSettings();
+    addTearDown(settings.dispose);
+    await settings.setLigatures(false);
+    await tester.pumpWidget(
+      MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        locale: const Locale('ko'),
+        theme: AppTheme.build(StudioPalette.saturn, Brightness.light),
+        home: Scaffold(
+          body: EditorSettingsScope(
+            settings: settings,
+            child: ListenableBuilder(listenable: c, builder: (context, _) => EditorPane(controller: c)),
+          ),
+        ),
+      ),
+    );
+    await tester.pump();
+
+    // re_editor가 안에서 만드는 본문 글자 모양 (비공개 위젯의 공개 필드).
+    final editable = tester.widget(find.byWidgetPredicate((w) => w.runtimeType.toString() == '_CodeEditable'));
+    final style = (editable as dynamic).textStyle as TextStyle;
+    expect([for (final f in style.fontFeatures!) f.feature], containsAll(['liga', 'clig', 'calt']));
+    await _unmount(tester);
+  });
 
   testWidgets('Dart 파일을 열면 편집기와 정렬 단추가 보이고, 줄 끝(CRLF)을 유지한다', (tester) async {
     final f = write('a.dart', _dart.replaceAll('\n', '\r\n'));

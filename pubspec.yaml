@@ -42,7 +42,9 @@ dependencies:
   file_selector: ^1.1.0
   shared_preferences: ^2.5.6
   path: ^1.9.1
-  re_editor: ^0.10.0
+  # 글꼴 기능(합자 끄기)을 줄 수 있게 고친 복사본 (packages/re_editor/PATCHES.md)
+  re_editor:
+    path: packages/re_editor
   re_highlight: ^0.0.3
   flutter_markdown_plus: ^1.0.12
   markdown: ^7.3.1

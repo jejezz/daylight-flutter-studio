@@ -140,7 +140,7 @@ class _BuildOptionsSectionState extends State<BuildOptionsSection> {
           summary,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          style: context.tokens.logText.copyWith(color: theme.hintColor),
+          style: context.logText.copyWith(color: theme.hintColor),
         ),
         expandedCrossAxisAlignment: CrossAxisAlignment.stretch,
         children: [

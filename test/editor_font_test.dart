@@ -109,6 +109,95 @@ void main() {
     expect(editor.lineHeight, isNull);
   });
 
+  group('합자와 로그 글꼴', () {
+    test('기본은 합자 켬·로그 글꼴 따로, 저장하고 다시 읽는다', () async {
+      expect(editor.ligatures, isTrue);
+      expect(editor.logFollowsEditor, isFalse);
+      await editor.setLigatures(false);
+      await editor.setLogFollowsEditor(true);
+      final again = EditorSettings();
+      addTearDown(again.dispose);
+      await again.restore();
+      expect(again.ligatures, isFalse);
+      expect(again.logFollowsEditor, isTrue);
+    });
+
+    testWidgets('합자를 끄면 편집기 글자 모양과 편집기 스타일에 글꼴 기능 끄기가 들어간다', (tester) async {
+      TextStyle? text;
+      CodeEditorStyle? style;
+      await tester.pumpWidget(
+        app((context) {
+          text = editorTextStyle(context);
+          style = buildEditorStyle(context, languageId: 'dart');
+          return const SizedBox();
+        }),
+      );
+      expect(text!.fontFeatures, isNull, reason: '켜 두면 글꼴 기본대로');
+      expect(style!.fontFeatures, isNull);
+
+      await editor.setLigatures(false);
+      await tester.pump();
+      final tags = [for (final f in text!.fontFeatures!) '${f.feature}=${f.value}'];
+      expect(tags, containsAll(['liga=0', 'clig=0', 'calt=0']));
+      expect(style!.fontFeatures, text!.fontFeatures);
+    });
+
+    testWidgets('로그 글꼴: 기본은 테마의 로그 글꼴, 켜면 편집기 글꼴과 합자 설정을 따른다 (크기는 그대로)', (tester) async {
+      late TextStyle log;
+      late TextStyle themeLog;
+      late TextStyle md;
+      late TextStyle themeCode;
+      await tester.pumpWidget(
+        app((context) {
+          log = context.logText;
+          themeLog = context.tokens.logText;
+          md = followEditorFont(context, context.tokens.editorText);
+          themeCode = context.tokens.editorText;
+          return const SizedBox();
+        }),
+      );
+      expect(log, themeLog);
+      expect(md, themeCode);
+
+      await editor.setFontName('Fira Code');
+      await editor.setLigatures(false);
+      await tester.pump();
+      expect(log, themeLog, reason: '켜기 전에는 편집기 설정이 로그에 번지지 않는다');
+
+      await editor.setLogFollowsEditor(true);
+      await tester.pump();
+      expect(log.fontFamily, contains('Fira Code'));
+      expect(log.fontFeatures, isNotEmpty);
+      expect(log.fontSize, themeLog.fontSize, reason: '크기·줄 간격은 로그 것을 그대로 쓴다');
+      expect(log.height, themeLog.height);
+      expect(md.fontFamily, contains('Fira Code'), reason: 'Markdown 코드도 같다');
+      expect(md.fontSize, themeCode.fontSize);
+    });
+
+    testWidgets('설정 화면의 스위치가 두 설정을 바꾼다', (tester) async {
+      await tester.pumpWidget(
+        app(
+          (context) => FilledButton(
+            onPressed: () => showSettingsDialog(context, theme: theme, initial: SettingsSection.editor),
+            child: const Text('열기'),
+          ),
+        ),
+      );
+      await tester.tap(find.text('열기'));
+      await tester.pumpAndSettle();
+
+      await tester.ensureVisible(find.text('합자(ligature) 쓰기'));
+      await tester.tap(find.text('합자(ligature) 쓰기'));
+      await tester.pump();
+      expect(editor.ligatures, isFalse);
+
+      await tester.ensureVisible(find.text('로그·출력 글꼴을 편집기와 같이 쓰기'));
+      await tester.tap(find.text('로그·출력 글꼴을 편집기와 같이 쓰기'));
+      await tester.pump();
+      expect(editor.logFollowsEditor, isTrue);
+    });
+  });
+
   testWidgets('Text로 그린 편집기 글자는 주변 글자 모양을 물려받지 않아 편집기와 같다', (tester) async {
     await editor.setFontName('Fira Code');
     await tester.pumpWidget(

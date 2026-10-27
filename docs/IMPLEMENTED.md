@@ -1,6 +1,6 @@
 # 구현된 것
 
-기준: 2026-10-27, 로컬 `main`. `flutter analyze` 새 문제 없음, 테스트 494개 통과
+기준: 2026-10-27, 로컬 `main`. `flutter analyze` 새 문제 없음, 테스트 499개 통과
 (`test/branchdock/`·`test/verify_gate_controller_test.dart`의 실제 git 테스트 몇 개는 전체를 한꺼번에 돌리면 Windows 파일 잠금으로
 간간이 실패한다 — 알려진 한계, 따로 돌리면 통과한다).
 앞으로 할 일은 [PLAN.md](../PLAN.md)에 있다. 이 문서는 **이미 만들어진 것**과 그 구조·작업 방식을 적는다.
@@ -130,7 +130,7 @@ Material 쪽은 단축키를 글자로만 보여 준다(이미 화면에 바인�
 - **파일 종류별 아이콘**: 파일 트리가 Dart·pubspec·설정·YAML·JSON·문서·그림·마크업·다른 언어 소스·스크립트·설정/잠금 파일마다 다른 아이콘을 쓴다. 종류는 이름·확장자만 보고 정하고(`lib/studio/file_kind.dart`), 모양은 현재 아이콘 세트(`context.icons`)에서, 색은 현재 테마의 구문 강조 색(`SyntaxTokens`)에서 가져와(`lib/theme/file_icons.dart`) 아이콘 모양·색 구성(고대비 포함)을 바꾸면 함께 바뀐다. 끄는 설정은 없다. 편집기 탭·빠른 열기에는 아직 쓰지 않는다.
 - **UI 글꼴**: 이름(설치된 글꼴 중 고르거나 직접 적음, 비우면 기본 SeoulNamsan)과 크기 배율(85~125%, `AppTheme.minUiFontScale`~`maxUiFontScale`). 트리·탭·메뉴·단추 등 화면 전체 글자 크기에 배율이 곱해지지만 칸 크기(행 높이·탭
   높이·도구 막대 높이)는 그대로 둔다 — 배율 범위를 넓지 않게 둔 것도 그래서다. 편집기 글꼴·배율은 따로 설정한다
-  (`EditorSettings`·`EditorZoom`) — 아직 "편집기와 같이 쓰기"는 없다(터미널 글꼴에는 있다).
+  (`EditorSettings`·`EditorZoom`). 설정 → 편집기에 **합자(ligature) 쓰기**(기본 켬; 끄면 `liga`·`clig`·`calt`를 끈다)와 **로그·출력 글꼴을 편집기와 같이 쓰기**(기본 끔)가 있다. 뒤의 것을 켜면 실행 출력·명령 기록·경로·해시(`context.logText`, `context.mono`)와 Markdown 코드가 편집기 글꼴 계열과 합자 설정을 따르고 크기·줄 간격은 제 것을 쓴다(`logTextStyle`·`followEditorFont`, `lib/theme/editor_theme.dart`). 터미널은 따로 "편집기 글꼴과 같이 쓰기"가 있다.
 - 설치된 글꼴 목록은 `lib/theme/font_scan.dart`가 OS 글꼴 폴더를 훑어 읽는다 — 편집기·터미널 글꼴은 고정폭만
   (`monospaceOnly: true`), UI 글꼴은 고정폭이 아닌 것도 보여 준다.
 - **글꼴 고르기**(`_FontPicker`, `lib/ui/settings_dialog.dart`): 편집기·터미널·UI 글꼴이 모두 같은 콤보 상자를 쓴다 —
@@ -162,6 +162,7 @@ macOS 앱 샌드박스는 **꺼져 있다**(폴더 선택·git·flutter 실행�
 - `lib/core`, `lib/devices`, `lib/flutter`, `lib/install`, `lib/doctor`: flutty-dock-flutter에서 복사해 이쪽에서 고쳐 쓴 것. `lib/run/run_controller.dart`가 Run 상태.
 - `lib/terminal/`: daylight-terminal-flutter에서 로컬 셸 부분만 가져와 줄인 것. `lib/ui/terminal_pane.dart`·`terminal_panel.dart`가 화면.
   `packages/xterm2`·`packages/flutter_pty`는 그 앱의 패치된 복사본을 그대로 옮겨 온 것(각 폴더의 `PATCHES.md`).
+  `packages/re_editor`는 pub의 re_editor 0.10.0을 복사해 `CodeEditorStyle.fontFeatures`(합자 끄기)만 더한 것이다(`PATCHES.md`). 새 버전으로 올릴 때는 이 패치를 다시 얹는다.
 - `lib/studio/`(프로젝트·탭·편집기 상태), `lib/ui/`(화면), `lib/problems/`, `lib/diff/`, `lib/verify/`(검증 기록), `lib/settings/`, `lib/theme/`.
 - 원본 앱(flutty-dock-flutter, branch-dock-flutter, daylight-terminal-flutter)은 수정하지 않는다. 필요한 코드는 복사해 온다.
 

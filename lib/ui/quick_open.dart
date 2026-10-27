@@ -113,7 +113,7 @@ class _QuickOpenState extends State<_QuickOpen> {
                               selected: i == _selected,
                               selectedTileColor: theme.colorScheme.secondaryContainer,
                               title: Text(slash < 0 ? rel : rel.substring(slash + 1)),
-                              subtitle: slash < 0 ? null : Text(rel.substring(0, slash), style: t.logText),
+                              subtitle: slash < 0 ? null : Text(rel.substring(0, slash), style: context.logText),
                               onTap: () => _open(rel),
                             );
                           },

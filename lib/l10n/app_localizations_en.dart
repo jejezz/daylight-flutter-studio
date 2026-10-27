@@ -855,6 +855,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsLineHeightReset => 'Reset line spacing';
 
   @override
+  String get settingsLigatures => 'Use ligatures';
+
+  @override
+  String get settingsLigaturesNote =>
+      'Lets the font draw sequences like ->, != and >= as one glyph. Only visible with ligature fonts such as Fira Code, JetBrains Mono or Cascadia Code.';
+
+  @override
+  String get settingsLogShareFont => 'Use the editor font for logs and output';
+
+  @override
+  String get settingsLogShareFontNote =>
+      'Applies the editor font and ligature setting to run output, the command log, paths and hashes, and Markdown code. Off uses the theme\'s default monospace font.';
+
+  @override
   String get settingsEditorFontMissing =>
       'This font doesn\'t seem to be installed on this computer. A fallback such as Menlo is shown instead.';
 

@@ -59,7 +59,7 @@ class _OutputViewerScreenState extends State<OutputViewerScreen> {
           widget.entry.commandLine,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          style: context.tokens.logText,
+          style: context.logText,
         ),
         actions: [
           IconButton(
@@ -87,7 +87,7 @@ class _OutputViewerScreenState extends State<OutputViewerScreen> {
                     padding: EdgeInsets.all(context.tokens.spaceLg),
                     child: SizedBox(
                       width: double.infinity,
-                      child: SelectableText(text, style: context.tokens.logText),
+                      child: SelectableText(text, style: context.logText),
                     ),
                   ),
                 ),

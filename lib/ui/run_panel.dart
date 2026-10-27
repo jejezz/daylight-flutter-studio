@@ -504,7 +504,7 @@ class _VerifyCard extends StatelessWidget {
             Text(l10n.runVerifyTitle, style: theme.textTheme.titleSmall),
             SizedBox(height: t.spaceXs),
             if (controller.snapshot != null)
-              Text('${controller.snapshot!.branch ?? l10n.runDetachedHead} @ ${controller.snapshot!.shortSha}', style: t.logText),
+              Text('${controller.snapshot!.branch ?? l10n.runDetachedHead} @ ${controller.snapshot!.shortSha}', style: context.logText),
             Text(label, style: TextStyle(color: color)),
             if (rec != null && rec.note.isNotEmpty) Text(rec.note),
             if (controller.recordSkipped != null)
@@ -603,7 +603,7 @@ class _Output extends StatelessWidget {
           ),
           child: SingleChildScrollView(
             reverse: true,
-            child: SelectableText('\$ ${last.commandLine}\n${tail.join('\n')}', style: t.logText),
+            child: SelectableText('\$ ${last.commandLine}\n${tail.join('\n')}', style: context.logText),
           ),
         ),
       ],

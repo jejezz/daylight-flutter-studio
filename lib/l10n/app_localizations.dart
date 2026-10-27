@@ -1556,6 +1556,30 @@ abstract class AppLocalizations {
   /// **'기본 줄 간격으로'**
   String get settingsLineHeightReset;
 
+  /// No description provided for @settingsLigatures.
+  ///
+  /// In ko, this message translates to:
+  /// **'합자(ligature) 쓰기'**
+  String get settingsLigatures;
+
+  /// No description provided for @settingsLigaturesNote.
+  ///
+  /// In ko, this message translates to:
+  /// **'->, !=, >= 같은 글자 묶음을 글꼴이 한 글자처럼 그립니다. Fira Code·JetBrains Mono·Cascadia Code 같은 합자 글꼴에서만 보입니다.'**
+  String get settingsLigaturesNote;
+
+  /// No description provided for @settingsLogShareFont.
+  ///
+  /// In ko, this message translates to:
+  /// **'로그·출력 글꼴을 편집기와 같이 쓰기'**
+  String get settingsLogShareFont;
+
+  /// No description provided for @settingsLogShareFontNote.
+  ///
+  /// In ko, this message translates to:
+  /// **'실행 출력, 명령 기록, 경로·해시, Markdown 코드에 편집기 글꼴과 합자 설정을 씁니다. 끄면 테마의 기본 고정폭 글꼴을 씁니다.'**
+  String get settingsLogShareFontNote;
+
   /// No description provided for @settingsEditorFontMissing.
   ///
   /// In ko, this message translates to:

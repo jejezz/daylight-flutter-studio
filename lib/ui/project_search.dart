@@ -207,9 +207,9 @@ class _ProjectSearchState extends State<_ProjectSearch> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(h.text, maxLines: 1, overflow: TextOverflow.ellipsis, style: t.logText),
+                  Text(h.text, maxLines: 1, overflow: TextOverflow.ellipsis, style: context.logText),
                   if (after != null && after != h.text)
-                    Text(after, maxLines: 1, overflow: TextOverflow.ellipsis, style: t.logText.copyWith(color: t.success)),
+                    Text(after, maxLines: 1, overflow: TextOverflow.ellipsis, style: context.logText.copyWith(color: t.success)),
                 ],
               ),
             ),
