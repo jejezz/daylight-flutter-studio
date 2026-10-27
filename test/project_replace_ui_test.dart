@@ -12,7 +12,7 @@ void main() {
   setUp(() => dir = Directory.systemTemp.createTempSync('replace_ui'));
   tearDown(() => dir.deleteSync(recursive: true));
 
-  Widget host({bool Function(String path)? isBusy, VoidCallback? onReplaced}) => MaterialApp(
+  Widget host({bool Function(String path)? isBusy, VoidCallback? onReplaced, String initialQuery = '', bool replaceMode = false}) => MaterialApp(
     theme: AppTheme.build(StudioPalette.saturn, Brightness.light),
     localizationsDelegates: AppLocalizations.localizationsDelegates,
     supportedLocales: AppLocalizations.supportedLocales,
@@ -28,6 +28,8 @@ void main() {
               searchProjectSync(root, files, query, caseSensitive: caseSensitive, regex: regex),
           isBusy: isBusy,
           onReplaced: onReplaced,
+          initialQuery: initialQuery,
+          replaceMode: replaceMode,
         ),
         child: const Text('찾기'),
       ),
@@ -96,6 +98,18 @@ void main() {
     expect(b.readAsStringSync(), 'foo');
     expect(find.text('2개 파일을 되돌렸습니다.'), findsOneWidget);
     expect(replacedCalls, 2);
+  });
+
+  testWidgets('선택해 둔 글이 검색어로 들어가 바로 검색되고, 바꾸기 줄이 열린 채 시작할 수 있다', (tester) async {
+    File('${dir.path}/a.txt').writeAsStringSync('foo\nbar\nfoo\n');
+    await tester.pumpWidget(host(initialQuery: 'foo', replaceMode: true));
+    await tester.tap(find.text('찾기'));
+    await tester.pumpAndSettle();
+    await waitFor(tester, () => find.text('2곳').evaluate().isNotEmpty);
+
+    expect(tester.widget<TextField>(find.byType(TextField).first).controller!.text, 'foo');
+    expect(find.text('2곳'), findsOneWidget);
+    expect(find.byType(TextField), findsNWidgets(2)); // 찾을 글 + 바꿀 글
   });
 
   testWidgets('확인창에서 취소하면 아무것도 바꾸지 않는다', (tester) async {

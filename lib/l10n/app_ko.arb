@@ -3265,6 +3265,7 @@
   "menuFind": "찾기…",
   "menuReplace": "바꾸기…",
   "menuFindInProject": "프로젝트에서 찾기…",
+  "menuReplaceInProject": "프로젝트에서 바꾸기…",
   "menuFormat": "코드 정렬",
   "menuBottomPanel": "아래 패널",
   "menuGitDock": "Git 패널",

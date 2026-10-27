@@ -4463,6 +4463,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get menuFindInProject => '프로젝트에서 찾기…';
 
   @override
+  String get menuReplaceInProject => '프로젝트에서 바꾸기…';
+
+  @override
   String get menuFormat => '코드 정렬';
 
   @override

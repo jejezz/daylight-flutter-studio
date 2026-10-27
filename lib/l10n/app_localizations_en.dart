@@ -4713,6 +4713,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get menuFindInProject => 'Find in Project…';
 
   @override
+  String get menuReplaceInProject => 'Replace in Project…';
+
+  @override
   String get menuFormat => 'Format Code';
 
   @override

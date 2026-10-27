@@ -7634,6 +7634,12 @@ abstract class AppLocalizations {
   /// **'프로젝트에서 찾기…'**
   String get menuFindInProject;
 
+  /// No description provided for @menuReplaceInProject.
+  ///
+  /// In ko, this message translates to:
+  /// **'프로젝트에서 바꾸기…'**
+  String get menuReplaceInProject;
+
   /// No description provided for @menuFormat.
   ///
   /// In ko, this message translates to:
