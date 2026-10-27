@@ -38,6 +38,7 @@ class BranchDockDock extends StatefulWidget {
     this.gate,
     this.onOpenFolder,
     this.onHeadChanged,
+    this.onShowDiff,
     this.services,
   });
 
@@ -52,7 +53,10 @@ class BranchDockDock extends StatefulWidget {
 
   /// 브랜치 전환·커밋·병합 등으로 HEAD가 바뀐 뒤 (파일과 비교 기준을 새로 읽을 때).
   final VoidCallback? onHeadChanged;
-  // onOpenFolder·onHeadChanged와 MergeGateScope(`lib/branchdock/ui/merge_gate.dart`)가 Branch Dock 원본에서 Studio에 맞게
+
+  /// 변경 파일을 눌렀을 때 Studio 편집기의 변경점 보기로 연다. 절대 경로를 받아 열었으면 true.
+  final Future<bool> Function(String path)? onShowDiff;
+  // onOpenFolder·onHeadChanged·onShowDiff와 MergeGateScope(`lib/branchdock/ui/merge_gate.dart`)가 Branch Dock 원본에서 Studio에 맞게
   // 더한 연결점의 전부다. 나머지 `lib/branchdock/`은 원본 그대로(문구·아이콘 규칙만 바꿈)다.
 
   /// 테스트용. 없으면 PATH를 읽어 직접 만든다.
@@ -395,7 +399,7 @@ class _RepoView extends StatelessWidget {
                 // 목록을 옆으로 쓸다가 탭이 바뀌지 않게 한다.
                 physics: const NeverScrollableScrollPhysics(),
                 children: [
-                  ChangesTab(commitFocus: state._commitFocus),
+                  ChangesTab(commitFocus: state._commitFocus, onShowDiff: state.widget.onShowDiff),
                   const BranchesTab(),
                   TagsTab(onOpenReleaseWizard: state._openReleaseWizard),
                   const RemotesTab(),

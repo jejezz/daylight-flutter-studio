@@ -174,10 +174,15 @@ void main() {
     });
 
     test('openDiff는 파일을 열고 변경점 보기로 바꾼다', () async {
-      await c.openDiff(_p(repo, 'a.txt'));
+      expect(await c.openDiff(_p(repo, 'a.txt')), isTrue);
       expect(c.activeTab!.diffMode, isTrue);
       c.toggleDiff(c.activeTab!);
       expect(c.activeTab!.diffMode, isFalse);
+    });
+
+    test('openDiff는 열 수 없는 파일이면 false를 돌려주고 탭을 만들지 않는다', () async {
+      expect(await c.openDiff(_p(repo, 'missing.txt')), isFalse);
+      expect(c.tabs, isEmpty);
     });
   });
 

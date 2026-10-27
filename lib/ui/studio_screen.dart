@@ -532,6 +532,7 @@ class _StudioScreenState extends State<StudioScreen>
                                       gate: _mergeGate,
                                       onOpenFolder: (path) => _controller.openProject(path, remember: false),
                                       onHeadChanged: _onBranchChanged,
+                                      onShowDiff: _controller.openDiff,
                                     ),
                                   );
                                   if (!open) {

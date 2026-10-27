@@ -1,4 +1,6 @@
 // branch-dock-flutter/lib/ui/tabs/changes_tab.dart 에서 옮김 (Studio 규칙: bd 접두어 문구, context.icons, context.mono).
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -21,10 +23,14 @@ import '../shortcut_label.dart';
 
 /// 변경 탭 (UI_UX.md §4.1): 커밋 상자 + 충돌 / 스테이징됨 / 변경됨 / 추적 안 됨.
 class ChangesTab extends StatefulWidget {
-  const ChangesTab({super.key, required this.commitFocus});
+  const ChangesTab({super.key, required this.commitFocus, this.onShowDiff});
 
   /// ⌘Enter와 탭 전환 후 커밋 메시지로 바로 가기 위한 포커스.
   final FocusNode commitFocus;
+
+  /// [Studio에서 달라진 곳] 파일을 눌렀을 때 Studio 편집기의 변경점 보기로 여는 연결점. 절대 경로를 받아
+  /// 열었으면 true를 돌려준다. 없거나 false면 Branch Dock의 diff 시트가 열린다.
+  final Future<bool> Function(String path)? onShowDiff;
 
   @override
   State<ChangesTab> createState() => _ChangesTabState();
@@ -152,7 +158,7 @@ class _ChangesTabState extends State<ChangesTab> {
               },
             ),
             if (!_collapsed.contains(group))
-              for (final f in files) _FileRow(file: f, group: group, repo: repo),
+              for (final f in files) _FileRow(file: f, group: group, repo: repo, onShowDiff: widget.onShowDiff),
           ],
         // 임시 저장 (PLAN.md 3.2 P1)
         if (repo.stashes.isNotEmpty || !s.clean)
@@ -256,11 +262,12 @@ class _ChangesTabState extends State<ChangesTab> {
 String commandsText(List<List<String>> commands) => commands.map(formatCommandLine).join('\n');
 
 class _FileRow extends StatefulWidget {
-  const _FileRow({required this.file, required this.group, required this.repo});
+  const _FileRow({required this.file, required this.group, required this.repo, this.onShowDiff});
 
   final FileChange file;
   final _Group group;
   final RepoController repo;
+  final Future<bool> Function(String path)? onShowDiff;
 
   @override
   State<_FileRow> createState() => _FileRowState();
@@ -291,7 +298,7 @@ class _FileRowState extends State<_FileRow> {
       child: InkWell(
         splashFactory: NoSplash.splashFactory,
         onDoubleTap: () => RepoActions.openInEditor(context, repo, f),
-        // 누르면 읽기 전용 diff (PLAN.md 3.2 P2)
+        // 누르면 변경점 보기 (Studio에서는 편집기, 아니면 읽기 전용 diff 시트)
         onTap: () => _showDiff(context),
         child: SizedBox(
           height: 36,
@@ -391,6 +398,11 @@ class _FileRowState extends State<_FileRow> {
     final l10n = AppLocalizations.of(context);
     final f = widget.file;
     final repo = widget.repo;
+    // 지워졌거나 폴더인 항목은 열 파일이 없으니 시트로 보여 준다.
+    final open = widget.onShowDiff;
+    final absolute = '${repo.root}${Platform.pathSeparator}${f.path.replaceAll('/', Platform.pathSeparator)}';
+    if (open != null && FileSystemEntity.isFileSync(absolute) && await open(absolute)) return;
+    if (!context.mounted) return;
     final command = switch (widget.group) {
       _Group.untracked => GitCommands.diffUntracked(f.path),
       _Group.staged => GitCommands.diffStaged(f.path),

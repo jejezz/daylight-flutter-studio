@@ -332,14 +332,15 @@ class StudioController extends ChangeNotifier {
   /// 열린 모든 탭의 기준을 다시 읽는다 (커밋·브랜치 전환·창 활성화 뒤).
   Future<void> refreshBases() => Future.wait([for (final t in List.of(tabs)) refreshBase(t)]);
 
-  /// 파일을 열고 곧바로 변경점 보기로 보여 준다.
-  Future<void> openDiff(String path) async {
+  /// 파일을 열고 곧바로 변경점 보기로 보여 준다. 열지 못했으면(너무 크거나 글자 파일이 아님) false.
+  Future<bool> openDiff(String path) async {
     await openFile(path);
     final tab = tabFor(path);
-    if (tab == null) return;
+    if (tab == null) return false;
     tab.diffMode = true;
     activeIndex = tabs.indexOf(tab);
     notifyListeners();
+    return true;
   }
 
   /// 파일을 열고 [line]/[column](1부터)에 커서를 두어 보여 준다. 문제 패널에서 문제를 눌렀을 때 쓴다.

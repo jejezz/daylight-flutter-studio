@@ -1,6 +1,6 @@
 # 구현된 것
 
-기준: 2026-10-27, 로컬 `main`. `flutter analyze` 새 문제 없음, 테스트 462개 통과
+기준: 2026-10-27, 로컬 `main`. `flutter analyze` 새 문제 없음, 테스트 467개 통과
 (`test/branchdock/`·`test/verify_gate_controller_test.dart`의 실제 git 테스트 몇 개는 전체를 한꺼번에 돌리면 Windows 파일 잠금으로
 간간이 실패한다 — 알려진 한계, 따로 돌리면 통과한다).
 앞으로 할 일은 [PLAN.md](../PLAN.md)에 있다. 이 문서는 **이미 만들어진 것**과 그 구조·작업 방식을 적는다.
@@ -41,11 +41,11 @@ Claude Code는 worktree에서 작업하고 사용자는 main만 쓴다. 그러�
 - 셸은 `lib/ui/branchdock_dock.dart`: 상태 헤더 → 다음 할 일 배너 → 아이콘 탭(변경·브랜치·태그·원격·릴리스·PR·기록) → 내용 → 명령 막대.
   **CI(Actions) 탭은 뜻을 두고 뺐다.** 열린 프로젝트 폴더가 바뀌면 `RepoController`를 다시 연다.
 - 기능은 Branch Dock과 같다: 스테이지·커밋, 가져오기·받기·올리기, 브랜치(전환·만들기·이름 바꾸기·삭제·worktree), 병합·squash·rebase와 충돌 해결, 태그, 원격, 기록(그래프), PR 목록·리뷰·병합, 릴리스 마법사, 실수 복구(reflog), 개념 도움말.
-- **Studio 전용 연결점은 둘뿐이다**: `MergeGateScope`(PR 카드의 검증 관문과 검증 카드, `lib/ui/git_merge_gate.dart`)와 HEAD 변경 알림(`onHeadChanged` — 브랜치·커밋이 바뀌면 파일·문제·검증 상태를 새로 읽는다).
-  worktree를 열 때는 `onOpenFolder`로 Studio의 프로젝트를 바꾼다.
+- **Studio 전용 연결점은 넷뿐이다**: `MergeGateScope`(PR 카드의 검증 관문과 검증 카드, `lib/ui/git_merge_gate.dart`)와 HEAD 변경 알림(`onHeadChanged` — 브랜치·커밋이 바뀌면 파일·문제·검증 상태를 새로 읽는다).
+  worktree를 열 때는 `onOpenFolder`로, 변경 파일을 눌렀을 때는 `onShowDiff`로 Studio를 부린다.
 - `VerifyGateController`(`lib/verify/verify_gate_controller.dart`)가 검증 판정(관문)만 읽기 전용으로 맡는다. `lib/git/status.dart`는 HEAD 브랜치·커밋을 읽는 파서 하나만 남았다.
   옛 Studio Git 패널·릴리스 마법사·충돌 시트와 그 문구는 지웠다(Git 기능은 모두 Branch Dock 쪽).
-- 이식본이 원본에서 갈라진 곳은 코드에 `[Studio에서 달라진 곳]` 주석으로 표시했다(`command_runner`의 실행 파일 경로 검사, `pr_tab`의 관문, `branchdock_dock`의 연결점).
+- 이식본이 원본에서 갈라진 곳은 코드에 `[Studio에서 달라진 곳]` 주석으로 표시했다(`command_runner`의 실행 파일 경로 검사, `pr_tab`의 관문, `changes_tab`의 변경점 보기 연결, `branchdock_dock`의 연결점).
 
 ## Run 패널 (Flutty Dock)
 
@@ -96,6 +96,7 @@ PowerShell·cmd·Git Bash·WSL 배포판, macOS/Linux는 로그인 셸과 `/etc/
 - 줄 끝(CRLF/LF)은 파일 그대로 보존한다.
 - **디스크 변경 감지**: 열린 탭의 수정 시각·크기를 1초마다, 창이 다시 활성화될 때도 확인한다. 수정 안 한 탭은 조용히 다시 읽고, 수정 중인 탭은 배너로 "다시 읽기 / 내 수정 유지"를 고르게 하며 그 전에는 저장을 막는다. 파일이 사라지면 "탭 닫기 / 그대로 두기".
 - **변경 표시와 변경점 보기**: 줄 번호 옆에 HEAD 대비 새 줄·바뀐 줄·지워진 자리를 편집 중에 바로 그린다. 도구 막대의 변경점 단추로 통합 diff(+/- 개수, 바뀐 곳 둘레 3줄, 나머지는 눌러서 펼침)로 전환한다. git 저장소가 아니거나 .gitignore로 무시되는 파일은 비교하지 않는다.
+  Branch Dock의 **변경 탭에서 파일을 누르면 이 변경점 보기로 열린다**(`ChangesTab.onShowDiff` → `StudioController.openDiff`). 비교 기준은 언제나 작업 폴더의 파일과 HEAD라서, 스테이지된 변경만 따로 보지는 않는다. 지워진 파일이거나 Studio가 열 수 없는 파일(너무 큼·글자 파일 아님)이면 예전처럼 Branch Dock의 diff 시트가 뜬다.
 - **Dart 문제**: `dart analyze --format=json`을 패키지에서 돌려 "문제" 탭에 파일별로 보여 준다(오류·경고·정보 필터, 눌러서 그 줄로 이동). 편집기 줄 번호 왼쪽에 점, 상태 막대와 탭 이름에 개수. 폴더를 열 때·Dart 파일 저장 때·창이 30초 넘게 지난 뒤 다시 활성화될 때 분석하고 재요청은 한 번으로 합친다. `.dart_tool`이 없는 새 worktree는 `flutter pub get` 단추를 안내한다(서브 패키지 포함). 분석이 실패하면 "문제 없음"이라고 하지 않는다.
 - **찾기·바꾸기**(`Ctrl/Cmd+F` 찾기, `Ctrl/Cmd+R` 바꾸기 — 편집기에 포커스가 있을 때만; 터미널에서는 `Ctrl+R`이 셸 기록 검색이라 앱 전체 단축키로 두지 않았다. 편집기 위 줄: 대소문자·정규식·이전/다음·모두 바꾸기), **빠른 열기**(`Ctrl/Cmd+P`), **프로젝트에서 찾기**(`Ctrl/Cmd+Shift+F`; `build`·`.git` 등은 건너뜀, 바꾸기는 아래).
 - **프로젝트에서 바꾸기**(`lib/ui/project_search.dart`, 로직은 `lib/studio/project_replace.dart`): 검색창 왼쪽 ▸ 단추로 바꾸기 줄을 연다.
@@ -180,7 +181,6 @@ macOS 앱 샌드박스는 **꺼져 있다**(폴더 선택·git·flutter 실행�
 
 ## 알려진 한계
 
-- 변경 파일을 눌러도 Studio 편집기의 변경점 보기가 열리지 않고 Branch Dock의 diff 화면이 열린다.
 - 문제 표시는 줄 단위 점뿐(글자 단위 물결 밑줄·빠른 수정·LSP 없음). 변경점 보기는 줄 단위(줄 안 글자 차이는 표시 안 함)이고 HEAD와만 비교한다.
 - 프로젝트 검색의 파일 목록은 열 때마다 새로 읽는다(최대 2만 개).
 - 프로젝트 바꾸기는 줄 단위뿐이다(여러 줄에 걸친 패턴은 못 바꾼다). 되돌리기 기록은 검색창을 닫으면 사라진다. 수정 중인 탭이 열린 파일을 건너뛰는 것을 직접 눈으로(Flutty Dock 빌드) 확인하지는 않았다(컨트롤러 단위·위젯 테스트만).
