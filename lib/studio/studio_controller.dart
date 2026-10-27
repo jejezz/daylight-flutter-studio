@@ -70,6 +70,10 @@ class EditorTab {
   /// 편집기가 만든 접기 제어. 편집기가 화면에 올라온 뒤에 채워진다.
   CodeChunkController? chunks;
 
+  /// 이 탭의 찾기·바꾸기 제어. 탭이 들고 있어서 편집 메뉴가 포커스와 상관없이 바로 찾기 줄을 열 수 있다
+  /// (편집기가 직접 만들게 두면 메뉴에서는 닿을 수 없다).
+  late final CodeFindController find = CodeFindController(controller);
+
   bool get dirty => controller.text != savedText;
 
   String get name => path.split(RegExp(r'[/\\]')).last;
@@ -114,6 +118,7 @@ class EditorTab {
   void dispose() {
     _marksTimer?.cancel();
     marks.dispose();
+    find.dispose();
     controller.dispose();
   }
 }
