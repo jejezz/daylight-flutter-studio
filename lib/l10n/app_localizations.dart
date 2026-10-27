@@ -1877,7 +1877,7 @@ abstract class AppLocalizations {
   /// No description provided for @settingsEditorFontHint.
   ///
   /// In ko, this message translates to:
-  /// **'글꼴 이름 (비우면 기본)'**
+  /// **'글꼴 검색'**
   String get settingsEditorFontHint;
 
   /// No description provided for @settingsEditorFontDefault.
@@ -1889,7 +1889,7 @@ abstract class AppLocalizations {
   /// No description provided for @settingsEditorFontNote.
   ///
   /// In ko, this message translates to:
-  /// **'이 컴퓨터에 설치된 글꼴만 단추로 보입니다. 다른 글꼴은 이름을 그대로 적으세요.'**
+  /// **'입력해서 걸러 찾을 수 있습니다. 이 컴퓨터에 설치된 글꼴만 고를 수 있습니다.'**
   String get settingsEditorFontNote;
 
   /// No description provided for @settingsLineHeight.
@@ -1939,6 +1939,18 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'트리·탭·도구 막대 같은 칸 크기는 그대로 두고 글자만 커지거나 작아집니다.'**
   String get settingsUiFontScaleNote;
+
+  /// No description provided for @settingsUiFontPreview.
+  ///
+  /// In ko, this message translates to:
+  /// **'아름다운 날 Daylight Studio 123'**
+  String get settingsUiFontPreview;
+
+  /// No description provided for @settingsTerminalFontPreview.
+  ///
+  /// In ko, this message translates to:
+  /// **'\$ echo 안녕하세요 Hello 123'**
+  String get settingsTerminalFontPreview;
 
   /// No description provided for @settingsSectionTerminal.
   ///

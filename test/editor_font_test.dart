@@ -77,7 +77,7 @@ void main() {
     expect(after.height, 1.8);
   });
 
-  testWidgets('설정 화면: 글꼴 단추와 입력칸, 줄 간격 되돌리기', (tester) async {
+  testWidgets('설정 화면: 글꼴 콤보 상자로 고르고, 줄 간격을 되돌린다', (tester) async {
     await tester.pumpWidget(
       app(
         (context) => FilledButton(
@@ -89,14 +89,16 @@ void main() {
     await tester.tap(find.text('열기'));
     await tester.pumpAndSettle();
 
-    await tester.ensureVisible(find.text('Fira Code'));
-    await tester.tap(find.text('Fira Code'));
-    await tester.pump();
+    await tester.tap(find.byType(DropdownMenu<String?>));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Fira Code').last);
+    await tester.pumpAndSettle();
     expect(editor.fontName, 'Fira Code');
 
-    await tester.ensureVisible(find.text('기본'));
-    await tester.tap(find.text('기본'));
-    await tester.pump();
+    await tester.tap(find.byType(DropdownMenu<String?>));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('기본').last);
+    await tester.pumpAndSettle();
     expect(editor.fontName, isNull);
 
     await editor.setLineHeight(1.9);
@@ -126,7 +128,7 @@ void main() {
     expect(style.fontSize, span.style!.fontSize);
   });
 
-  testWidgets('설치되지 않은 글꼴은 단추에서 빠지고, 직접 적으면 안내가 뜬다', (tester) async {
+  testWidgets('설치되지 않은 글꼴은 콤보 상자 목록에서 빠지고, 저장된 값이 없으면 안내가 뜬다', (tester) async {
     FontProbe.isInstalled = (family) => family != 'Fira Code';
     monospaceFontLoader = () async => ['Fira Code', 'Monaco'];
     await tester.pumpWidget(
@@ -139,10 +141,11 @@ void main() {
     );
     await tester.tap(find.text('열기'));
     await tester.pumpAndSettle();
-    expect(find.widgetWithText(ChoiceChip, 'Fira Code'), findsNothing);
-    expect(find.widgetWithText(ChoiceChip, 'Menlo'), findsOneWidget);
-    // 폴더에서 읽은 글꼴도 단추로 나온다.
-    expect(find.widgetWithText(ChoiceChip, 'Monaco'), findsOneWidget);
+
+    final entries = tester.widget<DropdownMenu<String?>>(find.byType(DropdownMenu<String?>)).dropdownMenuEntries;
+    expect(entries.map((e) => e.label), isNot(contains('Fira Code')));
+    // 폴더에서 읽은 글꼴도 목록에 나온다.
+    expect(entries.map((e) => e.label), containsAll(['Menlo', 'Monaco']));
 
     await editor.setFontName('Fira Code');
     await tester.pump();

@@ -29,6 +29,17 @@ void main() {
       expect(darkTokens.keyword, isNot(saturnDarkTokens.keyword));
     });
 
+    test('선택된 목록 항목(설정 왼쪽 목록 등) 글자색이 배경과 같은 색으로 묻히지 않는다', () {
+      // ListTile의 기본 selectedColor(colorScheme.primary)는 고대비에서 secondaryContainer(= primary와
+      // 같은 색)와 겹쳐 글자가 안 보이게 된다 — onSecondaryContainer로 맞춰서 Chip·SegmentedButton과
+      // 같은 색 규칙을 쓰게 고쳤다.
+      for (final brightness in Brightness.values) {
+        final theme = AppTheme.build(StudioPalette.highContrast, brightness);
+        expect(theme.listTileTheme.selectedColor, theme.colorScheme.onSecondaryContainer);
+        expect(theme.listTileTheme.selectedColor, isNot(theme.colorScheme.secondaryContainer));
+      }
+    });
+
     test('고대비 색 구성 선택 자체는 주색 재질(apply)을 거치지 않는다', () {
       // StudioPalette.apply는 saturn·highContrast일 때 원본 scheme을 그대로 돌려준다 — 고대비는
       // _HighContrastTheme이 완전히 새로 만든 scheme을 쓰므로 apply를 거쳐도 안전해야 한다.
