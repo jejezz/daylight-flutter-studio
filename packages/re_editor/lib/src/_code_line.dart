@@ -23,6 +23,11 @@ class _CodeLineEditingControllerImpl extends ValueNotifier<CodeLineEditingValue>
   @override
   final ValueNotifier<CodeBlockSelection?> blockSelection = ValueNotifier<CodeBlockSelection?>(null);
 
+  /// Column and length of the IME composition currently shown on every row of
+  /// the block, or null when nothing is being composed.
+  int? _blockComposingColumn;
+  int _blockComposingLength = 0;
+
   _CodeLineEditingControllerImpl({
     required CodeLines codeLines,
     required this.options,
@@ -60,6 +65,7 @@ class _CodeLineEditingControllerImpl extends ValueNotifier<CodeLineEditingValue>
     if (blockSelection.value != null && (value.selection != super.value.selection ||
         !identical(value.codeLines, super.value.codeLines))) {
       blockSelection.value = null;
+      _blockComposingColumn = null;
     }
     super.value = value;
   }
@@ -207,14 +213,27 @@ class _CodeLineEditingControllerImpl extends ValueNotifier<CodeLineEditingValue>
 
   @override
   void edit(TextEditingValue newValue) {
-    if (blockSelection.value != null && selection.isCollapsed && !newValue.text.isMultiline &&
-        !(newValue.composing.isValid && !newValue.composing.isCollapsed)) {
+    if (blockSelection.value != null && selection.isCollapsed && !newValue.text.isMultiline) {
       final String old = extentLine.text;
-      final int at = selection.extentOffset;
-      final String before = old.substring(0, min(at, old.length));
-      final String after = old.substring(min(at, old.length));
-      if (newValue.text.length > old.length && newValue.text.startsWith(before) && newValue.text.endsWith(after)) {
-        _typeIntoBlock(newValue.text.substring(before.length, newValue.text.length - after.length));
+      final int at = min(selection.extentOffset, old.length);
+      final int? comp = _blockComposingColumn;
+      final int compLength = _blockComposingLength;
+      // While composing (IME), the text being composed sits at [column, column+length)
+      // on every row; otherwise the new text goes at the caret.
+      final int cut = comp == null ? at : min(comp, old.length);
+      final String before = old.substring(0, cut);
+      final String after = old.substring(comp == null ? at : min(comp + compLength, old.length));
+      final bool composing = newValue.composing.isValid && !newValue.composing.isCollapsed;
+      final bool grows = comp != null || newValue.text.length > old.length;
+      if (grows && newValue.text.length >= before.length + after.length &&
+          newValue.text.startsWith(before) && newValue.text.endsWith(after)) {
+        final String inserted = newValue.text.substring(before.length, newValue.text.length - after.length);
+        _typeIntoBlock(
+          inserted,
+          from: comp,
+          to: comp == null ? null : comp + compLength,
+          composing: composing,
+        );
         return;
       }
     }
@@ -963,7 +982,7 @@ class _CodeLineEditingControllerImpl extends ValueNotifier<CodeLineEditingValue>
   /// text for that row (0-based from the first line). Lines shorter than [from]
   /// and folded lines are left alone. The block stays active as a zero-width
   /// column after the inserted text.
-  void _replaceBlockColumns(CodeBlockSelection block, int from, int to, String Function(int row) insertFor) {
+  void _replaceBlockColumns(CodeBlockSelection block, int from, int to, String Function(int row) insertFor, {bool composing = false}) {
     final CodeLines newCodeLines = CodeLines.from(codeLines);
     final int last = min(block.endIndex, codeLines.length - 1);
     for (int i = block.startIndex; i <= last; i++) {
@@ -984,7 +1003,7 @@ class _CodeLineEditingControllerImpl extends ValueNotifier<CodeLineEditingValue>
         index: extentIndex,
         offset: min(column, newCodeLines[extentIndex].length),
       ),
-      composing: TextRange.empty,
+      composing: composing ? TextRange(start: from, end: column) : TextRange.empty,
     );
     blockSelection.value = CodeBlockSelection(
       baseIndex: block.baseIndex,
@@ -992,17 +1011,20 @@ class _CodeLineEditingControllerImpl extends ValueNotifier<CodeLineEditingValue>
       extentIndex: block.extentIndex,
       extentColumn: column,
     );
+    // The assignment above ran after `value =`, so remember the composition now.
+    _blockComposingColumn = composing ? from : null;
+    _blockComposingLength = column - from;
     makeCursorCenterIfInvisible();
   }
 
   /// Replaces the selected rectangle with [text] (typing). Returns false when
   /// there is no block.
-  bool _typeIntoBlock(String text) {
+  bool _typeIntoBlock(String text, {int? from, int? to, bool composing = false}) {
     final CodeBlockSelection? block = blockSelection.value;
     if (block == null) {
       return false;
     }
-    _replaceBlockColumns(block, block.startColumn, block.endColumn, (_) => text);
+    _replaceBlockColumns(block, from ?? block.startColumn, to ?? block.endColumn, (_) => text, composing: composing);
     return true;
   }
 
