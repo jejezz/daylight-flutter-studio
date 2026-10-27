@@ -232,6 +232,12 @@ class _StudioScreenState extends State<StudioScreen>
     if (tab != null) action(tab.controller);
   }
 
+  /// Ctrl/Cmd+S. 탭이 없으면 아무것도 하지 않는다.
+  Future<void> _saveActive() async {
+    final tab = _controller.activeTab;
+    if (tab != null) await _controller.save(tab);
+  }
+
   Future<void> _closeActiveTab() async {
     final i = _controller.activeIndex;
     if (i >= 0 && i < _controller.tabs.length) await closeTabWithPrompt(context, _controller, i);
@@ -254,7 +260,7 @@ class _StudioScreenState extends State<StudioScreen>
             MenuAction(p.split(RegExp(r'[/\\]')).where((s) => s.isNotEmpty).last, onPressed: () => _controller.openProject(p)),
         ]),
         const MenuDivider(),
-        MenuAction(l10n.commonSave, onPressed: hasTab ? () => _controller.save(_controller.activeTab!) : null, shortcut: key(LogicalKeyboardKey.keyS)),
+        MenuAction(l10n.commonSave, onPressed: hasTab ? _saveActive : null, shortcut: key(LogicalKeyboardKey.keyS)),
         MenuAction(l10n.menuSaveAll, onPressed: hasTab ? _controller.saveAll : null),
         MenuAction(l10n.menuCloseTab, onPressed: hasTab ? _closeActiveTab : null, shortcut: key(LogicalKeyboardKey.keyW)),
         const MenuDivider(),
@@ -366,6 +372,8 @@ class _StudioScreenState extends State<StudioScreen>
             const SingleActivator(LogicalKeyboardKey.keyJ, meta: true): _layout.toggleBottom,
             const SingleActivator(LogicalKeyboardKey.keyB, control: true, alt: true): _layout.toggleDock,
             const SingleActivator(LogicalKeyboardKey.keyB, meta: true, alt: true): _layout.toggleDock,
+            const SingleActivator(LogicalKeyboardKey.keyS, control: true): _saveActive,
+            const SingleActivator(LogicalKeyboardKey.keyS, meta: true): _saveActive,
             const SingleActivator(LogicalKeyboardKey.keyO, control: true): _pickProject,
             const SingleActivator(LogicalKeyboardKey.keyO, meta: true): _pickProject,
             const SingleActivator(LogicalKeyboardKey.keyW, control: true): _closeActiveTab,
