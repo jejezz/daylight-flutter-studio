@@ -107,6 +107,13 @@ abstract class CodeLineEditingController extends ValueNotifier<CodeLineEditingVa
   /// Get the code line options.
   CodeLineOptions get options;
 
+  /// The rectangular (column) selection made with Alt/Option + drag, or null.
+  ///
+  /// It is cleared as soon as the selection or the text changes. While it is
+  /// set, [copy] copies the rectangle. (Added in this vendored copy, see
+  /// PATCHES.md.)
+  ValueNotifier<CodeBlockSelection?> get blockSelection;
+
   /// The current codes the user is editing.
   CodeLines get codeLines;
 
@@ -587,6 +594,38 @@ class CodeLineEditingValue {
 }
 
 /// A range of code lines that represents a selection.
+/// A rectangular selection: the same column range on every line from
+/// [startIndex] to [endIndex]. Columns are character offsets in the line.
+class CodeBlockSelection {
+
+  const CodeBlockSelection({
+    required this.baseIndex,
+    required this.baseColumn,
+    required this.extentIndex,
+    required this.extentColumn,
+  });
+
+  final int baseIndex;
+  final int baseColumn;
+  final int extentIndex;
+  final int extentColumn;
+
+  int get startIndex => min(baseIndex, extentIndex);
+  int get endIndex => max(baseIndex, extentIndex);
+  int get startColumn => min(baseColumn, extentColumn);
+  int get endColumn => max(baseColumn, extentColumn);
+
+  @override
+  bool operator ==(Object other) =>
+    other is CodeBlockSelection &&
+    other.baseIndex == baseIndex && other.baseColumn == baseColumn &&
+    other.extentIndex == extentIndex && other.extentColumn == extentColumn;
+
+  @override
+  int get hashCode => Object.hash(baseIndex, baseColumn, extentIndex, extentColumn);
+
+}
+
 class CodeLineSelection {
 
   /// The line index at which the selection originates.
