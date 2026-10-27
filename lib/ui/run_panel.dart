@@ -28,6 +28,10 @@ class RunPanel extends StatelessWidget {
   /// 두 칸일 때 왼쪽(설정) 칸의 너비.
   static const wideControlsWidth = 380.0;
 
+  /// 이 높이보다 낮으면 너비가 넓어도 두 칸으로 나누지 않고 세로로 스크롤하게 쌓는다.
+  /// 도구 막대(둘째 줄로 넘어갈 수 있다)와 구분선이 이 안에 다 들어가야 넘치지 않는다.
+  static const wideMinHeight = 240.0;
+
   @override
   Widget build(BuildContext context) {
     final t = context.tokens;
@@ -50,7 +54,7 @@ class RunPanel extends StatelessWidget {
               if (verify) ...[_VerifyCard(controller: controller), SizedBox(height: t.spaceMd)],
               _Output(log: log),
             ];
-            if (box.maxWidth < wideWidth) {
+            if (box.maxWidth < wideWidth || box.maxHeight < wideMinHeight) {
               return ListView(
                 padding: EdgeInsets.only(bottom: t.spaceMd),
                 children: [

@@ -48,14 +48,14 @@ void main() {
     log.dispose();
   });
 
-  Widget app(double width) => AppSettingsScope(
+  Widget app(double width, {double height = 320}) => AppSettingsScope(
     settings: settings,
     child: MaterialApp(
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       locale: const Locale('ko'),
       theme: AppTheme.build(StudioPalette.saturn, Brightness.light),
-      home: Scaffold(body: SizedBox(width: width, height: 320, child: RunPanel(controller: controller, log: log))),
+      home: Scaffold(body: SizedBox(width: width, height: height, child: RunPanel(controller: controller, log: log))),
     ),
   );
 
@@ -75,6 +75,19 @@ void main() {
     final divider = tester.getRect(find.byType(VerticalDivider));
     expect(divider.left, closeTo(RunPanel.wideControlsWidth, 1));
     expect(tester.takeException(), isNull, reason: '넓은 배치에서도 넘치지 않는다');
+  });
+
+  testWidgets('넓어도 낮으면(아래 패널을 줄였을 때) 세로로 쌓아 넘치지 않는다', (tester) async {
+    for (final h in [72.0, 120.0, RunPanel.wideMinHeight - 1]) {
+      await tester.pumpWidget(app(1200, height: h));
+      await tester.pump();
+      expect(find.byType(VerticalDivider), findsNothing, reason: '높이 $h');
+      expect(tester.takeException(), isNull, reason: '높이 $h에서 넘치지 않는다');
+    }
+    await tester.pumpWidget(app(1200, height: RunPanel.wideMinHeight));
+    await tester.pump();
+    expect(find.byType(VerticalDivider), findsOneWidget);
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets('기준 너비를 넘나들면 배치가 바로 바뀐다', (tester) async {
