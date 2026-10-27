@@ -35,3 +35,21 @@ Android Studio처럼 테마를 바꾸면 아이콘과 글꼴이 함께 바뀌고
 
 - 각 앱의 GitHub 워크플로를 나눈다: PR에서는 한 OS만, 전 OS 빌드는 태그 푸시 때만.
 - 서명·점검 상세가 더 필요하면 Flutty Dock의 서명·점검 화면을 설정 → 환경 점검에 확장한다(필요해질 때).
+
+## 먼 미래: Run 패널을 프로젝트 종류별로 꽂기 (아이디어, 필요해지면)
+
+지금 이 앱에서 Flutter 전용이 아닌 부분(트리·편집기·Branch Dock·메뉴·테마·검증 기록/병합 관문)은 이미 일반적이고,
+Flutter 전용인 부분은 Run 패널(기기·대상·빌드 옵션)과 환경 점검(`lib/doctor`)뿐이다. `pubspec.yaml`/`package.json`/
+`Cargo.toml` 같은 매니페스트로 프로젝트 종류를 감지해 맞는 Run 패널·환경 점검을 꽂으면, 이 앱을 Flutter 전용에서
+몇 가지 개발 도구를 아는 IDE로 넓힐 수 있다. 검증 기록(`lib/verify/verify_store.dart`)이 "빌드 성공 → built" 신호를
+받는 연결점만 지키면 병합 관문은 그대로 작동한다.
+
+후보(기존 `lib/devices`·`lib/doctor`의 adb·Xcode 코드를 얼마나 재사용하는지로 난이도가 갈린다):
+
+1. **Tauri(Rust)** — `Cargo.toml`+`tauri.conf.json`. Flutter 데스크톱과 구조가 거의 같다(기기 목록 없음, 단일 실행 파일).
+2. **네이티브 Android(Gradle)** — `build.gradle(.kts)`. `lib/devices`의 adb 코드를 거의 그대로 쓴다.
+3. **네이티브 iOS/macOS(Xcode)** — `.xcodeproj`/`Package.swift`. `lib/doctor`의 Xcode 시뮬레이터·서명 점검과 겹친다.
+4. Electron(Node) — `package.json`. 5. Go — `go.mod`(기기 목록 없는 가장 단순한 경우). 6. .NET MAUI — `.csproj`.
+
+서드파티가 자기 플러그인을 넣게 하는 것(Android Studio·VSCode 식)은 Dart/Flutter에 그런 동적 로딩 API가 없어서
+범위가 다르다 — 하려면 LSP처럼 별도 프로세스 + JSON-RPC 프로토콜을 새로 설계해야 하는 훨씬 큰 일이라 지금은 보류.
