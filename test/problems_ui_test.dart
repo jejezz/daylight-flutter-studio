@@ -7,6 +7,7 @@ import 'package:daylight_flutter_studio/studio/studio_controller.dart';
 import 'package:daylight_flutter_studio/theme/app_theme.dart';
 import 'package:daylight_flutter_studio/ui/editor_pane.dart';
 import 'package:daylight_flutter_studio/ui/problem_gutter.dart';
+import 'package:daylight_flutter_studio/ui/problem_squiggles.dart';
 import 'package:daylight_flutter_studio/ui/problems_panel.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -15,8 +16,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 final _sep = Platform.pathSeparator;
 
-Diagnostic _d(String file, int line, DiagnosticSeverity s, {String code = 'some_code', String message = 'message', int column = 1, String correction = ''}) =>
-    Diagnostic(code: code, severity: s, message: message, file: file, line: line, column: column, correction: correction);
+Diagnostic _d(String file, int line, DiagnosticSeverity s, {String code = 'some_code', String message = 'message', int column = 1, int length = 0, String correction = ''}) =>
+    Diagnostic(code: code, severity: s, message: message, file: file, line: line, column: column, length: length, correction: correction);
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -206,6 +207,35 @@ void main() {
       await unmount(tester);
     });
 
+    testWidgets('문제가 있는 글자 밑에 테마 색 물결 밑줄을 긋는다', (tester) async {
+      next = AnalyzeResult.ok([_d(file('a.dart'), 2, DiagnosticSeverity.error, column: 2, length: 3), _d(file('a.dart'), 4, DiagnosticSeverity.warning, column: 1, length: 5)]);
+      await tester.runAsync(() async {
+        await problems.setProjectDir(pkg.path);
+        await c.openFile(file('a.dart'));
+      });
+      await tester.pumpWidget(editor());
+      await tester.pump(const Duration(milliseconds: 100));
+
+      final tokens = AppTheme.build(StudioPalette.saturn, Brightness.light).extension<StudioTokens>()!;
+      final squiggles = tester.renderObject(find.descendant(of: find.byType(ProblemSquiggles), matching: find.byType(CustomPaint)).last);
+      expect(squiggles, paints..path(color: tokens.danger)..path(color: tokens.warning));
+      await unmount(tester);
+    });
+
+    testWidgets('문제가 없는 파일에는 물결 밑줄이 없다', (tester) async {
+      next = AnalyzeResult.ok([_d(file('other.dart'), 2, DiagnosticSeverity.error, length: 3)]);
+      await tester.runAsync(() async {
+        await problems.setProjectDir(pkg.path);
+        await c.openFile(file('a.dart'));
+      });
+      await tester.pumpWidget(editor());
+      await tester.pump(const Duration(milliseconds: 100));
+
+      final squiggles = tester.renderObject(find.descendant(of: find.byType(ProblemSquiggles), matching: find.byType(CustomPaint)).last);
+      expect(squiggles, isNot(paints..path()));
+      await unmount(tester);
+    });
+
     testWidgets('분석이 끝나면 열려 있는 편집기에 점이 나타난다', (tester) async {
       await tester.runAsync(() async {
         await problems.setProjectDir(pkg.path);
@@ -222,6 +252,15 @@ void main() {
       expect(gutter, paints..circle());
       await unmount(tester);
     });
+  });
+
+  test('물결선은 시작과 끝 사이를 위아래로 번갈아 오르내린다', () {
+    final bounds = squigglePath(10, 25, 20).getBounds();
+    expect(bounds.left, 10);
+    expect(bounds.right, 25);
+    expect(bounds.top, lessThan(20));
+    expect(bounds.bottom, greaterThan(20));
+    expect(squigglePath(10, 10, 20).getBounds().width, 0, reason: '길이가 없으면 선도 없다');
   });
 
   group('문제 위치로 이동 (StudioController.openAt)', () {

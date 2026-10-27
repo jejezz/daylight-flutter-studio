@@ -36,6 +36,7 @@ class ProblemsController extends ChangeNotifier {
   bool _disposed = false;
   Timer? _saveTimer;
   Map<String, Map<int, DiagnosticSeverity>> _byFile = const {};
+  Map<String, Map<int, List<Diagnostic>>> _spans = const {};
 
   int count(DiagnosticSeverity s) => diagnostics.where((d) => d.severity == s).length;
 
@@ -88,6 +89,7 @@ class ProblemsController extends ChangeNotifier {
     _subMissing = const [];
     diagnostics = const [];
     _byFile = const {};
+    _spans = const {};
     error = null;
     analyzed = false;
     notifyListeners();
@@ -116,6 +118,7 @@ class ProblemsController extends ChangeNotifier {
         error = r.error;
       }
       _byFile = _index(diagnostics);
+      _spans = _indexSpans(diagnostics);
       _findSubMissing();
       analyzed = true;
       lastRun = DateTime.now();
@@ -163,6 +166,9 @@ class ProblemsController extends ChangeNotifier {
   /// [path] 파일의 줄(1부터)별로 가장 심각한 문제. 편집기 줄 번호 옆 표시에 쓴다.
   Map<int, DiagnosticSeverity> linesFor(String path) => _byFile[pathKey(path)] ?? const {};
 
+  /// [path] 파일의 줄(1부터)별 문제 목록. 편집기에서 문제가 있는 글자에 물결 밑줄을 그릴 때 쓴다.
+  Map<int, List<Diagnostic>> spansFor(String path) => _spans[pathKey(path)] ?? const {};
+
   /// 파일별로 묶은 문제 목록 (심각한 것·위쪽 줄 먼저). 파일은 경로 순서.
   Map<String, List<Diagnostic>> grouped({Set<DiagnosticSeverity>? only}) {
     final out = <String, List<Diagnostic>>{};
@@ -178,6 +184,14 @@ class ProblemsController extends ChangeNotifier {
     }
     final keys = out.keys.toList()..sort((a, b) => pathKey(a).compareTo(pathKey(b)));
     return {for (final k in keys) k: out[k]!};
+  }
+
+  static Map<String, Map<int, List<Diagnostic>>> _indexSpans(List<Diagnostic> all) {
+    final out = <String, Map<int, List<Diagnostic>>>{};
+    for (final d in all) {
+      ((out[pathKey(d.file)] ??= {})[d.line] ??= []).add(d);
+    }
+    return out;
   }
 
   static Map<String, Map<int, DiagnosticSeverity>> _index(List<Diagnostic> all) {

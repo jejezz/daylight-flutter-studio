@@ -19,6 +19,7 @@ import 'find_panel.dart';
 import 'indent_guides.dart';
 import 'markdown_view.dart';
 import 'problem_gutter.dart';
+import 'problem_squiggles.dart';
 
 /// 탭 막대 + 도구 막대 + 편집 영역. Markdown은 편집/보기를 전환한다.
 class EditorPane extends StatelessWidget {
@@ -204,6 +205,16 @@ class _CodeViewState extends State<_CodeView> {
               ),
               ChangeGutter(editing: editing, indicator: notifier, marks: tab.marks),
               DefaultCodeChunkIndicator(width: 20, controller: chunks, notifier: notifier),
+              if (widget.problems != null)
+                ProblemSquiggles(
+                  editing: editing,
+                  indicator: notifier,
+                  horizontal: _horizontal,
+                  problems: widget.problems!,
+                  path: tab.path,
+                  textStyle: editorTextStyle(context),
+                  textInset: t.spaceSm,
+                ),
               if (guides)
                 IndentGuides(
                   editing: editing,
