@@ -15,6 +15,8 @@ import 'theme/editor_zoom.dart';
 import 'theme/theme_controller.dart';
 import 'ui/studio_menus.dart';
 import 'ui/studio_screen.dart';
+import 'update/update_scope.dart';
+import 'update/update_service.dart';
 
 final bool _isDesktop =
     Platform.isMacOS || Platform.isWindows || Platform.isLinux;
@@ -38,13 +40,18 @@ Future<void> main() async {
     });
   }
 
-  runApp(StudioApp(settings: await AppSettings.load()));
+  final settings = await AppSettings.load();
+  // 데스크톱이 아니거나 UPDATE_SERVER 가 비어 있으면 null — 업데이트 확인 없음.
+  final updates = await UpdateService.create();
+  // UpdateScope 는 MaterialApp 위에 둔다 — 정보 창이 이것을 읽어 "업데이트 확인" 단추를 붙인다.
+  runApp(UpdateScope(service: updates, child: StudioApp(settings: settings, updates: updates)));
 }
 
 class StudioApp extends StatefulWidget {
-  const StudioApp({super.key, required this.settings});
+  const StudioApp({super.key, required this.settings, this.updates});
 
   final AppSettings settings;
+  final UpdateService? updates;
 
   @override
   State<StudioApp> createState() => _StudioAppState();
@@ -66,6 +73,7 @@ class _StudioAppState extends State<StudioApp> with WidgetsBindingObserver {
     _zoom.restore();
     _editor.restore();
     _syncWindowBrightness();
+    widget.updates?.startAutomaticCheck(_navigatorKey);
   }
 
   @override

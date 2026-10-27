@@ -56,6 +56,11 @@ dependencies:
   # Windows 결함을 고친 복사본 (packages/flutter_pty/PATCHES.md)
   flutter_pty:
     path: packages/flutter_pty
+  app_updater:
+    git:
+      url: https://github.com/jejezz/application-release-templates
+      path: updater
+      ref: updater-v0.1.0
 
 dev_dependencies:
   flutter_test:

@@ -7,7 +7,7 @@ daylight-commander 계열 앱.
 
 릴리스·버전·패키징·정보 창·아이콘·라이선스·UI/UX·글꼴·언어·테마는
 https://github.com/jejezz/application-release-templates/tree/main/conventions
-규약을 따른다. 이 앱에 적용할 규약 버전: conventions-v1 (미적용: 업데이트 확인, README 스크린샷)
+규약을 따른다. 이 앱에 적용할 규약 버전: conventions-v1 (미적용: README 스크린샷)
 
 - 표시 이름 `Daylight Workbench`, 패키지 `daylight_workbench`, 식별자 `art.zoomon.daylightworkbench` (macOS Debug 빌드는 `.dev`).
 - 이름에 "Flutter"·"Dart"를 넣지 않는다(둘 다 Google 상표). Flutter 전용이라는 설명은 부제·설명 문구로만 쓴다. 저장소·폴더 이름은 `daylight-workbench`다.

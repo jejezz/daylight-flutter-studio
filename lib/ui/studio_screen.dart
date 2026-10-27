@@ -31,6 +31,7 @@ import '../theme/app_theme.dart';
 import '../theme/editor_zoom.dart';
 import '../window/focus_tint.dart';
 import '../theme/theme_controller.dart';
+import '../update/update_scope.dart';
 import '../verify/verify_store.dart';
 import 'bottom_panel.dart';
 import 'editor_pane.dart';
@@ -304,7 +305,11 @@ class _StudioScreenState extends State<StudioScreen>
         MenuAction(l10n.menuZoomReset, onPressed: zoom?.reset, shortcut: key(LogicalKeyboardKey.digit0)),
       ]),
       if (widget.onAbout != null)
-        MenuSpec(l10n.menuHelp, [MenuAction(l10n.aboutMenuItem(AppIdentity.displayName), onPressed: widget.onAbout)]),
+        MenuSpec(l10n.menuHelp, [
+          MenuAction(l10n.aboutMenuItem(AppIdentity.displayName), onPressed: widget.onAbout),
+          if (UpdateScope.maybeOf(context) != null)
+            MenuAction(l10n.updateCheckMenuItem, onPressed: () => UpdateScope.maybeOf(context)!.checkManually(context)),
+        ]),
     ];
   }
 

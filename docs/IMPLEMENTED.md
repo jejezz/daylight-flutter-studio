@@ -152,9 +152,25 @@ Material 쪽은 단축키를 글자로만 보여 준다(이미 화면에 바인�
 
 ## 규약·배포
 
-conventions-v1 적용: 정보 창·오픈소스 라이선스·macOS 앱 메뉴, 한국어/영어(앱 바 `테마|언어|정보`), Saturn 팔레트·SeoulNamsan 글꼴, 고양이 아이콘, 릴리스 워크플로(`release.yml`, macOS·Windows)와 Windows 설치기, `scripts/bump-version.sh`.
+conventions-v1 적용: 정보 창·오픈소스 라이선스·macOS 앱 메뉴, 한국어/영어(앱 바 `테마|언어|정보`), Saturn 팔레트·SeoulNamsan 글꼴, 고양이 아이콘, 릴리스 워크플로(`release.yml`, macOS·Windows)와 Windows 설치기, `scripts/bump-version.sh`, **업데이트 확인**(아래).
 macOS 앱 샌드박스는 **꺼져 있다**(폴더 선택·git·flutter 실행에 필요). Debug 빌드는 `.dev` 식별자.
 프로젝트 열기: 앱 바 "프로젝트 열기" 옆 화살표와 파일 메뉴에서 최근 프로젝트(최대 8개, 사라진 폴더는 알리고 뺌)를 다시 열 수 있고, 첫 화면에도 같은 목록이 나온다. worktree 전환은 목록에 더하지 않는다.
+
+## 업데이트 확인
+
+시작 후 5초 뒤 하루 1회 서버에 새 버전을 묻고, 있으면 알려서 **동의를 받은 뒤** 내려받아 SHA-256을 검증하고 설치한다
+(conventions-v1 `updating.md`, `application-release-templates`의 `updater`·`common/lib/update/` 템플릿을 그대로 옮김).
+
+- 로직은 `app_updater` 패키지(`pubspec.yaml`에 git 의존성, 태그 `updater-v0.1.0`, 순수 Dart), 화면과 연결은 `lib/update/`
+  (`update_service.dart`·`update_dialogs.dart`·`update_scope.dart`·`update_state_store.dart`), 문구는 ARB의 `update*` 키.
+- 서버 주소는 `AppIdentity.updateServerUrl`(기본 `https://c-a3f19c04.rtc.zoomon.art/repos`, `--dart-define=UPDATE_SERVER=`로 덮어씀),
+  앱 이름은 `AppIdentity.updateAppId`(저장소 이름). 빈 값이면 업데이트 확인을 끈다.
+- `main.dart`: `UpdateService.create()` → `UpdateScope`로 `MaterialApp` 위를 감싸고 → `startAutomaticCheck(navigatorKey)`.
+  `UpdateScope`가 있으면 정보 창(`showAppAboutDialog`)이 "업데이트 확인" 단추를 스스로 붙인다(연 곳이 여럿이어도 따로 연결할 필요 없음).
+  도움말 메뉴에도 같은 항목이 있다(`StudioScreen._menus`, macOS·Windows·Linux 모두).
+- 끊기면 안 되는 일(기기에 쓰는 중 등)이 있으면 자동 알림을 미루고 "지금 업데이트"도 막는다 — 지금은 `isBusy`를 넘기지 않아 늘 한가하다고 본다
+  (Run의 빌드·설치 중에도 업데이트 설치를 막는 연결은 다음 단계).
+- 테스트는 `test/update_test.dart`(가짜 `AppUpdater`, 네트워크 없음).
 
 ## 코드 구조와 출처
 
@@ -196,3 +212,4 @@ macOS 앱 샌드박스는 **꺼져 있다**(폴더 선택·git·flutter 실행�
   Branch Dock 화면까지 고대비·85~125% 배율로 눈으로 다 훑어보지는 않았다.
 - 아이콘 세트는 아직 모양(둥근·윤곽선·채움) 3종뿐이다. 파일 종류별 색 아이콘 같은 "완전히 다른 세트"(예: 파일 종류 전용 아이콘 글꼴)는 없다.
 - 앱을 끌 때(⌘Q 등) 위젯 dispose가 보장되지 않아, 열린 터미널의 셸 프로세스가 남을 수 있다 — 종료 전에 정리하는 장치는 아직 없다.
+- 업데이트 확인의 `isBusy`를 Run의 빌드·설치 상태에 연결하지 않았다 — 지금은 늘 한가하다고 본다(설치는 앱을 끄므로 빌드 중 업데이트 설치는 막아야 한다). 실제 Windows·macOS 빌드에서 서버 응답·메뉴·정보 창을 직접 확인하지 않았다.
