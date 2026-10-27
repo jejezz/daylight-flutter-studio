@@ -576,6 +576,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get settingsPaletteSlate => '슬레이트';
 
   @override
+  String get settingsPaletteHighContrast => '고대비';
+
+  @override
   String get settingsBrightness => '밝기';
 
   @override
@@ -1023,6 +1026,20 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get settingsPreview => '미리보기';
+
+  @override
+  String get settingsUiFont => 'UI 글꼴';
+
+  @override
+  String get settingsUiFontMissing =>
+      '이 글꼴은 이 컴퓨터에 설치되어 있지 않은 것 같습니다. 기본 글꼴로 보입니다.';
+
+  @override
+  String get settingsUiFontScale => '글자 크기 배율';
+
+  @override
+  String get settingsUiFontScaleNote =>
+      '트리·탭·도구 막대 같은 칸 크기는 그대로 두고 글자만 커지거나 작아집니다.';
 
   @override
   String get settingsSectionTerminal => '터미널';

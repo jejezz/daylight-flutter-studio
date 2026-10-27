@@ -1136,6 +1136,12 @@ abstract class AppLocalizations {
   /// **'슬레이트'**
   String get settingsPaletteSlate;
 
+  /// No description provided for @settingsPaletteHighContrast.
+  ///
+  /// In ko, this message translates to:
+  /// **'고대비'**
+  String get settingsPaletteHighContrast;
+
   /// No description provided for @settingsBrightness.
   ///
   /// In ko, this message translates to:
@@ -1909,6 +1915,30 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'미리보기'**
   String get settingsPreview;
+
+  /// No description provided for @settingsUiFont.
+  ///
+  /// In ko, this message translates to:
+  /// **'UI 글꼴'**
+  String get settingsUiFont;
+
+  /// No description provided for @settingsUiFontMissing.
+  ///
+  /// In ko, this message translates to:
+  /// **'이 글꼴은 이 컴퓨터에 설치되어 있지 않은 것 같습니다. 기본 글꼴로 보입니다.'**
+  String get settingsUiFontMissing;
+
+  /// No description provided for @settingsUiFontScale.
+  ///
+  /// In ko, this message translates to:
+  /// **'글자 크기 배율'**
+  String get settingsUiFontScale;
+
+  /// No description provided for @settingsUiFontScaleNote.
+  ///
+  /// In ko, this message translates to:
+  /// **'트리·탭·도구 막대 같은 칸 크기는 그대로 두고 글자만 커지거나 작아집니다.'**
+  String get settingsUiFontScaleNote;
 
   /// No description provided for @settingsSectionTerminal.
   ///

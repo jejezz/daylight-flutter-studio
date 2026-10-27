@@ -13,14 +13,16 @@ import 'package:flutter/material.dart';
 import 'studio_icons.dart';
 import 'syntax_theme.dart';
 
-/// 고를 수 있는 색 구성. 기본 [saturn]은 규약 팔레트 그대로이고,
-/// 나머지는 주색만 바꾼다 (다크용·라이트용 한 쌍).
+/// 고를 수 있는 색 구성. 기본 [saturn]은 규약 팔레트 그대로이고, [highContrast] 전을 뺀 나머지는 주색만
+/// 바꾼다(다크용·라이트용 한 쌍). [highContrast]는 주색만이 아니라 배경·글자·테두리 전부를 최대 대비로
+/// 바꾼 완전히 다른 ColorScheme이라 [apply]를 거치지 않고 [_HighContrastTheme]이 따로 만든다.
 enum StudioPalette {
   saturn(Color(0xFF4C9DFF), Color(0xFF2C6BE0)),
   teal(Color(0xFF2DD4BF), Color(0xFF0F766E)),
   amber(Color(0xFFFBBF24), Color(0xFFB45309)),
   rose(Color(0xFFFB7185), Color(0xFFBE123C)),
-  slate(Color(0xFF94A3B8), Color(0xFF475569));
+  slate(Color(0xFF94A3B8), Color(0xFF475569)),
+  highContrast(Color(0xFFFFD60A), Color(0xFF0000CC));
 
   const StudioPalette(this.darkPrimary, this.lightPrimary);
 
@@ -29,9 +31,9 @@ enum StudioPalette {
 
   Color primaryFor(Brightness b) => b == Brightness.dark ? darkPrimary : lightPrimary;
 
-  /// 규약 ColorScheme에 이 색 구성의 주색을 입힌다. [saturn]은 그대로 둔다.
+  /// 규약 ColorScheme에 이 색 구성의 주색을 입힌다. [saturn]·[highContrast]는 그대로 둔다.
   ColorScheme apply(ColorScheme scheme) {
-    if (this == saturn) return scheme;
+    if (this == saturn || this == highContrast) return scheme;
     final dark = scheme.brightness == Brightness.dark;
     return scheme.copyWith(
       primary: dark ? darkPrimary : lightPrimary,
@@ -283,7 +285,13 @@ extension StudioTheme on BuildContext {
 }
 
 abstract final class _SaturnTheme {
-  static ThemeData dark(StudioPalette palette, {bool dense = true}) => _base(
+  static ThemeData dark(
+    StudioPalette palette, {
+    bool dense = true,
+    required String uiFontFamily,
+    required List<String> uiFontFallback,
+    required double uiFontScale,
+  }) => _base(
     palette.apply(
       const ColorScheme(
         brightness: Brightness.dark,
@@ -313,9 +321,18 @@ abstract final class _SaturnTheme {
     background: AppColors.bg,
     textLow: AppColors.textLow,
     dense: dense,
+    uiFontFamily: uiFontFamily,
+    uiFontFallback: uiFontFallback,
+    uiFontScale: uiFontScale,
   );
 
-  static ThemeData light(StudioPalette palette, {bool dense = true}) => _base(
+  static ThemeData light(
+    StudioPalette palette, {
+    bool dense = true,
+    required String uiFontFamily,
+    required List<String> uiFontFallback,
+    required double uiFontScale,
+  }) => _base(
     palette.apply(
       const ColorScheme(
         brightness: Brightness.light,
@@ -345,25 +362,34 @@ abstract final class _SaturnTheme {
     background: AppColors.bgLight,
     textLow: AppColors.textLowLight,
     dense: dense,
+    uiFontFamily: uiFontFamily,
+    uiFontFallback: uiFontFallback,
+    uiFontScale: uiFontScale,
   );
 
   /// [dense]: 데스크톱 밀도(본문 13)와 모바일 밀도(본문 15), ui-ux.md §4.
+  /// [uiFontScale]은 글자 크기에만 곱한다 — 트리 행 높이·탭 높이·도구 막대 등 칸 크기는 그대로 둔다
+  /// (`ThemeController.minUiFontScale`~`maxUiFontScale` 안에서는 칸에 넉넉히 들어간다).
   static ThemeData _base(
     ColorScheme scheme, {
     required Color background,
     required Color textLow,
     required bool dense,
+    required String uiFontFamily,
+    required List<String> uiFontFallback,
+    required double uiFontScale,
   }) {
     final hi = scheme.onSurface;
     final mid = scheme.onSurfaceVariant;
-    final body = dense ? 13.0 : 15.0;
-    final small = dense ? 11.5 : 13.0;
+    final body = (dense ? 13.0 : 15.0) * uiFontScale;
+    final small = (dense ? 11.5 : 13.0) * uiFontScale;
     const buttonShape = RoundedRectangleBorder(
       borderRadius: BorderRadius.all(Radius.circular(AppRadius.button)),
     );
     final buttonSize = Size(0, dense ? 36 : 44);
     final buttonText = TextStyle(
-      fontFamily: AppFonts.family,
+      fontFamily: uiFontFamily,
+      fontFamilyFallback: uiFontFallback,
       fontSize: body,
       fontWeight: FontWeight.w700,
     );
@@ -371,24 +397,24 @@ abstract final class _SaturnTheme {
     return ThemeData(
       useMaterial3: true,
       colorScheme: scheme,
-      fontFamily: AppFonts.family,
-      fontFamilyFallback: AppFonts.fallback,
+      fontFamily: uiFontFamily,
+      fontFamilyFallback: uiFontFallback,
       scaffoldBackgroundColor: background,
       canvasColor: background,
       splashFactory: InkSparkle.splashFactory,
       textTheme: TextTheme(
         headlineMedium: TextStyle(
-          fontSize: dense ? 20 : 34,
+          fontSize: (dense ? 20 : 34) * uiFontScale,
           fontWeight: FontWeight.w800,
           color: hi,
         ),
         titleLarge: TextStyle(
-          fontSize: dense ? 16 : 20,
+          fontSize: (dense ? 16 : 20) * uiFontScale,
           fontWeight: FontWeight.w700,
           color: hi,
         ),
         titleMedium: TextStyle(
-          fontSize: dense ? 14 : 17,
+          fontSize: (dense ? 14 : 17) * uiFontScale,
           fontWeight: FontWeight.w700,
           color: hi,
         ),
@@ -421,8 +447,9 @@ abstract final class _SaturnTheme {
         toolbarHeight: dense ? 44 : kToolbarHeight,
         foregroundColor: hi,
         titleTextStyle: TextStyle(
-          fontFamily: AppFonts.family,
-          fontSize: dense ? 16 : 20,
+          fontFamily: uiFontFamily,
+          fontFamilyFallback: uiFontFallback,
+          fontSize: (dense ? 16 : 20) * uiFontScale,
           fontWeight: FontWeight.w700,
           color: hi,
         ),
@@ -506,7 +533,8 @@ abstract final class _SaturnTheme {
       snackBarTheme: SnackBarThemeData(
         backgroundColor: scheme.surfaceContainerHighest,
         contentTextStyle: TextStyle(
-          fontFamily: AppFonts.family,
+          fontFamily: uiFontFamily,
+          fontFamilyFallback: uiFontFallback,
           fontSize: body,
           color: hi,
         ),
@@ -525,12 +553,124 @@ abstract final class _SaturnTheme {
   }
 }
 
+/// [StudioPalette.highContrast] 전용 색. 주색은 [StudioPalette.highContrast]의 것을 그대로 쓴다.
+abstract final class _HighContrastColors {
+  // Dark: 순흑 배경.
+  static const dimDark = Color(0xFFBFBFBF);
+  static const surfaceHiDark = Color(0xFF262626);
+  static const errorDark = Color(0xFFFF6B6B);
+
+  // Light: 순백 배경.
+  static const dimLight = Color(0xFF404040);
+  static const surfaceHiLight = Color(0xFFE0E0E0);
+  static const errorLight = Color(0xFFCC0000);
+}
+
+/// 고대비 테마: [_SaturnTheme]처럼 주색만 바꾸는 게 아니라 배경·글자·테두리를 순흑/순백 최대 대비로 바꾼다
+/// (Windows 고대비 테마와 같은 생각). 반투명 테두리(`AppColors.stroke` 등)도 꽉 찬 색으로 바꾼다.
+abstract final class _HighContrastTheme {
+  static ThemeData dark({
+    required String uiFontFamily,
+    required List<String> uiFontFallback,
+    required double uiFontScale,
+  }) => _SaturnTheme._base(
+    ColorScheme(
+      brightness: Brightness.dark,
+      primary: StudioPalette.highContrast.darkPrimary,
+      onPrimary: Colors.black,
+      secondary: StudioPalette.highContrast.darkPrimary,
+      onSecondary: Colors.black,
+      error: _HighContrastColors.errorDark,
+      onError: Colors.black,
+      surface: Colors.black,
+      onSurface: Colors.white,
+      onSurfaceVariant: _HighContrastColors.dimDark,
+      surfaceContainerHighest: _HighContrastColors.surfaceHiDark,
+      surfaceContainerHigh: _HighContrastColors.surfaceHiDark,
+      surfaceContainer: Colors.black,
+      surfaceContainerLow: Colors.black,
+      surfaceContainerLowest: Colors.black,
+      outline: Colors.white,
+      outlineVariant: _HighContrastColors.dimDark,
+      inverseSurface: Colors.white,
+      onInverseSurface: Colors.black,
+      inversePrimary: StudioPalette.highContrast.lightPrimary,
+      shadow: Colors.black,
+      scrim: Colors.black,
+    ),
+    background: Colors.black,
+    textLow: _HighContrastColors.dimDark,
+    dense: true,
+    uiFontFamily: uiFontFamily,
+    uiFontFallback: uiFontFallback,
+    uiFontScale: uiFontScale,
+  );
+
+  static ThemeData light({
+    required String uiFontFamily,
+    required List<String> uiFontFallback,
+    required double uiFontScale,
+  }) => _SaturnTheme._base(
+    ColorScheme(
+      brightness: Brightness.light,
+      primary: StudioPalette.highContrast.lightPrimary,
+      onPrimary: Colors.white,
+      secondary: StudioPalette.highContrast.lightPrimary,
+      onSecondary: Colors.white,
+      error: _HighContrastColors.errorLight,
+      onError: Colors.white,
+      surface: Colors.white,
+      onSurface: Colors.black,
+      onSurfaceVariant: _HighContrastColors.dimLight,
+      surfaceContainerHighest: _HighContrastColors.surfaceHiLight,
+      surfaceContainerHigh: _HighContrastColors.surfaceHiLight,
+      surfaceContainer: Colors.white,
+      surfaceContainerLow: Colors.white,
+      surfaceContainerLowest: Colors.white,
+      outline: Colors.black,
+      outlineVariant: _HighContrastColors.dimLight,
+      inverseSurface: Colors.black,
+      onInverseSurface: Colors.white,
+      inversePrimary: StudioPalette.highContrast.darkPrimary,
+      shadow: Colors.black,
+      scrim: Colors.black,
+    ),
+    background: Colors.white,
+    textLow: _HighContrastColors.dimLight,
+    dense: true,
+    uiFontFamily: uiFontFamily,
+    uiFontFallback: uiFontFallback,
+    uiFontScale: uiFontScale,
+  );
+}
+
 abstract final class AppTheme {
+  static const defaultUiFontScale = 1.0;
+  static const minUiFontScale = 0.85;
+  static const maxUiFontScale = 1.25;
+
   /// [palette]·[brightness]에 맞는 전체 테마. 컨트롤 모양은 여기서 한곳에 모아 정한다.
-  static ThemeData build(StudioPalette palette, Brightness brightness, {StudioIconSet iconSet = StudioIconSet.rounded}) {
-    final saturn = brightness == Brightness.dark
-        ? _SaturnTheme.dark(palette)
-        : _SaturnTheme.light(palette);
+  /// [uiFontFamily]가 없으면(기본값) 앱 기본 글꼴을 쓴다. [uiFontScale]은 [minUiFontScale]~[maxUiFontScale]로 맞춘다.
+  static ThemeData build(
+    StudioPalette palette,
+    Brightness brightness, {
+    StudioIconSet iconSet = StudioIconSet.rounded,
+    String? uiFontFamily,
+    double uiFontScale = defaultUiFontScale,
+  }) {
+    final family = uiFontFamily?.trim();
+    final resolvedFamily = family == null || family.isEmpty ? AppFonts.family : family;
+    // 고른 글꼴에 없는 글리프는 기본 글꼴이, 한글은 OS 한글 글꼴이 채운다.
+    final resolvedFallback = resolvedFamily == AppFonts.family ? AppFonts.fallback : [AppFonts.family, ...AppFonts.fallback];
+    final scale = uiFontScale.clamp(minUiFontScale, maxUiFontScale);
+    final highContrast = palette == StudioPalette.highContrast;
+    final saturn = highContrast
+        ? (brightness == Brightness.dark
+              ? _HighContrastTheme.dark(uiFontFamily: resolvedFamily, uiFontFallback: resolvedFallback, uiFontScale: scale)
+              : _HighContrastTheme.light(uiFontFamily: resolvedFamily, uiFontFallback: resolvedFallback, uiFontScale: scale))
+        : (brightness == Brightness.dark
+              ? _SaturnTheme.dark(palette, uiFontFamily: resolvedFamily, uiFontFallback: resolvedFallback, uiFontScale: scale)
+              : _SaturnTheme.light(palette, uiFontFamily: resolvedFamily, uiFontFallback: resolvedFallback, uiFontScale: scale));
     final scheme = saturn.colorScheme;
     final tokens = StudioTokens.forBrightness(brightness, iconSet: iconSet);
     final shape = RoundedRectangleBorder(
@@ -538,7 +678,7 @@ abstract final class AppTheme {
     );
     return saturn.copyWith(
       visualDensity: VisualDensity.compact,
-      extensions: [tokens, SyntaxTokens.forBrightness(brightness)],
+      extensions: [tokens, highContrast ? SyntaxTokens.highContrast(brightness) : SyntaxTokens.forBrightness(brightness)],
       tabBarTheme: TabBarThemeData(
         labelColor: scheme.primary,
         unselectedLabelColor: scheme.onSurfaceVariant,

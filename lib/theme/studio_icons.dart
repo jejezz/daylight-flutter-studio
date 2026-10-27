@@ -150,4 +150,5 @@ class StudioIcons {
   IconData get bolt => _pick(Icons.bolt, Icons.bolt_outlined, Icons.bolt_rounded);
   IconData get arrowDropDown => _pick(Icons.arrow_drop_down, Icons.arrow_drop_down_outlined, Icons.arrow_drop_down_rounded);
   IconData get history => _pick(Icons.history, Icons.history_outlined, Icons.history_rounded);
+  IconData get contrast => _pick(Icons.contrast, Icons.contrast, Icons.contrast);
 }

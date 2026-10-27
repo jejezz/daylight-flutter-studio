@@ -592,6 +592,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsPaletteSlate => 'Slate';
 
   @override
+  String get settingsPaletteHighContrast => 'High contrast';
+
+  @override
   String get settingsBrightness => 'Brightness';
 
   @override
@@ -1048,6 +1051,20 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsPreview => 'Preview';
+
+  @override
+  String get settingsUiFont => 'UI font';
+
+  @override
+  String get settingsUiFontMissing =>
+      'This font doesn\'t seem to be installed on this computer. The default font is shown instead.';
+
+  @override
+  String get settingsUiFontScale => 'Font size scale';
+
+  @override
+  String get settingsUiFontScaleNote =>
+      'Rows, tabs and toolbars keep their size — only the text grows or shrinks.';
 
   @override
   String get settingsSectionTerminal => 'Terminal';
