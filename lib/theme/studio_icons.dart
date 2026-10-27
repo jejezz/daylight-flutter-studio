@@ -51,6 +51,9 @@ class StudioIcons {
   IconData get textFields => _pick(Icons.text_fields, Icons.text_fields_outlined, Icons.text_fields_rounded);
   IconData get restartAlt => _pick(Icons.restart_alt, Icons.restart_alt_outlined, Icons.restart_alt_rounded);
   IconData get reportProblem => _pick(Icons.report_problem, Icons.report_problem_outlined, Icons.report_problem_rounded);
+  IconData get image => _pick(Icons.image, Icons.image_outlined, Icons.image_rounded);
+  IconData get dataObject => _pick(Icons.data_object, Icons.data_object_outlined, Icons.data_object_rounded);
+  IconData get article => _pick(Icons.article, Icons.article_outlined, Icons.article_rounded);
   IconData get insertDriveFile => _pick(Icons.insert_drive_file, Icons.insert_drive_file_outlined, Icons.insert_drive_file_rounded);
   IconData get copy => _pick(Icons.copy, Icons.copy_outlined, Icons.copy_rounded);
   IconData get code => _pick(Icons.code, Icons.code_outlined, Icons.code_rounded);

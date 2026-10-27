@@ -2,7 +2,9 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 
+import '../studio/file_kind.dart';
 import '../theme/app_theme.dart';
+import '../theme/file_icons.dart';
 
 /// 폴더를 펼칠 때 내용을 읽는 파일 트리.
 class FileTree extends StatelessWidget {
@@ -163,6 +165,7 @@ class _FileRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final fileIcon = context.fileIcon(fileKindOf(path));
     return InkWell(
       onTap: onTap,
       child: Container(
@@ -170,7 +173,7 @@ class _FileRow extends StatelessWidget {
         padding: EdgeInsets.fromLTRB(8.0 + depth * 14 + 18, 3, 8, 3),
         child: Row(
           children: [
-            Icon(context.icons.insertDriveFile, size: 15),
+            Icon(fileIcon.icon, size: 15, color: fileIcon.color),
             const SizedBox(width: 6),
             Expanded(child: Text(_baseName(path), overflow: TextOverflow.ellipsis)),
           ],

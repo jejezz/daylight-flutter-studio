@@ -1,6 +1,6 @@
 # 구현된 것
 
-기준: 2026-10-27, 로컬 `main`. `flutter analyze` 새 문제 없음, 테스트 487개 통과
+기준: 2026-10-27, 로컬 `main`. `flutter analyze` 새 문제 없음, 테스트 494개 통과
 (`test/branchdock/`·`test/verify_gate_controller_test.dart`의 실제 git 테스트 몇 개는 전체를 한꺼번에 돌리면 Windows 파일 잠금으로
 간간이 실패한다 — 알려진 한계, 따로 돌리면 통과한다).
 앞으로 할 일은 [PLAN.md](../PLAN.md)에 있다. 이 문서는 **이미 만들어진 것**과 그 구조·작업 방식을 적는다.
@@ -127,6 +127,7 @@ Material 쪽은 단축키를 글자로만 보여 준다(이미 화면에 바인�
 - **색 구성** 6가지: 새턴·청록·호박·장미·슬레이트는 규약 ColorScheme의 주색만 바꾸고(`StudioPalette.apply`), **고대비**는
   배경·글자·테두리 전부를 순흑/순백 최대 대비로 바꾼 완전히 다른 ColorScheme이다(`_HighContrastTheme`). 구문 강조 색도
   고대비 전용(`SyntaxTokens.highContrast`)이다. 밝기(라이트/다크/시스템)는 색 구성과 상관없이 그대로 고른다.
+- **파일 종류별 아이콘**: 파일 트리가 Dart·pubspec·설정·YAML·JSON·문서·그림·마크업·다른 언어 소스·스크립트·설정/잠금 파일마다 다른 아이콘을 쓴다. 종류는 이름·확장자만 보고 정하고(`lib/studio/file_kind.dart`), 모양은 현재 아이콘 세트(`context.icons`)에서, 색은 현재 테마의 구문 강조 색(`SyntaxTokens`)에서 가져와(`lib/theme/file_icons.dart`) 아이콘 모양·색 구성(고대비 포함)을 바꾸면 함께 바뀐다. 끄는 설정은 없다. 편집기 탭·빠른 열기에는 아직 쓰지 않는다.
 - **UI 글꼴**: 이름(설치된 글꼴 중 고르거나 직접 적음, 비우면 기본 SeoulNamsan)과 크기 배율(85~125%, `AppTheme.minUiFontScale`~`maxUiFontScale`). 트리·탭·메뉴·단추 등 화면 전체 글자 크기에 배율이 곱해지지만 칸 크기(행 높이·탭
   높이·도구 막대 높이)는 그대로 둔다 — 배율 범위를 넓지 않게 둔 것도 그래서다. 편집기 글꼴·배율은 따로 설정한다
   (`EditorSettings`·`EditorZoom`) — 아직 "편집기와 같이 쓰기"는 없다(터미널 글꼴에는 있다).
