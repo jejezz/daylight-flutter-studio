@@ -1,4 +1,4 @@
-import 'package:daylight_flutter_studio/branchdock/core/vscode.dart';
+import 'package:daylight_workbench/branchdock/core/vscode.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

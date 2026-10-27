@@ -1,5 +1,5 @@
-import 'package:daylight_flutter_studio/verify/verify_state.dart';
-import 'package:daylight_flutter_studio/verify/verify_store.dart';
+import 'package:daylight_workbench/verify/verify_state.dart';
+import 'package:daylight_workbench/verify/verify_store.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 VerifyRecord _rec(String sha, VerifyStatus status, {String branch = 'feat', int minute = 0}) => VerifyRecord(

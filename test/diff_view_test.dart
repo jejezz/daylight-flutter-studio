@@ -1,15 +1,15 @@
 import 'dart:io';
 
-import 'package:daylight_flutter_studio/l10n/app_localizations.dart';
-import 'package:daylight_flutter_studio/core/command_log.dart';
-import 'package:daylight_flutter_studio/core/command_runner.dart';
-import 'package:daylight_flutter_studio/studio/git_base.dart';
-import 'package:daylight_flutter_studio/studio/studio_controller.dart';
-import 'package:daylight_flutter_studio/theme/app_theme.dart';
-import 'package:daylight_flutter_studio/ui/change_gutter.dart';
-import 'package:daylight_flutter_studio/ui/compare_dialog.dart';
-import 'package:daylight_flutter_studio/ui/diff_view.dart';
-import 'package:daylight_flutter_studio/ui/editor_pane.dart';
+import 'package:daylight_workbench/l10n/app_localizations.dart';
+import 'package:daylight_workbench/core/command_log.dart';
+import 'package:daylight_workbench/core/command_runner.dart';
+import 'package:daylight_workbench/studio/git_base.dart';
+import 'package:daylight_workbench/studio/studio_controller.dart';
+import 'package:daylight_workbench/theme/app_theme.dart';
+import 'package:daylight_workbench/ui/change_gutter.dart';
+import 'package:daylight_workbench/ui/compare_dialog.dart';
+import 'package:daylight_workbench/ui/diff_view.dart';
+import 'package:daylight_workbench/ui/editor_pane.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';

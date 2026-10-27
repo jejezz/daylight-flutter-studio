@@ -1,13 +1,13 @@
 import 'dart:io';
 
-import 'package:daylight_flutter_studio/branchdock/git/commands.dart';
-import 'package:daylight_flutter_studio/branchdock/git/commits.dart';
-import 'package:daylight_flutter_studio/branchdock/git/status.dart';
-import 'package:daylight_flutter_studio/branchdock/git/tags.dart';
-import 'package:daylight_flutter_studio/branchdock/github/models.dart';
-import 'package:daylight_flutter_studio/branchdock/release/release_flow.dart';
-import 'package:daylight_flutter_studio/branchdock/release/repo_release_info.dart';
-import 'package:daylight_flutter_studio/branchdock/release/version_files.dart';
+import 'package:daylight_workbench/branchdock/git/commands.dart';
+import 'package:daylight_workbench/branchdock/git/commits.dart';
+import 'package:daylight_workbench/branchdock/git/status.dart';
+import 'package:daylight_workbench/branchdock/git/tags.dart';
+import 'package:daylight_workbench/branchdock/github/models.dart';
+import 'package:daylight_workbench/branchdock/release/release_flow.dart';
+import 'package:daylight_workbench/branchdock/release/repo_release_info.dart';
+import 'package:daylight_workbench/branchdock/release/version_files.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'support.dart';
 

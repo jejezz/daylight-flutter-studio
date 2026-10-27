@@ -180,7 +180,7 @@ macOS 앱 샌드박스는 **꺼져 있다**(폴더 선택·git·flutter 실행�
 
 ## 다른 PC에서 시작하기
 
-- 원격: `https://github.com/jejezz/daylight-flutter-studio.git` (공개). 필요한 것: Flutter 3.47(Dart 3.13), git, `dart`·`flutter`가 PATH에 있을 것, GitHub CLI `gh`(PR 기능, `gh auth login`).
+- 원격: `https://github.com/jejezz/daylight-workbench.git` (공개). 필요한 것: Flutter 3.47(Dart 3.13), git, `dart`·`flutter`가 PATH에 있을 것, GitHub CLI `gh`(PR 기능, `gh auth login`).
 - 시작: `flutter pub get` → `flutter analyze` → `flutter test` → Flutty Dock으로 빌드(또는 `flutter run -d windows`).
 - 코드 출처 앱은 이미 필요한 코드를 복사했으므로 다른 PC에 없어도 된다.
 
@@ -191,7 +191,6 @@ macOS 앱 샌드박스는 **꺼져 있다**(폴더 선택·git·flutter 실행�
 - 프로젝트 바꾸기는 줄 단위뿐이다(여러 줄에 걸친 패턴은 못 바꾼다). 되돌리기 기록은 검색창을 닫으면 사라진다. 수정 중인 탭이 열린 파일을 건너뛰는 것을 직접 눈으로(Flutty Dock 빌드) 확인하지는 않았다(컨트롤러 단위·위젯 테스트만).
 - macOS 메뉴는 코드와 변환 테스트만 있고 실제 Mac에서는 확인하지 않았다. (편집 메뉴의 찾기·바꾸기는 탭이 들고 있는 찾기 제어를 직접 불러서 포커스와 상관없이 동작한다.)
 - 파일 끌어다 놓기는 컨트롤러 동작만 테스트했다(실제 OS에서 끄는 동작은 직접 확인 필요).
-- 앱 이름에 "Flutter"가 들어 있어 공개 배포 전에 다시 정해야 한다(Flutter 상표).
 - 터미널 패널은 Windows/macOS에서 실제 셸로 직접 켜 보고 확인하지 않았다(네이티브 flutter_pty 빌드가 필요해 Flutty Dock으로 빌드해야 한다). 탐색기·파일 끌어놓기, 로그 기록, ANSI 제거 같은 daylight-terminal-flutter의 기능은 가져오지 않았다.
 - 고대비·UI 글꼴 배율은 설정 화면을 직접 켜서 확인했다(선택된 구역 글자가 묻히던 문제를 찾아 고쳤다). 다만 트리·
   Branch Dock 화면까지 고대비·85~125% 배율로 눈으로 다 훑어보지는 않았다.

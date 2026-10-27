@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:daylight_flutter_studio/core/command_runner.dart';
+import 'package:daylight_workbench/core/command_runner.dart';
 
 void main() {
   test('UTF-8 출력은 그대로 읽는다', () {

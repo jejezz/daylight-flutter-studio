@@ -1,5 +1,5 @@
-import 'package:daylight_flutter_studio/terminal/local_shell.dart';
-import 'package:daylight_flutter_studio/terminal/terminal_sessions_controller.dart';
+import 'package:daylight_workbench/terminal/local_shell.dart';
+import 'package:daylight_workbench/terminal/terminal_sessions_controller.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'helpers/fake_pty.dart';

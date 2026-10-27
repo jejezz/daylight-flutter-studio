@@ -1,5 +1,5 @@
-import 'package:daylight_flutter_studio/studio/dart_chunk_analyzer.dart';
-import 'package:daylight_flutter_studio/studio/fold_plan.dart';
+import 'package:daylight_workbench/studio/dart_chunk_analyzer.dart';
+import 'package:daylight_workbench/studio/fold_plan.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:re_editor/re_editor.dart';
 

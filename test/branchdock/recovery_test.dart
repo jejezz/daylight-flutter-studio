@@ -2,17 +2,17 @@
 
 import 'dart:io';
 
-import 'package:daylight_flutter_studio/branchdock/core/command_log.dart';
-import 'package:daylight_flutter_studio/branchdock/core/command_runner.dart';
-import 'package:daylight_flutter_studio/branchdock/git/commands.dart';
-import 'package:daylight_flutter_studio/branchdock/git/error_hints.dart';
-import 'package:daylight_flutter_studio/branchdock/git/reflog.dart';
-import 'package:daylight_flutter_studio/branchdock/repo/repo_controller.dart';
-import 'package:daylight_flutter_studio/branchdock/l10n/app_localizations.dart';
-import 'package:daylight_flutter_studio/branchdock/repo/repo_prefs.dart';
-import 'package:daylight_flutter_studio/branchdock/theme/app_theme.dart';
-import 'package:daylight_flutter_studio/branchdock/ui/recovery_sheet.dart';
-import 'package:daylight_flutter_studio/branchdock/ui/services.dart';
+import 'package:daylight_workbench/branchdock/core/command_log.dart';
+import 'package:daylight_workbench/branchdock/core/command_runner.dart';
+import 'package:daylight_workbench/branchdock/git/commands.dart';
+import 'package:daylight_workbench/branchdock/git/error_hints.dart';
+import 'package:daylight_workbench/branchdock/git/reflog.dart';
+import 'package:daylight_workbench/branchdock/repo/repo_controller.dart';
+import 'package:daylight_workbench/branchdock/l10n/app_localizations.dart';
+import 'package:daylight_workbench/branchdock/repo/repo_prefs.dart';
+import 'package:daylight_workbench/branchdock/theme/app_theme.dart';
+import 'package:daylight_workbench/branchdock/ui/recovery_sheet.dart';
+import 'package:daylight_workbench/branchdock/ui/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';

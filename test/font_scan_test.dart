@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:daylight_flutter_studio/theme/font_scan.dart';
+import 'package:daylight_workbench/theme/font_scan.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 /// 글꼴 파일의 머리말과 `name`·`post` 표만 가진 아주 작은 TTF를 만든다 (설치된 글꼴에 기대지 않으려고).

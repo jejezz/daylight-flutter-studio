@@ -6,9 +6,9 @@
 
 abstract final class AppIdentity {
   /// 표시 이름. 번역하지 않는다 (conventions/localization.md §2).
-  static const displayName = 'Daylight Flutter Studio';
+  static const displayName = 'Daylight Workbench';
 
-  static const repositoryUrl = 'https://github.com/jejezz/daylight-flutter-studio';
+  static const repositoryUrl = 'https://github.com/jejezz/daylight-workbench';
 
   static const copyrightHolder = 'Jongyun Ahn';
 

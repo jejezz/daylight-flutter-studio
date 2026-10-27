@@ -1,13 +1,13 @@
 import 'dart:io';
 
-import 'package:daylight_flutter_studio/core/command_log.dart';
-import 'package:daylight_flutter_studio/core/command_runner.dart';
-import 'package:daylight_flutter_studio/devices/device_service.dart';
-import 'package:daylight_flutter_studio/devices/mobile_device.dart';
-import 'package:daylight_flutter_studio/install/build_options.dart';
-import 'package:daylight_flutter_studio/install/install_plan.dart';
-import 'package:daylight_flutter_studio/run/run_controller.dart';
-import 'package:daylight_flutter_studio/verify/verify_store.dart';
+import 'package:daylight_workbench/core/command_log.dart';
+import 'package:daylight_workbench/core/command_runner.dart';
+import 'package:daylight_workbench/devices/device_service.dart';
+import 'package:daylight_workbench/devices/mobile_device.dart';
+import 'package:daylight_workbench/install/build_options.dart';
+import 'package:daylight_workbench/install/install_plan.dart';
+import 'package:daylight_workbench/run/run_controller.dart';
+import 'package:daylight_workbench/verify/verify_store.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

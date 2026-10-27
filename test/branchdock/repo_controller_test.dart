@@ -4,12 +4,12 @@
 
 import 'dart:io';
 
-import 'package:daylight_flutter_studio/branchdock/core/command_log.dart';
-import 'package:daylight_flutter_studio/branchdock/core/command_runner.dart';
-import 'package:daylight_flutter_studio/branchdock/git/commands.dart';
-import 'package:daylight_flutter_studio/branchdock/git/error_hints.dart';
-import 'package:daylight_flutter_studio/branchdock/repo/environment.dart';
-import 'package:daylight_flutter_studio/branchdock/repo/repo_controller.dart';
+import 'package:daylight_workbench/branchdock/core/command_log.dart';
+import 'package:daylight_workbench/branchdock/core/command_runner.dart';
+import 'package:daylight_workbench/branchdock/git/commands.dart';
+import 'package:daylight_workbench/branchdock/git/error_hints.dart';
+import 'package:daylight_workbench/branchdock/repo/environment.dart';
+import 'package:daylight_workbench/branchdock/repo/repo_controller.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'support.dart';
 

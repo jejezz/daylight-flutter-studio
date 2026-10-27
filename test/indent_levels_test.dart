@@ -1,4 +1,4 @@
-import 'package:daylight_flutter_studio/studio/indent_levels.dart';
+import 'package:daylight_workbench/studio/indent_levels.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

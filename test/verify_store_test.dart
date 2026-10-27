@@ -1,8 +1,8 @@
 import 'dart:io';
 
-import 'package:daylight_flutter_studio/core/command_log.dart';
-import 'package:daylight_flutter_studio/core/command_runner.dart';
-import 'package:daylight_flutter_studio/verify/verify_store.dart';
+import 'package:daylight_workbench/core/command_log.dart';
+import 'package:daylight_workbench/core/command_runner.dart';
+import 'package:daylight_workbench/verify/verify_store.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 Future<void> _git(String dir, List<String> args) async {

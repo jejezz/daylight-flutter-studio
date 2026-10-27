@@ -1,6 +1,6 @@
 import 'dart:math';
 
-import 'package:daylight_flutter_studio/diff/line_diff.dart';
+import 'package:daylight_workbench/diff/line_diff.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 List<String> _l(String s) => s.isEmpty ? <String>[] : s.split(',');

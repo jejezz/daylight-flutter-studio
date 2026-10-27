@@ -1,7 +1,7 @@
 import 'dart:io';
 
-import 'package:daylight_flutter_studio/studio/studio_controller.dart';
-import 'package:daylight_flutter_studio/studio/worktree.dart';
+import 'package:daylight_workbench/studio/studio_controller.dart';
+import 'package:daylight_workbench/studio/worktree.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

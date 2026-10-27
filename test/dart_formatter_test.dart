@@ -1,8 +1,8 @@
 import 'dart:io';
 
-import 'package:daylight_flutter_studio/core/command_log.dart';
-import 'package:daylight_flutter_studio/core/command_runner.dart';
-import 'package:daylight_flutter_studio/studio/dart_formatter.dart';
+import 'package:daylight_workbench/core/command_log.dart';
+import 'package:daylight_workbench/core/command_runner.dart';
+import 'package:daylight_workbench/studio/dart_formatter.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

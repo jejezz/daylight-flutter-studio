@@ -32,7 +32,6 @@ Android Studio처럼 테마를 바꾸면 아이콘과 글꼴이 함께 바뀌고
 
 - 업데이트 확인(`lib/update`): 서버가 정해지면 conventions-v1대로 넣는다.
 - README 스크린샷·GIF(`tool/readme/capture.sh`)를 현재 화면(Branch Dock Git 패널, Run 도구 막대, 메뉴 막대)으로 다시 찍는다.
-- **앱 이름의 "Flutter"**: 공개 배포 전에 이름을 다시 정한다(Flutter 상표). 이름을 바꾸면 패키지명·식별자·릴리스 워크플로·문서를 함께 고친다.
 
 ## 이 앱 밖
 
