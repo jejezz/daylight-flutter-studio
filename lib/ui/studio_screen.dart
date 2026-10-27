@@ -10,6 +10,7 @@ import 'package:window_manager/window_manager.dart';
 
 import '../core/command_log.dart';
 import '../core/command_runner.dart';
+import '../dev/demo_runner.dart';
 import '../devices/device_service.dart';
 import '../verify/verify_gate_controller.dart';
 import '../run/run_controller.dart';
@@ -116,6 +117,7 @@ class _StudioScreenState extends State<StudioScreen>
     _layout.restore();
     _terminalSettings.restore();
     unawaited(_terminal.loadShells());
+    unawaited(runDemoIfRequested(studio: _controller, run: _run, runner: _runner));
     _env.onToolPathsChanged = () => _run.refreshDevices();
     // clean + pub get이 끝나면 패키지 정보가 새로 생겼으니 문제 탭도 바로 다시 분석한다.
     _run.onCleaned = _problems.refresh;

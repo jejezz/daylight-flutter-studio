@@ -25,7 +25,7 @@
 </p>
 
 <p align="center">
-  <img src="docs/screenshots/demo.gif" width="720" alt="Daylight Workbench 데모: 파일 수정, Git 패널 반영, 커밋">
+  <img src="docs/screenshots/demo.gif" width="720" alt="Daylight Workbench 데모: 파일 수정, 저장, 커밋, 검증 기록">
 </p>
 
 ## 기능

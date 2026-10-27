@@ -25,7 +25,7 @@
 </p>
 
 <p align="center">
-  <img src="docs/screenshots/demo.gif" width="720" alt="Daylight Workbench demo: edit a file, see it in the Git panel, commit">
+  <img src="docs/screenshots/demo.gif" width="720" alt="Daylight Workbench demo: edit a file, save, commit, and record a verification">
 </p>
 
 ## Features
