@@ -194,4 +194,49 @@ void main() {
       expect(r.map((x) => x.newNo), [1, 2]);
     });
   });
+
+  group('intraLineDiff', () {
+    String cut(String text, List<(int, int)> ranges) => [for (final (s, e) in ranges) text.substring(s, e)].join('|');
+
+    test('바뀐 낱말만 골라낸다', () {
+      const a = 'final int count = 10;';
+      const b = 'final int total = 10;';
+      final d = intraLineDiff(a, b);
+      expect(cut(a, d.removed), 'count');
+      expect(cut(b, d.added), 'total');
+    });
+
+    test('끝에 덧붙인 글은 새 쪽에만 나온다', () {
+      const a = 'print(x);';
+      const b = 'print(x, y);';
+      final d = intraLineDiff(a, b);
+      expect(d.removed, isEmpty);
+      expect(cut(b, d.added), ', y');
+    });
+
+    test('한글 낱말도 낱말 단위로 센다', () {
+      const a = '저장 버튼을 누른다';
+      const b = '저장 단추를 누른다';
+      final d = intraLineDiff(a, b);
+      expect(cut(a, d.removed), '버튼을');
+      expect(cut(b, d.added), '단추를');
+    });
+
+    test('거의 다른 줄이나 같은 줄, 빈 줄은 표시하지 않는다', () {
+      expect(intraLineDiff('abcdef', 'uvwxyz').added, isEmpty);
+      expect(intraLineDiff('same', 'same').added, isEmpty);
+      expect(intraLineDiff('', 'new').added, isEmpty);
+    });
+
+    test('buildUnifiedRows가 지운 줄과 새 줄을 짝지어 범위를 싣는다', () {
+      final a = _l('x,let a = 1;,y');
+      final b = _l('x,let b = 1;,y');
+      final r = buildUnifiedRows(a, b, diffLines(a, b));
+      final removed = r.firstWhere((x) => x.kind == DiffRowKind.removed);
+      final added = r.firstWhere((x) => x.kind == DiffRowKind.added);
+      expect(cut(removed.text, removed.changed), 'a');
+      expect(cut(added.text, added.changed), 'b');
+      expect(r.where((x) => x.kind == DiffRowKind.context).every((x) => x.changed.isEmpty), isTrue);
+    });
+  });
 }

@@ -86,6 +86,19 @@ class EditorTab {
   /// 아직 커밋되지 않은 새 파일이다.
   bool baseIsNew = false;
 
+  /// 변경점 보기가 HEAD 대신 비교하는 기준(브랜치·태그·커밋). null이면 HEAD다. 줄 번호 옆 변경 표시는 늘 HEAD 기준이다.
+  String? compareRef;
+
+  /// [compareRef] 시점의 글. 그 시점에 파일이 없었으면 빈 목록이고 [compareIsNew]가 true다.
+  List<String>? compareLines;
+  bool compareIsNew = false;
+
+  /// 변경점 보기가 비교하는 기준 글.
+  List<String>? get diffBase => compareRef == null ? baseLines : compareLines;
+
+  /// 비교 기준에 이 파일이 없었다(HEAD 기준이면 아직 커밋 전의 새 파일).
+  bool get diffBaseIsNew => compareRef == null ? baseIsNew : compareIsNew;
+
   /// 줄 번호 옆에 그리는 변경 표시. 편집할 때마다(잠깐 멈춘 뒤) 다시 계산한다.
   final ValueNotifier<ChangeMarks> marks = ValueNotifier(ChangeMarks.empty);
 
@@ -125,13 +138,19 @@ class EditorTab {
 
 /// 열린 프로젝트(폴더), worktree 목록, 편집기 탭을 들고 있다.
 class StudioController extends ChangeNotifier {
-  StudioController({this.formatDart, this.readBase, this.onSaved, this.formatOnSave});
+  StudioController({this.formatDart, this.readBase, this.readRefBase, this.listCompareChoices, this.onSaved, this.formatOnSave});
 
   /// Dart 글을 정렬한다 (`dart format`). 없으면 정렬 기능을 쓸 수 없다.
   final Future<FormatResult> Function(String path, String text)? formatDart;
 
   /// 파일의 git HEAD 내용을 읽는다. 없으면 변경 표시와 변경점 보기를 쓸 수 없다.
   final Future<GitBase> Function(String path)? readBase;
+
+  /// 파일의 [ref] 시점 내용을 읽는다. 없으면 HEAD 말고는 비교할 수 없다.
+  final Future<GitBase> Function(String path, String ref)? readRefBase;
+
+  /// 비교 기준으로 고를 브랜치와 커밋을 읽는다.
+  final Future<CompareChoices> Function(String path)? listCompareChoices;
 
   /// 파일을 저장한 뒤 부른다 (Dart 문제를 다시 분석하는 데 쓴다).
   final void Function(String path)? onSaved;
@@ -326,8 +345,48 @@ class StudioController extends ChangeNotifier {
     tab.baseLines = base.available ? splitLines(base.text) : null;
     tab.baseIsNew = base.isNew;
     tab.recomputeMarks();
+    final ref = tab.compareRef;
+    if (ref != null && !await _readCompare(tab, ref) && !_disposed) {
+      // 비교하던 기준이 사라졌다(브랜치를 지웠다 등): HEAD로 되돌린다.
+      tab.compareRef = null;
+      tab.compareLines = null;
+      tab.compareIsNew = false;
+    }
     notifyListeners();
   }
+
+  /// 변경점 보기의 비교 기준을 [ref]로 바꾼다. null이거나 `HEAD`면 HEAD로 돌아간다.
+  /// 그 이름을 찾을 수 없으면 기준은 그대로 두고 false를 돌려준다.
+  Future<bool> setCompareRef(EditorTab tab, String? ref) async {
+    final name = ref?.trim();
+    if (name == null || name.isEmpty || name == 'HEAD') {
+      tab.compareRef = null;
+      tab.compareLines = null;
+      tab.compareIsNew = false;
+      notifyListeners();
+      return true;
+    }
+    final ok = await _readCompare(tab, name);
+    if (_disposed) return false;
+    if (!ok) message = CurrentL10n.value.messageCompareRefNotFound(name);
+    notifyListeners();
+    return ok;
+  }
+
+  Future<bool> _readCompare(EditorTab tab, String ref) async {
+    final read = readRefBase;
+    if (read == null) return false;
+    final base = await read(tab.path, ref);
+    if (_disposed || !tabs.contains(tab)) return false;
+    if (!base.available) return false;
+    tab.compareRef = ref;
+    tab.compareLines = splitLines(base.text);
+    tab.compareIsNew = base.isNew;
+    return true;
+  }
+
+  /// [tab] 파일이 있는 저장소에서 비교 기준으로 고를 수 있는 것들.
+  Future<CompareChoices> compareChoices(EditorTab tab) async => await listCompareChoices?.call(tab.path) ?? const CompareChoices();
 
   /// 열린 모든 탭의 기준을 다시 읽는다 (커밋·브랜치 전환·창 활성화 뒤).
   Future<void> refreshBases() => Future.wait([for (final t in List.of(tabs)) refreshBase(t)]);

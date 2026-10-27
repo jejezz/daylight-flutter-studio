@@ -1082,6 +1082,72 @@ abstract class AppLocalizations {
   /// **'새 파일 (아직 커밋되지 않음)'**
   String get diffNewFile;
 
+  /// No description provided for @diffAgainstRef.
+  ///
+  /// In ko, this message translates to:
+  /// **'비교 기준: {ref}'**
+  String diffAgainstRef(String ref);
+
+  /// No description provided for @diffSameAsRef.
+  ///
+  /// In ko, this message translates to:
+  /// **'비교 기준({ref})과 같습니다. 변경된 곳이 없습니다.'**
+  String diffSameAsRef(String ref);
+
+  /// No description provided for @diffNotInRef.
+  ///
+  /// In ko, this message translates to:
+  /// **'이 기준에는 없던 파일'**
+  String get diffNotInRef;
+
+  /// No description provided for @diffChangeBase.
+  ///
+  /// In ko, this message translates to:
+  /// **'비교 기준 바꾸기'**
+  String get diffChangeBase;
+
+  /// No description provided for @compareDialogTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'비교 기준 고르기'**
+  String get compareDialogTitle;
+
+  /// No description provided for @compareFieldHint.
+  ///
+  /// In ko, this message translates to:
+  /// **'브랜치, 태그, 커밋 이름'**
+  String get compareFieldHint;
+
+  /// No description provided for @compareUseHead.
+  ///
+  /// In ko, this message translates to:
+  /// **'HEAD (마지막 커밋)'**
+  String get compareUseHead;
+
+  /// No description provided for @compareBranches.
+  ///
+  /// In ko, this message translates to:
+  /// **'브랜치'**
+  String get compareBranches;
+
+  /// No description provided for @compareCommits.
+  ///
+  /// In ko, this message translates to:
+  /// **'최근 커밋'**
+  String get compareCommits;
+
+  /// No description provided for @compareApply.
+  ///
+  /// In ko, this message translates to:
+  /// **'비교'**
+  String get compareApply;
+
+  /// No description provided for @messageCompareRefNotFound.
+  ///
+  /// In ko, this message translates to:
+  /// **'\'{ref}\'을(를) 찾을 수 없습니다. 브랜치·태그·커밋 이름을 확인하세요.'**
+  String messageCompareRefNotFound(String ref);
+
   /// No description provided for @diffSameAsHead.
   ///
   /// In ko, this message translates to:

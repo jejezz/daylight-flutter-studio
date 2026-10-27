@@ -7,6 +7,7 @@ import 'package:daylight_flutter_studio/studio/git_base.dart';
 import 'package:daylight_flutter_studio/studio/studio_controller.dart';
 import 'package:daylight_flutter_studio/theme/app_theme.dart';
 import 'package:daylight_flutter_studio/ui/change_gutter.dart';
+import 'package:daylight_flutter_studio/ui/compare_dialog.dart';
 import 'package:daylight_flutter_studio/ui/diff_view.dart';
 import 'package:daylight_flutter_studio/ui/editor_pane.dart';
 import 'package:flutter/foundation.dart';
@@ -183,6 +184,144 @@ void main() {
     test('openDiff는 열 수 없는 파일이면 false를 돌려주고 탭을 만들지 않는다', () async {
       expect(await c.openDiff(_p(repo, 'missing.txt')), isFalse);
       expect(c.tabs, isEmpty);
+    });
+  });
+
+  group('다른 기준과 비교', () {
+    /// 첫 커밋(one,two,three) 뒤에 a.txt를 고치고 새 파일 c.txt를 더한 두 번째 커밋을 만든다.
+    Future<void> secondCommit() async {
+      File(_p(repo, 'a.txt')).writeAsStringSync('one\nTWO\nthree\n');
+      File(_p(repo, 'c.txt')).writeAsStringSync('only later\n');
+      await _git(repo.path, ['add', '-A']);
+      await _git(repo.path, ['commit', '-m', 'second']);
+    }
+
+    String lf(String s) => s.replaceAll('\r\n', '\n');
+
+    test('readAt은 그 시점의 내용을 돌려준다', () async {
+      await secondCommit();
+      final old = await reader.readAt(_p(repo, 'a.txt'), 'HEAD~1');
+      expect(old.available, isTrue);
+      expect(lf(old.text), 'one\ntwo\nthree\n');
+      final head = await reader.readAt(_p(repo, 'a.txt'), 'HEAD');
+      expect(lf(head.text), 'one\nTWO\nthree\n');
+    });
+
+    test('그 시점에 없던 파일은 새 파일처럼 빈 글이다', () async {
+      await secondCommit();
+      final base = await reader.readAt(_p(repo, 'c.txt'), 'HEAD~1');
+      expect(base.available, isTrue);
+      expect(base.isNew, isTrue);
+      expect(base.text, isEmpty);
+    });
+
+    test('브랜치와 태그 이름으로도 읽고, 없는 이름이나 옵션처럼 보이는 이름은 거절한다', () async {
+      await _git(repo.path, ['branch', 'topic']);
+      await _git(repo.path, ['tag', 'v0']);
+      await secondCommit();
+      expect(lf((await reader.readAt(_p(repo, 'a.txt'), 'topic')).text), 'one\ntwo\nthree\n');
+      expect(lf((await reader.readAt(_p(repo, 'a.txt'), 'v0')).text), 'one\ntwo\nthree\n');
+      expect((await reader.readAt(_p(repo, 'a.txt'), 'nope')).available, isFalse);
+      expect((await reader.readAt(_p(repo, 'a.txt'), '--help')).available, isFalse);
+    });
+
+    test('choices는 브랜치와 최근 커밋을 나열한다', () async {
+      await _git(repo.path, ['branch', 'topic']);
+      await secondCommit();
+      final choices = await reader.choices(_p(repo, 'a.txt'));
+      expect(choices.branches, containsAll(['main', 'topic']));
+      expect(choices.commits.map((c) => c.subject), ['second', 'first']);
+      expect(choices.commits.first.hash, isNotEmpty);
+    });
+
+    test('setCompareRef: 기준을 바꾸고, 없는 이름이면 그대로 두고 알리며, HEAD로 돌아간다', () async {
+      await secondCommit();
+      final c = StudioController(readBase: reader.read, readRefBase: reader.readAt);
+      addTearDown(c.dispose);
+      await c.openFile(_p(repo, 'a.txt'));
+      final tab = c.activeTab!;
+      await c.refreshBase(tab);
+      expect(tab.diffBase, tab.baseLines);
+
+      expect(await c.setCompareRef(tab, 'HEAD~1'), isTrue);
+      expect(tab.compareRef, 'HEAD~1');
+      expect(tab.diffBase, ['one', 'two', 'three']);
+      expect(tab.baseLines, ['one', 'TWO', 'three'], reason: '줄 번호 옆 변경 표시는 계속 HEAD 기준이다');
+
+      expect(await c.setCompareRef(tab, 'nope'), isFalse);
+      expect(tab.compareRef, 'HEAD~1', reason: '찾지 못하면 기준을 바꾸지 않는다');
+      expect(c.message, contains('nope'));
+
+      expect(await c.setCompareRef(tab, 'HEAD'), isTrue);
+      expect(tab.compareRef, isNull);
+      expect(tab.diffBase, tab.baseLines);
+    });
+
+    test('다시 읽을 때 사라진 기준은 HEAD로 되돌린다', () async {
+      await _git(repo.path, ['branch', 'temp']);
+      final c = StudioController(readBase: reader.read, readRefBase: reader.readAt);
+      addTearDown(c.dispose);
+      await c.openFile(_p(repo, 'a.txt'));
+      final tab = c.activeTab!;
+      await c.setCompareRef(tab, 'temp');
+      expect(tab.compareRef, 'temp');
+      await _git(repo.path, ['branch', '-D', 'temp']);
+      await c.refreshBase(tab);
+      expect(tab.compareRef, isNull);
+    });
+
+    testWidgets('변경점 보기 머리글이 비교 기준을 알려 주고 바꾸기 단추가 있다', (tester) async {
+      final c = StudioController(readBase: reader.read, readRefBase: reader.readAt);
+      addTearDown(c.dispose);
+      await tester.runAsync(() async {
+        await secondCommit();
+        await c.openFile(_p(repo, 'a.txt'));
+        await c.refreshBase(c.activeTab!);
+        await c.setCompareRef(c.activeTab!, 'HEAD~1');
+      });
+      await tester.pumpWidget(
+        MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          locale: const Locale('ko'),
+          theme: AppTheme.build(StudioPalette.saturn, Brightness.light),
+          home: Scaffold(body: DiffView(tab: c.activeTab!, controller: c)),
+        ),
+      );
+      await tester.pump();
+      expect(find.text('비교 기준: HEAD~1'), findsOneWidget);
+      expect(find.text('비교 기준 바꾸기'), findsOneWidget);
+      // 첫 커밋(two)과 지금(TWO)의 차이가 줄 단위로 보인다.
+      expect(find.text('two'), findsOneWidget);
+    });
+
+    testWidgets('비교 기준을 고르는 대화상자: 목록에서 고르면 그 이름을 돌려준다', (tester) async {
+      String? picked;
+      await tester.pumpWidget(
+        MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          locale: const Locale('ko'),
+          theme: AppTheme.build(StudioPalette.saturn, Brightness.light),
+          home: Builder(
+            builder: (context) => TextButton(
+              onPressed: () async => picked = await showCompareDialog(
+                context,
+                choices: Future.value(const CompareChoices(branches: ['main', 'topic'], commits: [(hash: 'abc1234', subject: '첫 커밋')])),
+              ),
+              child: const Text('열기'),
+            ),
+          ),
+        ),
+      );
+      await tester.tap(find.text('열기'));
+      await tester.pumpAndSettle();
+      expect(find.text('topic'), findsOneWidget);
+      expect(find.text('첫 커밋'), findsOneWidget);
+
+      await tester.tap(find.text('abc1234'));
+      await tester.pumpAndSettle();
+      expect(picked, 'abc1234');
     });
   });
 

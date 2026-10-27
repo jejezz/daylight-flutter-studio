@@ -536,6 +536,45 @@ class AppLocalizationsKo extends AppLocalizations {
   String get diffNewFile => '새 파일 (아직 커밋되지 않음)';
 
   @override
+  String diffAgainstRef(String ref) {
+    return '비교 기준: $ref';
+  }
+
+  @override
+  String diffSameAsRef(String ref) {
+    return '비교 기준($ref)과 같습니다. 변경된 곳이 없습니다.';
+  }
+
+  @override
+  String get diffNotInRef => '이 기준에는 없던 파일';
+
+  @override
+  String get diffChangeBase => '비교 기준 바꾸기';
+
+  @override
+  String get compareDialogTitle => '비교 기준 고르기';
+
+  @override
+  String get compareFieldHint => '브랜치, 태그, 커밋 이름';
+
+  @override
+  String get compareUseHead => 'HEAD (마지막 커밋)';
+
+  @override
+  String get compareBranches => '브랜치';
+
+  @override
+  String get compareCommits => '최근 커밋';
+
+  @override
+  String get compareApply => '비교';
+
+  @override
+  String messageCompareRefNotFound(String ref) {
+    return '\'$ref\'을(를) 찾을 수 없습니다. 브랜치·태그·커밋 이름을 확인하세요.';
+  }
+
+  @override
   String get diffSameAsHead => 'HEAD와 같습니다. 변경된 곳이 없습니다.';
 
   @override

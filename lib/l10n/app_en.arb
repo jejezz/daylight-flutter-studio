@@ -223,6 +223,38 @@
   "diffNotComparable": "This file can't be compared with git.\n(Not a git repository, or ignored by .gitignore)",
   "diffAgainstHead": "Compared with HEAD",
   "diffNewFile": "New file (not committed yet)",
+  "diffAgainstRef": "Compared with {ref}",
+  "@diffAgainstRef": {
+    "placeholders": {
+      "ref": {
+        "type": "String"
+      }
+    }
+  },
+  "diffSameAsRef": "Same as {ref}. Nothing has changed.",
+  "@diffSameAsRef": {
+    "placeholders": {
+      "ref": {
+        "type": "String"
+      }
+    }
+  },
+  "diffNotInRef": "File did not exist at this point",
+  "diffChangeBase": "Change what to compare with",
+  "compareDialogTitle": "Choose what to compare with",
+  "compareFieldHint": "Branch, tag or commit name",
+  "compareUseHead": "HEAD (last commit)",
+  "compareBranches": "Branches",
+  "compareCommits": "Recent commits",
+  "compareApply": "Compare",
+  "messageCompareRefNotFound": "Can't find '{ref}'. Check the branch, tag or commit name.",
+  "@messageCompareRefNotFound": {
+    "placeholders": {
+      "ref": {
+        "type": "String"
+      }
+    }
+  },
   "diffSameAsHead": "Same as HEAD. Nothing changed.",
   "diffHiddenLines": "{count} unchanged lines — click to expand",
   "@diffHiddenLines": {
