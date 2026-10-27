@@ -23,11 +23,6 @@ class _CodeLineEditingControllerImpl extends ValueNotifier<CodeLineEditingValue>
   @override
   final ValueNotifier<CodeBlockSelection?> blockSelection = ValueNotifier<CodeBlockSelection?>(null);
 
-  /// Column and length of the IME composition currently shown on every row of
-  /// the block, or null when nothing is being composed.
-  int? _blockComposingColumn;
-  int _blockComposingLength = 0;
-
   _CodeLineEditingControllerImpl({
     required CodeLines codeLines,
     required this.options,
@@ -65,7 +60,6 @@ class _CodeLineEditingControllerImpl extends ValueNotifier<CodeLineEditingValue>
     if (blockSelection.value != null && (value.selection != super.value.selection ||
         !identical(value.codeLines, super.value.codeLines))) {
       blockSelection.value = null;
-      _blockComposingColumn = null;
     }
     super.value = value;
   }
@@ -213,27 +207,36 @@ class _CodeLineEditingControllerImpl extends ValueNotifier<CodeLineEditingValue>
 
   @override
   void edit(TextEditingValue newValue) {
-    if (blockSelection.value != null && selection.isCollapsed && !newValue.text.isMultiline) {
+    final CodeBlockSelection? block = blockSelection.value;
+    if (block != null && selection.isCollapsed && !newValue.text.isMultiline) {
+      // The input method edits only the caret line. Find what changed there by
+      // comparing it with the old text around the caret (the IME's composing
+      // range is not reliable: macOS reports none), then apply the same change
+      // at the same columns on every row. This also covers Korean composition,
+      // where the previous jamo is replaced: 'ㅎ' -> '하'.
       final String old = extentLine.text;
-      final int at = min(selection.extentOffset, old.length);
-      final int? comp = _blockComposingColumn;
-      final int compLength = _blockComposingLength;
-      // While composing (IME), the text being composed sits at [column, column+length)
-      // on every row; otherwise the new text goes at the caret.
-      final int cut = comp == null ? at : min(comp, old.length);
-      final String before = old.substring(0, cut);
-      final String after = old.substring(comp == null ? at : min(comp + compLength, old.length));
-      final bool composing = newValue.composing.isValid && !newValue.composing.isCollapsed;
-      final bool grows = comp != null || newValue.text.length > old.length;
-      if (grows && newValue.text.length >= before.length + after.length &&
-          newValue.text.startsWith(before) && newValue.text.endsWith(after)) {
-        final String inserted = newValue.text.substring(before.length, newValue.text.length - after.length);
-        _typeIntoBlock(
-          inserted,
-          from: comp,
-          to: comp == null ? null : comp + compLength,
-          composing: composing,
-        );
+      final String text = newValue.text;
+      final int caret = min(selection.extentOffset, old.length);
+      int prefix = 0;
+      final int maxPrefix = min(caret, min(old.length, text.length));
+      while (prefix < maxPrefix && old.codeUnitAt(prefix) == text.codeUnitAt(prefix)) {
+        prefix++;
+      }
+      int suffix = 0;
+      final int maxSuffix = min(old.length - caret, min(old.length, text.length) - prefix);
+      while (suffix < maxSuffix && old.codeUnitAt(old.length - 1 - suffix) == text.codeUnitAt(text.length - 1 - suffix)) {
+        suffix++;
+      }
+      final int removed = old.length - prefix - suffix;
+      final String inserted = text.substring(prefix, text.length - suffix);
+      if (block.startColumn != block.endColumn) {
+        // First keystroke over a rectangle: it must be a plain insertion at the caret.
+        if (removed == 0 && inserted.isNotEmpty && prefix == caret) {
+          _typeIntoBlock(inserted);
+          return;
+        }
+      } else if (block.startColumn == caret && (removed > 0 || inserted.isNotEmpty)) {
+        _typeIntoBlock(inserted, from: prefix, to: prefix + removed);
         return;
       }
     }
@@ -982,7 +985,7 @@ class _CodeLineEditingControllerImpl extends ValueNotifier<CodeLineEditingValue>
   /// text for that row (0-based from the first line). Lines shorter than [from]
   /// and folded lines are left alone. The block stays active as a zero-width
   /// column after the inserted text.
-  void _replaceBlockColumns(CodeBlockSelection block, int from, int to, String Function(int row) insertFor, {bool composing = false}) {
+  void _replaceBlockColumns(CodeBlockSelection block, int from, int to, String Function(int row) insertFor) {
     final CodeLines newCodeLines = CodeLines.from(codeLines);
     final int last = min(block.endIndex, codeLines.length - 1);
     for (int i = block.startIndex; i <= last; i++) {
@@ -1003,7 +1006,7 @@ class _CodeLineEditingControllerImpl extends ValueNotifier<CodeLineEditingValue>
         index: extentIndex,
         offset: min(column, newCodeLines[extentIndex].length),
       ),
-      composing: composing ? TextRange(start: from, end: column) : TextRange.empty,
+      composing: TextRange.empty,
     );
     blockSelection.value = CodeBlockSelection(
       baseIndex: block.baseIndex,
@@ -1011,20 +1014,17 @@ class _CodeLineEditingControllerImpl extends ValueNotifier<CodeLineEditingValue>
       extentIndex: block.extentIndex,
       extentColumn: column,
     );
-    // The assignment above ran after `value =`, so remember the composition now.
-    _blockComposingColumn = composing ? from : null;
-    _blockComposingLength = column - from;
     makeCursorCenterIfInvisible();
   }
 
   /// Replaces the selected rectangle with [text] (typing). Returns false when
   /// there is no block.
-  bool _typeIntoBlock(String text, {int? from, int? to, bool composing = false}) {
+  bool _typeIntoBlock(String text, {int? from, int? to}) {
     final CodeBlockSelection? block = blockSelection.value;
     if (block == null) {
       return false;
     }
-    _replaceBlockColumns(block, from ?? block.startColumn, to ?? block.endColumn, (_) => text, composing: composing);
+    _replaceBlockColumns(block, from ?? block.startColumn, to ?? block.endColumn, (_) => text);
     return true;
   }
 

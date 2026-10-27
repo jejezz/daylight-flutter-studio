@@ -191,22 +191,20 @@ void main() {
       ctl.dispose();
     });
 
-    test('한글 조합 중에는 모든 줄의 조합 글자가 같이 바뀐다', () {
+    test('한글 조합(조합 범위를 알려 주지 않는 입력기 포함)은 모든 줄에서 같이 바뀐다', () {
       TextEditingValue v(String text, int caret, [TextRange composing = TextRange.empty]) =>
         TextEditingValue(text: text, selection: TextSelection.collapsed(offset: caret), composing: composing);
       final ctl = CodeLineEditingController.fromText('abc\nabc\nabc');
       ctl.selection = const CodeLineSelection.collapsed(index: 2, offset: 2);
       ctl.blockSelection.value = const CodeBlockSelection(baseIndex: 0, baseColumn: 2, extentIndex: 2, extentColumn: 2);
-      ctl.edit(v('abㅎc', 3, const TextRange(start: 2, end: 3)));
+      ctl.edit(v('abㅎc', 3));
       expect(ctl.text, 'abㅎc\nabㅎc\nabㅎc');
-      ctl.edit(v('ab하c', 3, const TextRange(start: 2, end: 3)));
-      ctl.edit(v('ab한c', 3, const TextRange(start: 2, end: 3)));
+      ctl.edit(v('ab하c', 3));
+      ctl.edit(v('ab한c', 3));
       expect(ctl.text, 'ab한c\nab한c\nab한c');
-      expect(ctl.composing, const TextRange(start: 2, end: 3));
       ctl.edit(v('ab한c', 3)); // 확정
-      expect(ctl.composing, TextRange.empty);
-      ctl.edit(v('ab한ㄱc', 4, const TextRange(start: 3, end: 4)));
-      ctl.edit(v('ab한글c', 4, const TextRange(start: 3, end: 4)));
+      ctl.edit(v('ab한ㄱc', 4));
+      ctl.edit(v('ab한글c', 4));
       expect(ctl.text, 'ab한글c\nab한글c\nab한글c');
       expect(ctl.blockSelection.value, isNotNull);
       ctl.dispose();

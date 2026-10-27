@@ -7,5 +7,5 @@
   - `code_line.dart`: `CodeBlockSelection`(줄 범위 + 열 범위)과 `CodeLineEditingController.blockSelection`을 더한다. 선택·글이 바뀌면 지워진다.
   - `_code_selection.dart`: Alt를 누르고 눌렀을 때 시작점을 기억해 드래그하면 `blockSelection`을 정한다.
   - `_code_field.dart`: `_CodeFieldBlockSelectionPainter`가 줄마다 같은 열 범위를 칠한다. `_code_line.dart`: `copy()`는 블록이 있으면 줄마다 잘라 줄바꿈으로 잇는다.
-  - 열은 글자 위치(offset)다 — 한글 같은 넓은 글자가 섞이면 화면 열과 어긋날 수 있다. 블록이 있으면 `edit`(타이핑)·`deleteBackward/Forward/deleteSelection`·`cut`·`paste`가 블록을 줄마다 처리한다(`_replaceBlockColumns`) — 짧은 줄과 접힌 줄은 건드리지 않고, 처리 뒤에도 폭 0 블록이 남아 계속 이어 칠 수 있다. 조합 중인 입력(IME, 한글)은 조합 글자의 열·길이를 기억해 모든 줄의 조합 글자를 같이 바꾼다(`_blockComposingColumn`).
+  - 열은 글자 위치(offset)다 — 한글 같은 넓은 글자가 섞이면 화면 열과 어긋날 수 있다. 블록이 있으면 `edit`(타이핑)·`deleteBackward/Forward/deleteSelection`·`cut`·`paste`가 블록을 줄마다 처리한다(`_replaceBlockColumns`) — 짧은 줄과 접힌 줄은 건드리지 않고, 처리 뒤에도 폭 0 블록이 남아 계속 이어 칠 수 있다. 입력기(IME, 한글)는 조합 범위를 알려 주지 않는 경우(macOS)가 있어, 커서 줄의 앞뒤 공통 부분을 비교해 바뀐 구간을 찾고 같은 열에 모든 줄을 같이 바꾼다(`edit`) — 'ㅎ'→'하'처럼 앞 글자를 바꾸는 조합도 된다.
 - 원본이 고치면 되돌린다.
