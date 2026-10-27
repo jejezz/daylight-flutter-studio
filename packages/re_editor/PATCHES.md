@@ -7,5 +7,5 @@
   - `code_line.dart`: `CodeBlockSelection`(줄 범위 + 열 범위)과 `CodeLineEditingController.blockSelection`을 더한다. 선택·글이 바뀌면 지워진다.
   - `_code_selection.dart`: Alt를 누르고 눌렀을 때 시작점을 기억해 드래그하면 `blockSelection`을 정한다.
   - `_code_field.dart`: `_CodeFieldBlockSelectionPainter`가 줄마다 같은 열 범위를 칠한다. `_code_line.dart`: `copy()`는 블록이 있으면 줄마다 잘라 줄바꿈으로 잇는다.
-  - 열은 글자 위치(offset)다 — 한글 같은 넓은 글자가 섞이면 화면 열과 어긋날 수 있다. 자르기·붙여넣기·타이핑은 아직 블록을 모른다(자르기는 복사만).
+  - 열은 글자 위치(offset)다 — 한글 같은 넓은 글자가 섞이면 화면 열과 어긋날 수 있다. 블록이 있으면 `edit`(타이핑)·`deleteBackward/Forward/deleteSelection`·`cut`·`paste`가 블록을 줄마다 처리한다(`_replaceBlockColumns`) — 짧은 줄과 접힌 줄은 건드리지 않고, 처리 뒤에도 폭 0 블록이 남아 계속 이어 칠 수 있다. 한글 등 조합 중인 입력(IME)은 아직 블록을 모른다(블록이 풀리고 보통 입력으로 처리).
 - 원본이 고치면 되돌린다.

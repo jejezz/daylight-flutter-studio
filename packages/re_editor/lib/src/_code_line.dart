@@ -207,6 +207,17 @@ class _CodeLineEditingControllerImpl extends ValueNotifier<CodeLineEditingValue>
 
   @override
   void edit(TextEditingValue newValue) {
+    if (blockSelection.value != null && selection.isCollapsed && !newValue.text.isMultiline &&
+        !(newValue.composing.isValid && !newValue.composing.isCollapsed)) {
+      final String old = extentLine.text;
+      final int at = selection.extentOffset;
+      final String before = old.substring(0, min(at, old.length));
+      final String after = old.substring(min(at, old.length));
+      if (newValue.text.length > old.length && newValue.text.startsWith(before) && newValue.text.endsWith(after)) {
+        _typeIntoBlock(newValue.text.substring(before.length, newValue.text.length - after.length));
+        return;
+      }
+    }
     if (newValue.text.isMultiline) {
       final String replacement;
       final String beforeText = _codeTextBefore(selection.start);
@@ -873,16 +884,28 @@ class _CodeLineEditingControllerImpl extends ValueNotifier<CodeLineEditingValue>
 
   @override
   void deleteSelection() {
+    if (blockSelection.value != null) {
+      runRevocableOp(() => _deleteInBlock(forward: true));
+      return;
+    }
     runRevocableOp(_deleteSelection);
   }
 
   @override
   void deleteBackward() {
+    if (blockSelection.value != null) {
+      runRevocableOp(() => _deleteInBlock(forward: false));
+      return;
+    }
     runRevocableOp(_deleteBackward);
   }
 
   @override
   void deleteForward() {
+    if (blockSelection.value != null) {
+      runRevocableOp(() => _deleteInBlock(forward: true));
+      return;
+    }
     runRevocableOp(_deleteForward);
   }
 
@@ -936,6 +959,97 @@ class _CodeLineEditingControllerImpl extends ValueNotifier<CodeLineEditingValue>
   @override
   void redo() => _cache.redo();
 
+  /// Replaces columns [from, to) of every line of [block] with [insertFor]'s
+  /// text for that row (0-based from the first line). Lines shorter than [from]
+  /// and folded lines are left alone. The block stays active as a zero-width
+  /// column after the inserted text.
+  void _replaceBlockColumns(CodeBlockSelection block, int from, int to, String Function(int row) insertFor) {
+    final CodeLines newCodeLines = CodeLines.from(codeLines);
+    final int last = min(block.endIndex, codeLines.length - 1);
+    for (int i = block.startIndex; i <= last; i++) {
+      final CodeLine line = codeLines[i];
+      final String text = line.text;
+      if (line.chunkParent || from > text.length) {
+        continue;
+      }
+      newCodeLines[i] = line.copyWith(
+        text: text.substring(0, from) + insertFor(i - block.startIndex) + text.substring(min(to, text.length)),
+      );
+    }
+    final int column = from + insertFor(0).length;
+    final int extentIndex = min(block.extentIndex, codeLines.length - 1);
+    value = value.copyWith(
+      codeLines: newCodeLines,
+      selection: CodeLineSelection.collapsed(
+        index: extentIndex,
+        offset: min(column, newCodeLines[extentIndex].length),
+      ),
+      composing: TextRange.empty,
+    );
+    blockSelection.value = CodeBlockSelection(
+      baseIndex: block.baseIndex,
+      baseColumn: column,
+      extentIndex: block.extentIndex,
+      extentColumn: column,
+    );
+    makeCursorCenterIfInvisible();
+  }
+
+  /// Replaces the selected rectangle with [text] (typing). Returns false when
+  /// there is no block.
+  bool _typeIntoBlock(String text) {
+    final CodeBlockSelection? block = blockSelection.value;
+    if (block == null) {
+      return false;
+    }
+    _replaceBlockColumns(block, block.startColumn, block.endColumn, (_) => text);
+    return true;
+  }
+
+  /// Backspace / Delete on a block: removes the rectangle, or one character
+  /// before / after the column when the block is zero-width.
+  bool _deleteInBlock({required bool forward}) {
+    final CodeBlockSelection? block = blockSelection.value;
+    if (block == null) {
+      return false;
+    }
+    if (block.startColumn != block.endColumn) {
+      _replaceBlockColumns(block, block.startColumn, block.endColumn, (_) => '');
+    } else if (forward) {
+      _replaceBlockColumns(block, block.startColumn, block.startColumn + 1, (_) => '');
+    } else if (block.startColumn > 0) {
+      _replaceBlockColumns(block, block.startColumn - 1, block.startColumn, (_) => '');
+    }
+    return true;
+  }
+
+  /// Paste into a block: one clipboard line per row when the counts match,
+  /// the same text on every row when it is a single line. Otherwise the block
+  /// is dropped and the text is pasted at its top-left corner.
+  bool _pasteIntoBlock(String text) {
+    final CodeBlockSelection? block = blockSelection.value;
+    if (block == null) {
+      return false;
+    }
+    final List<String> lines = text.split(RegExp(r'\r\n|\n|\r'));
+    if (lines.length > 1 && lines.last.isEmpty) {
+      lines.removeLast();
+    }
+    final int rows = block.endIndex - block.startIndex + 1;
+    if (lines.length == rows) {
+      _replaceBlockColumns(block, block.startColumn, block.endColumn, (row) => lines[row]);
+    } else if (lines.length == 1) {
+      _replaceBlockColumns(block, block.startColumn, block.endColumn, (_) => lines.first);
+    } else {
+      selection = CodeLineSelection.collapsed(
+        index: block.startIndex,
+        offset: min(block.startColumn, codeLines[block.startIndex].length),
+      );
+      return false;
+    }
+    return true;
+  }
+
   String _blockText(CodeBlockSelection block) {
     final StringBuffer sb = StringBuffer();
     final int last = min(block.endIndex, codeLines.length - 1);
@@ -968,7 +1082,7 @@ class _CodeLineEditingControllerImpl extends ValueNotifier<CodeLineEditingValue>
   void cut() {
     copy();
     if (blockSelection.value != null) {
-      // Deleting a rectangle is not supported yet; only copy.
+      runRevocableOp(() => _deleteInBlock(forward: true));
       return;
     }
     if (selection.isCollapsed) {
@@ -984,6 +1098,13 @@ class _CodeLineEditingControllerImpl extends ValueNotifier<CodeLineEditingValue>
       final String? text = data?.text;
       if (text == null || text.isEmpty) {
         return;
+      }
+      if (blockSelection.value != null) {
+        bool done = false;
+        runRevocableOp(() => done = _pasteIntoBlock(text));
+        if (done) {
+          return;
+        }
       }
       replaceSelection(text);
     });
