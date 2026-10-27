@@ -105,7 +105,9 @@ void main() {
     await tester.pump(_doubleTapWait);
     await tester.pumpAndSettle();
 
-    expect(opened, ['$dir${Platform.pathSeparator}m.txt'.replaceAll('/', Platform.pathSeparator)]);
+    // macOS의 임시 폴더는 /var → /private/var 심볼릭 링크라 앱이 넘긴 경로와 글자가 다를 수 있다.
+    final expected = '$dir${Platform.pathSeparator}m.txt'.replaceAll('/', Platform.pathSeparator);
+    expect(opened.map((p) => File(p).resolveSymbolicLinksSync()), [File(expected).resolveSymbolicLinksSync()]);
     expect(find.text(_sheetAction), findsNothing, reason: 'Studio가 열었으면 diff 시트는 뜨지 않는다');
   });
 
