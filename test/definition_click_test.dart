@@ -6,7 +6,9 @@ import 'package:daylight_workbench/theme/app_theme.dart';
 import 'package:daylight_workbench/theme/editor_zoom.dart';
 import 'package:daylight_workbench/ui/editor_pane.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:re_editor/re_editor.dart';
@@ -17,6 +19,8 @@ void main() {
   late StudioController c;
   late EditorZoom zoom;
   var calls = 0;
+  TestGesture? mouse;
+  var moves = 0;
 
   Widget app() => MaterialApp(
     localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -39,6 +43,8 @@ void main() {
     c = StudioController();
     zoom = EditorZoom();
     calls = 0;
+    mouse = null;
+    moves = 0;
   });
 
   tearDown(() async {
@@ -71,6 +77,49 @@ void main() {
     await clickEditor(tester);
     await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
     expect(calls, 1);
+    await finish(tester);
+  });
+
+  /// 마우스를 편집기 위에 올렸을 때 운영체제가 쓰는 커서.
+  Future<MouseCursor> cursorOver(WidgetTester tester) async {
+    final origin = tester.getTopLeft(find.byType(CodeEditor));
+    final at = origin + Offset(120.0 + ++moves, 20);
+    if (mouse == null) {
+      mouse = await tester.createGesture(kind: PointerDeviceKind.mouse, pointer: 7);
+      addTearDown(mouse!.removePointer);
+      await mouse!.addPointer(location: at);
+    } else {
+      await mouse!.moveTo(at);
+    }
+    await tester.pump();
+    // 시험용 마우스의 장치 번호를 모르니 붙어 있는 장치 중 커서가 있는 것을 쓴다.
+    for (var device = 0; device < 20; device++) {
+      final cursor = RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(device);
+      if (cursor != null) return cursor;
+    }
+    throw StateError('마우스 장치를 찾지 못했다');
+  }
+
+  testWidgets('Ctrl을 누르는 동안만 손 모양이 되고 떼면 돌아온다', (tester) async {
+    await open(tester, 'a.dart');
+    expect(await cursorOver(tester), SystemMouseCursors.text);
+
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+    await tester.pump();
+    expect(await cursorOver(tester), SystemMouseCursors.click);
+
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+    await tester.pump();
+    expect(await cursorOver(tester), SystemMouseCursors.text);
+    await finish(tester);
+  });
+
+  testWidgets('Dart가 아닌 글에서는 Ctrl을 눌러도 손 모양이 되지 않는다', (tester) async {
+    await open(tester, 'a.txt');
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+    await tester.pump();
+    expect(await cursorOver(tester), SystemMouseCursors.text);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
     await finish(tester);
   });
 

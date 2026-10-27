@@ -163,12 +163,57 @@ class _CodeViewState extends State<_CodeView> {
 
   @override
   void dispose() {
+    HardwareKeyboard.instance.removeHandler(_onKey);
+    _modifierHeld.dispose();
     _vertical.dispose();
     _horizontal.dispose();
     super.dispose();
   }
 
   Offset? _downAt;
+
+  /// 정의로 이동하는 수정키(macOS는 Cmd, 그 밖은 Ctrl)를 누르고 있는가.
+  final _modifierHeld = ValueNotifier<bool>(false);
+
+  bool get _modifierNow {
+    final keys = HardwareKeyboard.instance;
+    return defaultTargetPlatform == TargetPlatform.macOS ? keys.isMetaPressed : keys.isControlPressed;
+  }
+
+  bool _onKey(KeyEvent event) {
+    _modifierHeld.value = _modifierNow;
+    return false; // 키를 가로채지 않는다
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    HardwareKeyboard.instance.addHandler(_onKey);
+  }
+
+  /// 수정키를 누르고 있는 동안 편집기 위에서 마우스를 손 모양으로 바꾼다. 편집기는 자기 커서(글자 입력 모양)를
+  /// 안쪽에서 정하므로 바깥에서 감싸는 것으로는 못 이긴다 — 위에 투명한 영역을 겹치고(클릭은 그대로 아래로 간다) 거기서 정한다.
+  Widget _handCursorOver(Widget editor) {
+    if (widget.onGoToDefinition == null || !widget.tab.language.isDart) return editor;
+    return Stack(
+      children: [
+        Positioned.fill(child: editor),
+        Positioned.fill(
+          child: ValueListenableBuilder<bool>(
+            valueListenable: _modifierHeld,
+            builder: (context, held, _) => MouseRegion(
+              opaque: false,
+              cursor: held ? SystemMouseCursors.click : MouseCursor.defer,
+              // 누른 채 창을 떠났다 돌아온 경우처럼 키 이벤트를 놓쳤을 때를 위해 움직일 때도 확인한다.
+              onHover: (_) {
+                if (_modifierHeld.value != _modifierNow) _modifierHeld.value = _modifierNow;
+              },
+            ),
+          ),
+        ),
+      ],
+    );
+  }
 
   /// Cmd(macOS)/Ctrl + 클릭: 클릭한 자리의 정의로 간다 (Dart 글만). 끌어서 선택한 것은 클릭으로 치지 않는다.
   /// macOS에서 Ctrl+클릭은 오른쪽 클릭이라 Cmd만 쓴다.
@@ -205,7 +250,8 @@ class _CodeViewState extends State<_CodeView> {
       onPointerUp: _maybeGoToDefinition,
       child: ZoomWheel(
       scrollers: [_vertical, _horizontal],
-      child: CodeEditor(
+      child: _handCursorOver(
+      CodeEditor(
         controller: tab.controller,
         findController: tab.find,
         focusNode: tab.focusNode,
@@ -255,6 +301,7 @@ class _CodeViewState extends State<_CodeView> {
             ],
           );
         },
+      ),
       ),
       ),
     );
