@@ -11,7 +11,7 @@ import 'package:window_manager/window_manager.dart';
 import '../core/command_log.dart';
 import '../core/command_runner.dart';
 import '../devices/device_service.dart';
-import '../git/git_controller.dart';
+import '../verify/verify_gate_controller.dart';
 import '../run/run_controller.dart';
 import '../problems/dart_analyzer.dart';
 import '../settings/gate_settings.dart';
@@ -89,7 +89,7 @@ class _StudioScreenState extends State<StudioScreen>
   late final TerminalSessionsController _terminal = TerminalSessionsController(
     scrollback: () => _terminalSettings.scrollback,
   );
-  late final GitController _git = GitController(
+  late final VerifyGateController _git = VerifyGateController(
     runner: _runner,
     store: VerifyStore(_runner),
     gate: _gate,
@@ -110,7 +110,6 @@ class _StudioScreenState extends State<StudioScreen>
     _git.addListener(_onGitChanged);
     _run.addListener(_onRunChanged);
     _gate.restore();
-    _git.onFilesChanged = _onOperationChanged;
     _layout.restore();
     _terminalSettings.restore();
     unawaited(_terminal.loadShells());
@@ -187,15 +186,6 @@ class _StudioScreenState extends State<StudioScreen>
     if (head == _lastHead) return;
     _lastHead = head;
     _controller.refreshBases();
-  }
-
-  /// 병합·rebase를 계속·건너뛰기·중단한 뒤: 파일과 HEAD가 바뀌었으니 화면을 새로 읽는다 (Git 상태는 이미 새로 읽었다).
-  void _onOperationChanged() {
-    _controller.checkExternalChanges();
-    _controller.refreshTree();
-    _controller.refreshBases();
-    _run.refreshVerify();
-    _problems.refresh();
   }
 
   /// 브랜치를 전환·만들기·이름 바꾸기·삭제한 뒤: 작업 폴더의 파일과 HEAD가 바뀌었을 수 있으니 화면을 새로 읽는다.

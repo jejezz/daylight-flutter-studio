@@ -129,6 +129,7 @@ class CommandRunner {
     final entry = quiet ? null : log.start(args);
     final watch = Stopwatch()..start();
     final executable = executableFor(args.first);
+    // [Studio에서 달라진 곳] 아래 실행 파일 경로 검사는 이 앱에서 더했다(원본에는 없다).
     // 사용자가 지정한 실행 파일 경로가 없으면 바로 "찾을 수 없음"(127)이다. Windows는 셸을 거치면
     // 없는 파일에도 종료 코드 1을 돌려줘서, 이렇게 먼저 걸러야 도구 없음을 알아본다.
     if (executable.contains(RegExp(r'[/\\]')) && !File(executable).existsSync()) {

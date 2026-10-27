@@ -52,6 +52,8 @@ class BranchDockDock extends StatefulWidget {
 
   /// 브랜치 전환·커밋·병합 등으로 HEAD가 바뀐 뒤 (파일과 비교 기준을 새로 읽을 때).
   final VoidCallback? onHeadChanged;
+  // onOpenFolder·onHeadChanged와 MergeGateScope(`lib/branchdock/ui/merge_gate.dart`)가 Branch Dock 원본에서 Studio에 맞게
+  // 더한 연결점의 전부다. 나머지 `lib/branchdock/`은 원본 그대로(문구·아이콘 규칙만 바꿈)다.
 
   /// 테스트용. 없으면 PATH를 읽어 직접 만든다.
   final AppServices? services;

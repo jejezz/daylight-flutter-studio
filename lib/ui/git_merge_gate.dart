@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
 import '../branchdock/ui/merge_gate.dart';
-import '../git/git_controller.dart';
+import '../verify/verify_gate_controller.dart';
 import '../settings/gate_settings.dart';
 import '../l10n/app_localizations.dart';
 import '../theme/app_theme.dart';
 import '../verify/verify_state.dart';
 
-/// [GitController]의 검증 판정을 Branch Dock의 PR 카드에 연결한다.
+/// [VerifyGateController]의 검증 판정을 Branch Dock의 PR 카드에 연결한다.
 class GitMergeGate extends MergeGateSource {
   GitMergeGate(this.git) {
     git.addListener(notifyListeners);
@@ -15,7 +15,7 @@ class GitMergeGate extends MergeGateSource {
     git.gate?.addListener(notifyListeners);
   }
 
-  final GitController git;
+  final VerifyGateController git;
 
   @override
   bool get active => git.gate?.mode != GateMode.off;
@@ -47,7 +47,7 @@ class GitMergeGate extends MergeGateSource {
 class VerifyCard extends StatelessWidget {
   const VerifyCard({super.key, required this.controller});
 
-  final GitController controller;
+  final VerifyGateController controller;
 
   @override
   Widget build(BuildContext context) {

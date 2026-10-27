@@ -8,7 +8,7 @@
 
 ## 권장 순서
 
-IDE 테마(남은 항목) → 편집기 보강 → 규약 마무리. 정리 작업은 각 단계 사이에 끼워 넣는다.
+IDE 테마(남은 항목) → 편집기 보강 → 규약 마무리.
 
 ## 1. IDE 테마
 
@@ -35,12 +35,6 @@ Android Studio처럼 테마를 바꾸면 아이콘과 글꼴이 함께 바뀌고
 - 업데이트 확인(`lib/update`): 서버가 정해지면 conventions-v1대로 넣는다.
 - README 스크린샷·GIF(`tool/readme/capture.sh`)를 현재 화면(Branch Dock Git 패널, Run 도구 막대, 메뉴 막대)으로 다시 찍는다.
 - **앱 이름의 "Flutter"**: 공개 배포 전에 이름을 다시 정한다(Flutter 상표). 이름을 바꾸면 패키지명·식별자·릴리스 워크플로·문서를 함께 고친다.
-
-## 정리 (틈틈이)
-
-- **옛 Studio 쪽 Git·릴리스 코드**: 화면에서 더 쓰지 않는 파일이 남아 있다 — `lib/ui/release_dialog.dart`, `lib/release/`(release_check·release_controller·semver), `lib/ui/conflict_sheet.dart`, `lib/git/`의 `conflicts`·`commits`·`refs`·`operation`·`error_hints` 중 `GitController`가 쓰지 않는 것, 그리고 그 테스트(`test/release_test.dart`, `test/conflicts_test.dart` 등). 쓰는 곳을 확인한 뒤 지우고, 안 쓰는 언어 문구(옛 Git 패널·브랜치 탭용)도 `lib/l10n`에서 정리한다.
-- `GitController`가 맡는 검증 판정(관문)만 남기고 이름·위치를 정리할지 정한다.
-- Branch Dock 이식본(`lib/branchdock/`)이 원본에서 갈라진 곳(이 앱 전용 연결점, `command_runner`의 실행 파일 경로 검사 등)을 주석으로 표시해 둔다.
 
 ## 이 앱 밖
 

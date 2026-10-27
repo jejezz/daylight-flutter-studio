@@ -36,37 +36,6 @@ bool _better(SigningCert a, SigningCert b) {
   return ae.isAfter(be);
 }
 
-/// `~/Library/.../Provisioning Profiles`의 프로파일 하나.
-class ProfileInfo {
-  const ProfileInfo({
-    required this.name,
-    required this.appId,
-    required this.teamId,
-    this.created,
-    this.expires,
-    this.deviceCount,
-  });
-
-  final String name;
-
-  /// `TEAMID.번들ID` (와일드카드면 `TEAMID.*`)
-  final String appId;
-  final String teamId;
-  final DateTime? created;
-  final DateTime? expires;
-  final int? deviceCount;
-
-  /// 무료 Apple ID 프로파일은 수명이 7일이다.
-  bool get isShortLived => created != null && expires != null && expires!.difference(created!).inDays <= 8;
-
-  int? daysLeft(DateTime now) => expires?.difference(now).inDays;
-
-  bool matches(String bundleId) {
-    final id = appId.contains('.') ? appId.substring(appId.indexOf('.') + 1) : appId;
-    return id == bundleId || id == '*' || (id.endsWith('.*') && bundleId.startsWith(id.substring(0, id.length - 1)));
-  }
-}
-
 /// `security find-certificate -a -p` 출력을 인증서 한 개씩의 PEM으로 나눈다.
 List<String> splitPems(String text) => [
   for (final m in RegExp(r'-----BEGIN CERTIFICATE-----.*?-----END CERTIFICATE-----', dotAll: true).allMatches(text))
@@ -103,24 +72,3 @@ SigningCert? parseOpenSslCert(String out, {Set<String> identityNames = const {}}
 
 /// `security find-identity -v -p codesigning`에서 유효한 인증서 이름들.
 Set<String> parseIdentityNames(String out) => {for (final m in RegExp(r'"([^"]+)"').allMatches(out)) m[1]!};
-
-/// `security cms -D -i profile.mobileprovision`의 XML plist에서 필요한 값만 읽는다.
-ProfileInfo? parseProfileXml(String xml) {
-  String? value(String key, String tag) => RegExp('<key>$key</key>\\s*<$tag>([^<]*)</$tag>').firstMatch(xml)?[1];
-  final appId = value('application-identifier', 'string');
-  final team = RegExp(r'<key>TeamIdentifier</key>\s*<array>\s*<string>([^<]*)</string>').firstMatch(xml)?[1];
-  if (appId == null || team == null) return null;
-  final devices = RegExp(r'<key>ProvisionedDevices</key>\s*<array>(.*?)</array>', dotAll: true).firstMatch(xml);
-  return ProfileInfo(
-    name: value('Name', 'string') ?? appId,
-    appId: appId,
-    teamId: team,
-    created: DateTime.tryParse(value('CreationDate', 'date') ?? ''),
-    expires: DateTime.tryParse(value('ExpirationDate', 'date') ?? ''),
-    deviceCount: devices == null ? null : '<string>'.allMatches(devices[1]!).length,
-  );
-}
-
-/// `android/key.properties`의 `storeFile` 값.
-String? parseKeyPropertiesStoreFile(String text) =>
-    RegExp(r'^\s*storeFile\s*=\s*(.+?)\s*$', multiLine: true).firstMatch(text)?[1];

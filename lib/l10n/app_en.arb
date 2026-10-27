@@ -16,7 +16,6 @@
   "aboutTagline": "An all-in-one workbench for building Flutter apps",
   "aboutDescription": "Combines a project tree, a light editor, build/install, and PR/merge/release in one window, keeping the order: work → local verification → merge → release.",
   "runNotFlutterProject": "The open folder is not a Flutter project",
-  "runNoPlatforms": "No supported platforms",
   "runTarget": "Target",
   "runRefreshDevices": "Rescan devices",
   "runNoDevices": "No devices connected",
@@ -24,12 +23,6 @@
   "runPlatformWindows": "Windows desktop",
   "runLinkWireless": "Wireless",
   "runLinkLocal": "This computer",
-  "runModeDebug": "Debug (flutter run)",
-  "runStart": "Run",
-  "runBuildInstall": "Build & install",
-  "runStop": "Stop",
-  "runHotReload": "r hot reload",
-  "runHotRestart": "R hot restart",
   "runQuit": "q quit",
   "runBlockerNoProject": "Open a project.",
   "runBlockerNoDevice": "Choose a target.",
@@ -39,7 +32,6 @@
   "runBlockerDeveloperModeOff": "Developer Mode is off on the iPhone.",
   "runBlockerAndroidUnauthorized": "Approve USB debugging on the phone.",
   "runBlockerNeedsTeamId": "An iOS signing Team ID is required. (The project needs DEVELOPMENT_TEAM)",
-  "runCommandsToRun": "Commands to run",
   "runCommandNotFound": "Command {command} not found. Check your PATH.",
   "@runCommandNotFound": {
     "placeholders": {
@@ -71,114 +63,6 @@
   "commonCancel": "Cancel",
   "runRecordAndCopy": "Record and copy",
   "runNoteCopied": "Note copied. Paste it into your Claude session.",
-  "runOutput": "Output",
-  "runCopyOutput": "Copy output",
-  "runNoOutput": "(no output)",
-  "commonStop": "Stop",
-  "gitNotRepo": "The open folder is not a git repository",
-  "gitNoGh": "GitHub CLI (gh) not found, so PR features are unavailable.",
-  "gitUpstreamGone": "Gone from remote",
-  "gitNoUpstream": "No upstream branch",
-  "gitDetachedHead": "(detached HEAD)",
-  "gitRefresh": "Refresh",
-  "gitClean": "No changes",
-  "gitChangedFiles": "{count} changed files",
-  "@gitChangedFiles": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
-  "gitMoreFiles": "… and {count} more",
-  "@gitMoreFiles": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
-  "gitFileDeleted": "Deleted file",
-  "gitFileOpenDiff": "Click to view changes",
-  "gitFileOpenConflict": "Click to resolve conflict",
-  "gitConflicts": "{count} conflicts — click a file to resolve",
-  "@gitConflicts": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
-  "gitStage": "Stage",
-  "gitUnstage": "Unstage",
-  "gitStageAll": "Stage all",
-  "gitUnstageAll": "Unstage all",
-  "gitDoneStaged": "Staged",
-  "gitDoneUnstaged": "Unstaged",
-  "gitDoneCommit": "Committed",
-  "gitCommitMessageHint": "Commit message",
-  "gitCommitAll": "Commit",
-  "gitCommitStaged": "Commit ({count})",
-  "@gitCommitStaged": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
-  "gitOnDefaultBranch": "Can't create a PR from the default branch ({branch}). Work on a new branch instead.",
-  "@gitOnDefaultBranch": {
-    "placeholders": {
-      "branch": {
-        "type": "String"
-      }
-    }
-  },
-  "conflictSheetTitle": "Resolve conflicts in {name}",
-  "@conflictSheetTitle": {
-    "placeholders": {
-      "name": {
-        "type": "String"
-      }
-    }
-  },
-  "conflictUnreadable": "Can't read this file (it may be binary or deleted). Fix it directly in the editor.",
-  "conflictBroken": "The conflict markers aren't intact, so this app can't read them. Fix the file directly in the editor.",
-  "conflictNone": "This file has no conflict markers. If you've already fixed it, close this and refresh the status.",
-  "conflictBlockTitle": "Conflict {index}/{total}",
-  "@conflictBlockTitle": {
-    "placeholders": {
-      "index": {
-        "type": "int"
-      },
-      "total": {
-        "type": "int"
-      }
-    }
-  },
-  "conflictSideMine": "Mine",
-  "conflictSideIncoming": "Incoming",
-  "conflictKeepBoth": "Keep both (mine, then incoming)",
-  "conflictEmptySide": "(empty)",
-  "conflictPickHint": "Pick a side for each conflict. {left} left.",
-  "@conflictPickHint": {
-    "placeholders": {
-      "left": {
-        "type": "int"
-      }
-    }
-  },
-  "conflictApply": "Apply and mark resolved",
-  "conflictApplyNote": "Rewrites the file with your picks and runs git add. To edit by hand instead, open it in the editor.",
-  "doneConflictResolved": "{name}: conflict resolved",
-  "@doneConflictResolved": {
-    "placeholders": {
-      "name": {
-        "type": "String"
-      }
-    }
-  },
-  "gitFetch": "Fetch",
   "gitPull": "Pull (↓{behind})",
   "@gitPull": {
     "placeholders": {
@@ -203,55 +87,11 @@
   "gitUnverified": "This commit has not been verified",
   "gitHeadDiffers": "Local HEAD and PR head differ. The verdict is based on the PR head.",
   "gitBuildInRunTab": "Before merging, build and check this commit in the Run tab.",
-  "gitNoPr": "This branch has no PR.",
-  "gitPrTitle": "PR title",
-  "gitPushFirst": "Push the branch first to create a PR.",
-  "gitCreatePr": "Create PR",
-  "gitMergeBlocked": "Merge PR (verification required)",
-  "gitMergeConfirm": "Merge PR…",
   "gitMerge": "Merge PR",
   "gitMergeUnverified": "Merge without verification…",
   "gitUnverifiedDialogTitle": "This commit has not been checked",
   "gitUnverifiedDialogBody": "If you merge anyway, GitHub builds every OS, and any problem means fixing it and releasing again.",
   "gitMergeAnyway": "Merge anyway",
-  "gitPrDraft": "This is a draft PR.",
-  "gitPrConflict": "There are conflicts.",
-  "gitPrChecksFailed": "Failed checks: {names}",
-  "@gitPrChecksFailed": {
-    "placeholders": {
-      "names": {
-        "type": "String"
-      }
-    }
-  },
-  "gitPrChecksPending": "{count} checks are in progress.",
-  "@gitPrChecksPending": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
-  "gitPrReviewRequired": "A review is required.",
-  "gitPrMerged": "Merged",
-  "gitPrOpen": "Open",
-  "gitPrChecks": "Checks passed {passed} · failed {failed} · pending {pending}",
-  "@gitPrChecks": {
-    "placeholders": {
-      "passed": {
-        "type": "int"
-      },
-      "failed": {
-        "type": "int"
-      },
-      "pending": {
-        "type": "int"
-      }
-    }
-  },
-  "gitMergeMethod": "Merge method",
-  "gitMergeCommit": "Merge commit",
-  "gitDeleteBranchAfter": "Delete branch after merge",
   "studioOpenProject": "Open project",
   "studioOpenProjectFolder": "Open project folder",
   "studioSettingsTooltip": "Settings (Ctrl+,)",
@@ -261,7 +101,6 @@
   "terminalCloseTooltip": "Close Terminal",
   "terminalEmpty": "No terminal is open",
   "terminalEmptyHint": "Click + to open a new terminal",
-  "terminalLoadingShells": "Finding shells…",
   "terminalNoShells": "No shell was found",
   "terminalExited": "{shell} exited (code {code})",
   "@terminalExited": {
@@ -283,7 +122,6 @@
       }
     }
   },
-  "gitTabChanges": "Changes",
   "studioBottomPanelHide": "Hide bottom panel (Ctrl+J)",
   "studioBottomPanelShow": "Show bottom panel (Ctrl+J)",
   "studioShowProblems": "Open Problems",
@@ -501,43 +339,6 @@
     }
   },
   "problemsPubGetFailed": "flutter pub get failed. See the output in the command log below.",
-  "gitDoneFetch": "Fetched",
-  "gitDonePull": "Pulled",
-  "gitDonePush": "Pushed",
-  "gitDonePrCreated": "PR created",
-  "gitNotMerged": "Not merged: {reason}",
-  "@gitNotMerged": {
-    "placeholders": {
-      "reason": {
-        "type": "String"
-      }
-    }
-  },
-  "gitDoneMergedUnverified": "Merged #{number} without verification",
-  "@gitDoneMergedUnverified": {
-    "placeholders": {
-      "number": {
-        "type": "int"
-      }
-    }
-  },
-  "gitDoneMerged": "Merged #{number}",
-  "@gitDoneMerged": {
-    "placeholders": {
-      "number": {
-        "type": "int"
-      }
-    }
-  },
-  "gitCommandNotFound": "Command not found. Make sure git and the GitHub CLI (gh) are installed and on your PATH.",
-  "gitFailedExit": "Failed (exit code {code})",
-  "@gitFailedExit": {
-    "placeholders": {
-      "code": {
-        "type": "int"
-      }
-    }
-  },
   "findHint": "Find",
   "findReplaceHint": "Replace with",
   "findNoResults": "No results",
@@ -680,65 +481,10 @@
   "settingsTerminalFontSize": "Font size",
   "settingsTerminalScrollback": "Scrollback lines",
   "settingsTerminalScrollbackNote": "Doesn't apply to terminal tabs already open — only to ones opened from now on.",
-  "releaseButton": "Release…",
-  "releaseTitle": "Release tag",
-  "releaseNotReady": "Checks did not pass, so no tag was created.",
-  "releaseTagged": "Pushed tag {tag}. GitHub Actions will build the release.",
-  "@releaseTagged": {
-    "placeholders": {
-      "tag": {
-        "type": "String"
-      }
-    }
-  },
-  "releaseTagPushFailed": "Couldn't push the tag: {error}",
-  "@releaseTagPushFailed": {
-    "placeholders": {
-      "error": {
-        "type": "String"
-      }
-    }
-  },
-  "releaseVersionLine": "pubspec {version} → tag {tag}",
-  "@releaseVersionLine": {
-    "placeholders": {
-      "version": {
-        "type": "String"
-      },
-      "tag": {
-        "type": "String"
-      }
-    }
-  },
-  "releaseLastTag": "Last tag: {tag}",
-  "@releaseLastTag": {
-    "placeholders": {
-      "tag": {
-        "type": "String"
-      }
-    }
-  },
-  "releaseNoLastTag": "No tags yet",
-  "releaseNoVersion": "Couldn't read a version from pubspec.yaml",
-  "releaseCheckCleanTree": "No uncommitted changes in the working folder",
-  "releaseCheckOnDefaultBranch": "On the default branch (no tags on work branches)",
-  "releaseCheckSynced": "In sync with the remote",
-  "releaseCheckVersionBumped": "Version is higher than the last tag (the bump is merged)",
-  "releaseCheckTagFree": "No tag with that name yet",
-  "releaseCheckVerified": "This commit was built and checked by eye",
-  "releaseBumpHint": "To bump the version, make a bump commit and merge it by PR:",
-  "releaseBumpHintNoScript": "Merge a commit that raises version in pubspec.yaml via PR.",
-  "releaseRecheck": "Check again",
-  "releaseCreateTag": "Create and push tag",
-  "releaseTagWithoutVerification": "Tag without verification…",
-  "releaseUnverifiedTitle": "This commit has not been checked",
-  "releaseUnverifiedBody": "If you push the tag anyway, GitHub builds every OS, and a pushed tag is never moved — a problem means releasing a new PATCH.",
-  "releaseTagAnyway": "Tag anyway",
   "settingsIconSet": "Icon style",
   "settingsIconSetRounded": "Rounded",
   "settingsIconSetOutlined": "Outlined",
   "settingsIconSetFilled": "Filled",
-  "homeBuildTitle": "Build",
   "homeModeDebug": "Debug",
   "homeModeRelease": "Release",
   "homeTeamLabel": "Apple Team ID",
@@ -891,8 +637,6 @@
   "stepsFlutterMissingWindows": "1. Install the Flutter SDK from flutter.dev\n2. Add the flutter\\bin folder to PATH, or pick flutter.bat with \"Set tool paths…\" above\n3. Press Check again",
   "stepsXcodeMissing": "1. Install Xcode from the App Store\n2. In a terminal run sudo xcode-select -s /Applications/Xcode.app\n3. Open Xcode once and accept the license",
   "stepsAdbMissing": "1. Install the Android SDK platform-tools (Android Studio SDK Manager)\n2. Add the platform-tools folder to PATH\n3. Press Check again",
-  "stepsCertExpiry": "1. Xcode → Settings → Accounts → Manage Certificates: create a new Apple Development certificate\n2. Press Check again",
-  "toolPathsOpen": "Set tool paths…",
   "toolPathsTitle": "Tool paths",
   "toolPathsHelp": "Point the app at tools it can't find on PATH. The choice is saved and used the next time too. Pick the executable file, not the folder.",
   "toolPathNotFound": "Not found",
@@ -923,298 +667,6 @@
   },
   "settingsIndentGuides": "Indent guides",
   "settingsIndentGuidesNote": "Draws vertical lines in a different color per depth so you can match blocks. Accurate with monospace fonts.",
-  "gitTabBranches": "Branches",
-  "branchesLocal": "Local branches",
-  "branchesRemote": "Remote branches",
-  "branchesSearchHint": "Search branches",
-  "branchesNew": "New branch",
-  "branchesRefresh": "Refresh branches",
-  "branchesEmpty": "No branches",
-  "branchesNoMatch": "No branches match",
-  "branchesNotRepo": "The open folder is not a git repository",
-  "branchCurrent": "Current",
-  "branchSwitch": "Switch",
-  "branchTrackSwitch": "Check out as local and switch",
-  "branchNewFrom": "New branch from here",
-  "branchRename": "Rename",
-  "branchDelete": "Delete",
-  "branchDeleteRemote": "Delete remote branch",
-  "branchInWorktree": "In use by another worktree: {path}",
-  "@branchInWorktree": {
-    "placeholders": {
-      "path": {
-        "type": "String"
-      }
-    }
-  },
-  "branchOpenWorktree": "Open that worktree",
-  "branchGone": "Gone from remote",
-  "branchNoUpstream": "No upstream",
-  "branchCreateTitle": "New branch",
-  "branchNameLabel": "Branch name",
-  "branchBaseLabel": "Base branch",
-  "branchBaseHead": "Current position (HEAD)",
-  "branchSwitchAfter": "Switch to it after creating",
-  "branchCreate": "Create",
-  "branchCommandPreview": "Command to run",
-  "branchNameEmpty": "Enter a name",
-  "branchNameInvalidChar": "Spaces and characters like ~ ^ : ? * [ are not allowed",
-  "branchNameDash": "Cannot start with -",
-  "branchNameSequence": ".. // and parts starting with . are not allowed",
-  "branchNameEdge": "Cannot start with / or end with / or .",
-  "branchNameExists": "That name already exists",
-  "branchRenameTitle": "Rename branch",
-  "branchRenameAction": "Rename",
-  "branchDeleteTitle": "Delete branch",
-  "branchDeleteBody": "Deletes the branch '{name}'. Only branches already merged are removed.",
-  "@branchDeleteBody": {
-    "placeholders": {
-      "name": {
-        "type": "String"
-      }
-    }
-  },
-  "branchDeleteNotMergedTitle": "Branch is not merged",
-  "branchDeleteNotMergedBody": "'{name}' has commits that are not on any other branch. Deleting it makes those commits hard to reach.",
-  "@branchDeleteNotMergedBody": {
-    "placeholders": {
-      "name": {
-        "type": "String"
-      }
-    }
-  },
-  "branchForceDelete": "Delete anyway (-D)",
-  "branchDeleteRemoteTitle": "Delete remote branch",
-  "branchDeleteRemoteBody": "Deletes '{branch}' from remote {remote}. This affects everyone using that remote.",
-  "@branchDeleteRemoteBody": {
-    "placeholders": {
-      "remote": {
-        "type": "String"
-      },
-      "branch": {
-        "type": "String"
-      }
-    }
-  },
-  "branchDoneSwitch": "Switched to '{name}'",
-  "@branchDoneSwitch": {
-    "placeholders": {
-      "name": {
-        "type": "String"
-      }
-    }
-  },
-  "branchDoneCreate": "Created branch '{name}'",
-  "@branchDoneCreate": {
-    "placeholders": {
-      "name": {
-        "type": "String"
-      }
-    }
-  },
-  "branchDoneRename": "Renamed '{from}' to '{to}'",
-  "@branchDoneRename": {
-    "placeholders": {
-      "from": {
-        "type": "String"
-      },
-      "to": {
-        "type": "String"
-      }
-    }
-  },
-  "branchDoneDelete": "Deleted branch '{name}'",
-  "@branchDoneDelete": {
-    "placeholders": {
-      "name": {
-        "type": "String"
-      }
-    }
-  },
-  "branchDoneDeleteRemote": "Deleted remote branch '{name}'",
-  "@branchDoneDeleteRemote": {
-    "placeholders": {
-      "name": {
-        "type": "String"
-      }
-    }
-  },
-  "branchErrInOtherWorktree": "'{name}' is in use by another worktree, so it can't be switched to or deleted: {path}",
-  "@branchErrInOtherWorktree": {
-    "placeholders": {
-      "name": {
-        "type": "String"
-      },
-      "path": {
-        "type": "String"
-      }
-    }
-  },
-  "branchErrLocalChanges": "You have uncommitted changes that would be overwritten. Commit or discard them and try again.",
-  "branchErrNotMerged": "'{name}' is not fully merged.",
-  "@branchErrNotMerged": {
-    "placeholders": {
-      "name": {
-        "type": "String"
-      }
-    }
-  },
-  "branchErrExists": "'{name}' already exists.",
-  "@branchErrExists": {
-    "placeholders": {
-      "name": {
-        "type": "String"
-      }
-    }
-  },
-  "branchErrRemote": "Couldn't reach the remote. Check your sign-in and network.",
-  "branchErrNoGit": "git was not found. Make sure it is installed and on PATH.",
-  "branchErrGeneric": "Failed (exit code {code})",
-  "@branchErrGeneric": {
-    "placeholders": {
-      "code": {
-        "type": "String"
-      }
-    }
-  },
-  "mergeMenuItem": "Merge into current branch…",
-  "mergeTitle": "Merge '{source}' into '{target}'",
-  "@mergeTitle": {
-    "placeholders": {
-      "source": {
-        "type": "String"
-      },
-      "target": {
-        "type": "String"
-      }
-    }
-  },
-  "mergeIncoming": "{count} incoming commits",
-  "@mergeIncoming": {
-    "placeholders": {
-      "count": {
-        "type": "String"
-      }
-    }
-  },
-  "mergeNothing": "'{source}' has no commits that '{target}' lacks. Already up to date.",
-  "@mergeNothing": {
-    "placeholders": {
-      "source": {
-        "type": "String"
-      },
-      "target": {
-        "type": "String"
-      }
-    }
-  },
-  "mergeLoadFailed": "Could not load the preview",
-  "mergeModeFastForward": "Fast-forward",
-  "mergeFastForwardWhen": "Just moves the branch tip forward. No merge commit is created.",
-  "mergeFastForwardDisabled": "Not available: the branches have diverged (the current branch has new commits too).",
-  "mergeModeMergeCommit": "Merge commit",
-  "mergeMergeCommitWhen": "Creates a commit that joins both histories, so the merge point stays visible.",
-  "mergeModeSquash": "Squash",
-  "mergeSquashWhen": "Combines the incoming commits into one. Tidy history, but the original commits are not kept.",
-  "mergeModeRebase": "Rebase",
-  "mergeRebaseWhen": "Replays the current branch's commits on top of '{source}'. History stays linear, but the commits are recreated.",
-  "@mergeRebaseWhen": {
-    "placeholders": {
-      "source": {
-        "type": "String"
-      }
-    }
-  },
-  "mergeMessageLabel": "Commit message",
-  "mergeSquashNote": "The commits from '{source}' are combined, staged and committed. If there are conflicts, resolve them and commit yourself.",
-  "@mergeSquashNote": {
-    "placeholders": {
-      "source": {
-        "type": "String"
-      }
-    }
-  },
-  "mergeRebaseReplay": "{count} of your commits will be replayed",
-  "@mergeRebaseReplay": {
-    "placeholders": {
-      "count": {
-        "type": "String"
-      }
-    }
-  },
-  "mergeRebaseNothing": "You have no commits to replay. You are already on top of that branch.",
-  "mergeRebasePublishedWarning": "This branch is on the remote. Rebasing recreates its commits, so the next push needs a force push (--force-with-lease).",
-  "mergeConfirm": "Merge",
-  "mergeConfirmRebase": "Rebase",
-  "mergeDone": "Merged '{source}' into '{target}'",
-  "@mergeDone": {
-    "placeholders": {
-      "source": {
-        "type": "String"
-      },
-      "target": {
-        "type": "String"
-      }
-    }
-  },
-  "mergeDoneRebase": "Rebased '{target}' onto '{source}'",
-  "@mergeDoneRebase": {
-    "placeholders": {
-      "target": {
-        "type": "String"
-      },
-      "source": {
-        "type": "String"
-      }
-    }
-  },
-  "mergeErrConflict": "There are conflicts. Resolve them in the Changes tab and continue, or abort to go back.",
-  "mergeErrLocalChanges": "Your uncommitted changes overlap with the merge. Commit or discard them and try again.",
-  "mergeErrNotFastForward": "Can't fast-forward: the histories have diverged. Choose a merge commit or squash.",
-  "mergeBusyOperation": "A merge or rebase is in progress. Continue or abort it first.",
-  "opMerging": "Merging — {count} conflicts",
-  "@opMerging": {
-    "placeholders": {
-      "count": {
-        "type": "String"
-      }
-    }
-  },
-  "opRebasing": "Rebasing — {count} conflicts",
-  "@opRebasing": {
-    "placeholders": {
-      "count": {
-        "type": "String"
-      }
-    }
-  },
-  "opCherryPicking": "Cherry-picking — {count} conflicts",
-  "@opCherryPicking": {
-    "placeholders": {
-      "count": {
-        "type": "String"
-      }
-    }
-  },
-  "opReverting": "Reverting — {count} conflicts",
-  "@opReverting": {
-    "placeholders": {
-      "count": {
-        "type": "String"
-      }
-    }
-  },
-  "opContinue": "Continue",
-  "opSkip": "Skip",
-  "opAbort": "Abort",
-  "opContinueBlocked": "Resolve and stage all conflicts before continuing.",
-  "opAbortTitle": "Abort operation",
-  "opAbortMergeBody": "Aborts the merge and returns to the state before it. Conflict resolutions you made are lost.",
-  "opAbortRebaseBody": "Aborts the rebase and returns to the state before it started. Commits already replayed are discarded.",
-  "opAbortOtherBody": "Aborts the operation in progress and returns to the state before it.",
-  "opDoneContinue": "Continued",
-  "opDoneSkip": "Skipped",
-  "opDoneAbort": "Aborted. Back to the state before it started.",
   "bdAboutTooltip": "About",
   "bdAboutVersion": "Version {version} (build {build})",
   "bdAboutOpenSourceLicenses": "Open Source Licenses",

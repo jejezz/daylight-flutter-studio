@@ -63,9 +63,6 @@ class AppLocalizationsKo extends AppLocalizations {
   String get runNotFlutterProject => '열린 폴더가 Flutter 프로젝트가 아닙니다';
 
   @override
-  String get runNoPlatforms => '지원 플랫폼 없음';
-
-  @override
   String get runTarget => '대상';
 
   @override
@@ -85,24 +82,6 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get runLinkLocal => '이 컴퓨터';
-
-  @override
-  String get runModeDebug => 'Debug (flutter run)';
-
-  @override
-  String get runStart => '실행';
-
-  @override
-  String get runBuildInstall => '빌드 & 설치';
-
-  @override
-  String get runStop => '중지';
-
-  @override
-  String get runHotReload => 'r 핫 리로드';
-
-  @override
-  String get runHotRestart => 'R 핫 리스타트';
 
   @override
   String get runQuit => 'q 종료';
@@ -131,9 +110,6 @@ class AppLocalizationsKo extends AppLocalizations {
   @override
   String get runBlockerNeedsTeamId =>
       'iOS 서명 Team ID가 필요합니다. (프로젝트에 DEVELOPMENT_TEAM이 있어야 합니다)';
-
-  @override
-  String get runCommandsToRun => '실행될 명령';
 
   @override
   String runCommandNotFound(String command) {
@@ -214,152 +190,6 @@ class AppLocalizationsKo extends AppLocalizations {
   String get runNoteCopied => '메모를 복사했습니다. Claude 세션에 붙여 넣으세요.';
 
   @override
-  String get runOutput => '출력';
-
-  @override
-  String get runCopyOutput => '출력 복사';
-
-  @override
-  String get runNoOutput => '(출력 없음)';
-
-  @override
-  String get commonStop => '중지';
-
-  @override
-  String get gitNotRepo => '열린 폴더가 git 저장소가 아닙니다';
-
-  @override
-  String get gitNoGh => 'GitHub CLI(gh)를 찾을 수 없어 PR 기능을 쓸 수 없습니다.';
-
-  @override
-  String get gitUpstreamGone => '원격에 없음';
-
-  @override
-  String get gitNoUpstream => '추적 브랜치 없음';
-
-  @override
-  String get gitDetachedHead => '(분리된 HEAD)';
-
-  @override
-  String get gitRefresh => '새로 고침';
-
-  @override
-  String get gitClean => '변경 없음';
-
-  @override
-  String gitChangedFiles(int count) {
-    return '변경된 파일 $count개';
-  }
-
-  @override
-  String gitMoreFiles(int count) {
-    return '… 외 $count개';
-  }
-
-  @override
-  String get gitFileDeleted => '삭제된 파일';
-
-  @override
-  String get gitFileOpenDiff => '눌러서 변경점 보기';
-
-  @override
-  String get gitFileOpenConflict => '눌러서 충돌 해결';
-
-  @override
-  String gitConflicts(int count) {
-    return '충돌 $count개 — 파일을 눌러 해결하세요';
-  }
-
-  @override
-  String get gitStage => '스테이지';
-
-  @override
-  String get gitUnstage => '스테이지 해제';
-
-  @override
-  String get gitStageAll => '모두 스테이지';
-
-  @override
-  String get gitUnstageAll => '모두 해제';
-
-  @override
-  String get gitDoneStaged => '스테이지함';
-
-  @override
-  String get gitDoneUnstaged => '스테이지 해제함';
-
-  @override
-  String get gitDoneCommit => '커밋함';
-
-  @override
-  String get gitCommitMessageHint => '커밋 메시지';
-
-  @override
-  String get gitCommitAll => '커밋';
-
-  @override
-  String gitCommitStaged(int count) {
-    return '커밋 ($count)';
-  }
-
-  @override
-  String gitOnDefaultBranch(String branch) {
-    return '기본 브랜치($branch)에서는 PR을 만들 수 없습니다. 새 브랜치에서 작업하세요.';
-  }
-
-  @override
-  String conflictSheetTitle(String name) {
-    return '$name 충돌 해결';
-  }
-
-  @override
-  String get conflictUnreadable =>
-      '파일을 읽을 수 없습니다(이진 파일이거나 삭제된 파일일 수 있습니다). 편집기에서 직접 고치세요.';
-
-  @override
-  String get conflictBroken => '충돌 표시가 온전하지 않아 앱에서 읽을 수 없습니다. 편집기에서 직접 고쳐 주세요.';
-
-  @override
-  String get conflictNone => '이 파일에는 충돌 표시가 없습니다. 이미 고쳤다면 닫고 상태를 다시 확인하세요.';
-
-  @override
-  String conflictBlockTitle(int index, int total) {
-    return '충돌 $index/$total';
-  }
-
-  @override
-  String get conflictSideMine => '내 것';
-
-  @override
-  String get conflictSideIncoming => '들어오는 것';
-
-  @override
-  String get conflictKeepBoth => '둘 다 유지 (위, 아래 순서)';
-
-  @override
-  String get conflictEmptySide => '(비어 있음)';
-
-  @override
-  String conflictPickHint(int left) {
-    return '구간마다 어느 쪽을 쓸지 골라 주세요. $left개 남았습니다.';
-  }
-
-  @override
-  String get conflictApply => '적용하고 해결됨 표시';
-
-  @override
-  String get conflictApplyNote =>
-      '고른 대로 파일을 다시 쓰고 git add 합니다. 직접 고쳐 쓰려면 편집기로 여세요.';
-
-  @override
-  String doneConflictResolved(String name) {
-    return '$name: 충돌 해결됨';
-  }
-
-  @override
-  String get gitFetch => '가져오기';
-
-  @override
   String gitPull(int behind) {
     return '받기 (↓$behind)';
   }
@@ -394,24 +224,6 @@ class AppLocalizationsKo extends AppLocalizations {
   String get gitBuildInRunTab => '병합하기 전에 Run 탭에서 이 커밋을 빌드해 확인하세요.';
 
   @override
-  String get gitNoPr => '이 브랜치의 PR이 없습니다.';
-
-  @override
-  String get gitPrTitle => 'PR 제목';
-
-  @override
-  String get gitPushFirst => '먼저 브랜치를 올려야 PR을 만들 수 있습니다.';
-
-  @override
-  String get gitCreatePr => 'PR 만들기';
-
-  @override
-  String get gitMergeBlocked => 'PR 병합 (검증 필요)';
-
-  @override
-  String get gitMergeConfirm => 'PR 병합…';
-
-  @override
   String get gitMerge => 'PR 병합';
 
   @override
@@ -426,45 +238,6 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get gitMergeAnyway => '그래도 병합';
-
-  @override
-  String get gitPrDraft => '초안(draft) PR입니다.';
-
-  @override
-  String get gitPrConflict => '충돌이 있습니다.';
-
-  @override
-  String gitPrChecksFailed(String names) {
-    return '실패한 검사: $names';
-  }
-
-  @override
-  String gitPrChecksPending(int count) {
-    return '검사 $count개가 진행 중입니다.';
-  }
-
-  @override
-  String get gitPrReviewRequired => '리뷰가 필요합니다.';
-
-  @override
-  String get gitPrMerged => '병합됨';
-
-  @override
-  String get gitPrOpen => '열림';
-
-  @override
-  String gitPrChecks(int passed, int failed, int pending) {
-    return '검사 통과 $passed · 실패 $failed · 진행 $pending';
-  }
-
-  @override
-  String get gitMergeMethod => '병합 방식';
-
-  @override
-  String get gitMergeCommit => '병합 커밋';
-
-  @override
-  String get gitDeleteBranchAfter => '병합 후 브랜치 삭제';
 
   @override
   String get studioOpenProject => '프로젝트 열기';
@@ -494,9 +267,6 @@ class AppLocalizationsKo extends AppLocalizations {
   String get terminalEmptyHint => '+ 를 눌러 새 터미널을 엽니다';
 
   @override
-  String get terminalLoadingShells => '셸을 찾는 중…';
-
-  @override
   String get terminalNoShells => '쓸 수 있는 셸을 찾지 못했습니다';
 
   @override
@@ -511,9 +281,6 @@ class AppLocalizationsKo extends AppLocalizations {
   String terminalStartError(String error) {
     return '셸을 시작하지 못했습니다: $error';
   }
-
-  @override
-  String get gitTabChanges => '변경';
 
   @override
   String get studioBottomPanelHide => '아래 패널 접기 (Ctrl+J)';
@@ -873,42 +640,6 @@ class AppLocalizationsKo extends AppLocalizations {
       'flutter pub get이 실패했습니다. 출력은 아래 명령 기록에서 확인하세요.';
 
   @override
-  String get gitDoneFetch => '가져왔습니다';
-
-  @override
-  String get gitDonePull => '받았습니다';
-
-  @override
-  String get gitDonePush => '올렸습니다';
-
-  @override
-  String get gitDonePrCreated => 'PR을 만들었습니다';
-
-  @override
-  String gitNotMerged(String reason) {
-    return '병합하지 않았습니다: $reason';
-  }
-
-  @override
-  String gitDoneMergedUnverified(int number) {
-    return '#$number을 검증 없이 병합했습니다';
-  }
-
-  @override
-  String gitDoneMerged(int number) {
-    return '#$number을 병합했습니다';
-  }
-
-  @override
-  String get gitCommandNotFound =>
-      '명령을 찾을 수 없습니다. git과 GitHub CLI(gh)가 설치되어 PATH에 있는지 확인하세요.';
-
-  @override
-  String gitFailedExit(int code) {
-    return '실패했습니다 (종료 코드 $code)';
-  }
-
-  @override
   String get findHint => '찾기';
 
   @override
@@ -1107,85 +838,6 @@ class AppLocalizationsKo extends AppLocalizations {
       '이미 열려 있는 터미널 탭에는 적용되지 않고, 새로 여는 탭부터 적용됩니다.';
 
   @override
-  String get releaseButton => '릴리스…';
-
-  @override
-  String get releaseTitle => '릴리스 태그';
-
-  @override
-  String get releaseNotReady => '점검을 통과하지 못해 태그를 달지 않았습니다.';
-
-  @override
-  String releaseTagged(String tag) {
-    return '$tag 태그를 올렸습니다. GitHub Actions가 릴리스를 만듭니다.';
-  }
-
-  @override
-  String releaseTagPushFailed(String error) {
-    return '태그를 올리지 못했습니다: $error';
-  }
-
-  @override
-  String releaseVersionLine(String version, String tag) {
-    return 'pubspec $version → 태그 $tag';
-  }
-
-  @override
-  String releaseLastTag(String tag) {
-    return '마지막 태그: $tag';
-  }
-
-  @override
-  String get releaseNoLastTag => '아직 태그가 없습니다';
-
-  @override
-  String get releaseNoVersion => 'pubspec.yaml에서 버전을 읽지 못했습니다';
-
-  @override
-  String get releaseCheckCleanTree => '작업 폴더에 커밋하지 않은 수정이 없다';
-
-  @override
-  String get releaseCheckOnDefaultBranch => '기본 브랜치에 있다 (작업 브랜치에는 태그를 달지 않습니다)';
-
-  @override
-  String get releaseCheckSynced => '원격과 같다';
-
-  @override
-  String get releaseCheckVersionBumped => '버전이 마지막 태그보다 높다 (버전 올림이 병합됐다)';
-
-  @override
-  String get releaseCheckTagFree => '같은 이름의 태그가 아직 없다';
-
-  @override
-  String get releaseCheckVerified => '이 커밋을 빌드해서 눈으로 확인했다';
-
-  @override
-  String get releaseBumpHint => '버전을 올리려면 PR로 병합할 버전 올림 커밋을 만드세요:';
-
-  @override
-  String get releaseBumpHintNoScript =>
-      'pubspec.yaml의 version을 올린 커밋을 PR로 병합하세요.';
-
-  @override
-  String get releaseRecheck => '다시 확인';
-
-  @override
-  String get releaseCreateTag => '태그 만들고 올리기';
-
-  @override
-  String get releaseTagWithoutVerification => '검증 없이 태그…';
-
-  @override
-  String get releaseUnverifiedTitle => '확인하지 않은 커밋입니다';
-
-  @override
-  String get releaseUnverifiedBody =>
-      '그래도 태그를 올리면 GitHub에서 모든 OS 빌드가 돌고, 문제가 나와도 이미 올린 태그는 옮기지 않습니다. PATCH를 올려 다시 릴리스해야 합니다.';
-
-  @override
-  String get releaseTagAnyway => '그래도 태그';
-
-  @override
   String get settingsIconSet => '아이콘 모양';
 
   @override
@@ -1196,9 +848,6 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get settingsIconSetFilled => '채움';
-
-  @override
-  String get homeBuildTitle => '빌드';
 
   @override
   String get homeModeDebug => 'Debug';
@@ -1462,13 +1111,6 @@ class AppLocalizationsKo extends AppLocalizations {
       '1. Android SDK platform-tools를 설치합니다 (Android Studio SDK Manager)\n2. platform-tools 폴더를 PATH에 추가합니다\n3. 다시 점검을 누릅니다';
 
   @override
-  String get stepsCertExpiry =>
-      '1. Xcode → Settings → Accounts → Manage Certificates에서 새 Apple Development 인증서를 만듭니다\n2. 다시 점검을 누릅니다';
-
-  @override
-  String get toolPathsOpen => '도구 경로 지정…';
-
-  @override
   String get toolPathsTitle => '도구 경로';
 
   @override
@@ -1546,353 +1188,6 @@ class AppLocalizationsKo extends AppLocalizations {
   @override
   String get settingsIndentGuidesNote =>
       '들여쓴 줄마다 깊이별로 색이 다른 세로선을 그어 짝을 맞춰 볼 수 있게 합니다. 고정폭 글꼴에서 정확합니다.';
-
-  @override
-  String get gitTabBranches => '브랜치';
-
-  @override
-  String get branchesLocal => '로컬 브랜치';
-
-  @override
-  String get branchesRemote => '원격 브랜치';
-
-  @override
-  String get branchesSearchHint => '브랜치 검색';
-
-  @override
-  String get branchesNew => '새 브랜치';
-
-  @override
-  String get branchesRefresh => '브랜치 목록 새로 고침';
-
-  @override
-  String get branchesEmpty => '브랜치가 없습니다';
-
-  @override
-  String get branchesNoMatch => '검색과 맞는 브랜치가 없습니다';
-
-  @override
-  String get branchesNotRepo => '열린 폴더가 git 저장소가 아닙니다';
-
-  @override
-  String get branchCurrent => '현재';
-
-  @override
-  String get branchSwitch => '전환';
-
-  @override
-  String get branchTrackSwitch => '로컬로 가져와 전환';
-
-  @override
-  String get branchNewFrom => '여기서 새 브랜치';
-
-  @override
-  String get branchRename => '이름 바꾸기';
-
-  @override
-  String get branchDelete => '삭제';
-
-  @override
-  String get branchDeleteRemote => '원격 브랜치 삭제';
-
-  @override
-  String branchInWorktree(String path) {
-    return '다른 worktree에서 사용 중: $path';
-  }
-
-  @override
-  String get branchOpenWorktree => '그 worktree 열기';
-
-  @override
-  String get branchGone => '원격에서 사라짐';
-
-  @override
-  String get branchNoUpstream => '추적 브랜치 없음';
-
-  @override
-  String get branchCreateTitle => '새 브랜치';
-
-  @override
-  String get branchNameLabel => '브랜치 이름';
-
-  @override
-  String get branchBaseLabel => '기준 브랜치';
-
-  @override
-  String get branchBaseHead => '현재 위치(HEAD)';
-
-  @override
-  String get branchSwitchAfter => '만든 뒤 바로 전환';
-
-  @override
-  String get branchCreate => '만들기';
-
-  @override
-  String get branchCommandPreview => '실행될 명령';
-
-  @override
-  String get branchNameEmpty => '이름을 입력하세요';
-
-  @override
-  String get branchNameInvalidChar => '공백이나 ~ ^ : ? * [ 같은 글자는 쓸 수 없습니다';
-
-  @override
-  String get branchNameDash => '-로 시작할 수 없습니다';
-
-  @override
-  String get branchNameSequence => '.. // 또는 .으로 시작하는 부분은 쓸 수 없습니다';
-
-  @override
-  String get branchNameEdge => '/로 시작하거나 /·.로 끝날 수 없습니다';
-
-  @override
-  String get branchNameExists => '이미 있는 이름입니다';
-
-  @override
-  String get branchRenameTitle => '브랜치 이름 바꾸기';
-
-  @override
-  String get branchRenameAction => '이름 바꾸기';
-
-  @override
-  String get branchDeleteTitle => '브랜치 삭제';
-
-  @override
-  String branchDeleteBody(String name) {
-    return '\'$name\' 브랜치를 삭제합니다. 다른 브랜치에 병합된 것만 지워집니다.';
-  }
-
-  @override
-  String get branchDeleteNotMergedTitle => '병합되지 않은 브랜치';
-
-  @override
-  String branchDeleteNotMergedBody(String name) {
-    return '\'$name\'에는 다른 브랜치에 없는 커밋이 있습니다. 지우면 그 커밋에 접근하기 어려워집니다.';
-  }
-
-  @override
-  String get branchForceDelete => '그래도 삭제 (-D)';
-
-  @override
-  String get branchDeleteRemoteTitle => '원격 브랜치 삭제';
-
-  @override
-  String branchDeleteRemoteBody(String remote, String branch) {
-    return '원격 $remote에서 \'$branch\'를 삭제합니다. 같은 원격을 쓰는 다른 사람에게도 영향이 갑니다.';
-  }
-
-  @override
-  String branchDoneSwitch(String name) {
-    return '\'$name\'(으)로 전환했습니다';
-  }
-
-  @override
-  String branchDoneCreate(String name) {
-    return '\'$name\' 브랜치를 만들었습니다';
-  }
-
-  @override
-  String branchDoneRename(String from, String to) {
-    return '\'$from\' → \'$to\'로 이름을 바꿨습니다';
-  }
-
-  @override
-  String branchDoneDelete(String name) {
-    return '\'$name\' 브랜치를 삭제했습니다';
-  }
-
-  @override
-  String branchDoneDeleteRemote(String name) {
-    return '원격 브랜치 \'$name\'을(를) 삭제했습니다';
-  }
-
-  @override
-  String branchErrInOtherWorktree(String name, String path) {
-    return '\'$name\'은(는) 다른 worktree에서 쓰고 있어 전환·삭제할 수 없습니다: $path';
-  }
-
-  @override
-  String get branchErrLocalChanges =>
-      '커밋하지 않은 변경이 있어 전환할 수 없습니다. 커밋하거나 되돌린 뒤 다시 시도하세요.';
-
-  @override
-  String branchErrNotMerged(String name) {
-    return '\'$name\'은(는) 병합되지 않았습니다.';
-  }
-
-  @override
-  String branchErrExists(String name) {
-    return '\'$name\' 이름이 이미 있습니다.';
-  }
-
-  @override
-  String get branchErrRemote => '원격에 연결하지 못했습니다. 로그인과 네트워크를 확인하세요.';
-
-  @override
-  String get branchErrNoGit => 'git을 찾을 수 없습니다. 설치되어 PATH에 있는지 확인하세요.';
-
-  @override
-  String branchErrGeneric(String code) {
-    return '실패했습니다 (종료 코드 $code)';
-  }
-
-  @override
-  String get mergeMenuItem => '현재 브랜치로 병합…';
-
-  @override
-  String mergeTitle(String source, String target) {
-    return '\'$source\'을(를) \'$target\'에 병합';
-  }
-
-  @override
-  String mergeIncoming(String count) {
-    return '들어올 커밋 $count개';
-  }
-
-  @override
-  String mergeNothing(String source, String target) {
-    return '\'$source\'에는 \'$target\'에 없는 커밋이 없습니다. 이미 최신입니다.';
-  }
-
-  @override
-  String get mergeLoadFailed => '미리 보기를 읽지 못했습니다';
-
-  @override
-  String get mergeModeFastForward => 'Fast-forward';
-
-  @override
-  String get mergeFastForwardWhen =>
-      '기록을 갈라놓지 않고 브랜치 끝만 앞으로 옮깁니다. 병합 커밋이 생기지 않습니다.';
-
-  @override
-  String get mergeFastForwardDisabled =>
-      '두 브랜치가 갈라져 있어 쓸 수 없습니다 (현재 브랜치에도 새 커밋이 있습니다).';
-
-  @override
-  String get mergeModeMergeCommit => '병합 커밋';
-
-  @override
-  String get mergeMergeCommitWhen => '두 기록을 합치는 커밋을 만듭니다. 어디서 합쳤는지 기록에 남습니다.';
-
-  @override
-  String get mergeModeSquash => 'Squash';
-
-  @override
-  String get mergeSquashWhen =>
-      '들어올 커밋을 하나로 묶어 커밋합니다. 기록은 깔끔하지만 원래 커밋은 따로 남지 않습니다.';
-
-  @override
-  String get mergeModeRebase => 'Rebase';
-
-  @override
-  String mergeRebaseWhen(String source) {
-    return '현재 브랜치의 커밋을 \'$source\' 끝에 다시 쌓습니다. 기록은 한 줄이 되지만 커밋이 새로 만들어집니다.';
-  }
-
-  @override
-  String get mergeMessageLabel => '커밋 메시지';
-
-  @override
-  String mergeSquashNote(String source) {
-    return '\'$source\'의 커밋들이 하나로 묶여 스테이징된 뒤 커밋됩니다. 충돌이 나면 해결한 다음 직접 커밋하세요.';
-  }
-
-  @override
-  String mergeRebaseReplay(String count) {
-    return '다시 쌓일 내 커밋 $count개';
-  }
-
-  @override
-  String get mergeRebaseNothing => '다시 쌓을 내 커밋이 없습니다. 이미 그 브랜치 위에 있습니다.';
-
-  @override
-  String get mergeRebasePublishedWarning =>
-      '이 브랜치는 원격에 올라가 있습니다. rebase하면 커밋이 새로 만들어져 다음 push에 강제 push(--force-with-lease)가 필요합니다.';
-
-  @override
-  String get mergeConfirm => '병합';
-
-  @override
-  String get mergeConfirmRebase => 'Rebase';
-
-  @override
-  String mergeDone(String source, String target) {
-    return '\'$source\'을(를) \'$target\'에 병합했습니다';
-  }
-
-  @override
-  String mergeDoneRebase(String target, String source) {
-    return '\'$target\'을(를) \'$source\' 위로 rebase했습니다';
-  }
-
-  @override
-  String get mergeErrConflict =>
-      '충돌이 났습니다. 변경 탭에서 충돌을 해결한 뒤 계속하거나, 중단해서 되돌리세요.';
-
-  @override
-  String get mergeErrLocalChanges =>
-      '커밋하지 않은 변경이 병합과 겹칩니다. 커밋하거나 되돌린 뒤 다시 시도하세요.';
-
-  @override
-  String get mergeErrNotFastForward =>
-      'fast-forward로 합칠 수 없습니다. 기록이 갈라졌으니 병합 커밋이나 squash를 고르세요.';
-
-  @override
-  String get mergeBusyOperation => '병합·rebase가 진행 중입니다. 먼저 계속하거나 중단하세요.';
-
-  @override
-  String opMerging(String count) {
-    return '병합 중 — 충돌 $count개';
-  }
-
-  @override
-  String opRebasing(String count) {
-    return 'rebase 중 — 충돌 $count개';
-  }
-
-  @override
-  String opCherryPicking(String count) {
-    return 'cherry-pick 중 — 충돌 $count개';
-  }
-
-  @override
-  String opReverting(String count) {
-    return 'revert 중 — 충돌 $count개';
-  }
-
-  @override
-  String get opContinue => '계속';
-
-  @override
-  String get opSkip => '건너뛰기';
-
-  @override
-  String get opAbort => '중단';
-
-  @override
-  String get opContinueBlocked => '충돌을 모두 해결하고 스테이지해야 계속할 수 있습니다.';
-
-  @override
-  String get opAbortTitle => '작업 중단';
-
-  @override
-  String get opAbortMergeBody => '병합을 중단하고 병합 전 상태로 되돌립니다. 충돌을 해결한 내용도 사라집니다.';
-
-  @override
-  String get opAbortRebaseBody =>
-      'rebase를 중단하고 시작하기 전 상태로 되돌립니다. 이미 다시 쌓은 커밋도 사라집니다.';
-
-  @override
-  String get opAbortOtherBody => '진행 중인 작업을 중단하고 시작 전 상태로 되돌립니다.';
-
-  @override
-  String get opDoneContinue => '계속했습니다';
-
-  @override
-  String get opDoneSkip => '건너뛰었습니다';
-
-  @override
-  String get opDoneAbort => '중단했습니다. 시작 전 상태로 돌아왔습니다.';
 
   @override
   String get bdAboutTooltip => '정보';

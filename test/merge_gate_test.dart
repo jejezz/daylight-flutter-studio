@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:daylight_flutter_studio/l10n/app_localizations.dart';
 import 'package:daylight_flutter_studio/core/command_log.dart';
 import 'package:daylight_flutter_studio/core/command_runner.dart';
-import 'package:daylight_flutter_studio/git/git_controller.dart';
+import 'package:daylight_flutter_studio/verify/verify_gate_controller.dart';
 import 'package:daylight_flutter_studio/github/pull_request.dart';
 import 'package:daylight_flutter_studio/settings/gate_settings.dart';
 import 'package:daylight_flutter_studio/theme/app_theme.dart';
@@ -33,8 +33,6 @@ class FakeRunner extends CommandRunner {
   FakeRunner() : super(CommandLog());
 
   final calls = <List<String>>[];
-
-  List<String>? get merge => calls.where((c) => c.length > 2 && c[0] == 'gh' && c[1] == 'pr' && c[2] == 'merge').firstOrNull;
 
   @override
   Future<CommandResult> run(
@@ -182,12 +180,12 @@ void main() {
     });
   });
 
-  group('GitController.merge', () {
+  group('VerifyGateController 판정', () {
     late FakeRunner runner;
     late FakeStore store;
 
-    Future<GitController> controller(GateMode? mode) async {
-      final c = GitController(runner: runner, store: store, gate: mode == null ? null : GateSettings(mode));
+    Future<VerifyGateController> controller(GateMode? mode) async {
+      final c = VerifyGateController(runner: runner, store: store, gate: mode == null ? null : GateSettings(mode));
       addTearDown(c.dispose);
       await c.setDir('/repo');
       c
@@ -202,85 +200,71 @@ void main() {
       store = FakeStore(runner);
     });
 
-    test('차단: 확인하지 않은 커밋은 gh를 부르지도 않고 막는다', () async {
+    test('차단: 확인하지 않은 커밋은 막고 Run 탭으로 안내한다', () async {
       final c = await controller(GateMode.block);
-      expect(await c.merge(PrMergeMethod.merge), isFalse);
-      expect(runner.merge, isNull);
-      expect(c.messageOk, isFalse);
-      expect(c.message, contains('병합하지 않았습니다'));
-      expect(c.message, contains('Run 탭'));
+      expect(c.gateDecision.action, GateAction.block);
+      expect(c.gateDecision.message, contains('Run 탭'));
     });
 
-    test('차단: 명시적 예외(overrideGate)로만 병합하고 그렇게 알린다', () async {
-      final c = await controller(GateMode.block);
-      expect(await c.merge(PrMergeMethod.squash, overrideGate: true), isTrue);
-      expect(runner.merge, ['gh', 'pr', 'merge', '7', '--squash', '--delete-branch']);
-      expect(c.message, contains('검증 없이 병합'));
-    });
-
-    test('확인함 기록이 있으면 예외 없이 병합한다', () async {
+    test('확인함 기록이 있으면 그대로 병합할 수 있다', () async {
       store.records = [_rec(VerifyStatus.confirmed)];
       final c = await controller(GateMode.block);
-      expect(await c.merge(PrMergeMethod.merge), isTrue);
-      expect(runner.merge, ['gh', 'pr', 'merge', '7', '--merge', '--delete-branch']);
-      expect(c.message, isNot(contains('검증 없이')));
+      expect(c.gateDecision.action, GateAction.allow);
     });
 
     test('빌드만 된 것은 막는다', () async {
       store.records = [_rec(VerifyStatus.built)];
       final c = await controller(GateMode.block);
-      expect(await c.merge(PrMergeMethod.merge), isFalse);
-      expect(c.message, contains('확인함'));
+      expect(c.gateDecision.action, GateAction.block);
+      expect(c.gateDecision.message, contains('확인함'));
     });
 
     test('문제가 있다고 기록한 커밋은 메모와 함께 막는다', () async {
       store.records = [_rec(VerifyStatus.problem, note: '로그인 버튼 먹통')];
       final c = await controller(GateMode.block);
-      expect(await c.merge(PrMergeMethod.merge), isFalse);
-      expect(c.message, contains('로그인 버튼 먹통'));
+      expect(c.gateDecision.action, GateAction.block);
+      expect(c.gateDecision.message, contains('로그인 버튼 먹통'));
     });
 
     test('검증한 뒤 커밋이 추가되면 막는다', () async {
       store.records = [_rec(VerifyStatus.confirmed, sha: 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb')];
       final c = await controller(GateMode.block);
-      expect(await c.merge(PrMergeMethod.merge), isFalse);
-      expect(c.message, contains('커밋'));
+      expect(c.gateDecision.action, GateAction.block);
+      expect(c.gateDecision.message, contains('커밋'));
     });
 
-    test('화면의 판정이 낡았어도 병합 직전에 기록을 다시 읽는다', () async {
+    test('판정은 refreshVerdict로 기록을 다시 읽어야 바뀐다', () async {
       final c = await controller(GateMode.block);
       expect(c.gateDecision.action, GateAction.block, reason: '아직 기록이 없다');
 
-      // 그 사이 사용자가 Run 탭에서 "확인함"을 눌렀지만 Git 패널은 아직 모른다.
+      // 그 사이 사용자가 Run 탭에서 "확인함"을 눌렀지만 판정은 아직 모른다.
       store.records = [_rec(VerifyStatus.confirmed)];
       expect(c.gateDecision.action, GateAction.block, reason: '새로 읽기 전의 판정은 그대로');
 
-      expect(await c.merge(PrMergeMethod.merge), isTrue);
+      await c.refreshVerdict();
+      expect(c.gateDecision.action, GateAction.allow);
     });
 
-    test('경고만: 확인(overrideGate) 없이는 병합하지 않고, 확인하면 병합한다', () async {
+    test('경고만: 확인은 받되 막지는 않는다', () async {
       final c = await controller(GateMode.warn);
-      expect(await c.merge(PrMergeMethod.merge), isFalse);
-      expect(runner.merge, isNull);
-      expect(await c.merge(PrMergeMethod.merge, overrideGate: true), isTrue);
+      expect(c.gateDecision.action, GateAction.confirm);
     });
 
-    test('끔: 확인 여부와 상관없이 병합한다', () async {
+    test('끔: 검증하지 않았어도 허용한다', () async {
       final c = await controller(GateMode.off);
-      expect(await c.merge(PrMergeMethod.rebase), isTrue);
-      expect(runner.merge, ['gh', 'pr', 'merge', '7', '--rebase', '--delete-branch']);
+      expect(c.gateDecision.action, GateAction.allow);
     });
 
-    test('관문 설정이 없으면(gate: null) 병합한다', () async {
+    test('관문 설정이 없으면(gate: null) 허용한다', () async {
       final c = await controller(null);
-      expect(await c.merge(PrMergeMethod.merge), isTrue);
+      expect(c.gateDecision.action, GateAction.allow);
     });
 
-    test('PR이 없으면 아무것도 하지 않는다', () async {
-      final c = await controller(GateMode.off);
-      c.pr = null;
-      expect(await c.merge(PrMergeMethod.merge), isFalse);
-      expect(runner.merge, isNull);
+    test('로컬 HEAD가 PR head와 다르면 알 수 있다', () async {
+      final c = await controller(GateMode.block);
+      expect(c.localDiffersFromPr, isFalse, reason: '같은 커밋이다');
+      c.prHeadSha = 'cccccccccccccccccccccccccccccccccccccccc';
+      expect(c.localDiffersFromPr, isTrue);
     });
 
     test('refreshVerdict는 gh나 git 상태를 다시 부르지 않는다', () async {
@@ -296,7 +280,7 @@ void main() {
     late FakeRunner runner;
     late FakeStore store;
     late GateSettings gate;
-    late GitController c;
+    late VerifyGateController c;
     late GitMergeGate mergeGate;
     late _BdRunner bdRunner;
     late Directory tmp;
@@ -333,7 +317,7 @@ void main() {
     Future<void> show(WidgetTester tester, {GateMode mode = GateMode.block, List<VerifyRecord> records = const []}) async {
       store.records = records;
       await gate.setMode(mode);
-      c = GitController(runner: runner, store: store, gate: gate);
+      c = VerifyGateController(runner: runner, store: store, gate: gate);
       addTearDown(c.dispose);
       await c.setDir('/repo');
       c
