@@ -288,7 +288,7 @@ class _StudioScreenState extends State<StudioScreen>
         MenuAction(l10n.menuSelectAll, onPressed: hasTab ? () => _edit((c) => c.selectAll()) : null, shortcut: key(LogicalKeyboardKey.keyA), nativeShortcut: false),
         const MenuDivider(),
         MenuAction(l10n.menuFind, onPressed: hasTab ? () => _controller.activeTab?.find.findMode() : null, shortcut: key(LogicalKeyboardKey.keyF), nativeShortcut: false),
-        MenuAction(l10n.menuReplace, onPressed: hasTab ? () => _controller.activeTab?.find.replaceMode() : null, shortcut: key(LogicalKeyboardKey.keyH), nativeShortcut: false),
+        MenuAction(l10n.menuReplace, onPressed: hasTab ? () => _controller.activeTab?.find.replaceMode() : null, shortcut: key(LogicalKeyboardKey.keyR), nativeShortcut: false),
         MenuAction(l10n.menuFindInProject, onPressed: hasProject ? _searchProject : null, shortcut: key(LogicalKeyboardKey.keyF, shift: true)),
         const MenuDivider(),
         MenuAction(

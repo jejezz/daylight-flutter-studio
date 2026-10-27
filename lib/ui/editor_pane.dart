@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:re_editor/re_editor.dart';
@@ -120,6 +121,21 @@ class _ExternalBanner extends StatelessWidget {
   }
 }
 
+/// 편집기 단축키. re_editor 기본값에서 바꾸기만 `Ctrl/⌘+R`로 바꾼다(기본은 `Ctrl/⌘+Alt+F`).
+/// 터미널에서는 `Ctrl+R`이 셸의 기록 검색이라, 앱 전체 단축키가 아니라 편집기 안에서만 쓴다.
+class StudioShortcuts extends CodeShortcutsActivatorsBuilder {
+  const StudioShortcuts();
+
+  static const _defaults = DefaultCodeShortcutsActivatorsBuilder();
+
+  @override
+  List<ShortcutActivator>? build(CodeShortcutType type) {
+    if (type != CodeShortcutType.replace) return _defaults.build(type);
+    final mac = defaultTargetPlatform == TargetPlatform.macOS;
+    return [SingleActivator(LogicalKeyboardKey.keyR, control: !mac, meta: mac)];
+  }
+}
+
 class _CodeView extends StatefulWidget {
   const _CodeView({super.key, required this.tab, this.problems});
 
@@ -160,6 +176,7 @@ class _CodeViewState extends State<_CodeView> {
       child: CodeEditor(
         controller: tab.controller,
         findController: tab.find,
+        shortcutsActivatorsBuilder: const StudioShortcuts(),
         scrollController: _scroll,
         wordWrap: false,
         findBuilder: (context, find, readOnly) => FindPanel(controller: find, readOnly: readOnly),

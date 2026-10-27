@@ -9,6 +9,7 @@ import 'package:daylight_flutter_studio/ui/editor_pane.dart';
 import 'package:daylight_flutter_studio/ui/markdown_view.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:re_editor/re_editor.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -100,6 +101,40 @@ void main() {
     c.activeTab!.find.replaceMode(); // 편집 메뉴 > 바꾸기
     await tester.pump();
     expect(find.text('바꿀 내용'), findsOneWidget);
+    await _unmount(tester);
+  });
+
+  testWidgets('편집기에서 Ctrl+R은 바꾸기를, Ctrl+F는 찾기를 연다', (tester) async {
+    final f = write('a.txt', 'hello\nworld\n');
+    await tester.runAsync(() => c.openFile(f.path));
+    await tester.pumpWidget(_app(c));
+    await tester.pump();
+    await tester.tap(find.byType(CodeEditor)); // 편집기에 포커스를 둔다
+    await tester.pump(const Duration(seconds: 1)); // 탭 감지 타이머를 흘려 보낸다
+    await tester.pump();
+
+    Future<void> ctrl(LogicalKeyboardKey key) async {
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+      await tester.sendKeyEvent(key);
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+      await tester.pump();
+    }
+
+    final finder = c.activeTab!.find;
+    await ctrl(LogicalKeyboardKey.keyF);
+    expect(finder.value, isNotNull);
+    expect(finder.value!.replaceMode, isFalse);
+
+    finder.close();
+    await tester.pump();
+    await ctrl(LogicalKeyboardKey.keyR);
+    expect(finder.value, isNotNull);
+    expect(finder.value!.replaceMode, isTrue);
+
+    finder.close();
+    await tester.pump();
+    await ctrl(LogicalKeyboardKey.keyH); // 예전 단축키는 더 이상 바꾸기가 아니다
+    expect(finder.value, isNull);
     await _unmount(tester);
   });
 
