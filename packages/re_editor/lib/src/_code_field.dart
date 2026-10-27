@@ -9,6 +9,7 @@ class _CodeField extends SingleChildRenderObjectWidget {
   final CodeLines codes;
   final CodeLineSelection selection;
   final List<CodeLineSelection>? highlightSelections;
+  final ValueNotifier<CodeBlockSelection?>? blockSelection;
   final TextStyle textStyle;
   final bool hasFocus;
   final _CodeHighlighter highlighter;
@@ -38,6 +39,7 @@ class _CodeField extends SingleChildRenderObjectWidget {
     required this.codes,
     required this.selection,
     required this.highlightSelections,
+    this.blockSelection,
     required this.textStyle,
     required this.hasFocus,
     required this.highlighter,
@@ -71,6 +73,7 @@ class _CodeField extends SingleChildRenderObjectWidget {
     codes: codes,
     selection: selection,
     highlightSelections: highlightSelections,
+    blockSelection: blockSelection,
     textStyle: textStyle,
     hasFocus: hasFocus,
     highlighter: highlighter,
@@ -102,6 +105,7 @@ class _CodeField extends SingleChildRenderObjectWidget {
       ..codes = codes
       ..selection = selection
       ..highlightSelections = highlightSelections
+      ..blockSelection = blockSelection
       ..textStyle = textStyle
       ..hasFocus = hasFocus
       ..highlighter = highlighter
@@ -145,6 +149,7 @@ class _CodeFieldRender extends RenderBox implements MouseTrackerAnnotation {
   bool _readOnly;
   int? _maxLengthSingleLineRendering;
   Color? _chunkIndicatorColor;
+  ValueNotifier<CodeBlockSelection?>? _blockSelection;
 
   double? _horizontalViewportSize;
   double? _verticalViewportSize;
@@ -165,6 +170,7 @@ class _CodeFieldRender extends RenderBox implements MouseTrackerAnnotation {
     required CodeLines codes,
     required CodeLineSelection selection,
     required List<CodeLineSelection>? highlightSelections,
+    ValueNotifier<CodeBlockSelection?>? blockSelection,
     required TextStyle textStyle,
     required bool hasFocus,
     required _CodeHighlighter highlighter,
@@ -184,7 +190,8 @@ class _CodeFieldRender extends RenderBox implements MouseTrackerAnnotation {
     int? maxLengthSingleLineRendering,
     required LayerLink startHandleLayerLink,
     required LayerLink endHandleLayerLink,
-  }) : _verticalViewport = verticalViewport,
+  }) : _blockSelection = blockSelection,
+    _verticalViewport = verticalViewport,
     _horizontalViewport = horizontalViewport,
     _verticalScrollbarWidth = verticalScrollbarWidth,
     _horizontalScrollbarHeight = horizontalScrollbarHeight,
@@ -210,6 +217,7 @@ class _CodeFieldRender extends RenderBox implements MouseTrackerAnnotation {
       painters: [
         _CodeCursorLinePainter(cursorLineColor, _selection),
         _CodeFieldSelectionPainter(selectionColor, _selection),
+        _CodeFieldBlockSelectionPainter(selectionColor, blockSelection),
         _CodeFieldHighlightPainter(highlightColor, highlightSelections ?? const [])
       ]
     );
@@ -301,6 +309,14 @@ class _CodeFieldRender extends RenderBox implements MouseTrackerAnnotation {
     markNeedsLayout();
   }
 
+  set blockSelection(ValueNotifier<CodeBlockSelection?>? value) {
+    if (identical(_blockSelection, value)) {
+      return;
+    }
+    _blockSelection = value;
+    _backgroundRender.find<_CodeFieldBlockSelectionPainter>().source = value;
+  }
+
   set highlightSelections(List<CodeLineSelection>? value) {
     _backgroundRender.find<_CodeFieldHighlightPainter>().selections = value ?? const [];
   }
@@ -381,6 +397,7 @@ class _CodeFieldRender extends RenderBox implements MouseTrackerAnnotation {
   }
 
   set selectionColor(Color value) {
+    _backgroundRender.find<_CodeFieldBlockSelectionPainter>().color = value;
     _backgroundRender.find<_CodeFieldSelectionPainter>().color = value;
   }
 
@@ -601,6 +618,18 @@ class _CodeFieldRender extends RenderBox implements MouseTrackerAnnotation {
       extentIndex: result.index,
       extentOffset: result.offset,
       extentAffinity: result.affinity
+    );
+  }
+
+  /// The text position under [position], clamped into the editor. Used by the
+  /// rectangular (Alt/Option + drag) selection.
+  CodeLinePosition? blockPositionAt(Offset position) {
+    final Offset localPosition = globalToLocal(position);
+    return calculateTextPosition(
+      Offset(
+        min(size.width, max(0, localPosition.dx)),
+        min(size.height - _preferredLineHeight / 2, max(_preferredLineHeight / 2, localPosition.dy))
+      )
     );
   }
 
@@ -1552,6 +1581,66 @@ class _CodeFieldSelectionPainter extends _CodeFieldSelectionsPainter {
 
   set selection(CodeLineSelection value) {
     selections = [value];
+  }
+
+}
+
+class _CodeFieldBlockSelectionPainter extends _CodeFieldExtraPainter {
+
+  final Paint _paint = Paint();
+  Color _color;
+  ValueNotifier<CodeBlockSelection?>? _source;
+
+  _CodeFieldBlockSelectionPainter(this._color, this._source) {
+    _source?.addListener(_changed);
+  }
+
+  void _changed() => notifyListeners();
+
+  set color(Color value) {
+    if (_color == value) {
+      return;
+    }
+    _color = value;
+    notifyListeners();
+  }
+
+  set source(ValueNotifier<CodeBlockSelection?>? value) {
+    if (identical(_source, value)) {
+      return;
+    }
+    _source?.removeListener(_changed);
+    _source = value;
+    _source?.addListener(_changed);
+    notifyListeners();
+  }
+
+  @override
+  void paint(Canvas canvas, Size size, _CodeFieldRender render) {
+    final CodeBlockSelection? block = _source?.value;
+    if (block == null || _color.alpha == 0) {
+      return;
+    }
+    _paint.color = _color;
+    for (final CodeLineRenderParagraph paragraph in render.displayParagraphs) {
+      if (paragraph.index < block.startIndex || paragraph.index > block.endIndex) {
+        continue;
+      }
+      final int start = min(block.startColumn, paragraph.length);
+      final int end = min(block.endColumn, paragraph.length);
+      final Offset shift = paragraph.offset - render.paintOffset;
+      if (start == end) {
+        // Short line (or empty column range): show a thin caret-like mark.
+        final Offset? offset = paragraph.getOffset(TextPosition(offset: start));
+        if (offset != null && block.startColumn == block.endColumn) {
+          canvas.drawRect(Rect.fromLTWH(offset.dx + shift.dx, offset.dy + shift.dy, 1, paragraph.preferredLineHeight), _paint);
+        }
+        continue;
+      }
+      for (final Rect rect in paragraph.getRangeRects(TextRange(start: start, end: end))) {
+        canvas.drawRect(rect.shift(shift), _paint);
+      }
+    }
   }
 
 }

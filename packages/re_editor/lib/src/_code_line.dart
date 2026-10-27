@@ -20,6 +20,9 @@ class _CodeLineEditingControllerImpl extends ValueNotifier<CodeLineEditingValue>
   CodeLineEditingValue? _preValue;
   GlobalKey? _editorKey;
 
+  @override
+  final ValueNotifier<CodeBlockSelection?> blockSelection = ValueNotifier<CodeBlockSelection?>(null);
+
   _CodeLineEditingControllerImpl({
     required CodeLines codeLines,
     required this.options,
@@ -54,6 +57,10 @@ class _CodeLineEditingControllerImpl extends ValueNotifier<CodeLineEditingValue>
   @override
   set value(CodeLineEditingValue value) {
     _preValue = super.value;
+    if (blockSelection.value != null && (value.selection != super.value.selection ||
+        !identical(value.codeLines, super.value.codeLines))) {
+      blockSelection.value = null;
+    }
     super.value = value;
   }
 
@@ -929,8 +936,27 @@ class _CodeLineEditingControllerImpl extends ValueNotifier<CodeLineEditingValue>
   @override
   void redo() => _cache.redo();
 
+  String _blockText(CodeBlockSelection block) {
+    final StringBuffer sb = StringBuffer();
+    final int last = min(block.endIndex, codeLines.length - 1);
+    for (int i = block.startIndex; i <= last; i++) {
+      final String text = codeLines[i].text;
+      final int from = min(block.startColumn, text.length);
+      final int to = min(block.endColumn, text.length);
+      sb.write(text.substring(from, to));
+      if (i < last) {
+        sb.write(lineBreak.value);
+      }
+    }
+    return sb.toString();
+  }
+
   @override
   Future<void> copy() {
+    final CodeBlockSelection? block = blockSelection.value;
+    if (block != null) {
+      return Clipboard.setData(ClipboardData(text: _blockText(block)));
+    }
     if (selection.isCollapsed) {
       return Clipboard.setData(ClipboardData(text: extentLine.text + lineBreak.value));
     } else {
@@ -941,6 +967,10 @@ class _CodeLineEditingControllerImpl extends ValueNotifier<CodeLineEditingValue>
   @override
   void cut() {
     copy();
+    if (blockSelection.value != null) {
+      // Deleting a rectangle is not supported yet; only copy.
+      return;
+    }
     if (selection.isCollapsed) {
       deleteSelectionLines(true);
     } else {
@@ -1120,6 +1150,7 @@ class _CodeLineEditingControllerImpl extends ValueNotifier<CodeLineEditingValue>
   void dispose() {
     _editorKey = null;
     _cache.dispose();
+    blockSelection.dispose();
     super.dispose();
   }
 
@@ -2479,6 +2510,9 @@ class _CodeLineEditingControllerDelegate implements CodeLineEditingController {
   void selectLines(int base, int extent) {
     _delegate.selectLines(base, extent);
   }
+
+  @override
+  ValueNotifier<CodeBlockSelection?> get blockSelection => _delegate.blockSelection;
 
   @override
   String get selectedText => _delegate.selectedText;

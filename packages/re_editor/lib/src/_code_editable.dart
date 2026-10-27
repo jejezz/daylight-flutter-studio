@@ -288,6 +288,7 @@ class _CodeEditableState extends State<_CodeEditable> with AutomaticKeepAliveCli
       horizontalScrollbarHeight: widget.horizontalScrollbarHeight ?? _kScrollbarThickness,
       selection: widget.controller.selection,
       highlightSelections: widget.findController.allMatchSelections,
+      blockSelection: widget.controller.blockSelection,
       codes: widget.controller.codeLines,
       textStyle: widget.textStyle,
       hasFocus: widget.focusNode.hasFocus,

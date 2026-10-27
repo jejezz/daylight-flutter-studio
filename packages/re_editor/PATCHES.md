@@ -3,4 +3,9 @@
 - 글꼴 기능(OpenType feature)을 줄 수 있게 했다. 원본의 `CodeEditorStyle`에는 `fontFeatures`가 없어서 합자(ligature)를 끌 수 없었다.
   - `lib/src/code_editor.dart`: `CodeEditorStyle.fontFeatures`를 더하고, 편집기 본문 글꼴(`baseStyle`)에 넘긴다.
   - 구문 강조 조각은 이 글꼴을 이어받는다(엔진이 안 정한 값은 부모 것을 쓴다).
+- 세로 블록(사각형) 선택: Alt(Option)+드래그. 원본은 선택이 연속된 한 구간뿐이다.
+  - `code_line.dart`: `CodeBlockSelection`(줄 범위 + 열 범위)과 `CodeLineEditingController.blockSelection`을 더한다. 선택·글이 바뀌면 지워진다.
+  - `_code_selection.dart`: Alt를 누르고 눌렀을 때 시작점을 기억해 드래그하면 `blockSelection`을 정한다.
+  - `_code_field.dart`: `_CodeFieldBlockSelectionPainter`가 줄마다 같은 열 범위를 칠한다. `_code_line.dart`: `copy()`는 블록이 있으면 줄마다 잘라 줄바꿈으로 잇는다.
+  - 열은 글자 위치(offset)다 — 한글 같은 넓은 글자가 섞이면 화면 열과 어긋날 수 있다. 자르기·붙여넣기·타이핑은 아직 블록을 모른다(자르기는 복사만).
 - 원본이 고치면 되돌린다.

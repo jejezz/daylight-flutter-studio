@@ -33,6 +33,7 @@ class _CodeSelectionGestureDetectorState extends State<_CodeSelectionGestureDete
   bool? _handleByNextEvent;
   bool _longPressOnSelection = false;
   CodeLineSelection? _anchorSelection;
+  CodeLinePosition? _blockAnchor;
 
   _CodeFieldRender get render => widget.editorKey.currentContext?.findRenderObject() as _CodeFieldRender;
 
@@ -140,16 +141,20 @@ class _CodeSelectionGestureDetectorState extends State<_CodeSelectionGestureDete
         child: Listener(
           onPointerDown: (event) {
             _tapping = render.isValidPointer2(event.position);
+            _blockAnchor = _tapping && _isAltPressed && !widget.controller.isComposing ?
+              render.blockPositionAt(event.position) : null;
             // A trick, delay the focus request here to avoid loss.
             Future(widget.inputController.ensureInput);
             _onDesktopTapDown(event.position);
           },
           onPointerUp: (event) {
             _tapping = false;
+            _blockAnchor = null;
             _onDesktopTapUp(event.position);
           },
           onPointerCancel: (event) {
             _tapping = false;
+            _blockAnchor = null;
             _handleByNextEvent = false;
             _pointerTapTimestamp = null;
             _pointerTapPosition = null;
@@ -160,6 +165,12 @@ class _CodeSelectionGestureDetectorState extends State<_CodeSelectionGestureDete
       );
     }
   }
+
+  bool get _isAltPressed => _isMobile ? false : HardwareKeyboard.instance.logicalKeysPressed
+    .any(<LogicalKeyboardKey>{
+      LogicalKeyboardKey.altLeft,
+      LogicalKeyboardKey.altRight,
+    }.contains);
 
   bool get _isMobile => kIsAndroid || kIsIOS;
 
@@ -305,7 +316,35 @@ class _CodeSelectionGestureDetectorState extends State<_CodeSelectionGestureDete
     widget.selectionOverlayController.showToolbar(context, details.globalPosition);
   }
 
+  void _extendBlockSelection(Offset offset, CodeLinePosition anchor) {
+    final CodeLinePosition? position = render.blockPositionAt(offset);
+    if (position == null) {
+      return;
+    }
+    final CodeBlockSelection block = CodeBlockSelection(
+      baseIndex: anchor.index,
+      baseColumn: anchor.offset,
+      extentIndex: position.index,
+      extentColumn: position.offset,
+    );
+    if (widget.controller.blockSelection.value == block) {
+      return;
+    }
+    // Moving the caret clears the previous block, so set the block afterwards.
+    widget.controller.value = widget.controller.value.copyWith(
+      selection: CodeLineSelection.fromPosition(position: position),
+      composing: TextRange.empty,
+    );
+    widget.controller.blockSelection.value = block;
+    widget.controller.makeCursorVisible();
+  }
+
   void _extendSelection(Offset offset, _SelectionChangedCause cause) {
+    final CodeLinePosition? blockAnchor = _blockAnchor;
+    if (blockAnchor != null && cause == _SelectionChangedCause.drag) {
+      _extendBlockSelection(offset, blockAnchor);
+      return;
+    }
     if (cause == _SelectionChangedCause.tapDown || cause == _SelectionChangedCause.tapUp) {
       if (expandChunkIfNeeded(render.chunkIndicatorHitIndex(offset))) {
         return;
