@@ -159,6 +159,7 @@ class _CodeViewState extends State<_CodeView> {
       scrollers: [_vertical, _horizontal],
       child: CodeEditor(
         controller: tab.controller,
+        findController: tab.find,
         scrollController: _scroll,
         wordWrap: false,
         findBuilder: (context, find, readOnly) => FindPanel(controller: find, readOnly: readOnly),

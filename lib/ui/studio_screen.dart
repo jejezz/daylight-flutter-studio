@@ -242,12 +242,6 @@ class _StudioScreenState extends State<StudioScreen>
     if (tab != null) action(tab.controller);
   }
 
-  /// 편집기가 직접 처리하는 동작(찾기·바꾸기)은 편집기에 포커스가 있을 때의 인텐트로 보낸다.
-  void _editorIntent(Intent intent) {
-    final ctx = FocusManager.instance.primaryFocus?.context;
-    if (ctx != null) Actions.maybeInvoke(ctx, intent);
-  }
-
   Future<void> _closeActiveTab() async {
     final i = _controller.activeIndex;
     if (i >= 0 && i < _controller.tabs.length) await closeTabWithPrompt(context, _controller, i);
@@ -293,8 +287,8 @@ class _StudioScreenState extends State<StudioScreen>
         MenuAction(l10n.menuPaste, onPressed: hasTab ? () => _edit((c) => c.paste()) : null, shortcut: key(LogicalKeyboardKey.keyV), nativeShortcut: false),
         MenuAction(l10n.menuSelectAll, onPressed: hasTab ? () => _edit((c) => c.selectAll()) : null, shortcut: key(LogicalKeyboardKey.keyA), nativeShortcut: false),
         const MenuDivider(),
-        MenuAction(l10n.menuFind, onPressed: hasTab ? () => _editorIntent(const CodeShortcutFindIntent()) : null, shortcut: key(LogicalKeyboardKey.keyF), nativeShortcut: false),
-        MenuAction(l10n.menuReplace, onPressed: hasTab ? () => _editorIntent(const CodeShortcutReplaceIntent()) : null, shortcut: key(LogicalKeyboardKey.keyH), nativeShortcut: false),
+        MenuAction(l10n.menuFind, onPressed: hasTab ? () => _controller.activeTab?.find.findMode() : null, shortcut: key(LogicalKeyboardKey.keyF), nativeShortcut: false),
+        MenuAction(l10n.menuReplace, onPressed: hasTab ? () => _controller.activeTab?.find.replaceMode() : null, shortcut: key(LogicalKeyboardKey.keyH), nativeShortcut: false),
         MenuAction(l10n.menuFindInProject, onPressed: hasProject ? _searchProject : null, shortcut: key(LogicalKeyboardKey.keyF, shift: true)),
         const MenuDivider(),
         MenuAction(

@@ -62,6 +62,47 @@ void main() {
 
   File write(String name, String text) => File('${dir.path}${Platform.pathSeparator}$name')..writeAsStringSync(text);
 
+  testWidgets('편집 메뉴의 찾기·바꾸기는 편집기에 포커스가 없어도 찾기 줄을 연다', (tester) async {
+    final f = write('a.txt', 'hello\nworld\n');
+    await tester.runAsync(() => c.openFile(f.path));
+    final outside = FocusNode();
+    addTearDown(outside.dispose);
+    await tester.pumpWidget(
+      MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        locale: const Locale('ko'),
+        theme: AppTheme.build(StudioPalette.saturn, Brightness.light),
+        home: Scaffold(
+          body: Column(
+            children: [
+              // 메뉴 항목을 누른 직후처럼 포커스가 편집기 밖에 있다.
+              TextField(focusNode: outside),
+              Expanded(
+                child: ListenableBuilder(listenable: c, builder: (context, _) => EditorPane(controller: c)),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+    await tester.pump();
+    outside.requestFocus();
+    await tester.pump();
+    expect(c.activeTab!.find.value, isNull); // 찾기 줄이 닫혀 있다
+
+    c.activeTab!.find.findMode(); // 편집 메뉴 > 찾기
+    await tester.pump();
+    expect(c.activeTab!.find.value, isNotNull);
+    expect(find.byType(EditableText), findsNWidgets(2)); // 본문 + 찾을 글
+    expect(find.text('바꿀 내용'), findsNothing);
+
+    c.activeTab!.find.replaceMode(); // 편집 메뉴 > 바꾸기
+    await tester.pump();
+    expect(find.text('바꿀 내용'), findsOneWidget);
+    await _unmount(tester);
+  });
+
   testWidgets('Dart 파일을 열면 편집기와 정렬 단추가 보이고, 줄 끝(CRLF)을 유지한다', (tester) async {
     final f = write('a.dart', _dart.replaceAll('\n', '\r\n'));
     await tester.runAsync(() => c.openFile(f.path));
