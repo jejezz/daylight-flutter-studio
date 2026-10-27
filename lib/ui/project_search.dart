@@ -19,10 +19,21 @@ Future<void> showProjectSearch(
   SearchFn search = searchProject,
   bool Function(String path)? isBusy,
   VoidCallback? onReplaced,
+  String initialQuery = '',
+  bool replaceMode = false,
 }) {
   return showDialog<void>(
     context: context,
-    builder: (context) => _ProjectSearch(root: root, files: files, onOpen: onOpen, search: search, isBusy: isBusy, onReplaced: onReplaced),
+    builder: (context) => _ProjectSearch(
+      root: root,
+      files: files,
+      onOpen: onOpen,
+      search: search,
+      isBusy: isBusy,
+      onReplaced: onReplaced,
+      initialQuery: initialQuery,
+      replaceMode: replaceMode,
+    ),
   );
 }
 
@@ -36,6 +47,8 @@ class _ProjectSearch extends StatefulWidget {
     required this.search,
     required this.isBusy,
     required this.onReplaced,
+    required this.initialQuery,
+    required this.replaceMode,
   });
 
   final String root;
@@ -45,6 +58,12 @@ class _ProjectSearch extends StatefulWidget {
   final bool Function(String path)? isBusy;
   final VoidCallback? onReplaced;
 
+  /// 편집기에서 선택해 둔 글. 비어 있지 않으면 검색어로 채우고 바로 검색한다.
+  final String initialQuery;
+
+  /// 바꾸기 줄을 연 채로 시작한다.
+  final bool replaceMode;
+
   @override
   State<_ProjectSearch> createState() => _ProjectSearchState();
 }
@@ -52,11 +71,11 @@ class _ProjectSearch extends StatefulWidget {
 class _ProjectSearchState extends State<_ProjectSearch> {
   static const _leadWidth = 40.0;
 
-  final _query = TextEditingController();
+  late final _query = TextEditingController(text: widget.initialQuery);
   final _replace = TextEditingController();
   bool _caseSensitive = false;
   bool _regex = false;
-  bool _replaceMode = false;
+  late bool _replaceMode = widget.replaceMode;
   bool _searching = false;
   bool _working = false;
   SearchResult? _result;
@@ -72,6 +91,12 @@ class _ProjectSearchState extends State<_ProjectSearch> {
   /// 마지막 바꾸기·되돌리기 결과 안내, 그리고 되돌릴 기록.
   String? _note;
   ReplaceSession? _undo;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.initialQuery.isNotEmpty) _go();
+  }
 
   @override
   void dispose() {

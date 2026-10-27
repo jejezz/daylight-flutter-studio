@@ -1754,6 +1754,7 @@
   "menuFind": "Find…",
   "menuReplace": "Replace…",
   "menuFindInProject": "Find in Project…",
+  "menuReplaceInProject": "Replace in Project…",
   "menuFormat": "Format Code",
   "menuBottomPanel": "Bottom Panel",
   "menuGitDock": "Git Panel",

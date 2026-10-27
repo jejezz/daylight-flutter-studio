@@ -213,12 +213,22 @@ class _StudioScreenState extends State<StudioScreen>
     if (path != null) await _controller.openFile(path);
   }
 
-  Future<void> _searchProject() async {
+  /// 편집기에서 한 줄 안의 글을 선택해 두었으면 그것을 검색어로 쓴다 (찾기 줄과 같다). 여러 줄이면 쓰지 않는다.
+  String _selectedQuery() {
+    final text = _controller.activeTab?.controller.selectedText ?? '';
+    return text.isEmpty || text.contains('\n') || text.contains('\r') ? '' : text;
+  }
+
+  Future<void> _replaceProject() => _searchProject(replace: true);
+
+  Future<void> _searchProject({bool replace = false}) async {
     final root = _controller.root;
     if (root == null) return;
     await showProjectSearch(
       context,
       root: root,
+      initialQuery: _selectedQuery(),
+      replaceMode: replace,
       files: listProjectFiles(root),
       onOpen: (path, line, column) => _controller.openAt(path, line, column),
       // 수정 중이거나 디스크와 달라진 탭이 열린 파일은 바꾸지 않는다 — 검색 결과(디스크)와 편집 중인 글이 다르다.
@@ -291,6 +301,7 @@ class _StudioScreenState extends State<StudioScreen>
         MenuAction(l10n.menuFind, onPressed: hasTab ? () => _controller.activeTab?.find.findMode() : null, shortcut: key(LogicalKeyboardKey.keyF), nativeShortcut: false),
         MenuAction(l10n.menuReplace, onPressed: hasTab ? () => _controller.activeTab?.find.replaceMode() : null, shortcut: key(LogicalKeyboardKey.keyR), nativeShortcut: false),
         MenuAction(l10n.menuFindInProject, onPressed: hasProject ? _searchProject : null, shortcut: key(LogicalKeyboardKey.keyF, shift: true)),
+        MenuAction(l10n.menuReplaceInProject, onPressed: hasProject ? _replaceProject : null, shortcut: key(LogicalKeyboardKey.keyH, shift: true)),
         const MenuDivider(),
         MenuAction(
           l10n.menuFormat,
@@ -391,6 +402,8 @@ class _StudioScreenState extends State<StudioScreen>
             const SingleActivator(LogicalKeyboardKey.keyP, meta: true): _quickOpen,
             const SingleActivator(LogicalKeyboardKey.keyF, control: true, shift: true): _searchProject,
             const SingleActivator(LogicalKeyboardKey.keyF, meta: true, shift: true): _searchProject,
+            const SingleActivator(LogicalKeyboardKey.keyH, control: true, shift: true): _replaceProject,
+            const SingleActivator(LogicalKeyboardKey.keyH, meta: true, shift: true): _replaceProject,
           },
           child: Focus(
             autofocus: true,
