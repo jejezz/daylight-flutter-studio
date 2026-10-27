@@ -28,7 +28,30 @@ TextStyle editorTextStyle(BuildContext context) {
     wordSpacing: 0,
     fontWeight: FontWeight.w400,
     fontStyle: FontStyle.normal,
+    fontFeatures: _ligatureFeatures(settings),
   );
+}
+
+/// 합자를 끄면 글꼴 기능 `liga`·`clig`·`calt`를 모두 끈다 (코딩용 글꼴은 `calt`로 합자를 만든다). 켜 두면 글꼴 기본대로.
+List<FontFeature>? _ligatureFeatures(EditorSettings? settings) => settings != null && !settings.ligatures
+    ? const [FontFeature.disable('liga'), FontFeature.disable('clig'), FontFeature.disable('calt')]
+    : null;
+
+/// 로그·명령 출력·경로·해시·Markdown 코드의 글꼴. 기본은 테마의 로그 글꼴이고,
+/// [EditorSettings.logFollowsEditor]를 켜면 편집기와 같은 글꼴·합자를 쓴다 (크기·줄 간격·색은 호출하는 쪽이 정한다).
+TextStyle logTextStyle(BuildContext context) => followEditorFont(context, context.tokens.logText);
+
+/// [EditorSettings.logFollowsEditor]가 켜져 있으면 [base]의 글꼴 계열·합자만 편집기 것으로 바꾼다. 꺼져 있으면 [base] 그대로.
+TextStyle followEditorFont(BuildContext context, TextStyle base) {
+  final settings = EditorSettingsScope.maybeOf(context);
+  if (settings == null || !settings.logFollowsEditor) return base;
+  final editor = editorTextStyle(context);
+  return base.copyWith(fontFamily: editor.fontFamily, fontFamilyFallback: editor.fontFamilyFallback, fontFeatures: editor.fontFeatures);
+}
+
+/// [logTextStyle]를 짧게 쓰는 길 (`context.logText`).
+extension LogText on BuildContext {
+  TextStyle get logText => logTextStyle(this);
 }
 
 /// 줄 번호 글꼴. 현재 줄은 본문 색, 나머지는 흐린 색.
@@ -46,6 +69,7 @@ CodeEditorStyle buildEditorStyle(BuildContext context, {required String language
     fontFamily: font.fontFamily,
     fontFamilyFallback: font.fontFamilyFallback,
     fontHeight: font.height,
+    fontFeatures: font.fontFeatures,
     textColor: scheme.onSurface,
     hintTextColor: scheme.onSurfaceVariant,
     backgroundColor: scheme.surface,

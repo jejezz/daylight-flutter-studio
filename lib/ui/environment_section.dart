@@ -189,7 +189,7 @@ class _EnvironmentSectionState extends State<EnvironmentSection> {
               ),
               SelectableText(
                 _found[tool] ?? l10n.toolPathNotFound,
-                style: t.logText.copyWith(color: _found[tool] == null ? t.danger : null),
+                style: context.logText.copyWith(color: _found[tool] == null ? t.danger : null),
               ),
               Row(
                 children: [

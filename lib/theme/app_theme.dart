@@ -10,6 +10,8 @@ library;
 
 import 'package:flutter/material.dart';
 
+import 'editor_theme.dart';
+export 'editor_theme.dart' show LogText, followEditorFont, logTextStyle;
 import 'studio_icons.dart';
 import 'syntax_theme.dart';
 
@@ -264,7 +266,7 @@ class StudioTokens extends ThemeExtension<StudioTokens> {
 /// 고정폭 글자(명령·해시·로그). 글꼴 계열은 테마의 로그 글꼴을 따르고 크기만 호출하는 쪽이 정한다.
 extension MonoText on BuildContext {
   TextStyle mono(double size, {Color? color, FontWeight? fontWeight, double? height}) =>
-      tokens.logText.copyWith(fontSize: size, color: color, fontWeight: fontWeight, height: height);
+      logTextStyle(this).copyWith(fontSize: size, color: color, fontWeight: fontWeight, height: height);
 
   /// 파일 이름·브랜치 이름·커밋 제목처럼 앱이 통제하지 않는 글자 (한글 대체 글꼴 포함).
   TextStyle userText(double size, {Color? color, FontWeight? fontWeight, double? height, TextDecoration? decoration}) =>

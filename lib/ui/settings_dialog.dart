@@ -627,7 +627,7 @@ class _TerminalSection extends StatelessWidget {
   }
 }
 
-const _previewSample = "void main() {\n  print('Hello, Flutter');\n}";
+const _previewSample = "void main() {\n  print('Hello, Flutter');\n  if (a != b && c >= d) return;\n}";
 
 /// 글자 크기·글꼴·줄 간격이 바뀌면 바로 따라 바뀌는 편집기 미리보기.
 class _Preview extends StatelessWidget {
@@ -713,6 +713,20 @@ class _FontSettings extends StatelessWidget {
                       : () => editor.setLineHeight(null),
                 ),
               ],
+            ),
+            SwitchListTile(
+              contentPadding: EdgeInsets.zero,
+              value: editor.ligatures,
+              onChanged: editor.setLigatures,
+              title: Text(l10n.settingsLigatures),
+              subtitle: Text(l10n.settingsLigaturesNote),
+            ),
+            SwitchListTile(
+              contentPadding: EdgeInsets.zero,
+              value: editor.logFollowsEditor,
+              onChanged: editor.setLogFollowsEditor,
+              title: Text(l10n.settingsLogShareFont),
+              subtitle: Text(l10n.settingsLogShareFontNote),
             ),
           ],
         );

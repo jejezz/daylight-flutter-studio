@@ -17,7 +17,6 @@ class RecentProjectsMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final t = context.tokens;
     final recents = controller.recentProjects;
     return PopupMenuButton<String>(
       tooltip: l10n.studioRecentTooltip,
@@ -35,7 +34,7 @@ class RecentProjectsMenu extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(_name(path), overflow: TextOverflow.ellipsis),
-                  Text(path, style: t.logText.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant), overflow: TextOverflow.ellipsis),
+                  Text(path, style: context.logText.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant), overflow: TextOverflow.ellipsis),
                 ],
               ),
             ),
@@ -83,7 +82,7 @@ class RecentProjectsList extends StatelessWidget {
               dense: true,
               leading: Icon(context.icons.folder, size: 18),
               title: Text(_name(path), overflow: TextOverflow.ellipsis),
-              subtitle: Text(path, style: t.logText, overflow: TextOverflow.ellipsis),
+              subtitle: Text(path, style: context.logText, overflow: TextOverflow.ellipsis),
               trailing: IconButton(
                 tooltip: l10n.studioRecentForget,
                 iconSize: 16,

@@ -255,7 +255,7 @@ class _Row extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(diagnostic.message, style: theme.textTheme.bodySmall),
-                    Text('${diagnostic.line}:${diagnostic.column} · ${diagnostic.code}', style: t.logText.copyWith(color: theme.colorScheme.outline)),
+                    Text('${diagnostic.line}:${diagnostic.column} · ${diagnostic.code}', style: context.logText.copyWith(color: theme.colorScheme.outline)),
                   ],
                 ),
               ),

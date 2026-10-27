@@ -14,7 +14,7 @@ class CommandText extends StatelessWidget {
   Widget build(BuildContext context) => Row(
     mainAxisSize: MainAxisSize.min,
     children: [
-      Flexible(child: SelectableText(command, style: context.tokens.logText)),
+      Flexible(child: SelectableText(command, style: context.logText)),
       Tooltip(
         message: AppLocalizations.of(context).homeCopyCommand,
         child: InkWell(
