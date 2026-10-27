@@ -232,7 +232,7 @@ enum DiffRowKind { context, added, removed, gap }
 
 @immutable
 class DiffRow {
-  const DiffRow(this.kind, {this.oldNo, this.newNo, this.text = '', this.hidden = 0, this.gapId = -1});
+  const DiffRow(this.kind, {this.oldNo, this.newNo, this.text = '', this.hidden = 0, this.gapId = -1, this.changed = const []});
 
   final DiffRowKind kind;
 
@@ -240,6 +240,9 @@ class DiffRow {
   final int? oldNo;
   final int? newNo;
   final String text;
+
+  /// 이 줄 안에서 짝이 되는 줄과 달라진 글자 범위들 (`text`의 [start, end) 위치). 줄 전체가 바뀌었으면 비어 있다.
+  final List<(int, int)> changed;
 
   /// gap일 때 접힌 줄 수와, 펼칠 때 쓰는 번호.
   final int hidden;
@@ -260,11 +263,14 @@ List<DiffRow> buildUnifiedRows(
   for (var i = 0; i < blocks.length; i++) {
     final block = blocks[i];
     if (block.isChange) {
+      // 지운 줄과 새 줄이 같은 수만큼 짝으로 놓일 때, 짝끼리 글자 차이를 구해 둔다.
+      final pairs = block.aLen > 0 && block.bLen > 0 ? block.aLen < block.bLen ? block.aLen : block.bLen : 0;
+      final diffs = [for (var j = 0; j < pairs; j++) intraLineDiff(a[block.aStart + j], b[block.bStart + j])];
       for (var j = 0; j < block.aLen; j++) {
-        rows.add(DiffRow(DiffRowKind.removed, oldNo: block.aStart + j + 1, text: a[block.aStart + j]));
+        rows.add(DiffRow(DiffRowKind.removed, oldNo: block.aStart + j + 1, text: a[block.aStart + j], changed: j < pairs ? diffs[j].removed : const []));
       }
       for (var j = 0; j < block.bLen; j++) {
-        rows.add(DiffRow(DiffRowKind.added, newNo: block.bStart + j + 1, text: b[block.bStart + j]));
+        rows.add(DiffRow(DiffRowKind.added, newNo: block.bStart + j + 1, text: b[block.bStart + j], changed: j < pairs ? diffs[j].added : const []));
       }
       continue;
     }
@@ -288,6 +294,43 @@ List<DiffRow> buildUnifiedRows(
     }
   }
   return rows;
+}
+
+final _token = RegExp(r'[\p{L}\p{N}_]+|\s+|.', unicode: true);
+
+/// 두 줄 사이에서 달라진 글자 범위. 낱말·공백·기호 단위로 비교한다.
+/// 같은 글이 [minSimilarity]보다 적으면(거의 다른 줄) 줄 전체가 바뀐 것이니 표시하지 않는다.
+({List<(int, int)> removed, List<(int, int)> added}) intraLineDiff(String a, String b, {double minSimilarity = 0.4}) {
+  const none = (removed: <(int, int)>[], added: <(int, int)>[]);
+  if (a == b || a.isEmpty || b.isEmpty) return none;
+  final ta = [for (final m in _token.allMatches(a)) m.group(0)!];
+  final tb = [for (final m in _token.allMatches(b)) m.group(0)!];
+  final blocks = diffLines(ta, tb);
+  // 토큰 번호를 글자 위치로 바꾼다.
+  List<int> starts(List<String> tokens) {
+    final out = <int>[0];
+    for (final t in tokens) {
+      out.add(out.last + t.length);
+    }
+    return out;
+  }
+
+  final sa = starts(ta);
+  final sb = starts(tb);
+  final removed = <(int, int)>[];
+  final added = <(int, int)>[];
+  var same = 0;
+  for (final block in blocks) {
+    if (!block.isChange) {
+      same += sa[block.aEnd] - sa[block.aStart];
+      continue;
+    }
+    if (block.aLen > 0) removed.add((sa[block.aStart], sa[block.aEnd]));
+    if (block.bLen > 0) added.add((sb[block.bStart], sb[block.bEnd]));
+  }
+  final longest = a.length > b.length ? a.length : b.length;
+  if (same / longest < minSimilarity) return none;
+  return (removed: removed, added: added);
 }
 
 /// 추가·삭제된 줄 수.

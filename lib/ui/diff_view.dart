@@ -130,6 +130,23 @@ class _Message extends StatelessWidget {
   }
 }
 
+/// 줄의 글을 그린다. [changed] 범위(글자 위치 [start, end))는 [highlight] 배경으로 도드라지게 한다.
+TextSpan diffLineSpan(String text, List<(int, int)> changed, TextStyle style, Color highlight) {
+  if (changed.isEmpty) return TextSpan(text: text, style: style);
+  final marked = style.copyWith(backgroundColor: highlight);
+  final spans = <TextSpan>[];
+  var at = 0;
+  for (final (start, end) in changed) {
+    final s = start.clamp(at, text.length);
+    final e = end.clamp(s, text.length);
+    if (s > at) spans.add(TextSpan(text: text.substring(at, s)));
+    if (e > s) spans.add(TextSpan(text: text.substring(s, e), style: marked));
+    at = e;
+  }
+  if (at < text.length) spans.add(TextSpan(text: text.substring(at)));
+  return TextSpan(style: style, children: spans);
+}
+
 class _RowView extends StatelessWidget {
   const _RowView({required this.row, required this.style, required this.numWidth, required this.onExpand});
 
@@ -186,7 +203,12 @@ class _RowView extends StatelessWidget {
           SizedBox(width: t.spaceSm),
           Text(marker, strutStyle: strut, style: style.copyWith(color: markerColor, fontWeight: FontWeight.bold)),
           SizedBox(width: t.spaceSm),
-          Expanded(child: Text(row.text.isEmpty ? ' ' : row.text, strutStyle: strut, style: style.copyWith(color: scheme.onSurface))),
+          Expanded(
+            child: Text.rich(
+              diffLineSpan(row.text.isEmpty ? ' ' : row.text, row.changed, style.copyWith(color: scheme.onSurface), markerColor.withValues(alpha: 0.38)),
+              strutStyle: strut,
+            ),
+          ),
         ],
       ),
     );
