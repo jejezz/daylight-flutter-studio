@@ -48,6 +48,8 @@ class _ProjectSearch extends StatefulWidget {
 }
 
 class _ProjectSearchState extends State<_ProjectSearch> {
+  static const _leadWidth = 40.0;
+
   final _query = TextEditingController();
   final _replace = TextEditingController();
   bool _caseSensitive = false;
@@ -280,10 +282,14 @@ class _ProjectSearchState extends State<_ProjectSearch> {
           children: [
             Row(
               children: [
-                IconButton(
-                  tooltip: l10n.findToggleReplace,
-                  icon: Icon(_replaceMode ? context.icons.keyboardArrowDown : context.icons.keyboardArrowRight),
-                  onPressed: () => setState(() => _replaceMode = !_replaceMode),
+                // 바꾸기 줄의 빈 자리와 같은 폭으로 못 박는다 — 두 입력칸의 글이 같은 자리에서 시작하게.
+                SizedBox(
+                  width: _leadWidth,
+                  child: IconButton(
+                    tooltip: l10n.findToggleReplace,
+                    icon: Icon(_replaceMode ? context.icons.keyboardArrowDown : context.icons.keyboardArrowRight),
+                    onPressed: () => setState(() => _replaceMode = !_replaceMode),
+                  ),
                 ),
                 Expanded(
                   child: TextField(
@@ -311,11 +317,12 @@ class _ProjectSearchState extends State<_ProjectSearch> {
               SizedBox(height: t.spaceSm),
               Row(
                 children: [
-                  SizedBox(width: 48),
+                  const SizedBox(width: _leadWidth),
                   Expanded(
                     child: TextField(
                       controller: _replace,
-                      decoration: InputDecoration(hintText: l10n.findReplaceHint),
+                      // 찾을 글 칸의 돋보기 자리에 같은 크기의 아이콘을 둬서 글 시작 위치를 맞춘다.
+                      decoration: InputDecoration(hintText: l10n.findReplaceHint, prefixIcon: Icon(context.icons.arrowForward, size: 18)),
                       onChanged: (_) => setState(() {}),
                     ),
                   ),
