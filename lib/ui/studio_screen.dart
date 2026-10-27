@@ -610,6 +610,10 @@ class _StudioScreenState extends State<StudioScreen>
                                       onOpenFolder: (path) => _controller.openProject(path, remember: false),
                                       onHeadChanged: _onBranchChanged,
                                       onShowDiff: _controller.openDiff,
+                                      onOpenFile: (path) async {
+                                        await _controller.openFile(path);
+                                        return _controller.tabFor(path) != null;
+                                      },
                                     ),
                                   );
                                   if (!open) {
