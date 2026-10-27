@@ -2,9 +2,9 @@
 
 import 'dart:io';
 
-import 'package:daylight_flutter_studio/branchdock/git/commands.dart';
-import 'package:daylight_flutter_studio/branchdock/git/graph_layout.dart';
-import 'package:daylight_flutter_studio/branchdock/git/history.dart';
+import 'package:daylight_workbench/branchdock/git/commands.dart';
+import 'package:daylight_workbench/branchdock/git/graph_layout.dart';
+import 'package:daylight_workbench/branchdock/git/history.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'support.dart';
 

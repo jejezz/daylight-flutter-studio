@@ -1,4 +1,4 @@
-import 'package:daylight_flutter_studio/ui/diff_view.dart';
+import 'package:daylight_workbench/ui/diff_view.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter_test/flutter_test.dart';
 

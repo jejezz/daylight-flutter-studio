@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:daylight_flutter_studio/studio/project_index.dart';
+import 'package:daylight_workbench/studio/project_index.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

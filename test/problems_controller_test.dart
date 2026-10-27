@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:daylight_flutter_studio/core/command_log.dart';
-import 'package:daylight_flutter_studio/core/command_runner.dart';
-import 'package:daylight_flutter_studio/problems/dart_analyzer.dart';
-import 'package:daylight_flutter_studio/problems/diagnostic.dart';
-import 'package:daylight_flutter_studio/problems/problems_controller.dart';
+import 'package:daylight_workbench/core/command_log.dart';
+import 'package:daylight_workbench/core/command_runner.dart';
+import 'package:daylight_workbench/problems/dart_analyzer.dart';
+import 'package:daylight_workbench/problems/diagnostic.dart';
+import 'package:daylight_workbench/problems/problems_controller.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 final _sep = Platform.pathSeparator;

@@ -3,8 +3,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:daylight_flutter_studio/terminal/local_shell.dart';
-import 'package:daylight_flutter_studio/terminal/pty_backend.dart';
+import 'package:daylight_workbench/terminal/local_shell.dart';
+import 'package:daylight_workbench/terminal/pty_backend.dart';
 
 /// 네이티브 flutter_pty 없이 로컬 셸 세션을 테스트하기 위한 가짜 pty.
 /// 입력으로 들어온 바이트는 [written]에 쌓이고, [emit]으로 셸이 내보내는 출력을 흉내 낸다.

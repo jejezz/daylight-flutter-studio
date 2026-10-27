@@ -2,13 +2,13 @@
 
 import 'dart:io';
 
-import 'package:daylight_flutter_studio/branchdock/core/command_log.dart';
-import 'package:daylight_flutter_studio/branchdock/core/command_runner.dart';
-import 'package:daylight_flutter_studio/branchdock/repo/repo_prefs.dart';
-import 'package:daylight_flutter_studio/branchdock/ui/services.dart';
-import 'package:daylight_flutter_studio/l10n/app_localizations.dart';
-import 'package:daylight_flutter_studio/theme/app_theme.dart';
-import 'package:daylight_flutter_studio/ui/branchdock_dock.dart';
+import 'package:daylight_workbench/branchdock/core/command_log.dart';
+import 'package:daylight_workbench/branchdock/core/command_runner.dart';
+import 'package:daylight_workbench/branchdock/repo/repo_prefs.dart';
+import 'package:daylight_workbench/branchdock/ui/services.dart';
+import 'package:daylight_workbench/l10n/app_localizations.dart';
+import 'package:daylight_workbench/theme/app_theme.dart';
+import 'package:daylight_workbench/ui/branchdock_dock.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';

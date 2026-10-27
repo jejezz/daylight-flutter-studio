@@ -1,9 +1,9 @@
-import 'package:daylight_flutter_studio/l10n/app_localizations.dart';
-import 'package:daylight_flutter_studio/settings/app_settings.dart';
-import 'package:daylight_flutter_studio/theme/app_theme.dart';
-import 'package:daylight_flutter_studio/theme/editor_zoom.dart';
-import 'package:daylight_flutter_studio/theme/theme_controller.dart';
-import 'package:daylight_flutter_studio/ui/studio_screen.dart';
+import 'package:daylight_workbench/l10n/app_localizations.dart';
+import 'package:daylight_workbench/settings/app_settings.dart';
+import 'package:daylight_workbench/theme/app_theme.dart';
+import 'package:daylight_workbench/theme/editor_zoom.dart';
+import 'package:daylight_workbench/theme/theme_controller.dart';
+import 'package:daylight_workbench/ui/studio_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';

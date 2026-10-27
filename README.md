@@ -3,21 +3,21 @@
      Fill every {{TODO: …}}; tool/readme/check_readme.py fails while any is left. -->
 
 <p align="center">
-  <img src="assets/icon/app_icon.png" width="128" alt="Daylight Flutter Studio icon">
+  <img src="assets/icon/app_icon.png" width="128" alt="Daylight Workbench icon">
 </p>
 
-<h1 align="center">Daylight Flutter Studio</h1>
+<h1 align="center">Daylight Workbench</h1>
 
 <p align="center">
   A single-window workbench for <b>building Flutter apps with Claude Code</b> — project tree, editor, build/install and PR/merge/release in one place, so work → local verification → merge → release can't be skipped.
 </p>
 
 <p align="center">
-  <a href="https://github.com/jejezz/daylight-flutter-studio/releases/latest"><img src="https://img.shields.io/github/v/release/jejezz/daylight-flutter-studio?style=flat-square&color=4c9dff" alt="Latest release"></a>
-  <a href="https://github.com/jejezz/daylight-flutter-studio/releases"><img src="https://img.shields.io/github/downloads/jejezz/daylight-flutter-studio/total?style=flat-square&color=7c5cff" alt="Downloads"></a>
+  <a href="https://github.com/jejezz/daylight-workbench/releases/latest"><img src="https://img.shields.io/github/v/release/jejezz/daylight-workbench?style=flat-square&color=4c9dff" alt="Latest release"></a>
+  <a href="https://github.com/jejezz/daylight-workbench/releases"><img src="https://img.shields.io/github/downloads/jejezz/daylight-workbench/total?style=flat-square&color=7c5cff" alt="Downloads"></a>
   <img src="https://img.shields.io/badge/platform-macOS%20%C2%B7%20Windows-34d399?style=flat-square" alt="macOS · Windows">
   <img src="https://img.shields.io/badge/built%20with-Flutter-02569b?style=flat-square" alt="Flutter">
-  <a href="LICENSE"><img src="https://img.shields.io/github/license/jejezz/daylight-flutter-studio?style=flat-square" alt="MIT license"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/jejezz/daylight-workbench?style=flat-square" alt="MIT license"></a>
 </p>
 
 <p align="center">
@@ -25,7 +25,7 @@
 </p>
 
 <p align="center">
-  <img src="docs/screenshots/demo.gif" width="720" alt="Daylight Flutter Studio demo: open a project, build and install, verify, merge">
+  <img src="docs/screenshots/demo.gif" width="720" alt="Daylight Workbench demo: open a project, build and install, verify, merge">
 </p>
 
 ## Features
@@ -42,12 +42,12 @@
 
 ## Install
 
-Download from [**Releases**](https://github.com/jejezz/daylight-flutter-studio/releases/latest):
+Download from [**Releases**](https://github.com/jejezz/daylight-workbench/releases/latest):
 
 | OS | File |
 |---|---|
-| macOS 12.0+ | `DaylightFlutterStudio-<version>-macos-universal.dmg` — open it and drag Daylight Flutter Studio to Applications |
-| Windows 10/11 (x64) | `DaylightFlutterStudio-<version>-windows-x64-setup.exe` |
+| macOS 12.0+ | `DaylightWorkbench-<version>-macos-universal.dmg` — open it and drag Daylight Workbench to Applications |
+| Windows 10/11 (x64) | `DaylightWorkbench-<version>-windows-x64-setup.exe` |
 
 **Windows:** the installer isn't code-signed yet, so SmartScreen says "Windows protected your PC" — choose **More info → Run anyway**.
 

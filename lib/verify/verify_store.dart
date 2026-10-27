@@ -30,7 +30,7 @@ class VerifyRecord {
     required this.status,
     required this.at,
     this.note = '',
-    this.app = 'Daylight Flutter Studio',
+    this.app = 'Daylight Workbench',
   });
 
   static const version = 1;

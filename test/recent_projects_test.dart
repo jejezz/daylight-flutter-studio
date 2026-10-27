@@ -1,9 +1,9 @@
 import 'dart:io';
 
-import 'package:daylight_flutter_studio/l10n/app_localizations.dart';
-import 'package:daylight_flutter_studio/studio/studio_controller.dart';
-import 'package:daylight_flutter_studio/theme/app_theme.dart';
-import 'package:daylight_flutter_studio/ui/recent_projects.dart';
+import 'package:daylight_workbench/l10n/app_localizations.dart';
+import 'package:daylight_workbench/studio/studio_controller.dart';
+import 'package:daylight_workbench/theme/app_theme.dart';
+import 'package:daylight_workbench/ui/recent_projects.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';

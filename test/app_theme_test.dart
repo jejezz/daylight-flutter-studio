@@ -1,6 +1,6 @@
-import 'package:daylight_flutter_studio/theme/app_theme.dart';
-import 'package:daylight_flutter_studio/theme/syntax_theme.dart';
-import 'package:daylight_flutter_studio/theme/theme_controller.dart';
+import 'package:daylight_workbench/theme/app_theme.dart';
+import 'package:daylight_workbench/theme/syntax_theme.dart';
+import 'package:daylight_workbench/theme/theme_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -88,7 +88,7 @@ void main() {
             length: 3,
             child: Scaffold(
               appBar: AppBar(
-                title: const Text('아주 긴 프로젝트 이름 예시 daylight-flutter-studio'),
+                title: const Text('아주 긴 프로젝트 이름 예시 daylight-workbench'),
                 bottom: const TabBar(tabs: [Tab(text: 'Run'), Tab(text: '문제'), Tab(text: '터미널')]),
               ),
               body: Center(child: FilledButton(onPressed: () {}, child: const Text('설정 열기'))),

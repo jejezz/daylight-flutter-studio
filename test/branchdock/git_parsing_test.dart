@@ -1,12 +1,12 @@
-import 'package:daylight_flutter_studio/branchdock/core/command_log.dart';
-import 'package:daylight_flutter_studio/branchdock/git/commands.dart';
-import 'package:daylight_flutter_studio/branchdock/git/error_hints.dart';
-import 'package:daylight_flutter_studio/branchdock/git/refs.dart';
-import 'package:daylight_flutter_studio/branchdock/git/remotes.dart';
-import 'package:daylight_flutter_studio/branchdock/git/status.dart';
-import 'package:daylight_flutter_studio/branchdock/git/worktrees.dart';
-import 'package:daylight_flutter_studio/branchdock/repo/environment.dart';
-import 'package:daylight_flutter_studio/branchdock/repo/next_action.dart';
+import 'package:daylight_workbench/branchdock/core/command_log.dart';
+import 'package:daylight_workbench/branchdock/git/commands.dart';
+import 'package:daylight_workbench/branchdock/git/error_hints.dart';
+import 'package:daylight_workbench/branchdock/git/refs.dart';
+import 'package:daylight_workbench/branchdock/git/remotes.dart';
+import 'package:daylight_workbench/branchdock/git/status.dart';
+import 'package:daylight_workbench/branchdock/git/worktrees.dart';
+import 'package:daylight_workbench/branchdock/repo/environment.dart';
+import 'package:daylight_workbench/branchdock/repo/next_action.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

@@ -1,7 +1,7 @@
 import 'dart:io';
 
-import 'package:daylight_flutter_studio/problems/diagnostic.dart';
-import 'package:daylight_flutter_studio/problems/problems_controller.dart';
+import 'package:daylight_workbench/problems/diagnostic.dart';
+import 'package:daylight_workbench/problems/problems_controller.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

@@ -15,10 +15,10 @@
 ;   2. MyAppURL — this app's GitHub repository (conventions/identity.md §1).
 
 #ifndef MyAppName
-  #define MyAppName "Daylight Flutter Studio"
+  #define MyAppName "Daylight Workbench"
 #endif
 #ifndef MyFileName
-  #define MyFileName "DaylightFlutterStudio"
+  #define MyFileName "DaylightWorkbench"
 #endif
 #ifndef MyAppVersion
   #define MyAppVersion "0.0.0"
@@ -27,10 +27,10 @@
   #define MyAppNumericVersion "0.0.0"
 #endif
 #ifndef MyAppExeName
-  #define MyAppExeName "daylight_flutter_studio.exe"
+  #define MyAppExeName "daylight_workbench.exe"
 #endif
 #define MyAppPublisher "Jongyun Ahn"
-#define MyAppURL "https://github.com/jejezz/daylight-flutter-studio"
+#define MyAppURL "https://github.com/jejezz/daylight-workbench"
 ; The app's first release year — edit it for apps started after 2026.
 #define MyFirstReleaseYear "2026"
 #define SourceDir "..\..\build\windows\x64\runner\Release"

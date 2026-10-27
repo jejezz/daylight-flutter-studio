@@ -1,5 +1,5 @@
-import 'package:daylight_flutter_studio/studio/dart_highlight.dart';
-import 'package:daylight_flutter_studio/theme/syntax_theme.dart';
+import 'package:daylight_workbench/studio/dart_highlight.dart';
+import 'package:daylight_workbench/theme/syntax_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:re_highlight/re_highlight.dart';

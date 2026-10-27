@@ -1,10 +1,10 @@
 import 'dart:io';
 
-import 'package:daylight_flutter_studio/l10n/app_localizations.dart';
-import 'package:daylight_flutter_studio/studio/studio_controller.dart';
-import 'package:daylight_flutter_studio/theme/app_theme.dart';
-import 'package:daylight_flutter_studio/theme/editor_zoom.dart';
-import 'package:daylight_flutter_studio/ui/editor_pane.dart';
+import 'package:daylight_workbench/l10n/app_localizations.dart';
+import 'package:daylight_workbench/studio/studio_controller.dart';
+import 'package:daylight_workbench/theme/app_theme.dart';
+import 'package:daylight_workbench/theme/editor_zoom.dart';
+import 'package:daylight_workbench/ui/editor_pane.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';

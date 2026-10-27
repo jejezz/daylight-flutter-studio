@@ -1,12 +1,12 @@
 // From jejezz/application-release-templates common/ @ conventions-v1.
 // conventions/about-dialog.md §4 — 정보 창이 열리고 버전·저작권·라이선스
-// 화면이 동작하는지. daylight_flutter_studio를 앱의 pubspec name으로 바꾼다.
+// 화면이 동작하는지. daylight_workbench를 앱의 pubspec name으로 바꾼다.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:daylight_flutter_studio/about/about_dialog.dart';
-import 'package:daylight_flutter_studio/app_identity.dart';
-import 'package:daylight_flutter_studio/l10n/app_localizations.dart';
+import 'package:daylight_workbench/about/about_dialog.dart';
+import 'package:daylight_workbench/app_identity.dart';
+import 'package:daylight_workbench/l10n/app_localizations.dart';
 
 Widget _host(Locale locale) => MaterialApp(
   locale: locale,

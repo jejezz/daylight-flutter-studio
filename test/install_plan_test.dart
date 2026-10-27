@@ -1,6 +1,6 @@
-import 'package:daylight_flutter_studio/devices/mobile_device.dart';
-import 'package:daylight_flutter_studio/flutter/flutter_project.dart';
-import 'package:daylight_flutter_studio/install/install_plan.dart';
+import 'package:daylight_workbench/devices/mobile_device.dart';
+import 'package:daylight_workbench/flutter/flutter_project.dart';
+import 'package:daylight_workbench/install/install_plan.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 const _project = FlutterProject(

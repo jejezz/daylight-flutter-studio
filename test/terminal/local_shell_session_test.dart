@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:daylight_flutter_studio/terminal/local_shell.dart';
-import 'package:daylight_flutter_studio/terminal/local_shell_session.dart';
-import 'package:daylight_flutter_studio/terminal/terminal_session.dart';
+import 'package:daylight_workbench/terminal/local_shell.dart';
+import 'package:daylight_workbench/terminal/local_shell_session.dart';
+import 'package:daylight_workbench/terminal/terminal_session.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'helpers/fake_pty.dart';

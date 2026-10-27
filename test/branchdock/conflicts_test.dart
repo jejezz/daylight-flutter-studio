@@ -2,7 +2,7 @@
 
 import 'dart:io';
 
-import 'package:daylight_flutter_studio/branchdock/git/conflicts.dart';
+import 'package:daylight_workbench/branchdock/git/conflicts.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'support.dart';
 

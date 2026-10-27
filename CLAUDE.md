@@ -1,4 +1,4 @@
-# Daylight Flutter Studio
+# Daylight Workbench
 
 Claude Code로 Flutter 앱을 만드는 사람을 위한 통합 작업대 (Windows / macOS).
 프로젝트 트리 + 간단 편집기 + Flutty Dock(빌드·설치) + Branch Dock(PR·병합·릴리스)을 한 창에 묶고,
@@ -9,8 +9,8 @@ daylight-commander 계열 앱.
 https://github.com/jejezz/application-release-templates/tree/main/conventions
 규약을 따른다. 이 앱에 적용할 규약 버전: conventions-v1 (미적용: 업데이트 확인, README 스크린샷)
 
-- 표시 이름 `Daylight Flutter Studio`, 패키지 `daylight_flutter_studio`, 식별자 `art.zoomon.daylightflutterstudio` (macOS Debug 빌드는 `.dev`).
-- 이름에 "Flutter"가 들어 있다. 개인용으로 운영하는 동안은 두되, 공개 배포 전에 이름을 다시 정한다 (Flutter 상표).
+- 표시 이름 `Daylight Workbench`, 패키지 `daylight_workbench`, 식별자 `art.zoomon.daylightworkbench` (macOS Debug 빌드는 `.dev`).
+- 이름에 "Flutter"·"Dart"를 넣지 않는다(둘 다 Google 상표). Flutter 전용이라는 설명은 부제·설명 문구로만 쓴다. 저장소·폴더 이름은 `daylight-workbench`다.
 - 기존 앱 flutty-dock-flutter, branch-dock-flutter는 **수정하지 않는다.** 필요한 코드는 이 프로젝트로 복사해서 쓴다.
 - 앞으로 할 일은 [PLAN.md](PLAN.md), 이미 구현된 것은 [docs/IMPLEMENTED.md](docs/IMPLEMENTED.md). **이어서 작업할 때는 두 문서를 먼저 읽는다** (IMPLEMENTED.md에 구조, 알려진 한계, 작업 방식, 테스트 요령이 있다). 기능이 구현·병합되면 PLAN.md에서 지우고 IMPLEMENTED.md에 옮긴다.
 - 작업은 브랜치 → 커밋 → 사용자 확인 후 로컬 `main` 병합. push는 요청받을 때만.

@@ -1,13 +1,13 @@
 import 'dart:io';
 
-import 'package:daylight_flutter_studio/l10n/app_localizations.dart';
-import 'package:daylight_flutter_studio/settings/editor_settings.dart';
-import 'package:daylight_flutter_studio/studio/dart_chunk_analyzer.dart';
-import 'package:daylight_flutter_studio/studio/fold_plan.dart';
-import 'package:daylight_flutter_studio/studio/studio_controller.dart';
-import 'package:daylight_flutter_studio/theme/app_theme.dart';
-import 'package:daylight_flutter_studio/ui/editor_pane.dart';
-import 'package:daylight_flutter_studio/ui/markdown_view.dart';
+import 'package:daylight_workbench/l10n/app_localizations.dart';
+import 'package:daylight_workbench/settings/editor_settings.dart';
+import 'package:daylight_workbench/studio/dart_chunk_analyzer.dart';
+import 'package:daylight_workbench/studio/fold_plan.dart';
+import 'package:daylight_workbench/studio/studio_controller.dart';
+import 'package:daylight_workbench/theme/app_theme.dart';
+import 'package:daylight_workbench/ui/editor_pane.dart';
+import 'package:daylight_workbench/ui/markdown_view.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -206,7 +206,7 @@ void main() {
   }
 
   testWidgets('합자를 끄면 편집기 본문 글자 모양까지 글꼴 기능 끄기가 전해진다 (고친 re_editor)', (tester) async {
-    final f = write('a.txt', 'a != b -> c' + String.fromCharCode(10));
+    final f = write('a.txt', 'a != b -> c${String.fromCharCode(10)}');
     await tester.runAsync(() => c.openFile(f.path));
     final settings = EditorSettings();
     addTearDown(settings.dispose);
