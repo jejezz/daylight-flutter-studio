@@ -584,6 +584,70 @@
     }
   },
   "searchInvalidPattern": "The regular expression is invalid",
+  "searchReplaceSelected": "Replace {count} selected",
+  "@searchReplaceSelected": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchConfirmBody": "This replaces {lines} lines in {files} files. You can undo it with \"Undo\" in this window afterwards.",
+  "@searchConfirmBody": {
+    "placeholders": {
+      "files": {
+        "type": "int"
+      },
+      "lines": {
+        "type": "int"
+      }
+    }
+  },
+  "searchReplaceDone": "Replaced {lines} lines in {files} files.",
+  "@searchReplaceDone": {
+    "placeholders": {
+      "files": {
+        "type": "int"
+      },
+      "lines": {
+        "type": "int"
+      }
+    }
+  },
+  "searchNothingReplaced": "Nothing was replaced. The files may have changed since the search — search again.",
+  "searchSkippedBusy": "Skipped {count} files that are open in a tab with unsaved changes. Save or close them and search again.",
+  "@searchSkippedBusy": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchReplaceFailed": "Could not read or write {count} files.",
+  "@searchReplaceFailed": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchUndo": "Undo",
+  "searchUndoDone": "Restored {count} files.",
+  "@searchUndoDone": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchUndoSkipped": "Left {count} files that were edited again after the replace.",
+  "@searchUndoSkipped": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "studioQuickOpenTooltip": "Open file (Ctrl+P)",
   "studioSearchTooltip": "Find in project (Ctrl+Shift+F)",
   "editorFormat": "Format (Ctrl+Alt+L)",

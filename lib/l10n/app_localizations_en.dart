@@ -1006,6 +1006,48 @@ class AppLocalizationsEn extends AppLocalizations {
   String get searchInvalidPattern => 'The regular expression is invalid';
 
   @override
+  String searchReplaceSelected(int count) {
+    return 'Replace $count selected';
+  }
+
+  @override
+  String searchConfirmBody(int files, int lines) {
+    return 'This replaces $lines lines in $files files. You can undo it with \"Undo\" in this window afterwards.';
+  }
+
+  @override
+  String searchReplaceDone(int files, int lines) {
+    return 'Replaced $lines lines in $files files.';
+  }
+
+  @override
+  String get searchNothingReplaced =>
+      'Nothing was replaced. The files may have changed since the search — search again.';
+
+  @override
+  String searchSkippedBusy(int count) {
+    return 'Skipped $count files that are open in a tab with unsaved changes. Save or close them and search again.';
+  }
+
+  @override
+  String searchReplaceFailed(int count) {
+    return 'Could not read or write $count files.';
+  }
+
+  @override
+  String get searchUndo => 'Undo';
+
+  @override
+  String searchUndoDone(int count) {
+    return 'Restored $count files.';
+  }
+
+  @override
+  String searchUndoSkipped(int count) {
+    return 'Left $count files that were edited again after the replace.';
+  }
+
+  @override
   String get studioQuickOpenTooltip => 'Open file (Ctrl+P)';
 
   @override

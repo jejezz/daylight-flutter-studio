@@ -601,6 +601,70 @@
     }
   },
   "searchInvalidPattern": "정규식이 올바르지 않습니다",
+  "searchReplaceSelected": "선택한 {count}곳 바꾸기",
+  "@searchReplaceSelected": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchConfirmBody": "{files}개 파일의 {lines}곳을 바꿉니다. 바꾼 뒤에는 이 창의 \"되돌리기\"로 되돌릴 수 있습니다.",
+  "@searchConfirmBody": {
+    "placeholders": {
+      "files": {
+        "type": "int"
+      },
+      "lines": {
+        "type": "int"
+      }
+    }
+  },
+  "searchReplaceDone": "{files}개 파일에서 {lines}곳을 바꿨습니다.",
+  "@searchReplaceDone": {
+    "placeholders": {
+      "files": {
+        "type": "int"
+      },
+      "lines": {
+        "type": "int"
+      }
+    }
+  },
+  "searchNothingReplaced": "바뀐 곳이 없습니다. 검색한 뒤에 파일이 바뀌었을 수 있으니 다시 찾아 보세요.",
+  "searchSkippedBusy": "수정 중인 탭이 열려 있는 {count}개 파일은 건너뛰었습니다. 저장하거나 닫고 다시 찾아 보세요.",
+  "@searchSkippedBusy": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchReplaceFailed": "{count}개 파일은 읽거나 쓰지 못했습니다.",
+  "@searchReplaceFailed": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchUndo": "되돌리기",
+  "searchUndoDone": "{count}개 파일을 되돌렸습니다.",
+  "@searchUndoDone": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchUndoSkipped": "바꾼 뒤에 또 수정된 {count}개 파일은 그대로 두었습니다.",
+  "@searchUndoSkipped": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "studioQuickOpenTooltip": "파일 열기 (Ctrl+P)",
   "studioSearchTooltip": "프로젝트에서 찾기 (Ctrl+Shift+F)",
   "editorFormat": "정렬 (Ctrl+Alt+L)",

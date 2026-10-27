@@ -109,14 +109,20 @@ Future<SearchResult> searchProject(
   return Isolate.run(() => searchProjectSync(root, files, query, caseSensitive: caseSensitive, regex: regex));
 }
 
+/// 검색·바꾸기가 함께 쓰는 패턴. 비었거나 정규식이 올바르지 않으면 null.
+RegExp? buildSearchPattern(String query, {bool caseSensitive = false, bool regex = false}) {
+  if (query.isEmpty) return null;
+  try {
+    return RegExp(regex ? query : RegExp.escape(query), caseSensitive: caseSensitive);
+  } on FormatException {
+    return null;
+  }
+}
+
 SearchResult searchProjectSync(String root, List<String> files, String query, {bool caseSensitive = false, bool regex = false}) {
   if (query.isEmpty) return const SearchResult([]);
-  final RegExp re;
-  try {
-    re = RegExp(regex ? query : RegExp.escape(query), caseSensitive: caseSensitive);
-  } on FormatException {
-    return const SearchResult([], invalidPattern: true);
-  }
+  final re = buildSearchPattern(query, caseSensitive: caseSensitive, regex: regex);
+  if (re == null) return const SearchResult([], invalidPattern: true);
   final sep = Platform.pathSeparator;
   final hits = <SearchHit>[];
   for (final rel in files) {
