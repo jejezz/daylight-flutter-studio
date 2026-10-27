@@ -1,5 +1,4 @@
 import 'package:daylight_flutter_studio/l10n/app_localizations.dart';
-import 'package:daylight_flutter_studio/studio/project_index.dart';
 import 'package:daylight_flutter_studio/theme/app_theme.dart';
 import 'package:daylight_flutter_studio/ui/find_panel.dart';
 import 'package:daylight_flutter_studio/ui/project_search.dart';
