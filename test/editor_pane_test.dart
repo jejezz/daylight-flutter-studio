@@ -163,6 +163,47 @@ void main() {
     await _unmount(tester);
   });
 
+  for (final alreadyOpen in [false, true]) {
+    testWidgets('문제 위치로 이동하면 그 줄이 보이게 스크롤하고 편집기에 포커스를 준다 (${alreadyOpen ? '열려 있던 파일' : '새로 여는 파일'})', (tester) async {
+      final f = write('long.txt', [for (var i = 1; i <= 300; i++) 'line $i'].join('\n'));
+      final outside = FocusNode();
+      addTearDown(outside.dispose);
+      if (alreadyOpen) await tester.runAsync(() => c.openFile(f.path));
+      await tester.pumpWidget(
+        MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          locale: const Locale('ko'),
+          theme: AppTheme.build(StudioPalette.saturn, Brightness.light),
+          home: Scaffold(
+            body: Column(
+              children: [
+                TextField(focusNode: outside), // 문제 목록을 눌렀을 때처럼 포커스가 편집기 밖에 있다
+                Expanded(child: ListenableBuilder(listenable: c, builder: (context, _) => EditorPane(controller: c))),
+              ],
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+      outside.requestFocus();
+      await tester.pump();
+
+      await tester.runAsync(() => c.openAt(f.path, 250, 3));
+      await tester.pump();
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+
+      final vertical = [
+        for (final e in find.byType(Scrollable).evaluate()) ((e as StatefulElement).state as ScrollableState).position,
+      ].firstWhere((p) => p.axis == Axis.vertical);
+      expect(vertical.pixels, greaterThan(0), reason: '250번째 줄이 보이도록 스크롤했다');
+      expect(c.activeTab!.focusNode.hasFocus, isTrue, reason: '커서가 보이게 편집기로 포커스를 옮긴다');
+      expect(c.activeTab!.controller.selection.extentIndex, 249);
+      await _unmount(tester);
+    });
+  }
+
   testWidgets('Dart 파일을 열면 편집기와 정렬 단추가 보이고, 줄 끝(CRLF)을 유지한다', (tester) async {
     final f = write('a.dart', _dart.replaceAll('\n', '\r\n'));
     await tester.runAsync(() => c.openFile(f.path));

@@ -180,6 +180,7 @@ class _CodeViewState extends State<_CodeView> {
       child: CodeEditor(
         controller: tab.controller,
         findController: tab.find,
+        focusNode: tab.focusNode,
         shortcutsActivatorsBuilder: const StudioShortcuts(),
         shortcutOverrideActions: {
           CodeShortcutSaveIntent: CallbackAction<CodeShortcutSaveIntent>(onInvoke: (_) => widget.onSave()),

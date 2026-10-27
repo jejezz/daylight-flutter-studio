@@ -74,6 +74,9 @@ class EditorTab {
   /// (편집기가 직접 만들게 두면 메뉴에서는 닿을 수 없다).
   late final CodeFindController find = CodeFindController(controller);
 
+  /// 편집기의 포커스. 문제·검색 결과로 이동했을 때 커서가 보이게 포커스를 편집기로 옮기는 데 쓴다.
+  final FocusNode focusNode = FocusNode(debugLabel: 'editor');
+
   bool get dirty => controller.text != savedText;
 
   String get name => path.split(RegExp(r'[/\\]')).last;
@@ -132,6 +135,7 @@ class EditorTab {
     _marksTimer?.cancel();
     marks.dispose();
     find.dispose();
+    focusNode.dispose();
     controller.dispose();
   }
 }
@@ -408,6 +412,7 @@ class StudioController extends ChangeNotifier {
     final tab = tabFor(path);
     if (tab == null) return;
     tab.diffMode = false;
+    tab.preview = false; // Markdown 보기에서는 커서도 줄도 보이지 않는다
     activeIndex = tabs.indexOf(tab);
     final lines = tab.controller.codeLines;
     final index = (line - 1).clamp(0, lines.length - 1);
@@ -421,6 +426,8 @@ class StudioController extends ChangeNotifier {
       } on Object {
         // 편집기가 아직 붙지 않았으면 선택만 남는다.
       }
+      // 포커스가 문제 목록 같은 곳에 남아 있으면 커서가 보이지 않아 어디로 갔는지 알 수 없다.
+      tab.focusNode.requestFocus();
     }
 
     SchedulerBinding.instance.addPostFrameCallback((_) => SchedulerBinding.instance.addPostFrameCallback((_) => center()));
