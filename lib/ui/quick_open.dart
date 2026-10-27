@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../l10n/app_localizations.dart';
+import '../studio/file_kind.dart';
 import '../studio/project_index.dart';
 import '../theme/app_theme.dart';
+import '../theme/file_icons.dart';
 
 /// 빠른 열기 (Ctrl/Cmd+P): 파일 이름 일부를 치면 맞는 파일이 점수 순으로 나온다.
 /// 고른 파일의 절대 경로를 돌려준다. 취소하면 null.
@@ -108,10 +110,12 @@ class _QuickOpenState extends State<_QuickOpen> {
                           itemBuilder: (context, i) {
                             final rel = _shown[i];
                             final slash = rel.lastIndexOf('/');
+                            final icon = context.fileIcon(fileKindOf(rel));
                             return ListTile(
                               dense: true,
                               selected: i == _selected,
                               selectedTileColor: theme.colorScheme.secondaryContainer,
+                              leading: Icon(icon.icon, size: 18, color: icon.color),
                               title: Text(slash < 0 ? rel : rel.substring(slash + 1)),
                               subtitle: slash < 0 ? null : Text(rel.substring(0, slash), style: context.logText),
                               onTap: () => _open(rel),

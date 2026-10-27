@@ -8,10 +8,12 @@ import '../diff/line_diff.dart';
 import '../studio/dart_chunk_analyzer.dart';
 import '../studio/fold_plan.dart';
 import '../settings/editor_settings.dart';
+import '../studio/file_kind.dart';
 import '../studio/studio_controller.dart';
 import '../theme/app_theme.dart';
 import '../theme/editor_theme.dart';
 import '../theme/editor_zoom.dart';
+import '../theme/file_icons.dart';
 import '../problems/problems_controller.dart';
 import 'change_gutter.dart';
 import 'diff_view.dart';
@@ -344,6 +346,8 @@ class _TabBar extends StatelessWidget {
                 ),
                 child: Row(
                   children: [
+                    Icon(context.fileIcon(fileKindOf(t.path)).icon, size: 16, color: context.fileIcon(fileKindOf(t.path)).color),
+                    const SizedBox(width: 6),
                     Text(t.dirty ? '● ${t.name}' : t.name),
                     IconButton(
                       iconSize: 14,

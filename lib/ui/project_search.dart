@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 
 import '../l10n/app_localizations.dart';
+import '../studio/file_kind.dart';
 import '../studio/project_index.dart';
 import '../studio/project_replace.dart';
 import '../theme/app_theme.dart';
+import '../theme/file_icons.dart';
 
 /// 프로젝트에서 찾기 (Ctrl/Cmd+Shift+F). 결과를 누르면 [onOpen]이 그 줄을 연다 (대화상자는 열어 둔다).
 ///
@@ -224,6 +226,7 @@ class _ProjectSearchState extends State<_ProjectSearch> {
     final theme = Theme.of(context);
     final all = indexes.every(_selected.contains);
     final none = !indexes.any(_selected.contains);
+    final icon = context.fileIcon(fileKindOf(path));
     return Container(
       color: theme.colorScheme.surfaceContainerHighest,
       padding: EdgeInsets.symmetric(vertical: t.spaceXs / 2),
@@ -238,6 +241,8 @@ class _ProjectSearchState extends State<_ProjectSearch> {
             )
           else
             SizedBox(width: t.spaceLg),
+          Icon(icon.icon, size: 16, color: icon.color),
+          SizedBox(width: t.spaceXs),
           Expanded(child: Text(_relative(path), maxLines: 1, overflow: TextOverflow.ellipsis, style: theme.textTheme.labelLarge)),
           Text('${indexes.length}', style: theme.textTheme.bodySmall),
           SizedBox(width: t.spaceSm),

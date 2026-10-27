@@ -127,7 +127,7 @@ Material 쪽은 단축키를 글자로만 보여 준다(이미 화면에 바인�
 - **색 구성** 6가지: 새턴·청록·호박·장미·슬레이트는 규약 ColorScheme의 주색만 바꾸고(`StudioPalette.apply`), **고대비**는
   배경·글자·테두리 전부를 순흑/순백 최대 대비로 바꾼 완전히 다른 ColorScheme이다(`_HighContrastTheme`). 구문 강조 색도
   고대비 전용(`SyntaxTokens.highContrast`)이다. 밝기(라이트/다크/시스템)는 색 구성과 상관없이 그대로 고른다.
-- **파일 종류별 아이콘**: 파일 트리가 Dart·pubspec·설정·YAML·JSON·문서·그림·마크업·다른 언어 소스·스크립트·설정/잠금 파일마다 다른 아이콘을 쓴다. 종류는 이름·확장자만 보고 정하고(`lib/studio/file_kind.dart`), 모양은 현재 아이콘 세트(`context.icons`)에서, 색은 현재 테마의 구문 강조 색(`SyntaxTokens`)에서 가져와(`lib/theme/file_icons.dart`) 아이콘 모양·색 구성(고대비 포함)을 바꾸면 함께 바뀐다. 끄는 설정은 없다. 편집기 탭·빠른 열기에는 아직 쓰지 않는다.
+- **파일 종류별 아이콘**: 파일 트리가 Dart·pubspec·설정·YAML·JSON·문서·그림·마크업·다른 언어 소스·스크립트·설정/잠금 파일마다 다른 아이콘을 쓴다. 종류는 이름·확장자만 보고 정하고(`lib/studio/file_kind.dart`), 모양은 현재 아이콘 세트(`context.icons`)에서, 색은 현재 테마의 구문 강조 색(`SyntaxTokens`)에서 가져와(`lib/theme/file_icons.dart`) 아이콘 모양·색 구성(고대비 포함)을 바꾸면 함께 바뀐다. 끄는 설정은 없다. 같은 아이콘을 편집기 탭(`lib/ui/editor_pane.dart`)·빠른 열기(`lib/ui/quick_open.dart`)·프로젝트에서 찾기의 파일별 묶음 머리글(`lib/ui/project_search.dart`)에도 쓴다.
 - **UI 글꼴**: 이름(설치된 글꼴 중 고르거나 직접 적음, 비우면 기본 SeoulNamsan)과 크기 배율(85~125%, `AppTheme.minUiFontScale`~`maxUiFontScale`). 트리·탭·메뉴·단추 등 화면 전체 글자 크기에 배율이 곱해지지만 칸 크기(행 높이·탭
   높이·도구 막대 높이)는 그대로 둔다 — 배율 범위를 넓지 않게 둔 것도 그래서다. 편집기 글꼴·배율은 따로 설정한다
   (`EditorSettings`·`EditorZoom`). 설정 → 편집기에 **합자(ligature) 쓰기**(기본 켬; 끄면 `liga`·`clig`·`calt`를 끈다)와 **로그·출력 글꼴을 편집기와 같이 쓰기**(기본 끔)가 있다. 뒤의 것을 켜면 실행 출력·명령 기록·경로·해시(`context.logText`, `context.mono`)와 Markdown 코드가 편집기 글꼴 계열과 합자 설정을 따르고 크기·줄 간격은 제 것을 쓴다(`logTextStyle`·`followEditorFont`, `lib/theme/editor_theme.dart`). 터미널은 따로 "편집기 글꼴과 같이 쓰기"가 있다.
@@ -194,6 +194,5 @@ macOS 앱 샌드박스는 **꺼져 있다**(폴더 선택·git·flutter 실행�
 - 터미널 패널은 Windows/macOS에서 실제 셸로 직접 켜 보고 확인하지 않았다(네이티브 flutter_pty 빌드가 필요해 Flutty Dock으로 빌드해야 한다). 탐색기·파일 끌어놓기, 로그 기록, ANSI 제거 같은 daylight-terminal-flutter의 기능은 가져오지 않았다.
 - 고대비·UI 글꼴 배율은 설정 화면을 직접 켜서 확인했다(선택된 구역 글자가 묻히던 문제를 찾아 고쳤다). 다만 트리·
   Branch Dock 화면까지 고대비·85~125% 배율로 눈으로 다 훑어보지는 않았다.
-- 아이콘 세트는 아직 모양(둥근·윤곽선·채움) 3종뿐이다. 파일 종류별 색 아이콘 같은 "완전히 다른 세트"는 없다 — 지금
-  트리는 모든 파일에 같은 아이콘을 쓴다. 편집기 글꼴의 합자(ligature) 켜고 끄기도 없다.
+- 아이콘 세트는 아직 모양(둥근·윤곽선·채움) 3종뿐이다. 파일 종류별 색 아이콘 같은 "완전히 다른 세트"(예: 파일 종류 전용 아이콘 글꼴)는 없다.
 - 앱을 끌 때(⌘Q 등) 위젯 dispose가 보장되지 않아, 열린 터미널의 셸 프로세스가 남을 수 있다 — 종료 전에 정리하는 장치는 아직 없다.

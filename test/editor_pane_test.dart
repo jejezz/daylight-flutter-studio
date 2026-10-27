@@ -346,7 +346,7 @@ void main() {
 
     // c 탭을 잡아 a 탭 앞까지 끈다.
     final from = tester.getCenter(find.text('c.txt'));
-    final to = tester.getCenter(find.text('a.txt')) - const Offset(120, 0);
+    final to = tester.getCenter(find.text('a.txt')) - const Offset(160, 0);
     final gesture = await tester.startGesture(from);
     await tester.pump(const Duration(milliseconds: 50));
     await gesture.moveTo(to, timeStamp: const Duration(milliseconds: 100));
