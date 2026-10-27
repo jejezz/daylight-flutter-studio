@@ -240,6 +240,38 @@
   "diffNotComparable": "이 파일은 git으로 비교할 수 없습니다.\n(git 저장소가 아니거나 .gitignore로 무시되는 파일입니다)",
   "diffAgainstHead": "HEAD와 비교",
   "diffNewFile": "새 파일 (아직 커밋되지 않음)",
+  "diffAgainstRef": "비교 기준: {ref}",
+  "@diffAgainstRef": {
+    "placeholders": {
+      "ref": {
+        "type": "String"
+      }
+    }
+  },
+  "diffSameAsRef": "비교 기준({ref})과 같습니다. 변경된 곳이 없습니다.",
+  "@diffSameAsRef": {
+    "placeholders": {
+      "ref": {
+        "type": "String"
+      }
+    }
+  },
+  "diffNotInRef": "이 기준에는 없던 파일",
+  "diffChangeBase": "비교 기준 바꾸기",
+  "compareDialogTitle": "비교 기준 고르기",
+  "compareFieldHint": "브랜치, 태그, 커밋 이름",
+  "compareUseHead": "HEAD (마지막 커밋)",
+  "compareBranches": "브랜치",
+  "compareCommits": "최근 커밋",
+  "compareApply": "비교",
+  "messageCompareRefNotFound": "'{ref}'을(를) 찾을 수 없습니다. 브랜치·태그·커밋 이름을 확인하세요.",
+  "@messageCompareRefNotFound": {
+    "placeholders": {
+      "ref": {
+        "type": "String"
+      }
+    }
+  },
   "diffSameAsHead": "HEAD와 같습니다. 변경된 곳이 없습니다.",
   "diffHiddenLines": "같은 줄 {count}개 — 눌러서 펼치기",
   "@diffHiddenLines": {

@@ -66,6 +66,8 @@ class _StudioScreenState extends State<StudioScreen>
   late final StudioController _controller = StudioController(
     formatDart: DartFormatter(_runner).format,
     readBase: GitBaseReader(_runner).read,
+    readRefBase: GitBaseReader(_runner).readAt,
+    listCompareChoices: GitBaseReader(_runner).choices,
     onSaved: (path) => _problems.onSaved(path),
     formatOnSave: () => EditorSettingsScope.maybeOf(context)?.formatOnSave ?? false,
   );

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../l10n/app_localizations.dart';
 import '../diff/line_diff.dart';
 import '../studio/studio_controller.dart';
+import 'compare_dialog.dart';
 import '../theme/app_theme.dart';
 import '../theme/editor_theme.dart';
 import '../theme/editor_zoom.dart';
@@ -10,9 +11,12 @@ import '../theme/editor_zoom.dart';
 /// HEAD 커밋과 지금 글의 차이를 통합(unified) 형식으로 보여 준다. 읽기 전용이다.
 /// 바뀐 곳 둘레 3줄만 보이고 나머지는 접혀 있다 (눌러서 펼침). 글자 크기는 편집기 배율을 따른다.
 class DiffView extends StatefulWidget {
-  const DiffView({super.key, required this.tab});
+  const DiffView({super.key, required this.tab, this.controller});
 
   final EditorTab tab;
+
+  /// 비교 기준을 바꾸는 데 쓴다. 없으면 기준 바꾸기 단추를 두지 않는다 (HEAD와만 비교).
+  final StudioController? controller;
 
   @override
   State<DiffView> createState() => _DiffViewState();
@@ -44,12 +48,22 @@ class _DiffViewState extends State<DiffView> {
     _expanded.clear();
   }
 
+  Future<void> _changeBase() async {
+    final controller = widget.controller!;
+    final tab = widget.tab;
+    final ref = await showCompareDialog(context, choices: controller.compareChoices(tab), current: tab.compareRef);
+    if (ref == null) return;
+    await controller.setCompareRef(tab, ref);
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final t = context.tokens;
-    final base = widget.tab.baseLines;
+    final tab = widget.tab;
+    final ref = tab.compareRef;
+    final base = tab.diffBase;
     if (base == null) {
       return _Message(icon: context.icons.block, text: l10n.diffNotComparable);
     }
@@ -68,22 +82,29 @@ class _DiffViewState extends State<DiffView> {
           padding: EdgeInsets.symmetric(horizontal: t.spaceMd, vertical: t.spaceXs),
           child: Row(
             children: [
-              Text(l10n.diffAgainstHead, style: theme.textTheme.labelMedium),
+              Text(ref == null ? l10n.diffAgainstHead : l10n.diffAgainstRef(ref), style: theme.textTheme.labelMedium),
               SizedBox(width: t.spaceMd),
               Text('+${counts.added}', style: theme.textTheme.labelMedium?.copyWith(color: t.success)),
               SizedBox(width: t.spaceSm),
               Text('−${counts.removed}', style: theme.textTheme.labelMedium?.copyWith(color: t.danger)),
-              if (widget.tab.baseIsNew) ...[
+              if (tab.diffBaseIsNew) ...[
                 SizedBox(width: t.spaceMd),
-                Text(l10n.diffNewFile, style: theme.textTheme.labelMedium?.copyWith(color: t.warning)),
+                Text(ref == null ? l10n.diffNewFile : l10n.diffNotInRef, style: theme.textTheme.labelMedium?.copyWith(color: t.warning)),
               ],
+              const Spacer(),
+              if (widget.controller != null)
+                TextButton.icon(
+                  onPressed: _changeBase,
+                  icon: Icon(context.icons.callSplit, size: 16),
+                  label: Text(l10n.diffChangeBase),
+                ),
             ],
           ),
         ),
         const Divider(),
         Expanded(
           child: rows.isEmpty
-              ? _Message(icon: context.icons.checkCircle, text: l10n.diffSameAsHead)
+              ? _Message(icon: context.icons.checkCircle, text: ref == null ? l10n.diffSameAsHead : l10n.diffSameAsRef(ref))
               : ZoomWheel(
                   scrollers: [_scroll],
                   child: SelectionArea(

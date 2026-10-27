@@ -52,7 +52,7 @@ class EditorPane extends StatelessWidget {
                     ..._zoomBindings(EditorZoomScope.maybeOf(context)),
                   },
                   child: tab.diffMode && tab.hasBase
-                      ? DiffView(key: ValueKey('${tab.path}#diff'), tab: tab)
+                      ? DiffView(key: ValueKey('${tab.path}#diff'), tab: tab, controller: controller)
                       : tab.language.isMarkdown && tab.preview
                       ? MarkdownView(
                           key: ValueKey('${tab.path}#preview'),

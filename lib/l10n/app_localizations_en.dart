@@ -557,6 +557,45 @@ class AppLocalizationsEn extends AppLocalizations {
   String get diffNewFile => 'New file (not committed yet)';
 
   @override
+  String diffAgainstRef(String ref) {
+    return 'Compared with $ref';
+  }
+
+  @override
+  String diffSameAsRef(String ref) {
+    return 'Same as $ref. Nothing has changed.';
+  }
+
+  @override
+  String get diffNotInRef => 'File did not exist at this point';
+
+  @override
+  String get diffChangeBase => 'Change what to compare with';
+
+  @override
+  String get compareDialogTitle => 'Choose what to compare with';
+
+  @override
+  String get compareFieldHint => 'Branch, tag or commit name';
+
+  @override
+  String get compareUseHead => 'HEAD (last commit)';
+
+  @override
+  String get compareBranches => 'Branches';
+
+  @override
+  String get compareCommits => 'Recent commits';
+
+  @override
+  String get compareApply => 'Compare';
+
+  @override
+  String messageCompareRefNotFound(String ref) {
+    return 'Can\'t find \'$ref\'. Check the branch, tag or commit name.';
+  }
+
+  @override
   String get diffSameAsHead => 'Same as HEAD. Nothing changed.';
 
   @override
