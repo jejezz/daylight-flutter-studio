@@ -37,7 +37,7 @@
 
 <p align="center">
   <img src="docs/screenshots/home.png" width="360" alt="프로젝트 트리, 편집기, Run 패널">
-  <img src="docs/screenshots/detail.png" width="360" alt="Git 패널과 변경점 보기">
+  <img src="docs/screenshots/detail.png" width="360" alt="변경 사항이 있는 Git 패널, 다크 테마">
 </p>
 
 ## 설치

@@ -37,7 +37,7 @@
 
 <p align="center">
   <img src="docs/screenshots/home.png" width="360" alt="Project tree, editor and Run panel">
-  <img src="docs/screenshots/detail.png" width="360" alt="Git panel and diff view">
+  <img src="docs/screenshots/detail.png" width="360" alt="Git panel with a pending change, dark theme">
 </p>
 
 ## Install
