@@ -7640,6 +7640,96 @@ abstract class AppLocalizations {
   /// **'프로젝트에서 바꾸기…'**
   String get menuReplaceInProject;
 
+  /// No description provided for @menuGoToSymbol.
+  ///
+  /// In ko, this message translates to:
+  /// **'심볼로 이동…'**
+  String get menuGoToSymbol;
+
+  /// No description provided for @menuGoToDefinition.
+  ///
+  /// In ko, this message translates to:
+  /// **'정의로 이동'**
+  String get menuGoToDefinition;
+
+  /// No description provided for @symbolSearchHint.
+  ///
+  /// In ko, this message translates to:
+  /// **'클래스·함수·메서드로 이동 (Ctrl+Shift+O)'**
+  String get symbolSearchHint;
+
+  /// No description provided for @symbolSearchLoading.
+  ///
+  /// In ko, this message translates to:
+  /// **'선언을 읽는 중…'**
+  String get symbolSearchLoading;
+
+  /// No description provided for @symbolSearchNoMatch.
+  ///
+  /// In ko, this message translates to:
+  /// **'맞는 선언이 없습니다'**
+  String get symbolSearchNoMatch;
+
+  /// No description provided for @symbolNotFound.
+  ///
+  /// In ko, this message translates to:
+  /// **'이 프로젝트에서 “{name}”(이)라는 선언을 찾지 못했습니다'**
+  String symbolNotFound(String name);
+
+  /// No description provided for @symbolKindClass.
+  ///
+  /// In ko, this message translates to:
+  /// **'클래스'**
+  String get symbolKindClass;
+
+  /// No description provided for @symbolKindMixin.
+  ///
+  /// In ko, this message translates to:
+  /// **'믹스인'**
+  String get symbolKindMixin;
+
+  /// No description provided for @symbolKindEnum.
+  ///
+  /// In ko, this message translates to:
+  /// **'열거형'**
+  String get symbolKindEnum;
+
+  /// No description provided for @symbolKindExtension.
+  ///
+  /// In ko, this message translates to:
+  /// **'확장'**
+  String get symbolKindExtension;
+
+  /// No description provided for @symbolKindTypedef.
+  ///
+  /// In ko, this message translates to:
+  /// **'형식 별칭'**
+  String get symbolKindTypedef;
+
+  /// No description provided for @symbolKindFunction.
+  ///
+  /// In ko, this message translates to:
+  /// **'함수'**
+  String get symbolKindFunction;
+
+  /// No description provided for @symbolKindMethod.
+  ///
+  /// In ko, this message translates to:
+  /// **'메서드'**
+  String get symbolKindMethod;
+
+  /// No description provided for @symbolKindGetter.
+  ///
+  /// In ko, this message translates to:
+  /// **'getter'**
+  String get symbolKindGetter;
+
+  /// No description provided for @symbolKindSetter.
+  ///
+  /// In ko, this message translates to:
+  /// **'setter'**
+  String get symbolKindSetter;
+
   /// No description provided for @menuFormat.
   ///
   /// In ko, this message translates to:
