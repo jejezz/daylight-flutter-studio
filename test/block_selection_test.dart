@@ -190,5 +190,24 @@ void main() {
       expect(ctl.text, 'aXYdef\ngXYjkl\nmXY\noXYrst');
       ctl.dispose();
     });
+
+    test('한글 조합(조합 범위를 알려 주지 않는 입력기 포함)은 모든 줄에서 같이 바뀐다', () {
+      TextEditingValue v(String text, int caret, [TextRange composing = TextRange.empty]) =>
+        TextEditingValue(text: text, selection: TextSelection.collapsed(offset: caret), composing: composing);
+      final ctl = CodeLineEditingController.fromText('abc\nabc\nabc');
+      ctl.selection = const CodeLineSelection.collapsed(index: 2, offset: 2);
+      ctl.blockSelection.value = const CodeBlockSelection(baseIndex: 0, baseColumn: 2, extentIndex: 2, extentColumn: 2);
+      ctl.edit(v('abㅎc', 3));
+      expect(ctl.text, 'abㅎc\nabㅎc\nabㅎc');
+      ctl.edit(v('ab하c', 3));
+      ctl.edit(v('ab한c', 3));
+      expect(ctl.text, 'ab한c\nab한c\nab한c');
+      ctl.edit(v('ab한c', 3)); // 확정
+      ctl.edit(v('ab한ㄱc', 4));
+      ctl.edit(v('ab한글c', 4));
+      expect(ctl.text, 'ab한글c\nab한글c\nab한글c');
+      expect(ctl.blockSelection.value, isNotNull);
+      ctl.dispose();
+    });
   });
 }

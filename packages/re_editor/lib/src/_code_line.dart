@@ -207,14 +207,36 @@ class _CodeLineEditingControllerImpl extends ValueNotifier<CodeLineEditingValue>
 
   @override
   void edit(TextEditingValue newValue) {
-    if (blockSelection.value != null && selection.isCollapsed && !newValue.text.isMultiline &&
-        !(newValue.composing.isValid && !newValue.composing.isCollapsed)) {
+    final CodeBlockSelection? block = blockSelection.value;
+    if (block != null && selection.isCollapsed && !newValue.text.isMultiline) {
+      // The input method edits only the caret line. Find what changed there by
+      // comparing it with the old text around the caret (the IME's composing
+      // range is not reliable: macOS reports none), then apply the same change
+      // at the same columns on every row. This also covers Korean composition,
+      // where the previous jamo is replaced: 'ㅎ' -> '하'.
       final String old = extentLine.text;
-      final int at = selection.extentOffset;
-      final String before = old.substring(0, min(at, old.length));
-      final String after = old.substring(min(at, old.length));
-      if (newValue.text.length > old.length && newValue.text.startsWith(before) && newValue.text.endsWith(after)) {
-        _typeIntoBlock(newValue.text.substring(before.length, newValue.text.length - after.length));
+      final String text = newValue.text;
+      final int caret = min(selection.extentOffset, old.length);
+      int prefix = 0;
+      final int maxPrefix = min(caret, min(old.length, text.length));
+      while (prefix < maxPrefix && old.codeUnitAt(prefix) == text.codeUnitAt(prefix)) {
+        prefix++;
+      }
+      int suffix = 0;
+      final int maxSuffix = min(old.length - caret, min(old.length, text.length) - prefix);
+      while (suffix < maxSuffix && old.codeUnitAt(old.length - 1 - suffix) == text.codeUnitAt(text.length - 1 - suffix)) {
+        suffix++;
+      }
+      final int removed = old.length - prefix - suffix;
+      final String inserted = text.substring(prefix, text.length - suffix);
+      if (block.startColumn != block.endColumn) {
+        // First keystroke over a rectangle: it must be a plain insertion at the caret.
+        if (removed == 0 && inserted.isNotEmpty && prefix == caret) {
+          _typeIntoBlock(inserted);
+          return;
+        }
+      } else if (block.startColumn == caret && (removed > 0 || inserted.isNotEmpty)) {
+        _typeIntoBlock(inserted, from: prefix, to: prefix + removed);
         return;
       }
     }
@@ -997,12 +1019,12 @@ class _CodeLineEditingControllerImpl extends ValueNotifier<CodeLineEditingValue>
 
   /// Replaces the selected rectangle with [text] (typing). Returns false when
   /// there is no block.
-  bool _typeIntoBlock(String text) {
+  bool _typeIntoBlock(String text, {int? from, int? to}) {
     final CodeBlockSelection? block = blockSelection.value;
     if (block == null) {
       return false;
     }
-    _replaceBlockColumns(block, block.startColumn, block.endColumn, (_) => text);
+    _replaceBlockColumns(block, from ?? block.startColumn, to ?? block.endColumn, (_) => text);
     return true;
   }
 
