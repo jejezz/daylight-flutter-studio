@@ -226,6 +226,13 @@ class _StudioScreenState extends State<StudioScreen>
       root: root,
       files: listProjectFiles(root),
       onOpen: (path, line, column) => _controller.openAt(path, line, column),
+      // 수정 중이거나 디스크와 달라진 탭이 열린 파일은 바꾸지 않는다 — 검색 결과(디스크)와 편집 중인 글이 다르다.
+      isBusy: (path) {
+        final tab = _controller.tabFor(path);
+        return tab != null && (tab.dirty || tab.external != ExternalChange.none);
+      },
+      // 바꾸거나 되돌린 뒤에는 열린 탭(수정 없는 탭은 조용히 다시 읽는다)·트리·변경 표시·문제를 다시 읽는다.
+      onReplaced: _onBranchChanged,
     );
   }
 

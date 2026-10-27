@@ -1832,6 +1832,60 @@ abstract class AppLocalizations {
   /// **'정규식이 올바르지 않습니다'**
   String get searchInvalidPattern;
 
+  /// No description provided for @searchReplaceSelected.
+  ///
+  /// In ko, this message translates to:
+  /// **'선택한 {count}곳 바꾸기'**
+  String searchReplaceSelected(int count);
+
+  /// No description provided for @searchConfirmBody.
+  ///
+  /// In ko, this message translates to:
+  /// **'{files}개 파일의 {lines}곳을 바꿉니다. 바꾼 뒤에는 이 창의 \"되돌리기\"로 되돌릴 수 있습니다.'**
+  String searchConfirmBody(int files, int lines);
+
+  /// No description provided for @searchReplaceDone.
+  ///
+  /// In ko, this message translates to:
+  /// **'{files}개 파일에서 {lines}곳을 바꿨습니다.'**
+  String searchReplaceDone(int files, int lines);
+
+  /// No description provided for @searchNothingReplaced.
+  ///
+  /// In ko, this message translates to:
+  /// **'바뀐 곳이 없습니다. 검색한 뒤에 파일이 바뀌었을 수 있으니 다시 찾아 보세요.'**
+  String get searchNothingReplaced;
+
+  /// No description provided for @searchSkippedBusy.
+  ///
+  /// In ko, this message translates to:
+  /// **'수정 중인 탭이 열려 있는 {count}개 파일은 건너뛰었습니다. 저장하거나 닫고 다시 찾아 보세요.'**
+  String searchSkippedBusy(int count);
+
+  /// No description provided for @searchReplaceFailed.
+  ///
+  /// In ko, this message translates to:
+  /// **'{count}개 파일은 읽거나 쓰지 못했습니다.'**
+  String searchReplaceFailed(int count);
+
+  /// No description provided for @searchUndo.
+  ///
+  /// In ko, this message translates to:
+  /// **'되돌리기'**
+  String get searchUndo;
+
+  /// No description provided for @searchUndoDone.
+  ///
+  /// In ko, this message translates to:
+  /// **'{count}개 파일을 되돌렸습니다.'**
+  String searchUndoDone(int count);
+
+  /// No description provided for @searchUndoSkipped.
+  ///
+  /// In ko, this message translates to:
+  /// **'바꾼 뒤에 또 수정된 {count}개 파일은 그대로 두었습니다.'**
+  String searchUndoSkipped(int count);
+
   /// No description provided for @studioQuickOpenTooltip.
   ///
   /// In ko, this message translates to:
