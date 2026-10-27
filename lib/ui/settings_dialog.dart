@@ -6,6 +6,7 @@ import '../doctor/environment_controller.dart';
 import '../l10n/app_localizations.dart';
 import '../settings/gate_settings.dart';
 import '../settings/editor_settings.dart';
+import '../settings/terminal_settings.dart';
 import '../theme/app_theme.dart';
 import '../theme/font_probe.dart';
 import '../theme/font_scan.dart';
@@ -19,12 +20,14 @@ import 'environment_section.dart';
 enum SettingsSection {
   appearance,
   editor,
+  terminal,
   gate,
   environment;
 
   IconData icon(StudioIcons icons) => switch (this) {
     appearance => icons.palette,
     editor => icons.editNote,
+    terminal => icons.terminal,
     gate => icons.shield,
     environment => icons.build,
   };
@@ -32,6 +35,7 @@ enum SettingsSection {
   String label(AppLocalizations l10n) => switch (this) {
     appearance => l10n.settingsSectionAppearance,
     editor => l10n.settingsSectionEditor,
+    terminal => l10n.settingsSectionTerminal,
     gate => l10n.settingsSectionGate,
     environment => l10n.settingsSectionEnvironment,
   };
@@ -43,12 +47,13 @@ Future<void> showSettingsDialog(
   required ThemeController theme,
   GateSettings? gate,
   EnvironmentController? environment,
+  TerminalSettings? terminal,
   SettingsSection initial = SettingsSection.appearance,
 }) {
   return showDialog<void>(
     context: context,
     builder: (context) =>
-        SettingsDialog(theme: theme, gate: gate, environment: environment, initial: initial),
+        SettingsDialog(theme: theme, gate: gate, environment: environment, terminal: terminal, initial: initial),
   );
 }
 
@@ -58,12 +63,14 @@ class SettingsDialog extends StatefulWidget {
     required this.theme,
     this.gate,
     this.environment,
+    this.terminal,
     this.initial = SettingsSection.appearance,
   });
 
   final ThemeController theme;
   final GateSettings? gate;
   final EnvironmentController? environment;
+  final TerminalSettings? terminal;
   final SettingsSection initial;
 
   @override
@@ -91,7 +98,8 @@ class _SettingsDialogState extends State<SettingsDialog> {
               child: ListView(
                 children: [
                   for (final s in SettingsSection.values)
-                    if ((s != SettingsSection.gate || widget.gate != null) &&
+                    if ((s != SettingsSection.terminal || widget.terminal != null) &&
+                        (s != SettingsSection.gate || widget.gate != null) &&
                         (s != SettingsSection.environment || widget.environment != null))
                       ListTile(
                         selected: s == _section,
@@ -112,6 +120,7 @@ class _SettingsDialogState extends State<SettingsDialog> {
                     theme: widget.theme,
                   ),
                   SettingsSection.editor => const _EditorSection(),
+                  SettingsSection.terminal => _TerminalSection(settings: widget.terminal!),
                   SettingsSection.gate => _GateSection(gate: widget.gate!),
                   SettingsSection.environment => EnvironmentSection(
                     controller: widget.environment!,
@@ -361,6 +370,120 @@ class _EditorSection extends StatelessWidget {
                 ],
               ),
             ),
+        ],
+      ),
+    );
+  }
+}
+
+class _TerminalSection extends StatefulWidget {
+  const _TerminalSection({required this.settings});
+
+  final TerminalSettings settings;
+
+  @override
+  State<_TerminalSection> createState() => _TerminalSectionState();
+}
+
+class _TerminalSectionState extends State<_TerminalSection> {
+  late final _name = TextEditingController(text: widget.settings.fontName ?? '');
+  late final Future<List<String>> _fonts = _loadFonts();
+
+  Future<List<String>> _loadFonts() async {
+    final found = <String>{...await monospaceFontLoader(), ...EditorSettings.presetFonts};
+    return found.where(FontProbe.isInstalled).toList()..sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
+  }
+
+  @override
+  void dispose() {
+    _name.dispose();
+    super.dispose();
+  }
+
+  void _pickFont(String? family) {
+    _name.text = family ?? '';
+    widget.settings.setFontName(family);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final t = context.tokens;
+    final settings = widget.settings;
+    return ListenableBuilder(
+      listenable: settings,
+      builder: (context, _) => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SwitchListTile(
+            contentPadding: EdgeInsets.zero,
+            value: settings.shareEditorFont,
+            onChanged: settings.setShareEditorFont,
+            title: Text(l10n.settingsTerminalShareFont),
+            subtitle: Text(l10n.settingsTerminalShareFontNote),
+          ),
+          if (!settings.shareEditorFont) ...[
+            SizedBox(height: t.spaceMd),
+            _Heading(l10n.settingsTerminalFont),
+            TextField(
+              controller: _name,
+              decoration: InputDecoration(hintText: l10n.settingsEditorFontHint),
+              onChanged: settings.setFontName,
+            ),
+            SizedBox(height: t.spaceSm),
+            FutureBuilder<List<String>>(
+              future: _fonts,
+              builder: (context, snapshot) => Wrap(
+                spacing: t.spaceSm,
+                runSpacing: t.spaceXs,
+                children: [
+                  ChoiceChip(
+                    selected: settings.fontName == null,
+                    showCheckmark: false,
+                    label: Text(l10n.settingsEditorFontDefault),
+                    onSelected: (_) => _pickFont(null),
+                  ),
+                  for (final f in snapshot.data ?? const <String>[])
+                    ChoiceChip(selected: settings.fontName == f, showCheckmark: false, label: Text(f), onSelected: (_) => _pickFont(f)),
+                ],
+              ),
+            ),
+            SizedBox(height: t.spaceMd),
+            _Heading(l10n.settingsTerminalFontSize),
+            Row(
+              children: [
+                Expanded(
+                  child: Slider(
+                    min: TerminalSettings.minSize,
+                    max: TerminalSettings.maxSize,
+                    divisions: (TerminalSettings.maxSize - TerminalSettings.minSize).round(),
+                    value: settings.size,
+                    label: settings.size.toStringAsFixed(0),
+                    onChanged: settings.setSize,
+                  ),
+                ),
+                SizedBox(width: 40, child: Text(settings.size.toStringAsFixed(0), textAlign: TextAlign.end)),
+              ],
+            ),
+          ],
+          SizedBox(height: t.spaceMd),
+          _Heading(l10n.settingsTerminalScrollback),
+          Row(
+            children: [
+              Expanded(
+                child: Slider(
+                  min: TerminalSettings.minScrollback.toDouble(),
+                  max: TerminalSettings.maxScrollback.toDouble(),
+                  value: settings.scrollback.toDouble(),
+                  label: '${settings.scrollback}',
+                  onChanged: (v) => settings.setScrollback((v / 500).round() * 500),
+                ),
+              ),
+              SizedBox(width: 56, child: Text('${settings.scrollback}', textAlign: TextAlign.end)),
+            ],
+          ),
+          SizedBox(height: t.spaceSm),
+          Text(l10n.settingsTerminalScrollbackNote, style: Theme.of(context).textTheme.bodySmall),
         ],
       ),
     );

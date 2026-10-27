@@ -12,6 +12,8 @@ include: package:flutter_lints/flutter.yaml
 analyzer:
   exclude:
     - build/**
+    # xterm2·flutter_pty 복사본(packages/xterm2/PATCHES.md, packages/flutter_pty/PATCHES.md) — 원본 코드라 고치지 않는다.
+    - packages/**
     - windows/**
     - macos/**
     - android/**
