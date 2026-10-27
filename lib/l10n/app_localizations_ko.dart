@@ -1042,12 +1042,6 @@ class AppLocalizationsKo extends AppLocalizations {
       '트리·탭·도구 막대 같은 칸 크기는 그대로 두고 글자만 커지거나 작아집니다.';
 
   @override
-  String get settingsUiFontPreview => '아름다운 날 Daylight Studio 123';
-
-  @override
-  String get settingsTerminalFontPreview => '\$ echo 안녕하세요 Hello 123';
-
-  @override
   String get settingsSectionTerminal => '터미널';
 
   @override

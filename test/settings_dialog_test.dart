@@ -5,7 +5,6 @@ import 'package:daylight_flutter_studio/theme/font_probe.dart';
 import 'package:daylight_flutter_studio/theme/font_scan.dart';
 import 'package:daylight_flutter_studio/theme/theme_controller.dart';
 import 'package:daylight_flutter_studio/ui/settings_dialog.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -125,29 +124,6 @@ void main() {
     await tester.tap(find.text('기본').last);
     await tester.pumpAndSettle();
     expect(theme.uiFontFamily, isNull);
-  });
-
-  testWidgets('글꼴 목록을 훑는(마우스를 올린) 동안 미리보기가 그 글꼴로 바로 바뀐다', (tester) async {
-    await open(tester);
-    final dropdown = find.byType(DropdownMenu<String?>);
-    await tester.ensureVisible(dropdown);
-    await tester.tap(dropdown);
-    await tester.pumpAndSettle();
-
-    final preview = find.textContaining('Daylight Studio');
-    final before = tester.widget<Text>(preview).style?.fontFamily;
-
-    final gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
-    addTearDown(gesture.removePointer);
-    await gesture.addPointer(location: Offset.zero);
-    await gesture.moveTo(tester.getCenter(find.text('Segoe UI').last));
-    await tester.pumpAndSettle();
-    expect(tester.widget<Text>(preview).style?.fontFamily, 'Segoe UI');
-    expect(theme.uiFontFamily, isNull); // 마우스만 올렸을 뿐 고른 것은 아니다
-
-    await gesture.moveTo(Offset.zero); // 목록을 벗어난다
-    await tester.pumpAndSettle();
-    expect(tester.widget<Text>(preview).style?.fontFamily, before);
   });
 
   testWidgets('UI 글꼴 배율 슬라이더로 바꾸고 100%로 되돌린다', (tester) async {
