@@ -64,9 +64,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get runNotFlutterProject => 'The open folder is not a Flutter project';
 
   @override
-  String get runNoPlatforms => 'No supported platforms';
-
-  @override
   String get runTarget => 'Target';
 
   @override
@@ -86,24 +83,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get runLinkLocal => 'This computer';
-
-  @override
-  String get runModeDebug => 'Debug (flutter run)';
-
-  @override
-  String get runStart => 'Run';
-
-  @override
-  String get runBuildInstall => 'Build & install';
-
-  @override
-  String get runStop => 'Stop';
-
-  @override
-  String get runHotReload => 'r hot reload';
-
-  @override
-  String get runHotRestart => 'R hot restart';
 
   @override
   String get runQuit => 'q quit';
@@ -137,9 +116,6 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get runBlockerNeedsTeamId =>
       'An iOS signing Team ID is required. (The project needs DEVELOPMENT_TEAM)';
-
-  @override
-  String get runCommandsToRun => 'Commands to run';
 
   @override
   String runCommandNotFound(String command) {
@@ -225,155 +201,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get runNoteCopied => 'Note copied. Paste it into your Claude session.';
 
   @override
-  String get runOutput => 'Output';
-
-  @override
-  String get runCopyOutput => 'Copy output';
-
-  @override
-  String get runNoOutput => '(no output)';
-
-  @override
-  String get commonStop => 'Stop';
-
-  @override
-  String get gitNotRepo => 'The open folder is not a git repository';
-
-  @override
-  String get gitNoGh =>
-      'GitHub CLI (gh) not found, so PR features are unavailable.';
-
-  @override
-  String get gitUpstreamGone => 'Gone from remote';
-
-  @override
-  String get gitNoUpstream => 'No upstream branch';
-
-  @override
-  String get gitDetachedHead => '(detached HEAD)';
-
-  @override
-  String get gitRefresh => 'Refresh';
-
-  @override
-  String get gitClean => 'No changes';
-
-  @override
-  String gitChangedFiles(int count) {
-    return '$count changed files';
-  }
-
-  @override
-  String gitMoreFiles(int count) {
-    return '… and $count more';
-  }
-
-  @override
-  String get gitFileDeleted => 'Deleted file';
-
-  @override
-  String get gitFileOpenDiff => 'Click to view changes';
-
-  @override
-  String get gitFileOpenConflict => 'Click to resolve conflict';
-
-  @override
-  String gitConflicts(int count) {
-    return '$count conflicts — click a file to resolve';
-  }
-
-  @override
-  String get gitStage => 'Stage';
-
-  @override
-  String get gitUnstage => 'Unstage';
-
-  @override
-  String get gitStageAll => 'Stage all';
-
-  @override
-  String get gitUnstageAll => 'Unstage all';
-
-  @override
-  String get gitDoneStaged => 'Staged';
-
-  @override
-  String get gitDoneUnstaged => 'Unstaged';
-
-  @override
-  String get gitDoneCommit => 'Committed';
-
-  @override
-  String get gitCommitMessageHint => 'Commit message';
-
-  @override
-  String get gitCommitAll => 'Commit';
-
-  @override
-  String gitCommitStaged(int count) {
-    return 'Commit ($count)';
-  }
-
-  @override
-  String gitOnDefaultBranch(String branch) {
-    return 'Can\'t create a PR from the default branch ($branch). Work on a new branch instead.';
-  }
-
-  @override
-  String conflictSheetTitle(String name) {
-    return 'Resolve conflicts in $name';
-  }
-
-  @override
-  String get conflictUnreadable =>
-      'Can\'t read this file (it may be binary or deleted). Fix it directly in the editor.';
-
-  @override
-  String get conflictBroken =>
-      'The conflict markers aren\'t intact, so this app can\'t read them. Fix the file directly in the editor.';
-
-  @override
-  String get conflictNone =>
-      'This file has no conflict markers. If you\'ve already fixed it, close this and refresh the status.';
-
-  @override
-  String conflictBlockTitle(int index, int total) {
-    return 'Conflict $index/$total';
-  }
-
-  @override
-  String get conflictSideMine => 'Mine';
-
-  @override
-  String get conflictSideIncoming => 'Incoming';
-
-  @override
-  String get conflictKeepBoth => 'Keep both (mine, then incoming)';
-
-  @override
-  String get conflictEmptySide => '(empty)';
-
-  @override
-  String conflictPickHint(int left) {
-    return 'Pick a side for each conflict. $left left.';
-  }
-
-  @override
-  String get conflictApply => 'Apply and mark resolved';
-
-  @override
-  String get conflictApplyNote =>
-      'Rewrites the file with your picks and runs git add. To edit by hand instead, open it in the editor.';
-
-  @override
-  String doneConflictResolved(String name) {
-    return '$name: conflict resolved';
-  }
-
-  @override
-  String get gitFetch => 'Fetch';
-
-  @override
   String gitPull(int behind) {
     return 'Pull (↓$behind)';
   }
@@ -410,24 +237,6 @@ class AppLocalizationsEn extends AppLocalizations {
       'Before merging, build and check this commit in the Run tab.';
 
   @override
-  String get gitNoPr => 'This branch has no PR.';
-
-  @override
-  String get gitPrTitle => 'PR title';
-
-  @override
-  String get gitPushFirst => 'Push the branch first to create a PR.';
-
-  @override
-  String get gitCreatePr => 'Create PR';
-
-  @override
-  String get gitMergeBlocked => 'Merge PR (verification required)';
-
-  @override
-  String get gitMergeConfirm => 'Merge PR…';
-
-  @override
   String get gitMerge => 'Merge PR';
 
   @override
@@ -442,45 +251,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get gitMergeAnyway => 'Merge anyway';
-
-  @override
-  String get gitPrDraft => 'This is a draft PR.';
-
-  @override
-  String get gitPrConflict => 'There are conflicts.';
-
-  @override
-  String gitPrChecksFailed(String names) {
-    return 'Failed checks: $names';
-  }
-
-  @override
-  String gitPrChecksPending(int count) {
-    return '$count checks are in progress.';
-  }
-
-  @override
-  String get gitPrReviewRequired => 'A review is required.';
-
-  @override
-  String get gitPrMerged => 'Merged';
-
-  @override
-  String get gitPrOpen => 'Open';
-
-  @override
-  String gitPrChecks(int passed, int failed, int pending) {
-    return 'Checks passed $passed · failed $failed · pending $pending';
-  }
-
-  @override
-  String get gitMergeMethod => 'Merge method';
-
-  @override
-  String get gitMergeCommit => 'Merge commit';
-
-  @override
-  String get gitDeleteBranchAfter => 'Delete branch after merge';
 
   @override
   String get studioOpenProject => 'Open project';
@@ -510,9 +280,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get terminalEmptyHint => 'Click + to open a new terminal';
 
   @override
-  String get terminalLoadingShells => 'Finding shells…';
-
-  @override
   String get terminalNoShells => 'No shell was found';
 
   @override
@@ -527,9 +294,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String terminalStartError(String error) {
     return 'Couldn\'t start the shell: $error';
   }
-
-  @override
-  String get gitTabChanges => 'Changes';
 
   @override
   String get studioBottomPanelHide => 'Hide bottom panel (Ctrl+J)';
@@ -898,42 +662,6 @@ class AppLocalizationsEn extends AppLocalizations {
       'flutter pub get failed. See the output in the command log below.';
 
   @override
-  String get gitDoneFetch => 'Fetched';
-
-  @override
-  String get gitDonePull => 'Pulled';
-
-  @override
-  String get gitDonePush => 'Pushed';
-
-  @override
-  String get gitDonePrCreated => 'PR created';
-
-  @override
-  String gitNotMerged(String reason) {
-    return 'Not merged: $reason';
-  }
-
-  @override
-  String gitDoneMergedUnverified(int number) {
-    return 'Merged #$number without verification';
-  }
-
-  @override
-  String gitDoneMerged(int number) {
-    return 'Merged #$number';
-  }
-
-  @override
-  String get gitCommandNotFound =>
-      'Command not found. Make sure git and the GitHub CLI (gh) are installed and on your PATH.';
-
-  @override
-  String gitFailedExit(int code) {
-    return 'Failed (exit code $code)';
-  }
-
-  @override
   String get findHint => 'Find';
 
   @override
@@ -1132,89 +860,6 @@ class AppLocalizationsEn extends AppLocalizations {
       'Doesn\'t apply to terminal tabs already open — only to ones opened from now on.';
 
   @override
-  String get releaseButton => 'Release…';
-
-  @override
-  String get releaseTitle => 'Release tag';
-
-  @override
-  String get releaseNotReady => 'Checks did not pass, so no tag was created.';
-
-  @override
-  String releaseTagged(String tag) {
-    return 'Pushed tag $tag. GitHub Actions will build the release.';
-  }
-
-  @override
-  String releaseTagPushFailed(String error) {
-    return 'Couldn\'t push the tag: $error';
-  }
-
-  @override
-  String releaseVersionLine(String version, String tag) {
-    return 'pubspec $version → tag $tag';
-  }
-
-  @override
-  String releaseLastTag(String tag) {
-    return 'Last tag: $tag';
-  }
-
-  @override
-  String get releaseNoLastTag => 'No tags yet';
-
-  @override
-  String get releaseNoVersion => 'Couldn\'t read a version from pubspec.yaml';
-
-  @override
-  String get releaseCheckCleanTree =>
-      'No uncommitted changes in the working folder';
-
-  @override
-  String get releaseCheckOnDefaultBranch =>
-      'On the default branch (no tags on work branches)';
-
-  @override
-  String get releaseCheckSynced => 'In sync with the remote';
-
-  @override
-  String get releaseCheckVersionBumped =>
-      'Version is higher than the last tag (the bump is merged)';
-
-  @override
-  String get releaseCheckTagFree => 'No tag with that name yet';
-
-  @override
-  String get releaseCheckVerified => 'This commit was built and checked by eye';
-
-  @override
-  String get releaseBumpHint =>
-      'To bump the version, make a bump commit and merge it by PR:';
-
-  @override
-  String get releaseBumpHintNoScript =>
-      'Merge a commit that raises version in pubspec.yaml via PR.';
-
-  @override
-  String get releaseRecheck => 'Check again';
-
-  @override
-  String get releaseCreateTag => 'Create and push tag';
-
-  @override
-  String get releaseTagWithoutVerification => 'Tag without verification…';
-
-  @override
-  String get releaseUnverifiedTitle => 'This commit has not been checked';
-
-  @override
-  String get releaseUnverifiedBody =>
-      'If you push the tag anyway, GitHub builds every OS, and a pushed tag is never moved — a problem means releasing a new PATCH.';
-
-  @override
-  String get releaseTagAnyway => 'Tag anyway';
-
-  @override
   String get settingsIconSet => 'Icon style';
 
   @override
@@ -1225,9 +870,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsIconSetFilled => 'Filled';
-
-  @override
-  String get homeBuildTitle => 'Build';
 
   @override
   String get homeModeDebug => 'Debug';
@@ -1495,13 +1137,6 @@ class AppLocalizationsEn extends AppLocalizations {
       '1. Install the Android SDK platform-tools (Android Studio SDK Manager)\n2. Add the platform-tools folder to PATH\n3. Press Check again';
 
   @override
-  String get stepsCertExpiry =>
-      '1. Xcode → Settings → Accounts → Manage Certificates: create a new Apple Development certificate\n2. Press Check again';
-
-  @override
-  String get toolPathsOpen => 'Set tool paths…';
-
-  @override
   String get toolPathsTitle => 'Tool paths';
 
   @override
@@ -1580,363 +1215,6 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get settingsIndentGuidesNote =>
       'Draws vertical lines in a different color per depth so you can match blocks. Accurate with monospace fonts.';
-
-  @override
-  String get gitTabBranches => 'Branches';
-
-  @override
-  String get branchesLocal => 'Local branches';
-
-  @override
-  String get branchesRemote => 'Remote branches';
-
-  @override
-  String get branchesSearchHint => 'Search branches';
-
-  @override
-  String get branchesNew => 'New branch';
-
-  @override
-  String get branchesRefresh => 'Refresh branches';
-
-  @override
-  String get branchesEmpty => 'No branches';
-
-  @override
-  String get branchesNoMatch => 'No branches match';
-
-  @override
-  String get branchesNotRepo => 'The open folder is not a git repository';
-
-  @override
-  String get branchCurrent => 'Current';
-
-  @override
-  String get branchSwitch => 'Switch';
-
-  @override
-  String get branchTrackSwitch => 'Check out as local and switch';
-
-  @override
-  String get branchNewFrom => 'New branch from here';
-
-  @override
-  String get branchRename => 'Rename';
-
-  @override
-  String get branchDelete => 'Delete';
-
-  @override
-  String get branchDeleteRemote => 'Delete remote branch';
-
-  @override
-  String branchInWorktree(String path) {
-    return 'In use by another worktree: $path';
-  }
-
-  @override
-  String get branchOpenWorktree => 'Open that worktree';
-
-  @override
-  String get branchGone => 'Gone from remote';
-
-  @override
-  String get branchNoUpstream => 'No upstream';
-
-  @override
-  String get branchCreateTitle => 'New branch';
-
-  @override
-  String get branchNameLabel => 'Branch name';
-
-  @override
-  String get branchBaseLabel => 'Base branch';
-
-  @override
-  String get branchBaseHead => 'Current position (HEAD)';
-
-  @override
-  String get branchSwitchAfter => 'Switch to it after creating';
-
-  @override
-  String get branchCreate => 'Create';
-
-  @override
-  String get branchCommandPreview => 'Command to run';
-
-  @override
-  String get branchNameEmpty => 'Enter a name';
-
-  @override
-  String get branchNameInvalidChar =>
-      'Spaces and characters like ~ ^ : ? * [ are not allowed';
-
-  @override
-  String get branchNameDash => 'Cannot start with -';
-
-  @override
-  String get branchNameSequence =>
-      '.. // and parts starting with . are not allowed';
-
-  @override
-  String get branchNameEdge => 'Cannot start with / or end with / or .';
-
-  @override
-  String get branchNameExists => 'That name already exists';
-
-  @override
-  String get branchRenameTitle => 'Rename branch';
-
-  @override
-  String get branchRenameAction => 'Rename';
-
-  @override
-  String get branchDeleteTitle => 'Delete branch';
-
-  @override
-  String branchDeleteBody(String name) {
-    return 'Deletes the branch \'$name\'. Only branches already merged are removed.';
-  }
-
-  @override
-  String get branchDeleteNotMergedTitle => 'Branch is not merged';
-
-  @override
-  String branchDeleteNotMergedBody(String name) {
-    return '\'$name\' has commits that are not on any other branch. Deleting it makes those commits hard to reach.';
-  }
-
-  @override
-  String get branchForceDelete => 'Delete anyway (-D)';
-
-  @override
-  String get branchDeleteRemoteTitle => 'Delete remote branch';
-
-  @override
-  String branchDeleteRemoteBody(String remote, String branch) {
-    return 'Deletes \'$branch\' from remote $remote. This affects everyone using that remote.';
-  }
-
-  @override
-  String branchDoneSwitch(String name) {
-    return 'Switched to \'$name\'';
-  }
-
-  @override
-  String branchDoneCreate(String name) {
-    return 'Created branch \'$name\'';
-  }
-
-  @override
-  String branchDoneRename(String from, String to) {
-    return 'Renamed \'$from\' to \'$to\'';
-  }
-
-  @override
-  String branchDoneDelete(String name) {
-    return 'Deleted branch \'$name\'';
-  }
-
-  @override
-  String branchDoneDeleteRemote(String name) {
-    return 'Deleted remote branch \'$name\'';
-  }
-
-  @override
-  String branchErrInOtherWorktree(String name, String path) {
-    return '\'$name\' is in use by another worktree, so it can\'t be switched to or deleted: $path';
-  }
-
-  @override
-  String get branchErrLocalChanges =>
-      'You have uncommitted changes that would be overwritten. Commit or discard them and try again.';
-
-  @override
-  String branchErrNotMerged(String name) {
-    return '\'$name\' is not fully merged.';
-  }
-
-  @override
-  String branchErrExists(String name) {
-    return '\'$name\' already exists.';
-  }
-
-  @override
-  String get branchErrRemote =>
-      'Couldn\'t reach the remote. Check your sign-in and network.';
-
-  @override
-  String get branchErrNoGit =>
-      'git was not found. Make sure it is installed and on PATH.';
-
-  @override
-  String branchErrGeneric(String code) {
-    return 'Failed (exit code $code)';
-  }
-
-  @override
-  String get mergeMenuItem => 'Merge into current branch…';
-
-  @override
-  String mergeTitle(String source, String target) {
-    return 'Merge \'$source\' into \'$target\'';
-  }
-
-  @override
-  String mergeIncoming(String count) {
-    return '$count incoming commits';
-  }
-
-  @override
-  String mergeNothing(String source, String target) {
-    return '\'$source\' has no commits that \'$target\' lacks. Already up to date.';
-  }
-
-  @override
-  String get mergeLoadFailed => 'Could not load the preview';
-
-  @override
-  String get mergeModeFastForward => 'Fast-forward';
-
-  @override
-  String get mergeFastForwardWhen =>
-      'Just moves the branch tip forward. No merge commit is created.';
-
-  @override
-  String get mergeFastForwardDisabled =>
-      'Not available: the branches have diverged (the current branch has new commits too).';
-
-  @override
-  String get mergeModeMergeCommit => 'Merge commit';
-
-  @override
-  String get mergeMergeCommitWhen =>
-      'Creates a commit that joins both histories, so the merge point stays visible.';
-
-  @override
-  String get mergeModeSquash => 'Squash';
-
-  @override
-  String get mergeSquashWhen =>
-      'Combines the incoming commits into one. Tidy history, but the original commits are not kept.';
-
-  @override
-  String get mergeModeRebase => 'Rebase';
-
-  @override
-  String mergeRebaseWhen(String source) {
-    return 'Replays the current branch\'s commits on top of \'$source\'. History stays linear, but the commits are recreated.';
-  }
-
-  @override
-  String get mergeMessageLabel => 'Commit message';
-
-  @override
-  String mergeSquashNote(String source) {
-    return 'The commits from \'$source\' are combined, staged and committed. If there are conflicts, resolve them and commit yourself.';
-  }
-
-  @override
-  String mergeRebaseReplay(String count) {
-    return '$count of your commits will be replayed';
-  }
-
-  @override
-  String get mergeRebaseNothing =>
-      'You have no commits to replay. You are already on top of that branch.';
-
-  @override
-  String get mergeRebasePublishedWarning =>
-      'This branch is on the remote. Rebasing recreates its commits, so the next push needs a force push (--force-with-lease).';
-
-  @override
-  String get mergeConfirm => 'Merge';
-
-  @override
-  String get mergeConfirmRebase => 'Rebase';
-
-  @override
-  String mergeDone(String source, String target) {
-    return 'Merged \'$source\' into \'$target\'';
-  }
-
-  @override
-  String mergeDoneRebase(String target, String source) {
-    return 'Rebased \'$target\' onto \'$source\'';
-  }
-
-  @override
-  String get mergeErrConflict =>
-      'There are conflicts. Resolve them in the Changes tab and continue, or abort to go back.';
-
-  @override
-  String get mergeErrLocalChanges =>
-      'Your uncommitted changes overlap with the merge. Commit or discard them and try again.';
-
-  @override
-  String get mergeErrNotFastForward =>
-      'Can\'t fast-forward: the histories have diverged. Choose a merge commit or squash.';
-
-  @override
-  String get mergeBusyOperation =>
-      'A merge or rebase is in progress. Continue or abort it first.';
-
-  @override
-  String opMerging(String count) {
-    return 'Merging — $count conflicts';
-  }
-
-  @override
-  String opRebasing(String count) {
-    return 'Rebasing — $count conflicts';
-  }
-
-  @override
-  String opCherryPicking(String count) {
-    return 'Cherry-picking — $count conflicts';
-  }
-
-  @override
-  String opReverting(String count) {
-    return 'Reverting — $count conflicts';
-  }
-
-  @override
-  String get opContinue => 'Continue';
-
-  @override
-  String get opSkip => 'Skip';
-
-  @override
-  String get opAbort => 'Abort';
-
-  @override
-  String get opContinueBlocked =>
-      'Resolve and stage all conflicts before continuing.';
-
-  @override
-  String get opAbortTitle => 'Abort operation';
-
-  @override
-  String get opAbortMergeBody =>
-      'Aborts the merge and returns to the state before it. Conflict resolutions you made are lost.';
-
-  @override
-  String get opAbortRebaseBody =>
-      'Aborts the rebase and returns to the state before it started. Commits already replayed are discarded.';
-
-  @override
-  String get opAbortOtherBody =>
-      'Aborts the operation in progress and returns to the state before it.';
-
-  @override
-  String get opDoneContinue => 'Continued';
-
-  @override
-  String get opDoneSkip => 'Skipped';
-
-  @override
-  String get opDoneAbort => 'Aborted. Back to the state before it started.';
 
   @override
   String get bdAboutTooltip => 'About';

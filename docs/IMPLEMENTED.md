@@ -1,7 +1,7 @@
 # 구현된 것
 
-기준: 2026-10-27, 로컬 `main`. `flutter analyze` 새 문제 없음, 테스트 484개 통과
-(`test/release_test.dart`·`test/branchdock/`의 실제 git 테스트 몇 개는 전체를 한꺼번에 돌리면 Windows 파일 잠금으로
+기준: 2026-10-27, 로컬 `main`. `flutter analyze` 새 문제 없음, 테스트 462개 통과
+(`test/branchdock/`·`test/verify_gate_controller_test.dart`의 실제 git 테스트 몇 개는 전체를 한꺼번에 돌리면 Windows 파일 잠금으로
 간간이 실패한다 — 알려진 한계, 따로 돌리면 통과한다).
 앞으로 할 일은 [PLAN.md](../PLAN.md)에 있다. 이 문서는 **이미 만들어진 것**과 그 구조·작업 방식을 적는다.
 
@@ -43,7 +43,9 @@ Claude Code는 worktree에서 작업하고 사용자는 main만 쓴다. 그러�
 - 기능은 Branch Dock과 같다: 스테이지·커밋, 가져오기·받기·올리기, 브랜치(전환·만들기·이름 바꾸기·삭제·worktree), 병합·squash·rebase와 충돌 해결, 태그, 원격, 기록(그래프), PR 목록·리뷰·병합, 릴리스 마법사, 실수 복구(reflog), 개념 도움말.
 - **Studio 전용 연결점은 둘뿐이다**: `MergeGateScope`(PR 카드의 검증 관문과 검증 카드, `lib/ui/git_merge_gate.dart`)와 HEAD 변경 알림(`onHeadChanged` — 브랜치·커밋이 바뀌면 파일·문제·검증 상태를 새로 읽는다).
   worktree를 열 때는 `onOpenFolder`로 Studio의 프로젝트를 바꾼다.
-- `GitController`(`lib/git/`)는 이제 검증 판정(관문)만 맡는다.
+- `VerifyGateController`(`lib/verify/verify_gate_controller.dart`)가 검증 판정(관문)만 읽기 전용으로 맡는다. `lib/git/status.dart`는 HEAD 브랜치·커밋을 읽는 파서 하나만 남았다.
+  옛 Studio Git 패널·릴리스 마법사·충돌 시트와 그 문구는 지웠다(Git 기능은 모두 Branch Dock 쪽).
+- 이식본이 원본에서 갈라진 곳은 코드에 `[Studio에서 달라진 곳]` 주석으로 표시했다(`command_runner`의 실행 파일 경로 검사, `pr_tab`의 관문, `branchdock_dock`의 연결점).
 
 ## Run 패널 (Flutty Dock)
 

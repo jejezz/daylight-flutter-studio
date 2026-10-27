@@ -163,6 +163,7 @@ class _PrCardState extends State<PrCard> {
   /// 막힌 경우에는 [force] (명시적 "검증 없이 병합")일 때만 확인 창까지 간다.
   Future<void> _merge(PullRequest pr, List<List<String>> commands, {bool force = false}) async {
     final l10n = AppLocalizations.of(context);
+    // [Studio에서 달라진 곳] 병합 관문(MergeGateScope)은 이 앱에서 더했다. 범위가 없으면 원본처럼 동작한다.
     final gate = MergeGateScope.maybeOf(context);
     if (gate != null && gate.active) {
       final d = await gate.judge();
