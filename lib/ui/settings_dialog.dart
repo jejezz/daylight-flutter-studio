@@ -199,17 +199,10 @@ class _SectionTile extends StatelessWidget {
   }
 }
 
-/// 글꼴 이름을 고르는 콤보 상자(입력해서 걸러 찾기) + 고른 글꼴로 보여 주는 미리보기 한 줄.
+/// 글꼴 이름을 고르는 콤보 상자(입력해서 가까운 항목을 찾아가기).
 /// 설치된 글꼴이 수백 개여도(특히 UI 글꼴처럼 고정폭이 아닌 것까지 다 보여 줄 때) 단추를 쭉 늘어놓지 않는다.
 class _FontPicker extends StatefulWidget {
-  const _FontPicker({
-    required this.value,
-    required this.onChanged,
-    required this.loader,
-    required this.presets,
-    required this.missingText,
-    this.previewText,
-  });
+  const _FontPicker({required this.value, required this.onChanged, required this.loader, required this.presets, required this.missingText});
 
   final String? value;
   final ValueChanged<String?> onChanged;
@@ -219,9 +212,6 @@ class _FontPicker extends StatefulWidget {
   /// 저장된 글꼴이 이 컴퓨터에 없을 때 보여 줄 경고.
   final String missingText;
 
-  /// 없으면(예: 편집기 글꼴 — 코드 미리보기가 따로 있다) 미리보기 글을 보여 주지 않는다.
-  final String? previewText;
-
   @override
   State<_FontPicker> createState() => _FontPickerState();
 }
@@ -229,9 +219,10 @@ class _FontPicker extends StatefulWidget {
 class _FontPickerState extends State<_FontPicker> {
   late final Future<List<String>> _fonts = _load();
 
-  /// 목록을 훑는(마우스를 올린) 동안만 쓰는 값 — 고르지 않아도 미리보기가 그 글꼴로 바뀐다.
-  /// 목록을 벗어나면(또는 실제로 고르면) 다시 null로 돌아가 저장된 값을 보여 준다.
-  String? _hovered;
+  /// 목록이 길면(한 화면을 넘어설 만큼) 펼친 목록 높이를 제한한다 — 안 그러면 화면을 거의 다 덮는다.
+  /// 짧은 목록까지 제한하면 빈 자리가 생겨 항목을 짚는 자리가 어긋난다(실제로 그랬다).
+  static const _longListThreshold = 8;
+  static const _cappedMenuHeight = 320.0;
 
   Future<List<String>> _load() async {
     final found = <String>{...await widget.loader(), ...widget.presets};
@@ -243,29 +234,12 @@ class _FontPickerState extends State<_FontPicker> {
     return installed;
   }
 
-  void _setHovered(String? family) {
-    if (_hovered != family) setState(() => _hovered = family);
-  }
-
-  /// 목록 항목 하나 — 마우스를 올리면(훑어보는 동안) 아래 미리보기가 바로 그 글꼴로 바뀐다.
-  DropdownMenuEntry<String?> _entry(String? value, String label) => DropdownMenuEntry(
-    value: value,
-    label: label,
-    style: value == null ? null : fontMenuEntryStyle(value),
-    labelWidget: MouseRegion(
-      onEnter: (_) => _setHovered(value),
-      onExit: (_) => _setHovered(null),
-      child: Text(label),
-    ),
-  );
-
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final t = context.tokens;
     final theme = Theme.of(context);
     final missing = widget.value != null && !FontProbe.isInstalled(widget.value!);
-    final previewed = _hovered ?? widget.value;
     return FutureBuilder<List<String>>(
       future: _fonts,
       builder: (context, snapshot) {
@@ -274,39 +248,26 @@ class _FontPickerState extends State<_FontPicker> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             DropdownMenu<String?>(
-              expandedInsets: EdgeInsets.zero,
+              // expandedInsets(부모 너비에 맞춰 늘이기) 대신 칸 너비를 못 박는다 — 설정 창처럼 내용 칸이
+              // SingleChildScrollView 등으로 겹겹이면 늘이기 계산이 어긋나 펼친 목록이 창 밖까지 넘친 적이 있다.
+              width: 460,
+              menuHeight: fonts.length > _longListThreshold ? _cappedMenuHeight : null,
               // enableFilter(걸러서 줄이기)는 다시 열었을 때 방금 고른 글꼴 이름으로 목록이 걸러져 "기본"
               // 같은 다른 항목이 숨는다 — 대신 기본 enableSearch로 입력한 글자와 가까운 항목을 찾아간다.
               hintText: l10n.settingsEditorFontHint,
               textStyle: fontPreviewStyle(widget.value),
               initialSelection: widget.value,
               dropdownMenuEntries: [
-                _entry(null, l10n.settingsEditorFontDefault),
-                for (final f in fonts) _entry(f, f),
+                DropdownMenuEntry(value: null, label: l10n.settingsEditorFontDefault, style: fontMenuEntryStyle()),
+                for (final f in fonts) DropdownMenuEntry(value: f, label: f, style: fontMenuEntryStyle(f)),
               ],
-              onSelected: (value) {
-                _setHovered(null);
-                widget.onChanged(value);
-              },
+              onSelected: widget.onChanged,
             ),
             SizedBox(height: t.spaceXs),
             if (missing)
               Text(widget.missingText, style: TextStyle(color: t.warning))
             else
               Text(l10n.settingsEditorFontNote, style: theme.textTheme.bodySmall),
-            if (widget.previewText != null) ...[
-              SizedBox(height: t.spaceSm),
-              Container(
-                width: double.infinity,
-                padding: EdgeInsets.all(t.spaceMd),
-                decoration: BoxDecoration(
-                  color: theme.colorScheme.surfaceContainerLowest,
-                  border: Border.all(color: theme.colorScheme.outlineVariant),
-                  borderRadius: BorderRadius.circular(t.radius),
-                ),
-                child: Text(widget.previewText!, style: fontPreviewSampleStyle(previewed)),
-              ),
-            ],
           ],
         );
       },
@@ -439,7 +400,6 @@ class _UiFontSettings extends StatelessWidget {
               loader: proportionalFontLoader,
               presets: ThemeController.presetUiFonts,
               missingText: l10n.settingsUiFontMissing,
-              previewText: l10n.settingsUiFontPreview,
             ),
             SizedBox(height: t.spaceMd),
             _Heading(l10n.settingsUiFontScale),
@@ -624,7 +584,6 @@ class _TerminalSection extends StatelessWidget {
               loader: monospaceFontLoader,
               presets: EditorSettings.presetFonts,
               missingText: l10n.settingsEditorFontMissing,
-              previewText: l10n.settingsTerminalFontPreview,
             ),
             SizedBox(height: t.spaceMd),
             _Heading(l10n.settingsTerminalFontSize),

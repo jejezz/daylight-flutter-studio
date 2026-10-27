@@ -1940,18 +1940,6 @@ abstract class AppLocalizations {
   /// **'트리·탭·도구 막대 같은 칸 크기는 그대로 두고 글자만 커지거나 작아집니다.'**
   String get settingsUiFontScaleNote;
 
-  /// No description provided for @settingsUiFontPreview.
-  ///
-  /// In ko, this message translates to:
-  /// **'아름다운 날 Daylight Studio 123'**
-  String get settingsUiFontPreview;
-
-  /// No description provided for @settingsTerminalFontPreview.
-  ///
-  /// In ko, this message translates to:
-  /// **'\$ echo 안녕하세요 Hello 123'**
-  String get settingsTerminalFontPreview;
-
   /// No description provided for @settingsSectionTerminal.
   ///
   /// In ko, this message translates to:

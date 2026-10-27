@@ -1067,12 +1067,6 @@ class AppLocalizationsEn extends AppLocalizations {
       'Rows, tabs and toolbars keep their size — only the text grows or shrinks.';
 
   @override
-  String get settingsUiFontPreview => 'A beautiful day — Daylight Studio 123';
-
-  @override
-  String get settingsTerminalFontPreview => '\$ echo Hello 안녕하세요 123';
-
-  @override
   String get settingsSectionTerminal => 'Terminal';
 
   @override

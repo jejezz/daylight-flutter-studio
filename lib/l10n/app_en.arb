@@ -609,8 +609,6 @@
   "settingsUiFontMissing": "This font doesn't seem to be installed on this computer. The default font is shown instead.",
   "settingsUiFontScale": "Font size scale",
   "settingsUiFontScaleNote": "Rows, tabs and toolbars keep their size — only the text grows or shrinks.",
-  "settingsUiFontPreview": "A beautiful day — Daylight Studio 123",
-  "settingsTerminalFontPreview": "$ echo Hello 안녕하세요 123",
   "settingsSectionTerminal": "Terminal",
   "settingsTerminalShareFont": "Share font with editor",
   "settingsTerminalShareFontNote": "Turn off to pick a separate font and size for the terminal. Colors always follow the current theme.",
