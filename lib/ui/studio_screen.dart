@@ -563,6 +563,7 @@ class _StudioScreenState extends State<StudioScreen>
                                         child: EditorPane(
                                           controller: _controller,
                                           problems: _problems,
+                                          onGoToDefinition: _goToDefinition,
                                         ),
                                       ),
                                       if (_layout.bottomOpen)
