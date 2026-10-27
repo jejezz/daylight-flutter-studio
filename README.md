@@ -25,7 +25,7 @@
 </p>
 
 <p align="center">
-  <img src="docs/screenshots/demo.gif" width="720" alt="Daylight Workbench demo: open a project, build and install, verify, merge">
+  <img src="docs/screenshots/demo.gif" width="720" alt="Daylight Workbench demo: edit a file, see it in the Git panel, commit">
 </p>
 
 ## Features
@@ -37,7 +37,7 @@
 
 <p align="center">
   <img src="docs/screenshots/home.png" width="360" alt="Project tree, editor and Run panel">
-  <img src="docs/screenshots/detail.png" width="360" alt="Git panel and diff view">
+  <img src="docs/screenshots/detail.png" width="360" alt="Git panel with a pending change, dark theme">
 </p>
 
 ## Install

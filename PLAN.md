@@ -28,7 +28,7 @@ Android Studio처럼 테마를 바꾸면 아이콘과 글꼴이 함께 바뀌고
 
 ## 3. 규약 마무리와 공개 준비
 
-- README 스크린샷·GIF(`tool/readme/capture.sh`)를 현재 화면(Branch Dock Git 패널, Run 도구 막대, 메뉴 막대)으로 다시 찍는다. macOS에서 실제 앱을 띄워 캡처해야 하므로 사용자가 직접 한다.
+- README 스크린샷·GIF는 현재 화면으로 다시 찍었다(`home.png`·`detail.png`·`demo.gif`). 남은 것: 변경점 보기(diff)·메뉴 막대가 보이는 화면, 그리고 `demo.gif`를 빌드·설치·검증·병합 흐름으로 바꾸는 것(지금은 수정→Git 패널 반영→커밋만 보여 준다. 클릭이 필요해 직접 `tool/readme/capture.sh record`).
 - **확인할 것**: 업데이트 확인을 실제 Windows·macOS 빌드에서 — 메뉴("업데이트 확인")와 정보 창 단추가 뜨는지, 서버 응답을 실제로 받는지.
 
 ## 이 앱 밖
