@@ -12,6 +12,8 @@ import '../core/command_log.dart';
 import '../core/command_runner.dart';
 import '../dev/demo_runner.dart';
 import '../devices/device_service.dart';
+import '../studio/symbol_index.dart';
+import 'symbol_search.dart';
 import '../verify/verify_gate_controller.dart';
 import '../run/run_controller.dart';
 import '../problems/dart_analyzer.dart';
@@ -221,6 +223,45 @@ class _StudioScreenState extends State<StudioScreen>
 
   Future<void> _replaceProject() => _searchProject(replace: true);
 
+  /// 심볼로 이동 (Ctrl/Cmd+Shift+O): 프로젝트의 Dart 선언을 이름으로 찾아 간다.
+  Future<void> _goToSymbol({String initialQuery = '', Future<List<DartSymbol>>? symbols}) async {
+    final root = _controller.root;
+    if (root == null) return;
+    final picked = await showSymbolSearch(
+      context,
+      root: root,
+      symbols: symbols ?? _indexSymbols(root),
+      initialQuery: initialQuery,
+    );
+    if (picked != null) await _controller.openAt(picked.path, picked.line, picked.column);
+  }
+
+  Future<List<DartSymbol>> _indexSymbols(String root) async => indexProjectSymbols(root, await listProjectFiles(root));
+
+  /// 정의로 이동 (F12): 커서 아래(또는 선택한) 낱말과 이름이 같은 선언으로 간다. 하나면 바로, 여럿이면 골라서.
+  Future<void> _goToDefinition() async {
+    final root = _controller.root;
+    final tab = _controller.activeTab;
+    if (root == null || tab == null) return;
+    final selected = tab.controller.selectedText;
+    final sel = tab.controller.selection;
+    final lines = tab.controller.codeLines;
+    final word = selected.isNotEmpty && !selected.contains('\n')
+        ? selected.trim()
+        : wordAt(lines[sel.extentIndex.clamp(0, lines.length - 1)].text, sel.extentOffset);
+    if (word.isEmpty) return;
+    final all = await _indexSymbols(root);
+    if (!mounted) return;
+    final found = definitionsOf(word, all);
+    if (found.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context).symbolNotFound(word))));
+    } else if (found.length == 1) {
+      await _controller.openAt(found.first.path, found.first.line, found.first.column);
+    } else {
+      await _goToSymbol(initialQuery: word, symbols: Future.value(all));
+    }
+  }
+
   Future<void> _searchProject({bool replace = false}) async {
     final root = _controller.root;
     if (root == null) return;
@@ -279,6 +320,8 @@ class _StudioScreenState extends State<StudioScreen>
         MenuAction(l10n.menuSaveAll, onPressed: hasTab ? _controller.saveAll : null),
         MenuAction(l10n.menuCloseTab, onPressed: hasTab ? _closeActiveTab : null, shortcut: key(LogicalKeyboardKey.keyW)),
         const MenuDivider(),
+        MenuAction(l10n.menuGoToSymbol, onPressed: hasProject ? _goToSymbol : null, shortcut: key(LogicalKeyboardKey.keyO, shift: true)),
+        MenuAction(l10n.menuGoToDefinition, onPressed: hasTab ? _goToDefinition : null, shortcut: const SingleActivator(LogicalKeyboardKey.f12)),
         MenuAction(l10n.menuQuickOpen, onPressed: hasProject ? _quickOpen : null, shortcut: key(LogicalKeyboardKey.keyP)),
         MenuAction(l10n.menuSettings, onPressed: _openSettings, shortcut: key(LogicalKeyboardKey.comma)),
         // macOS의 종료는 앱 메뉴에 있다.
@@ -398,6 +441,9 @@ class _StudioScreenState extends State<StudioScreen>
             const SingleActivator(LogicalKeyboardKey.keyO, meta: true): _pickProject,
             const SingleActivator(LogicalKeyboardKey.keyW, control: true): _closeActiveTab,
             const SingleActivator(LogicalKeyboardKey.keyW, meta: true): _closeActiveTab,
+            const SingleActivator(LogicalKeyboardKey.keyO, control: true, shift: true): _goToSymbol,
+            const SingleActivator(LogicalKeyboardKey.keyO, meta: true, shift: true): _goToSymbol,
+            const SingleActivator(LogicalKeyboardKey.f12): _goToDefinition,
             const SingleActivator(LogicalKeyboardKey.keyP, control: true): _quickOpen,
             const SingleActivator(LogicalKeyboardKey.keyP, meta: true): _quickOpen,
             const SingleActivator(LogicalKeyboardKey.keyF, control: true, shift: true): _searchProject,

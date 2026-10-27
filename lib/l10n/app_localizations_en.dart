@@ -4716,6 +4716,54 @@ class AppLocalizationsEn extends AppLocalizations {
   String get menuReplaceInProject => 'Replace in Project…';
 
   @override
+  String get menuGoToSymbol => 'Go to Symbol…';
+
+  @override
+  String get menuGoToDefinition => 'Go to Definition';
+
+  @override
+  String get symbolSearchHint =>
+      'Go to class, function or method (Ctrl+Shift+O)';
+
+  @override
+  String get symbolSearchLoading => 'Reading declarations…';
+
+  @override
+  String get symbolSearchNoMatch => 'No matching declarations';
+
+  @override
+  String symbolNotFound(String name) {
+    return 'No declaration named “$name” in this project';
+  }
+
+  @override
+  String get symbolKindClass => 'class';
+
+  @override
+  String get symbolKindMixin => 'mixin';
+
+  @override
+  String get symbolKindEnum => 'enum';
+
+  @override
+  String get symbolKindExtension => 'extension';
+
+  @override
+  String get symbolKindTypedef => 'typedef';
+
+  @override
+  String get symbolKindFunction => 'function';
+
+  @override
+  String get symbolKindMethod => 'method';
+
+  @override
+  String get symbolKindGetter => 'getter';
+
+  @override
+  String get symbolKindSetter => 'setter';
+
+  @override
   String get menuFormat => 'Format Code';
 
   @override

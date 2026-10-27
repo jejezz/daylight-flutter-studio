@@ -4466,6 +4466,53 @@ class AppLocalizationsKo extends AppLocalizations {
   String get menuReplaceInProject => '프로젝트에서 바꾸기…';
 
   @override
+  String get menuGoToSymbol => '심볼로 이동…';
+
+  @override
+  String get menuGoToDefinition => '정의로 이동';
+
+  @override
+  String get symbolSearchHint => '클래스·함수·메서드로 이동 (Ctrl+Shift+O)';
+
+  @override
+  String get symbolSearchLoading => '선언을 읽는 중…';
+
+  @override
+  String get symbolSearchNoMatch => '맞는 선언이 없습니다';
+
+  @override
+  String symbolNotFound(String name) {
+    return '이 프로젝트에서 “$name”(이)라는 선언을 찾지 못했습니다';
+  }
+
+  @override
+  String get symbolKindClass => '클래스';
+
+  @override
+  String get symbolKindMixin => '믹스인';
+
+  @override
+  String get symbolKindEnum => '열거형';
+
+  @override
+  String get symbolKindExtension => '확장';
+
+  @override
+  String get symbolKindTypedef => '형식 별칭';
+
+  @override
+  String get symbolKindFunction => '함수';
+
+  @override
+  String get symbolKindMethod => '메서드';
+
+  @override
+  String get symbolKindGetter => 'getter';
+
+  @override
+  String get symbolKindSetter => 'setter';
+
+  @override
   String get menuFormat => '코드 정렬';
 
   @override
