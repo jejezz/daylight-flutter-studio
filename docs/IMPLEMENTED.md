@@ -1,6 +1,6 @@
 # 구현된 것
 
-기준: 2026-10-27, 로컬 `main`. `flutter analyze` 새 문제 없음, 테스트 467개 통과
+기준: 2026-10-27, 로컬 `main`. `flutter analyze` 새 문제 없음, 테스트 468개 통과
 (`test/branchdock/`·`test/verify_gate_controller_test.dart`의 실제 git 테스트 몇 개는 전체를 한꺼번에 돌리면 Windows 파일 잠금으로
 간간이 실패한다 — 알려진 한계, 따로 돌리면 통과한다).
 앞으로 할 일은 [PLAN.md](../PLAN.md)에 있다. 이 문서는 **이미 만들어진 것**과 그 구조·작업 방식을 적는다.
@@ -99,6 +99,7 @@ PowerShell·cmd·Git Bash·WSL 배포판, macOS/Linux는 로그인 셸과 `/etc/
   Branch Dock의 **변경 탭에서 파일을 누르면 이 변경점 보기로 열린다**(`ChangesTab.onShowDiff` → `StudioController.openDiff`). 비교 기준은 언제나 작업 폴더의 파일과 HEAD라서, 스테이지된 변경만 따로 보지는 않는다. 지워진 파일이거나 Studio가 열 수 없는 파일(너무 큼·글자 파일 아님)이면 예전처럼 Branch Dock의 diff 시트가 뜬다.
 - **Dart 문제**: `dart analyze --format=json`을 패키지에서 돌려 "문제" 탭에 파일별로 보여 준다(오류·경고·정보 필터, 눌러서 그 줄로 이동). 편집기 줄 번호 왼쪽에 점, 상태 막대와 탭 이름에 개수. 폴더를 열 때·Dart 파일 저장 때·창이 30초 넘게 지난 뒤 다시 활성화될 때 분석하고 재요청은 한 번으로 합친다. `.dart_tool`이 없는 새 worktree는 `flutter pub get` 단추를 안내한다(서브 패키지 포함). 분석이 실패하면 "문제 없음"이라고 하지 않는다.
 - **찾기·바꾸기**(`Ctrl/Cmd+F` 찾기, `Ctrl/Cmd+R` 바꾸기 — 편집기에 포커스가 있을 때만; 터미널에서는 `Ctrl+R`이 셸 기록 검색이라 앱 전체 단축키로 두지 않았다. 편집기 위 줄: 대소문자·정규식·이전/다음·모두 바꾸기), **빠른 열기**(`Ctrl/Cmd+P`), **프로젝트에서 찾기**(`Ctrl/Cmd+Shift+F`; `build`·`.git` 등은 건너뜀, 바꾸기는 아래).
+  **저장**(`Ctrl/Cmd+S`)은 화면 전체 단축키다. 편집기 안에서는 re_editor가 저장 단축키를 받아 아무것도 하지 않고 삼키므로 `shortcutOverrideActions`의 `CodeShortcutSaveIntent`로 이어 준다(바깥 `CallbackShortcuts`만으로는 닿지 않는다).
 - **프로젝트에서 바꾸기**(`lib/ui/project_search.dart`, 로직은 `lib/studio/project_replace.dart`): 검색창 왼쪽 ▸ 단추로 바꾸기 줄을 연다.
   결과는 파일별로 묶여 보이고(파일 체크 상자는 그 파일의 줄 전체), **줄 단위**로 골라 바꾼다(고른 줄 안의 맞는 곳은 모두 바뀐다).
   바꾼 뒤의 모습이 결과 줄 아래에 초록으로 미리 보이고, "선택한 N곳 바꾸기"는 확인창을 거친다. 정규식 모드에서는 `$1`~`$9`(묶음)·`$$`(`$`)를 쓴다.

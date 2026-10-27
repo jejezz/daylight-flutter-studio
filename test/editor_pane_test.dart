@@ -138,6 +138,31 @@ void main() {
     await _unmount(tester);
   });
 
+  testWidgets('편집기에서 Ctrl+S는 수정한 글을 파일에 저장한다', (tester) async {
+    final f = write('a.txt', 'hello\n');
+    await tester.runAsync(() => c.openFile(f.path));
+    await tester.pumpWidget(_app(c));
+    await tester.pump();
+    await tester.tap(find.byType(CodeEditor));
+    await tester.pump(const Duration(seconds: 1));
+    c.activeTab!.controller.text = 'changed\n';
+    await tester.pump();
+    expect(c.activeTab!.dirty, isTrue);
+
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+    await tester.sendKeyEvent(LogicalKeyboardKey.keyS);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+    // 저장은 실제 파일 입출력이라 진짜 시계로 기다리며 pump로 뒷일을 흘려 보낸다.
+    for (var i = 0; i < 100 && c.activeTab!.dirty; i++) {
+      await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 30)));
+      await tester.pump();
+    }
+
+    expect(f.readAsStringSync(), 'changed\n');
+    expect(c.activeTab!.dirty, isFalse);
+    await _unmount(tester);
+  });
+
   testWidgets('Dart 파일을 열면 편집기와 정렬 단추가 보이고, 줄 끝(CRLF)을 유지한다', (tester) async {
     final f = write('a.dart', _dart.replaceAll('\n', '\r\n'));
     await tester.runAsync(() => c.openFile(f.path));

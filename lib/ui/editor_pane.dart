@@ -58,7 +58,7 @@ class EditorPane extends StatelessWidget {
                           text: tab.controller.text,
                           baseDir: tab.path.substring(0, tab.path.lastIndexOf(RegExp(r'[/\\]'))),
                         )
-                      : _CodeView(key: ValueKey(tab.path), tab: tab, problems: problems),
+                      : _CodeView(key: ValueKey(tab.path), tab: tab, problems: problems, onSave: () => controller.save(tab)),
                 ),
         ),
       ],
@@ -137,9 +137,12 @@ class StudioShortcuts extends CodeShortcutsActivatorsBuilder {
 }
 
 class _CodeView extends StatefulWidget {
-  const _CodeView({super.key, required this.tab, this.problems});
+  const _CodeView({super.key, required this.tab, required this.onSave, this.problems});
 
   final EditorTab tab;
+
+  /// Ctrl/Cmd+S. re_editor는 저장 단축키를 받아 아무것도 하지 않고 삼키므로, 바깥 `CallbackShortcuts`까지 올라가지 않는다.
+  final VoidCallback onSave;
   final ProblemsController? problems;
 
   @override
@@ -177,6 +180,9 @@ class _CodeViewState extends State<_CodeView> {
         controller: tab.controller,
         findController: tab.find,
         shortcutsActivatorsBuilder: const StudioShortcuts(),
+        shortcutOverrideActions: {
+          CodeShortcutSaveIntent: CallbackAction<CodeShortcutSaveIntent>(onInvoke: (_) => widget.onSave()),
+        },
         scrollController: _scroll,
         wordWrap: false,
         findBuilder: (context, find, readOnly) => FindPanel(controller: find, readOnly: readOnly),
