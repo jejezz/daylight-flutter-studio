@@ -25,12 +25,15 @@ import 'problem_squiggles.dart';
 
 /// 탭 막대 + 도구 막대 + 편집 영역. Markdown은 편집/보기를 전환한다.
 class EditorPane extends StatelessWidget {
-  const EditorPane({super.key, required this.controller, this.problems});
+  const EditorPane({super.key, required this.controller, this.problems, this.onGoToDefinition});
 
   final StudioController controller;
 
   /// Dart 문제. 있으면 줄 번호 왼쪽에 문제가 있는 줄을 점으로 표시한다.
   final ProblemsController? problems;
+
+  /// Cmd(macOS)/Ctrl 를 누른 채 Dart 글을 클릭했을 때 부른다. 편집기가 커서를 클릭한 자리로 옮긴 뒤라서, 받는 쪽은 커서 아래 낱말을 쓰면 된다.
+  final VoidCallback? onGoToDefinition;
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +64,7 @@ class EditorPane extends StatelessWidget {
                           text: tab.controller.text,
                           baseDir: tab.path.substring(0, tab.path.lastIndexOf(RegExp(r'[/\\]'))),
                         )
-                      : _CodeView(key: ValueKey(tab.path), tab: tab, problems: problems, onSave: () => controller.save(tab)),
+                      : _CodeView(key: ValueKey(tab.path), tab: tab, problems: problems, onSave: () => controller.save(tab), onGoToDefinition: onGoToDefinition),
                 ),
         ),
       ],
@@ -140,13 +143,14 @@ class StudioShortcuts extends CodeShortcutsActivatorsBuilder {
 }
 
 class _CodeView extends StatefulWidget {
-  const _CodeView({super.key, required this.tab, required this.onSave, this.problems});
+  const _CodeView({super.key, required this.tab, required this.onSave, this.problems, this.onGoToDefinition});
 
   final EditorTab tab;
 
   /// Ctrl/Cmd+S. re_editor는 저장 단축키를 받아 아무것도 하지 않고 삼키므로, 바깥 `CallbackShortcuts`까지 올라가지 않는다.
   final VoidCallback onSave;
   final ProblemsController? problems;
+  final VoidCallback? onGoToDefinition;
 
   @override
   State<_CodeView> createState() => _CodeViewState();
@@ -164,6 +168,25 @@ class _CodeViewState extends State<_CodeView> {
     super.dispose();
   }
 
+  Offset? _downAt;
+
+  /// Cmd(macOS)/Ctrl + 클릭: 클릭한 자리의 정의로 간다 (Dart 글만). 끌어서 선택한 것은 클릭으로 치지 않는다.
+  /// macOS에서 Ctrl+클릭은 오른쪽 클릭이라 Cmd만 쓴다.
+  void _maybeGoToDefinition(PointerUpEvent e) {
+    final go = widget.onGoToDefinition;
+    final down = _downAt;
+    _downAt = null;
+    if (go == null || down == null || !widget.tab.language.isDart) return;
+    if ((e.position - down).distance > 4) return;
+    final keys = HardwareKeyboard.instance;
+    final modifier = defaultTargetPlatform == TargetPlatform.macOS ? keys.isMetaPressed : keys.isControlPressed;
+    if (!modifier) return;
+    // 편집기가 같은 클릭으로 커서를 옮긴 다음에 커서 아래 낱말을 읽는다.
+    Future<void>.delayed(const Duration(milliseconds: 40), () {
+      if (mounted) go();
+    });
+  }
+
   /// 글자 하나의 폭 (고정폭 글꼴 기준) — 들여쓰기 선의 간격 계산에 쓴다.
   double _charWidth(BuildContext context) {
     final painter = TextPainter(text: TextSpan(text: '0', style: editorTextStyle(context)), textDirection: TextDirection.ltr)..layout();
@@ -177,7 +200,10 @@ class _CodeViewState extends State<_CodeView> {
     final tab = widget.tab;
     final t = context.tokens;
     final mode = tab.language.mode;
-    return ZoomWheel(
+    return Listener(
+      onPointerDown: (e) => _downAt = e.position,
+      onPointerUp: _maybeGoToDefinition,
+      child: ZoomWheel(
       scrollers: [_vertical, _horizontal],
       child: CodeEditor(
         controller: tab.controller,
@@ -229,6 +255,7 @@ class _CodeViewState extends State<_CodeView> {
             ],
           );
         },
+      ),
       ),
     );
   }
