@@ -175,6 +175,7 @@ class _AppearanceSection extends StatelessWidget {
     StudioPalette.amber => l10n.settingsPaletteAmber,
     StudioPalette.rose => l10n.settingsPaletteRose,
     StudioPalette.slate => l10n.settingsPaletteSlate,
+    StudioPalette.highContrast => l10n.settingsPaletteHighContrast,
   };
 
   @override
@@ -218,11 +219,10 @@ class _AppearanceSection extends StatelessWidget {
                 ChoiceChip(
                   selected: theme.palette == p,
                   showCheckmark: false,
-                  avatar: Icon(
-                    context.icons.circle,
-                    size: 14,
-                    color: p.primaryFor(Theme.of(context).brightness),
-                  ),
+                  // 고대비는 주색 하나가 아니라 배경·글자 전부를 바꾸므로 색 원 대신 아이콘으로 구분한다.
+                  avatar: p == StudioPalette.highContrast
+                      ? Icon(context.icons.contrast, size: 14, color: Theme.of(context).colorScheme.onSurface)
+                      : Icon(context.icons.circle, size: 14, color: p.primaryFor(Theme.of(context).brightness)),
                   label: Text(_palette(l10n, p)),
                   onSelected: (_) => theme.setPalette(p),
                 ),
@@ -246,12 +246,122 @@ class _AppearanceSection extends StatelessWidget {
             ],
           ),
           SizedBox(height: t.spaceMd),
+          _UiFontSettings(theme: theme),
+          SizedBox(height: t.spaceMd),
           Text(
             l10n.settingsAppliedNote,
             style: Theme.of(context).textTheme.bodySmall,
           ),
         ],
       ),
+    );
+  }
+}
+
+/// UI 글꼴 이름과 글자 크기 배율. 이 설정 화면 자체가 바로 바뀐 글꼴로 다시 그려지므로 따로 미리보기를
+/// 두지 않는다(편집기 글꼴은 편집기만의 글꼴이라 미리보기가 따로 필요하다).
+class _UiFontSettings extends StatefulWidget {
+  const _UiFontSettings({required this.theme});
+
+  final ThemeController theme;
+
+  @override
+  State<_UiFontSettings> createState() => _UiFontSettingsState();
+}
+
+class _UiFontSettingsState extends State<_UiFontSettings> {
+  late final _name = TextEditingController(text: widget.theme.uiFontFamily ?? '');
+
+  /// 이 컴퓨터에 설치된 글꼴(고정폭이 아닌 것도 포함) 중 Flutter가 실제로 쓸 수 있는 것.
+  late final Future<List<String>> _fonts = _loadFonts();
+
+  Future<List<String>> _loadFonts() async {
+    final found = <String>{...await proportionalFontLoader(), ...ThemeController.presetUiFonts};
+    return found.where(FontProbe.isInstalled).toList()..sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
+  }
+
+  @override
+  void dispose() {
+    _name.dispose();
+    super.dispose();
+  }
+
+  void _pick(String? family) {
+    _name.text = family ?? '';
+    widget.theme.setUiFontFamily(family);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final t = context.tokens;
+    final theme = widget.theme;
+    return ListenableBuilder(
+      listenable: theme,
+      builder: (context, _) {
+        final name = theme.uiFontFamily;
+        final percent = (theme.uiFontScale * 100).round();
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _Heading(l10n.settingsUiFont),
+            TextField(
+              controller: _name,
+              decoration: InputDecoration(hintText: l10n.settingsEditorFontHint),
+              onChanged: theme.setUiFontFamily,
+            ),
+            SizedBox(height: t.spaceSm),
+            FutureBuilder<List<String>>(
+              future: _fonts,
+              builder: (context, snapshot) => Wrap(
+                spacing: t.spaceSm,
+                runSpacing: t.spaceXs,
+                children: [
+                  ChoiceChip(
+                    selected: name == null,
+                    showCheckmark: false,
+                    label: Text(l10n.settingsEditorFontDefault),
+                    onSelected: (_) => _pick(null),
+                  ),
+                  for (final f in snapshot.data ?? const <String>[])
+                    ChoiceChip(selected: name == f, showCheckmark: false, label: Text(f), onSelected: (_) => _pick(f)),
+                ],
+              ),
+            ),
+            SizedBox(height: t.spaceXs),
+            if (name != null && !FontProbe.isInstalled(name))
+              Text(l10n.settingsUiFontMissing, style: TextStyle(color: t.warning))
+            else
+              Text(l10n.settingsEditorFontNote, style: Theme.of(context).textTheme.bodySmall),
+            SizedBox(height: t.spaceMd),
+            _Heading(l10n.settingsUiFontScale),
+            Row(
+              children: [
+                Expanded(
+                  child: Slider(
+                    min: AppTheme.minUiFontScale,
+                    max: AppTheme.maxUiFontScale,
+                    divisions: ((AppTheme.maxUiFontScale - AppTheme.minUiFontScale) / 0.05).round(),
+                    value: theme.uiFontScale,
+                    label: '$percent%',
+                    onChanged: theme.setUiFontScale,
+                  ),
+                ),
+                SizedBox(width: 56, child: Text('$percent%', textAlign: TextAlign.end)),
+                IconButton(
+                  tooltip: l10n.settingsResetZoom,
+                  icon: Icon(context.icons.restartAlt, size: 18),
+                  onPressed: theme.uiFontScale == AppTheme.defaultUiFontScale
+                      ? null
+                      : () => theme.setUiFontScale(AppTheme.defaultUiFontScale),
+                ),
+              ],
+            ),
+            SizedBox(height: t.spaceXs),
+            Text(l10n.settingsUiFontScaleNote, style: Theme.of(context).textTheme.bodySmall),
+          ],
+        );
+      },
     );
   }
 }

@@ -1,4 +1,4 @@
-/// 이 컴퓨터에 설치된 고정폭 글꼴의 이름을 글꼴 파일에서 읽는다.
+/// 이 컴퓨터에 설치된 글꼴의 이름을 글꼴 파일에서 읽는다 — 편집기·터미널 글꼴은 고정폭만, UI 글꼴은 전부.
 ///
 /// Flutter에는 설치된 글꼴 목록을 묻는 방법이 없어서 OS의 글꼴 폴더를 훑는다. 파일 전체를 읽지 않고
 /// 머리말과 `name`(이름)·`post`(고정폭 표시) 표만 읽는다. 글꼴 하나가 수십 MB여도 빠르다.
@@ -24,18 +24,30 @@ List<String> systemFontDirectories() {
 }
 
 List<String>? _cache;
+List<String>? _cacheAll;
 
-/// 글꼴 목록을 가져오는 방법. 테스트에서는 실제 폴더 대신 정해 둔 목록으로 바꿔 끼운다.
+/// 글꼴 목록을 가져오는 방법(고정폭만, 편집기·터미널 글꼴 고를 때). 테스트에서는 실제 폴더 대신 정해 둔 목록으로 바꿔 끼운다.
 Future<List<String>> Function() monospaceFontLoader = installedMonospaceFonts;
+
+/// 글꼴 목록을 가져오는 방법(고정폭 아닌 것도 포함, UI 글꼴 고를 때).
+Future<List<String>> Function() proportionalFontLoader = installedFonts;
 
 /// 설치된 고정폭 글꼴 가족 이름 (중복 없이, 가나다·ABC 순). 읽지 못한 폴더는 건너뛴다.
 Future<List<String>> installedMonospaceFonts() async {
-  final dirs = systemFontDirectories();
-  _cache ??= await Isolate.run(() => scanMonospaceFonts(dirs));
+  _cache ??= await Isolate.run(() => scanFonts(systemFontDirectories(), monospaceOnly: true));
   return _cache!;
 }
 
-List<String> scanMonospaceFonts(List<String> directories) {
+/// 설치된 글꼴 가족 이름(고정폭 아닌 것도 포함). 읽지 못한 폴더는 건너뛴다.
+Future<List<String>> installedFonts() async {
+  _cacheAll ??= await Isolate.run(() => scanFonts(systemFontDirectories(), monospaceOnly: false));
+  return _cacheAll!;
+}
+
+/// 고정폭 글꼴만 찾는다(`scanFonts`의 뒷날 호환용 이름).
+List<String> scanMonospaceFonts(List<String> directories) => scanFonts(directories, monospaceOnly: true);
+
+List<String> scanFonts(List<String> directories, {required bool monospaceOnly}) {
   final families = <String>{};
   for (final dir in directories) {
     final d = Directory(dir);
@@ -45,7 +57,7 @@ List<String> scanMonospaceFonts(List<String> directories) {
         if (e is! File) continue;
         final lower = e.path.toLowerCase();
         if (!(lower.endsWith('.ttf') || lower.endsWith('.otf') || lower.endsWith('.ttc') || lower.endsWith('.otc'))) continue;
-        families.addAll(monospaceFamiliesInFile(e.path));
+        families.addAll(monospaceFamiliesInFile(e.path, requireFixedPitch: monospaceOnly));
       }
     } on FileSystemException {
       continue;
@@ -56,8 +68,8 @@ List<String> scanMonospaceFonts(List<String> directories) {
   return families.toList()..sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
 }
 
-/// 글꼴 파일(컬렉션이면 안의 모든 글꼴)에서 고정폭인 것의 가족 이름. 읽을 수 없으면 빈 목록.
-List<String> monospaceFamiliesInFile(String path) {
+/// 글꼴 파일(컬렉션이면 안의 모든 글꼴)에서 가족 이름. [requireFixedPitch]면 고정폭인 것만. 읽을 수 없으면 빈 목록.
+List<String> monospaceFamiliesInFile(String path, {bool requireFixedPitch = true}) {
   RandomAccessFile? f;
   try {
     f = File(path).openSync();
@@ -78,7 +90,7 @@ List<String> monospaceFamiliesInFile(String path) {
       offsets.add(0);
     }
     return [
-      for (final o in offsets) ?_monospaceFamily(f, o),
+      for (final o in offsets) ?_familyInFile(f, o, requireFixedPitch: requireFixedPitch),
     ];
   } on Object {
     return const [];
@@ -87,7 +99,7 @@ List<String> monospaceFamiliesInFile(String path) {
   }
 }
 
-String? _monospaceFamily(RandomAccessFile f, int offset) {
+String? _familyInFile(RandomAccessFile f, int offset, {required bool requireFixedPitch}) {
   f.setPositionSync(offset);
   final head = f.readSync(12);
   if (head.length < 12) return null;
@@ -106,9 +118,11 @@ String? _monospaceFamily(RandomAccessFile f, int offset) {
   }
   if (nameOffset == null || nameLength == null || postOffset == null || nameLength > 1 << 20) return null;
 
-  f.setPositionSync(postOffset);
-  final post = f.readSync(16);
-  if (post.length < 16 || ByteData.sublistView(Uint8List.fromList(post)).getUint32(12) == 0) return null; // 고정폭이 아니다
+  if (requireFixedPitch) {
+    f.setPositionSync(postOffset);
+    final post = f.readSync(16);
+    if (post.length < 16 || ByteData.sublistView(Uint8List.fromList(post)).getUint32(12) == 0) return null; // 고정폭이 아니다
+  }
 
   f.setPositionSync(nameOffset);
   return _familyName(Uint8List.fromList(f.readSync(nameLength)));

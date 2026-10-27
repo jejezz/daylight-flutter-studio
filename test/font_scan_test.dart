@@ -133,4 +133,16 @@ void main() {
       'Zed Mono',
     ]);
   });
+
+  test('UI 글꼴처럼 고정폭이 아닌 것도 찾으려면 monospaceOnly를 끈다', () {
+    write('prop.ttf', _font(family: 'Prop Sans', fixedPitch: false));
+    write('mono.ttf', _font(family: 'Ace Mono', fixedPitch: true));
+
+    expect(scanFonts([dir.path], monospaceOnly: true), ['Ace Mono']);
+    expect(scanFonts([dir.path], monospaceOnly: false), ['Ace Mono', 'Prop Sans']);
+    expect(
+      monospaceFamiliesInFile('${dir.path}/prop.ttf', requireFixedPitch: false),
+      ['Prop Sans'],
+    );
+  });
 }

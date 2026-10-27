@@ -64,6 +64,37 @@ class SyntaxTokens extends ThemeExtension<SyntaxTokens> {
     );
   }
 
+  /// [StudioPalette.highContrast] 전용 — 순흑/순백 배경에서도 또렷이 구분되는 색만 쓴다(중간 밝기·채도 낮은
+  /// 색은 뺐다). `test/theme_rules_test.dart`가 이 파일 밖의 `Color(` 직접 사용을 막으므로 여기서만 정한다.
+  factory SyntaxTokens.highContrast(Brightness b) {
+    if (b == Brightness.dark) {
+      return const SyntaxTokens(
+        comment: Color(0xFFBFBFBF),
+        keyword: Color(0xFFFF66FF),
+        string: Color(0xFF00FF66),
+        number: Color(0xFFFFB000),
+        classType: Color(0xFFFFD60A),
+        title: Color(0xFF66CCFF),
+        meta: Color(0xFF66CCFF),
+        attr: Color(0xFFFF6B6B),
+        builtIn: Color(0xFFFFD60A),
+        literal: Color(0xFF00E5E5),
+      );
+    }
+    return const SyntaxTokens(
+      comment: Color(0xFF404040),
+      keyword: Color(0xFF8800AA),
+      string: Color(0xFF007700),
+      number: Color(0xFFAA5500),
+      classType: Color(0xFF805B00),
+      title: Color(0xFF0000CC),
+      meta: Color(0xFF0000CC),
+      attr: Color(0xFFCC0000),
+      builtIn: Color(0xFF805B00),
+      literal: Color(0xFF007777),
+    );
+  }
+
   /// highlight.js 이름표 → 글자 모양. 이름표에 없는 글자는 기본 색을 쓴다.
   Map<String, TextStyle> highlightTheme({required Color base}) {
     TextStyle c(Color color, {FontStyle? italic, FontWeight? weight}) =>

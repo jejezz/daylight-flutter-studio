@@ -91,6 +91,45 @@ void main() {
     expect(theme.palette, StudioPalette.rose);
   });
 
+  testWidgets('색 구성에서 고대비를 고르면 바로 적용된다', (tester) async {
+    await open(tester);
+    expect(theme.palette, StudioPalette.saturn);
+
+    await tester.ensureVisible(find.widgetWithText(ChoiceChip, '고대비'));
+    await tester.tap(find.widgetWithText(ChoiceChip, '고대비'));
+    await tester.pump();
+    expect(theme.palette, StudioPalette.highContrast);
+  });
+
+  testWidgets('UI 글꼴 이름을 적으면 바로 적용되고, 지우면 기본으로 돌아간다', (tester) async {
+    await open(tester);
+    expect(theme.uiFontFamily, isNull);
+
+    await tester.enterText(find.byType(TextField).first, 'Segoe UI');
+    await tester.pump();
+    expect(theme.uiFontFamily, 'Segoe UI');
+
+    await tester.enterText(find.byType(TextField).first, '');
+    await tester.pump();
+    expect(theme.uiFontFamily, isNull);
+  });
+
+  testWidgets('UI 글꼴 배율 슬라이더로 바꾸고 100%로 되돌린다', (tester) async {
+    await open(tester);
+    expect(theme.uiFontScale, 1.0);
+
+    final sliders = find.byType(Slider);
+    await tester.ensureVisible(sliders);
+    await tester.tapAt(tester.getTopRight(sliders) + const Offset(-4, 24));
+    await tester.pump();
+    expect(theme.uiFontScale, greaterThan(1.0));
+
+    await tester.ensureVisible(find.byTooltip('100%로'));
+    await tester.tap(find.byTooltip('100%로'));
+    await tester.pump();
+    expect(theme.uiFontScale, 1.0);
+  });
+
   testWidgets('편집기 구역: 슬라이더로 글자 크기를 바꾸고 100%로 되돌린다', (tester) async {
     await open(tester);
     await tester.tap(find.text('편집기'));

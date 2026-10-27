@@ -1,6 +1,6 @@
 # 구현된 것
 
-기준: 2026-10-27, 로컬 `main`. `flutter analyze` 새 문제 없음, 테스트 451개 통과
+기준: 2026-10-27, 로컬 `main`. `flutter analyze` 새 문제 없음, 테스트 467개 통과
 (`test/release_test.dart`·`test/branchdock/`의 실제 git 테스트 몇 개는 전체를 한꺼번에 돌리면 Windows 파일 잠금으로
 간간이 실패한다 — 알려진 한계, 따로 돌리면 통과한다).
 앞으로 할 일은 [PLAN.md](../PLAN.md)에 있다. 이 문서는 **이미 만들어진 것**과 그 구조·작업 방식을 적는다.
@@ -104,11 +104,25 @@ PowerShell·cmd·Git Bash·WSL 배포판, macOS/Linux는 로그인 셸과 `/etc/
 `lib/ui/studio_menus.dart`가 메뉴를 한 번 정의하고, Windows·Linux는 Material `MenuBar`, macOS는 `PlatformMenuBar`(`AppMenuBar`가 그리고 화면이 `StudioMenuHost`로 메뉴를 넘긴다)로 그린다.
 Material 쪽은 단축키를 글자로만 보여 준다(이미 화면에 바인딩이 있어 등록하면 두 번 실행된다). macOS 편집 메뉴는 단축키를 시스템에 등록하지 않는다(대화상자 입력 칸의 복사·붙여넣기가 막힌다).
 
+## 테마
+
+"테마"는 밝기(라이트·다크·시스템) + 색 구성(`StudioPalette`) + 아이콘 모양 + UI 글꼴을 하나로 묶은 것이다.
+`ThemeController`가 고른 값을 들고 있고(저장도 한다), `AppTheme.build`(`lib/theme/app_theme.dart`)가 실제 `ThemeData`로 만든다.
+모든 색·글꼴·크기는 `lib/theme/`에만 있다(`test/theme_rules_test.dart`가 강제하고 화면 코드의 `Colors.`·`Color(`·`fontSize`·`fontFamily`·`Icons.` 직접 사용을 막는다). 화면은 `context.icons.<의미 이름>`, `context.tokens`, `Theme.of(context)`만 쓴다.
+
+- **색 구성** 6가지: 새턴·청록·호박·장미·슬레이트는 규약 ColorScheme의 주색만 바꾸고(`StudioPalette.apply`), **고대비**는
+  배경·글자·테두리 전부를 순흑/순백 최대 대비로 바꾼 완전히 다른 ColorScheme이다(`_HighContrastTheme`). 구문 강조 색도
+  고대비 전용(`SyntaxTokens.highContrast`)이다. 밝기(라이트/다크/시스템)는 색 구성과 상관없이 그대로 고른다.
+- **UI 글꼴**: 이름(설치된 글꼴 중 고르거나 직접 적음, 비우면 기본 SeoulNamsan)과 크기 배율(85~125%, `AppTheme.minUiFontScale`~`maxUiFontScale`). 트리·탭·메뉴·단추 등 화면 전체 글자 크기에 배율이 곱해지지만 칸 크기(행 높이·탭
+  높이·도구 막대 높이)는 그대로 둔다 — 배율 범위를 넓지 않게 둔 것도 그래서다. 편집기 글꼴·배율은 따로 설정한다
+  (`EditorSettings`·`EditorZoom`) — 아직 "편집기와 같이 쓰기"는 없다(터미널 글꼴에는 있다).
+- 설치된 글꼴 목록은 `lib/theme/font_scan.dart`가 OS 글꼴 폴더를 훑어 읽는다 — 편집기·터미널 글꼴은 고정폭만
+  (`monospaceOnly: true`), UI 글꼴은 고정폭이 아닌 것도 보여 준다.
+
 ## 설정 (톱니, `Ctrl+,`)
 
-외형(밝기, 색 구성, 아이콘 모양 둥근·윤곽선·채움) · 편집기(글자 크기, 글꼴, 줄 간격, 들여쓰기 선, 저장 시 정렬) · 병합 관문(차단/경고만/끔) · 환경 점검.
+외형(밝기, 색 구성 — 고대비 포함, 아이콘 모양 둥근·윤곽선·채움, UI 글꼴 이름·배율) · 편집기(글자 크기, 글꼴, 줄 간격, 들여쓰기 선, 저장 시 정렬) · 터미널(편집기 글꼴 같이 쓰기, 글꼴, 스크롤백) · 병합 관문(차단/경고만/끔) · 환경 점검.
 **환경 점검**(이 컴퓨터 전체): flutter·adb·Xcode(Mac)·Windows 개발자 모드·Visual Studio, Mac 서명 인증서·만료일, 도구(flutter·adb) 위치 직접 지정(저장). 프로젝트·기기별 문제는 Run이 막는 항목·실패 힌트로 알려 준다.
-모든 색·글꼴·크기는 `lib/theme/`에만 있다(`test/theme_rules_test.dart`가 강제하고 화면 코드의 `Icons.` 직접 사용도 막는다). 화면은 `context.icons.<의미 이름>`, `context.tokens`, `Theme.of(context)`만 쓴다.
 
 ## 규약·배포
 
@@ -152,4 +166,8 @@ macOS 앱 샌드박스는 **꺼져 있다**(폴더 선택·git·flutter 실행�
 - 파일 끌어다 놓기는 컨트롤러 동작만 테스트했다(실제 OS에서 끄는 동작은 직접 확인 필요).
 - 앱 이름에 "Flutter"가 들어 있어 공개 배포 전에 다시 정해야 한다(Flutter 상표).
 - 터미널 패널은 Windows/macOS에서 실제 셸로 직접 켜 보고 확인하지 않았다(네이티브 flutter_pty 빌드가 필요해 Flutty Dock으로 빌드해야 한다). 탐색기·파일 끌어놓기, 로그 기록, ANSI 제거 같은 daylight-terminal-flutter의 기능은 가져오지 않았다.
+- 고대비·UI 글꼴 배율은 테마 데이터와 레이아웃 스모크 테스트(앱 바·탭·단추, 125%)로만 확인했다. Flutty Dock으로 실제
+  빌드해 고대비·85~125% 배율에서 트리·Branch Dock 화면까지 눈으로 확인하지 않았다.
+- 아이콘 세트는 아직 모양(둥근·윤곽선·채움) 3종뿐이다. 파일 종류별 색 아이콘 같은 "완전히 다른 세트"는 없다 — 지금
+  트리는 모든 파일에 같은 아이콘을 쓴다. 편집기 글꼴의 합자(ligature) 켜고 끄기도 없다.
 - 앱을 끌 때(⌘Q 등) 위젯 dispose가 보장되지 않아, 열린 터미널의 셸 프로세스가 남을 수 있다 — 종료 전에 정리하는 장치는 아직 없다.
