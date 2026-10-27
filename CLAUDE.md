@@ -29,4 +29,5 @@ https://github.com/jejezz/application-release-templates/tree/main/conventions
 - `lib/core`, `lib/devices`, `lib/flutter`, `lib/install`(plan·build_options)은 flutty-dock-flutter에서 복사한 것이다.
   이쪽에서 고쳐 가며 쓰고 원본에는 되돌리지 않는다.
 - `lib/branchdock/`은 branch-dock-flutter의 Git 기능을 통째로 옮긴 것이다(문구는 `bd` 접두어, 아이콘은 `context.icons`). 이 앱 전용 연결점은 `MergeGateScope`와 `onHeadChanged`뿐이고, 같은 방식으로 고쳐 쓰며 원본에는 되돌리지 않는다.
+- 편집기 위젯(`re_editor` 포크)은 이 저장소 밖 공용 저장소 `jejezz/daylight-editor-flutter`에 있고 git 의존성으로 쓴다(daylight-commander와 공유). 편집기 동작을 고치려면 그 저장소에서 고치고 새 태그를 달아 `pubspec.yaml`의 `ref`를 올린다 — 이 저장소에 복사본을 두지 않는다.
 - 검증 기록(`lib/verify/verify_store.dart`)의 파일 형식은 Branch Dock 쪽 병합 관문과 공유한다. 바꾸면 `VerifyRecord.version`을 올린다.

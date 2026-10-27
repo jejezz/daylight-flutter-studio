@@ -464,10 +464,12 @@ packages:
   re_editor:
     dependency: "direct main"
     description:
-      path: "packages/re_editor"
-      relative: true
-    source: path
-    version: "0.10.0"
+      path: "."
+      ref: "v0.10.0+1"
+      resolved-ref: "930ded762e7c5c96f8349f1d636d2ee8e26924f0"
+      url: "https://github.com/jejezz/daylight-editor-flutter"
+    source: git
+    version: "0.10.0+1"
   re_highlight:
     dependency: "direct main"
     description:
