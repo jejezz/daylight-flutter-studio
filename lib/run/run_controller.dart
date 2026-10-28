@@ -284,6 +284,14 @@ class RunController extends ChangeNotifier {
         environment: step.environment,
         handle: handle,
         keepStdinOpen: step.interactive,
+        onOutput: step.interactive
+            ? (chunk) {
+                // 앱이 종료되면 flutter run은 이 줄을 찍고 끝나야 하는데, 안 끝나는 경우가 있다.
+                if (chunk.contains('Application finished')) {
+                  Future.delayed(const Duration(seconds: 3), handle.finish);
+                }
+              }
+            : null,
       );
       if (handle.cancelled) {
         statuses[i] = StepStatus.cancelled;

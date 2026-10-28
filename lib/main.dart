@@ -17,6 +17,7 @@ import 'ui/studio_menus.dart';
 import 'ui/studio_screen.dart';
 import 'update/update_scope.dart';
 import 'update/update_service.dart';
+import 'window/window_state.dart';
 
 final bool _isDesktop =
     Platform.isMacOS || Platform.isWindows || Platform.isLinux;
@@ -28,16 +29,22 @@ Future<void> main() async {
   if (_isDesktop) {
     await windowManager.ensureInitialized();
     // ui-ux.md §5: 최소 크기는 960×600 이하 (1366×768 노트북).
-    const options = WindowOptions(
-      size: Size(1280, 800),
-      minimumSize: Size(960, 600),
-      center: true,
+    final saved = await WindowStateStore.load();
+    final options = WindowOptions(
+      size: saved?.bounds.size ?? const Size(1280, 800),
+      minimumSize: const Size(960, 600),
+      center: saved == null,
       title: AppIdentity.displayName,
     );
     await windowManager.waitUntilReadyToShow(options, () async {
+      if (saved != null) {
+        await windowManager.setBounds(saved.bounds);
+        if (saved.maximized) await windowManager.maximize();
+      }
       await windowManager.show();
       await windowManager.focus();
     });
+    WindowStateStore().attach();
   }
 
   final settings = await AppSettings.load();
