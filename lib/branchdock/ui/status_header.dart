@@ -89,7 +89,6 @@ class StatusHeader extends StatelessWidget {
               const HelpButton(concept: Concept.upstream),
             ]),
           ),
-          const _OpenFolderButton(),
         ]),
         if (pills.isNotEmpty) ...[
           const SizedBox(height: 6),
