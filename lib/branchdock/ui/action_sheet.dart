@@ -8,11 +8,14 @@ import 'repo_scope.dart';
 import 'widgets.dart';
 
 /// 아래에서 올라오는 양식 (UI_UX.md §5). 버튼 바로 위에 "실행될 명령".
-/// 시트는 앱 최상위 경로에 뜨므로, 부른 곳의 저장소·환경을 시트 안에도 다시 넣어 준다.
+/// `useRootNavigator: false`라 Git 패널 안의 로컬 Navigator(`_PanelNavigator`, branchdock_dock.dart)에
+/// 뜬다 — 앱 전역이 아니라 패널 범위로 보인다. RepoScope는 그 Navigator 경계를 넘어가므로
+/// 부른 곳의 저장소·환경을 시트 안에도 다시 넣어 준다.
 Future<T?> showActionSheet<T>(BuildContext context, WidgetBuilder builder) {
   final scope = context.getInheritedWidgetOfExactType<RepoScope>();
   return showModalBottomSheet<T>(
     context: context,
+    useRootNavigator: false,
     isScrollControlled: true,
     showDragHandle: true,
     constraints: BoxConstraints(maxHeight: MediaQuery.sizeOf(context).height * 0.85),
