@@ -265,17 +265,79 @@ class _BranchDockDockState extends State<BranchDockDock> with TickerProviderStat
     if (gate != null) body = MergeGateScope(gate: gate, child: body);
     return ServicesScope(
       services: services,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Expanded(child: body),
-          CommandBar(
-            log: services.log,
-            expanded: _logExpanded,
-            onToggle: () => setState(() => _logExpanded = !_logExpanded),
-            onCancel: repo?.cancel,
+      child: _PanelNavigator(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(child: body),
+            CommandBar(
+              log: services.log,
+              expanded: _logExpanded,
+              onToggle: () => setState(() => _logExpanded = !_logExpanded),
+              onCancel: repo?.cancel,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Git 패널 전용 Navigator. `showActionSheet`(바텀시트)가 기본값 `useRootNavigator: false`로
+/// 가장 가까운 Navigator를 찾으므로, 이 패널 안의 시트는 앱 전역이 아니라 이 패널 범위에서만 뜬다.
+/// 시트 높이 계산(`MediaQuery.sizeOf(context)`)도 화면 전체가 아니라 패널 크기를 보도록
+/// MediaQuery.size를 패널 크기로 덮어 둔다. `showDialog`(기본 `useRootNavigator: true`)와
+/// `showMenu`는 이 영향을 받지 않고 그대로 앱 전역에 뜬다.
+///
+/// Navigator는 처음 뜬 경로(route)의 내용을 그 뜰 때의 `child`로 고정해 버린다(이후
+/// `onGenerateRoute`가 다시 불리지 않음). 그래서 `child`를 route 안에 직접 넣지 않고,
+/// 그때그때 값이 바뀌는 `ValueNotifier`를 경로 안에 한 번만 넣고 `ValueListenableBuilder`로
+/// 갈아 끼운다 — 탭 전환이나 저장소 상태 변화가 그대로 반영되게.
+class _PanelNavigator extends StatefulWidget {
+  const _PanelNavigator({required this.child});
+
+  final Widget child;
+
+  @override
+  State<_PanelNavigator> createState() => _PanelNavigatorState();
+}
+
+class _PanelNavigatorState extends State<_PanelNavigator> {
+  final _content = ValueNotifier<Widget>(const SizedBox.shrink());
+
+  @override
+  void initState() {
+    super.initState();
+    _content.value = widget.child;
+  }
+
+  @override
+  void didUpdateWidget(_PanelNavigator old) {
+    super.didUpdateWidget(old);
+    _content.value = widget.child;
+  }
+
+  @override
+  void dispose() {
+    _content.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) => MediaQuery(
+        data: MediaQuery.of(context).copyWith(size: constraints.biggest),
+        child: Navigator(
+          onGenerateRoute: (_) => PageRouteBuilder<void>(
+            pageBuilder: (context, animation, secondaryAnimation) => ValueListenableBuilder<Widget>(
+              valueListenable: _content,
+              builder: (context, child, _) => child,
+            ),
+            transitionDuration: Duration.zero,
+            reverseTransitionDuration: Duration.zero,
           ),
-        ],
+        ),
       ),
     );
   }
