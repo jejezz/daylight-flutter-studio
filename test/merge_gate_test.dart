@@ -5,6 +5,7 @@ import 'package:daylight_workbench/core/command_log.dart';
 import 'package:daylight_workbench/core/command_runner.dart';
 import 'package:daylight_workbench/verify/verify_gate_controller.dart';
 import 'package:daylight_workbench/github/pull_request.dart';
+import 'package:daylight_workbench/settings/app_settings.dart';
 import 'package:daylight_workbench/settings/gate_settings.dart';
 import 'package:daylight_workbench/theme/app_theme.dart';
 import 'package:daylight_workbench/theme/theme_controller.dart';
@@ -478,9 +479,11 @@ void main() {
   group('설정 대화상자의 병합 관문 구역', () {
     late ThemeController theme;
     late GateSettings gate;
+    late AppSettings settings;
 
-    setUp(() {
+    setUp(() async {
       SharedPreferences.setMockInitialValues({});
+      settings = await AppSettings.load();
       theme = ThemeController();
       gate = GateSettings();
     });
@@ -490,7 +493,7 @@ void main() {
       gate.dispose();
     });
 
-    Widget app({GateSettings? g}) => MaterialApp(localizationsDelegates: AppLocalizations.localizationsDelegates, supportedLocales: AppLocalizations.supportedLocales, locale: const Locale('ko'), 
+    Widget app({GateSettings? g}) => AppSettingsScope(settings: settings, child: MaterialApp(localizationsDelegates: AppLocalizations.localizationsDelegates, supportedLocales: AppLocalizations.supportedLocales, locale: const Locale('ko'),
       theme: AppTheme.build(StudioPalette.saturn, Brightness.light),
       home: Builder(
         builder: (context) => Scaffold(
@@ -499,7 +502,7 @@ void main() {
           ),
         ),
       ),
-    );
+    ));
 
     testWidgets('모드를 고르면 바로 적용되고 설명이 바뀐다', (tester) async {
       await tester.pumpWidget(app(g: gate));

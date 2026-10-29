@@ -1,4 +1,5 @@
 import 'package:daylight_workbench/l10n/app_localizations.dart';
+import 'package:daylight_workbench/settings/app_settings.dart';
 import 'package:daylight_workbench/theme/app_theme.dart';
 import 'package:daylight_workbench/theme/studio_icons.dart';
 import 'package:daylight_workbench/theme/theme_controller.dart';
@@ -36,22 +37,26 @@ void main() {
 
   testWidgets('설정에서 아이콘 모양을 고르면 화면의 아이콘이 따라 바뀐다', (tester) async {
     SharedPreferences.setMockInitialValues({});
+    final settings = await AppSettings.load();
     final theme = ThemeController();
     await tester.pumpWidget(
-      ListenableBuilder(
-        listenable: theme,
-        builder: (context, _) => MaterialApp(
-          localizationsDelegates: AppLocalizations.localizationsDelegates,
-          supportedLocales: AppLocalizations.supportedLocales,
-          locale: const Locale('ko'),
-          theme: theme.light,
-          home: Builder(
-            builder: (context) => Scaffold(
-              body: Column(
-                children: [
-                  Icon(context.icons.settings, key: const Key('probe')),
-                  FilledButton(onPressed: () => showSettingsDialog(context, theme: theme), child: const Text('열기')),
-                ],
+      AppSettingsScope(
+        settings: settings,
+        child: ListenableBuilder(
+          listenable: theme,
+          builder: (context, _) => MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            locale: const Locale('ko'),
+            theme: theme.light,
+            home: Builder(
+              builder: (context) => Scaffold(
+                body: Column(
+                  children: [
+                    Icon(context.icons.settings, key: const Key('probe')),
+                    FilledButton(onPressed: () => showSettingsDialog(context, theme: theme), child: const Text('열기')),
+                  ],
+                ),
               ),
             ),
           ),

@@ -346,7 +346,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get settingsPaletteHighContrast => '고대비';
 
   @override
-  String get settingsBrightness => '밝기';
+  String get settingsBrightness => '모드';
 
   @override
   String get settingsBrightnessSystem => '시스템';

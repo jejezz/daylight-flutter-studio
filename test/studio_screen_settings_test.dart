@@ -57,7 +57,7 @@ void main() {
     );
     await tester.tap(find.byIcon(Icons.settings_rounded));
     await tester.pumpAndSettle();
-    expect(find.text('밝기'), findsOneWidget);
+    expect(find.text('모드'), findsOneWidget);
     await _drainStartup(tester);
   });
 
@@ -69,7 +69,7 @@ void main() {
     await tester.sendKeyEvent(LogicalKeyboardKey.comma);
     await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
     await tester.pumpAndSettle();
-    expect(find.text('밝기'), findsOneWidget);
+    expect(find.text('모드'), findsOneWidget);
     await _drainStartup(tester);
   });
 }

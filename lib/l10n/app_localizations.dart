@@ -731,7 +731,7 @@ abstract class AppLocalizations {
   /// No description provided for @settingsBrightness.
   ///
   /// In ko, this message translates to:
-  /// **'밝기'**
+  /// **'모드'**
   String get settingsBrightness;
 
   /// No description provided for @settingsBrightnessSystem.

@@ -359,7 +359,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsPaletteHighContrast => 'High contrast';
 
   @override
-  String get settingsBrightness => 'Brightness';
+  String get settingsBrightness => 'Mode';
 
   @override
   String get settingsBrightnessSystem => 'System';

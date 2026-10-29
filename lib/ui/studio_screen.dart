@@ -29,7 +29,6 @@ import '../app_identity.dart';
 import '../doctor/diagnostics.dart';
 import '../doctor/environment_controller.dart';
 import '../l10n/app_localizations.dart';
-import '../settings/settings_menus.dart';
 import '../theme/app_theme.dart';
 import '../theme/editor_zoom.dart';
 import '../window/focus_tint.dart';
@@ -508,8 +507,6 @@ class _StudioScreenState extends State<StudioScreen>
                     icon: Icon(context.icons.settings),
                     onPressed: _openSettings,
                   ),
-                  const ThemeMenuButton(),
-                  const LanguageMenuButton(),
                   if (widget.onAbout != null)
                     IconButton(
                       tooltip: AppLocalizations.of(context).aboutTooltip,

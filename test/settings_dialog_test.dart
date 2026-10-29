@@ -1,4 +1,5 @@
 import 'package:daylight_workbench/l10n/app_localizations.dart';
+import 'package:daylight_workbench/settings/app_settings.dart';
 import 'package:daylight_workbench/theme/app_theme.dart';
 import 'package:daylight_workbench/theme/editor_zoom.dart';
 import 'package:daylight_workbench/theme/font_probe.dart';
@@ -14,9 +15,11 @@ void main() {
 
   late ThemeController theme;
   late EditorZoom zoom;
+  late AppSettings settings;
 
-  setUp(() {
+  setUp(() async {
     SharedPreferences.setMockInitialValues({});
+    settings = await AppSettings.load();
     theme = ThemeController();
     zoom = EditorZoom();
     // 실제 설치된 글꼴을 다 훑으면(특히 UI 글꼴) 목록이 길어져 선택한 항목이 화면 밖으로 밀려날 수 있다
@@ -32,19 +35,22 @@ void main() {
 
   /// 앱과 같은 구조: 배율 범위를 MaterialApp.builder로 감싸고, 단추를 눌러 설정을 연다.
   Widget app({SettingsSection initial = SettingsSection.appearance}) =>
-      MaterialApp(
-        localizationsDelegates: AppLocalizations.localizationsDelegates,
-        supportedLocales: AppLocalizations.supportedLocales,
-        locale: const Locale('ko'),
-        theme: AppTheme.build(StudioPalette.saturn, Brightness.light),
-        builder: (context, child) => EditorZoomScope(zoom: zoom, child: child!),
-        home: Builder(
-          builder: (context) => Scaffold(
-            body: Center(
-              child: FilledButton(
-                onPressed: () =>
-                    showSettingsDialog(context, theme: theme, initial: initial),
-                child: const Text('열기'),
+      AppSettingsScope(
+        settings: settings,
+        child: MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          locale: const Locale('ko'),
+          theme: AppTheme.build(StudioPalette.saturn, Brightness.light),
+          builder: (context, child) => EditorZoomScope(zoom: zoom, child: child!),
+          home: Builder(
+            builder: (context) => Scaffold(
+              body: Center(
+                child: FilledButton(
+                  onPressed: () =>
+                      showSettingsDialog(context, theme: theme, initial: initial),
+                  child: const Text('열기'),
+                ),
               ),
             ),
           ),
@@ -65,7 +71,7 @@ void main() {
     expect(find.text('설정'), findsOneWidget);
     expect(find.text('외형'), findsOneWidget);
     expect(find.text('편집기'), findsOneWidget);
-    expect(find.text('밝기'), findsOneWidget);
+    expect(find.text('모드'), findsOneWidget);
     expect(find.text('색 구성'), findsOneWidget);
   });
 

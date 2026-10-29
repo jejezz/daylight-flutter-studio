@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import '../doctor/environment_controller.dart';
 import '../l10n/app_localizations.dart';
 import '../settings/gate_settings.dart';
+import '../settings/settings_menus.dart';
 import '../settings/editor_settings.dart';
 import '../settings/terminal_settings.dart';
 import '../theme/app_theme.dart';
@@ -345,6 +346,9 @@ class _AppearanceSection extends StatelessWidget {
                 ),
             ],
           ),
+          SizedBox(height: t.spaceMd),
+          _Heading(l10n.languageMenuTooltip),
+          const LanguageSegmentedButton(),
           SizedBox(height: t.spaceMd),
           _Heading(l10n.settingsIconSet),
           Wrap(
