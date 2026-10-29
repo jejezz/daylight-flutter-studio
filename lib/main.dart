@@ -38,8 +38,7 @@ Future<void> main() async {
     );
     await windowManager.waitUntilReadyToShow(options, () async {
       if (saved != null) {
-        await windowManager.setBounds(saved.bounds);
-        if (saved.maximized) await windowManager.maximize();
+        await WindowStateStore.restore(saved);
       }
       await windowManager.show();
       await windowManager.focus();
