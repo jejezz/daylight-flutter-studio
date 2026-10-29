@@ -61,6 +61,13 @@ class AppLocalizationsEn extends AppLocalizations {
       'Combines a project tree, a light editor, build/install, and PR/merge/release in one window, keeping the order: work → local verification → merge → release.';
 
   @override
+  String get runProject => 'Project';
+
+  @override
+  String get runPickProject =>
+      'This folder has several Flutter projects. Choose the one to use';
+
+  @override
   String get runNotFlutterProject => 'The open folder is not a Flutter project';
 
   @override

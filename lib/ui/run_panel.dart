@@ -40,6 +40,9 @@ class RunPanel extends StatelessWidget {
       builder: (context, _) {
         final project = controller.project;
         if (project == null) {
+          if (controller.candidates.length > 1) {
+            return Padding(padding: EdgeInsets.all(t.spaceMd), child: _ProjectPicker(controller: controller));
+          }
           return Center(child: Text(AppLocalizations.of(context).runNotFlutterProject));
         }
         final verify = controller.awaitingConfirm || controller.recordSkipped != null || controller.record != null;
@@ -47,7 +50,16 @@ class RunPanel extends StatelessWidget {
           builder: (context, box) {
             final toolbar = Padding(
               padding: EdgeInsets.fromLTRB(t.spaceMd, t.spaceSm, t.spaceMd, t.spaceSm),
-              child: _Toolbar(controller: controller),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  if (controller.candidates.length > 1) ...[
+                    _ProjectPicker(controller: controller),
+                    SizedBox(height: t.spaceSm),
+                  ],
+                  _Toolbar(controller: controller),
+                ],
+              ),
             );
             final settings = <Widget>[_Settings(controller: controller)];
             final results = <Widget>[
@@ -89,6 +101,36 @@ class RunPanel extends StatelessWidget {
           },
         );
       },
+    );
+  }
+}
+
+/// 열린 폴더에 Flutter 프로젝트가 여럿일 때 쓸 프로젝트를 고르는 드롭다운.
+class _ProjectPicker extends StatelessWidget {
+  const _ProjectPicker({required this.controller});
+
+  final RunController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final t = context.tokens;
+    final c = controller;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (c.project == null) ...[Text(l10n.runPickProject), SizedBox(height: t.spaceSm)],
+        DropdownButton<String>(
+          isExpanded: true,
+          hint: Text(l10n.runProject),
+          value: c.project?.path,
+          items: [
+            for (final p in c.candidates)
+              DropdownMenuItem(value: p.path, child: Text('${p.name}  (${p.path.split(RegExp(r'[\\/]')).last})')),
+          ],
+          onChanged: c.running ? null : (path) => c.chooseProject(c.candidates.firstWhere((p) => p.path == path)),
+        ),
+      ],
     );
   }
 }
