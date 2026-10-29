@@ -26,6 +26,12 @@ class RunHandle {
 
   void cancel() {
     _cancelled = true;
+    finish();
+  }
+
+  /// 취소로 치지 않고 프로세스 트리를 끝낸다 — 실행한 앱이 스스로 종료했는데
+  /// `flutter run`이 남아 있을 때 쓴다.
+  void finish() {
     final p = _process;
     if (p == null) return;
     if (Platform.isWindows) {
@@ -164,7 +170,8 @@ class CommandRunner {
       final outDone = process.stdout.map(decodeProcessOutput).listen((c) => tee(out, c)).asFuture<void>();
       final errDone = process.stderr.map(decodeProcessOutput).listen((c) => tee(err, c)).asFuture<void>();
       final code = await process.exitCode;
-      await Future.wait([outDone, errDone]);
+      // 손자 프로세스가 파이프를 쥐고 있으면 끝나지 않을 수 있다 — 잠깐만 기다린다.
+      await Future.wait([outDone, errDone]).timeout(const Duration(seconds: 2), onTimeout: () => const []);
       finish(code);
       return CommandResult(code, out.toString(), err.toString());
     } on ProcessException catch (e) {
