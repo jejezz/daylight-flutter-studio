@@ -25,6 +25,7 @@ class RunController extends ChangeNotifier {
   static const _modeKey = 'build_mode';
   static const _teamKey = 'ios_team_id';
   static const _optionsKeyPrefix = 'build_options:';
+  static const _choiceKeyPrefix = 'project_choice:';
 
   final CommandRunner runner;
   final DeviceService deviceService;
@@ -33,6 +34,10 @@ class RunController extends ChangeNotifier {
   final bool hostIsWindows;
 
   FlutterProject? project;
+
+  /// 열린 폴더에서 찾은 Flutter 프로젝트 전부. 둘 이상이면 사용자가 [chooseProject]로 고른다.
+  List<FlutterProject> candidates = const [];
+  String? _openDir;
   List<MobileDevice> devices = const [];
   bool loadingDevices = false;
   String? selectedId;
@@ -122,9 +127,34 @@ class RunController extends ChangeNotifier {
   }
 
   /// 스튜디오가 연 폴더가 바뀔 때 부른다. Flutter 프로젝트가 아니면 project는 null.
+  /// 연 폴더가 아니라 그 바로 아래 폴더(예: Rust 프로젝트의 `gui/`)가 Flutter 프로젝트여도 찾는다.
+  /// 후보가 여럿이면 [candidates]에 두고, 전에 고른 것이 있으면 그것을, 없으면 사용자가 고를 때까지 project는 null.
   Future<void> setProjectDir(String? dir) async {
     if (running) return;
-    project = dir == null ? null : await FlutterProject.detect(dir);
+    _openDir = dir;
+    candidates = dir == null ? const [] : await FlutterProject.findAll(dir);
+    project = candidates.length == 1 ? candidates.single : _savedChoice(dir, candidates);
+    await _applyProject();
+  }
+
+  /// 후보가 여럿일 때 사용할 프로젝트를 고른다. 열린 폴더별로 기억한다.
+  Future<void> chooseProject(FlutterProject p) async {
+    if (running || p.path == project?.path) return;
+    project = p;
+    try {
+      await _prefs?.setString('$_choiceKeyPrefix$_openDir', p.path);
+    } on Object {
+      // 기억해 둔 값은 편의일 뿐이다.
+    }
+    await _applyProject();
+  }
+
+  FlutterProject? _savedChoice(String? dir, List<FlutterProject> from) {
+    final saved = dir == null ? null : _prefs?.getString('$_choiceKeyPrefix$dir');
+    return from.where((p) => p.path == saved).firstOrNull;
+  }
+
+  Future<void> _applyProject() async {
     _loadOptions();
     cleanResult = null;
     statuses = const [];

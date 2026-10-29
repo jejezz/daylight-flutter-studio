@@ -38,6 +38,28 @@ class FlutterProject {
   final String? macosAppName;
   final String? windowsBinaryName;
 
+  /// [dir] 자체가 Flutter 프로젝트면 그것 하나를, 아니면 바로 아래 폴더(1단계) 중 Flutter 프로젝트인 것을 모두 돌려준다.
+  /// Rust·Node 같은 다른 프로젝트 안에 `gui/`로 숨은 Flutter 앱을 찾기 위한 것이다. 둘 이상이면 호출하는 쪽이 사용자에게 고르게 한다.
+  static Future<List<FlutterProject>> findAll(String dir) async {
+    final here = await detect(dir);
+    if (here != null) return [here];
+    final found = <FlutterProject>[];
+    try {
+      await for (final e in Directory(dir).list(followLinks: false)) {
+        if (e is! Directory) continue;
+        final name = e.path.split(RegExp(r'[\\/]')).last;
+        if (name.startsWith('.') || _skippedDirs.contains(name)) continue;
+        final p = await detect(e.path);
+        if (p != null) found.add(p);
+      }
+    } on FileSystemException {
+      return const [];
+    }
+    return found..sort((a, b) => a.path.compareTo(b.path));
+  }
+
+  static const _skippedDirs = {'build', 'node_modules', 'target', 'dist'};
+
   /// [dir]이 Flutter 프로젝트면 읽어서 돌려주고, 아니면 null.
   static Future<FlutterProject?> detect(String dir) async {
     final pubspec = File('$dir/pubspec.yaml');

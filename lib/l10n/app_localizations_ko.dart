@@ -60,6 +60,12 @@ class AppLocalizationsKo extends AppLocalizations {
       '프로젝트 트리·간단 편집기·빌드/설치·PR/병합/릴리스를 한 창에 묶어, 작업 → 로컬 검증 → 병합 → 릴리스 순서를 지키게 합니다.';
 
   @override
+  String get runProject => '프로젝트';
+
+  @override
+  String get runPickProject => '이 폴더에는 Flutter 프로젝트가 여러 개 있습니다. 사용할 프로젝트를 고르세요';
+
+  @override
   String get runNotFlutterProject => '열린 폴더가 Flutter 프로젝트가 아닙니다';
 
   @override
