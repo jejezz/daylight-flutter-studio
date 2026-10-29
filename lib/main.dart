@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:window_manager/window_manager.dart';
 
 import 'about/about_dialog.dart';
@@ -17,7 +18,7 @@ import 'ui/studio_menus.dart';
 import 'ui/studio_screen.dart';
 import 'update/update_scope.dart';
 import 'update/update_service.dart';
-import 'window/window_state.dart';
+import 'window/window_placement.dart';
 
 final bool _isDesktop =
     Platform.isMacOS || Platform.isWindows || Platform.isLinux;
@@ -29,21 +30,23 @@ Future<void> main() async {
   if (_isDesktop) {
     await windowManager.ensureInitialized();
     // ui-ux.md §5: 최소 크기는 960×600 이하 (1366×768 노트북).
-    final saved = await WindowStateStore.load();
+    const windowSize = Size(1280, 800);
+    WindowPlacement? placement;
+    if (WindowPlacement.enabled) {
+      placement = WindowPlacement(await SharedPreferences.getInstance(), defaultSize: windowSize);
+    }
     final options = WindowOptions(
-      size: saved?.bounds.size ?? const Size(1280, 800),
+      size: windowSize,
       minimumSize: const Size(960, 600),
-      center: saved == null,
+      center: placement == null,
       title: AppIdentity.displayName,
     );
     await windowManager.waitUntilReadyToShow(options, () async {
-      if (saved != null) {
-        await WindowStateStore.restore(saved);
-      }
+      await placement?.placeInitially();
+      placement?.attach();
       await windowManager.show();
       await windowManager.focus();
     });
-    WindowStateStore().attach();
   }
 
   final settings = await AppSettings.load();
