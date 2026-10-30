@@ -301,6 +301,25 @@
       }
     }
   },
+  "messageFolderGoneSwitched": "열어 둔 폴더가 사라졌습니다: {path}\n{next}(으)로 옮겼습니다.",
+  "@messageFolderGoneSwitched": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      },
+      "next": {
+        "type": "String"
+      }
+    }
+  },
+  "messageFolderGoneClosed": "열어 둔 폴더가 사라져 프로젝트를 닫았습니다: {path}\n'프로젝트 열기'로 다른 폴더를 여세요.",
+  "@messageFolderGoneClosed": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
   "messageFileTooLarge": "2MB보다 큰 파일은 열지 않습니다: {name}",
   "@messageFileTooLarge": {
     "placeholders": {

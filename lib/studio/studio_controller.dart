@@ -296,6 +296,76 @@ class StudioController extends ChangeNotifier {
     return openProject(Directory(next).existsSync() ? next : target.path, remember: false);
   }
 
+  // --- 열어 둔 폴더가 사라졌을 때 -----------------------------------------------
+
+  bool _handlingGone = false;
+
+  /// 열어 둔 프로젝트 폴더가 디스크에서 사라졌는지 보고, 사라졌으면 처리한다
+  /// (터미널에서 `git worktree remove`로 지운 경우 등). 처리했으면 true.
+  Future<bool> checkRootExists() async {
+    final gone = root;
+    if (gone == null || _handlingGone || _disposed || Directory(gone).existsSync()) return false;
+    _handlingGone = true;
+    try {
+      final next = _fallbackFor(gone);
+      if (next != null && await openProject(next, remember: false)) {
+        _dropTabsUnder(gone);
+        message = CurrentL10n.value.messageFolderGoneSwitched(gone, next);
+      } else {
+        _dropTabsUnder(gone);
+        await closeProject();
+        message = CurrentL10n.value.messageFolderGoneClosed(gone);
+      }
+      notifyListeners();
+      return true;
+    } finally {
+      _handlingGone = false;
+    }
+  }
+
+  /// 사라진 [gone] 대신 열 폴더: 아직 있는 상위 worktree → 같은 저장소의 기본 폴더 → 다른 worktree 순서.
+  String? _fallbackFor(String gone) {
+    final owner = worktreeContaining(worktrees, gone);
+    final candidates = [
+      ?owner,
+      ...worktrees.where((w) => w.main),
+      ...worktrees,
+    ];
+    for (final w in candidates) {
+      if (Directory(w.path).existsSync()) return w.path;
+    }
+    return null;
+  }
+
+  /// [dir] 아래 파일의 탭을 닫는다. 고치던 글이 있는 탭은 잃지 않게 남겨 두고(디스크 삭제로 표시된다) 알린다.
+  void _dropTabsUnder(String dir) {
+    final prefix = pathKey(dir);
+    bool under(EditorTab t) {
+      final k = pathKey(t.path);
+      return k == prefix || k.startsWith('$prefix/');
+    }
+
+    final active = activeTab;
+    for (final t in tabs.where((t) => under(t) && !t.dirty).toList()) {
+      tabs.remove(t);
+      t.dispose();
+    }
+    activeIndex = active != null && tabs.contains(active) ? tabs.indexOf(active) : (tabs.isEmpty ? -1 : 0);
+    unawaited(_persistTabs());
+  }
+
+  /// 프로젝트를 닫는다. 다음 실행 때 사라진 폴더를 다시 열려 하지 않도록 마지막 프로젝트 기록도 지운다.
+  Future<void> closeProject() async {
+    root = null;
+    worktrees = const [];
+    notifyListeners();
+    try {
+      await (await SharedPreferences.getInstance()).remove(_lastProjectKey);
+    } on Object {
+      // 기억해 둔 값은 편의일 뿐이다.
+    }
+  }
+
   Future<void> refreshWorktrees() async {
     final r = root;
     if (r == null) return;
@@ -561,6 +631,7 @@ class StudioController extends ChangeNotifier {
     if (_checking || _disposed) return;
     _checking = true;
     try {
+      if (await checkRootExists()) return;
       var changed = false;
       for (final tab in List.of(tabs)) {
         final now = await _stampOf(tab.path);

@@ -1,6 +1,5 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
-
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -53,19 +52,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get languageSystemShort => 'System';
 
   @override
-  String get aboutTagline =>
-      'An all-in-one workbench for building Flutter apps';
+  String get aboutTagline => 'An all-in-one workbench for building Flutter apps';
 
   @override
-  String get aboutDescription =>
-      'Combines a project tree, a light editor, build/install, and PR/merge/release in one window, keeping the order: work → local verification → merge → release.';
+  String get aboutDescription => 'Combines a project tree, a light editor, build/install, and PR/merge/release in one window, keeping the order: work → local verification → merge → release.';
 
   @override
   String get runProject => 'Project';
 
   @override
-  String get runPickProject =>
-      'This folder has several Flutter projects. Choose the one to use';
+  String get runPickProject => 'This folder has several Flutter projects. Choose the one to use';
 
   @override
   String get runNotFlutterProject => 'The open folder is not a Flutter project';
@@ -101,28 +97,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get runBlockerNoDevice => 'Choose a target.';
 
   @override
-  String get runBlockerPlatformMissing =>
-      'This project does not support the selected platform.';
+  String get runBlockerPlatformMissing => 'This project does not support the selected platform.';
 
   @override
-  String get runBlockerIosNeedsMac =>
-      'iOS installs are only possible on macOS.';
+  String get runBlockerIosNeedsMac => 'iOS installs are only possible on macOS.';
 
   @override
-  String get runBlockerWireless =>
-      'Installs fail over a wireless connection. Connect with USB.';
+  String get runBlockerWireless => 'Installs fail over a wireless connection. Connect with USB.';
 
   @override
-  String get runBlockerDeveloperModeOff =>
-      'Developer Mode is off on the iPhone.';
+  String get runBlockerDeveloperModeOff => 'Developer Mode is off on the iPhone.';
 
   @override
-  String get runBlockerAndroidUnauthorized =>
-      'Approve USB debugging on the phone.';
+  String get runBlockerAndroidUnauthorized => 'Approve USB debugging on the phone.';
 
   @override
-  String get runBlockerNeedsTeamId =>
-      'An iOS signing Team ID is required. (The project needs DEVELOPMENT_TEAM)';
+  String get runBlockerNeedsTeamId => 'An iOS signing Team ID is required. (The project needs DEVELOPMENT_TEAM)';
 
   @override
   String runCommandNotFound(String command) {
@@ -130,8 +120,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get runHintUseUsb =>
-      'Installs drop over a wireless connection. Connect with USB.';
+  String get runHintUseUsb => 'Installs drop over a wireless connection. Connect with USB.';
 
   @override
   String get runHintUnlockDevice => 'Unlock the device screen and try again.';
@@ -140,31 +129,25 @@ class AppLocalizationsEn extends AppLocalizations {
   String get runHintDeveloperMode => 'Turn on Developer Mode on the device.';
 
   @override
-  String get runHintSigning =>
-      'Signing is misconfigured. Check the Team ID and provisioning profile.';
+  String get runHintSigning => 'Signing is misconfigured. Check the Team ID and provisioning profile.';
 
   @override
-  String get runHintTrustComputer =>
-      'Tap \"Trust This Computer\" on the device.';
+  String get runHintTrustComputer => 'Tap \"Trust This Computer\" on the device.';
 
   @override
-  String get runHintNoAdb =>
-      'adb not found. Add the Android SDK platform-tools to your PATH.';
+  String get runHintNoAdb => 'adb not found. Add the Android SDK platform-tools to your PATH.';
 
   @override
   String get runHintCocoapods => 'CocoaPods is required.';
 
   @override
-  String get runHintVisualStudio =>
-      'The Visual Studio \"Desktop development with C++\" workload is required.';
+  String get runHintVisualStudio => 'The Visual Studio \"Desktop development with C++\" workload is required.';
 
   @override
-  String get runHintRestartApp =>
-      'Plugin links were not found. Reopen the app and try once more.';
+  String get runHintRestartApp => 'Plugin links were not found. Reopen the app and try once more.';
 
   @override
-  String get runHintStaleBuildCache =>
-      'A build cache from an older Visual Studio is left over. Delete the build folder and try again.';
+  String get runHintStaleBuildCache => 'A build cache from an older Visual Studio is left over. Delete the build folder and try again.';
 
   @override
   String get runVerifyConfirmed => 'Confirmed';
@@ -185,12 +168,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get runDetachedHead => '(detached HEAD)';
 
   @override
-  String get runRecordSkippedNotGit =>
-      'Not a git repository, so no verification was recorded.';
+  String get runRecordSkippedNotGit => 'Not a git repository, so no verification was recorded.';
 
   @override
-  String get runRecordSkippedDirty =>
-      'Uncommitted changes exist, so no verification was recorded. Commit and build again.';
+  String get runRecordSkippedDirty => 'Uncommitted changes exist, so no verification was recorded. Commit and build again.';
 
   @override
   String get runProblemTitle => 'What went wrong?';
@@ -236,12 +217,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get gitUnverified => 'This commit has not been verified';
 
   @override
-  String get gitHeadDiffers =>
-      'Local HEAD and PR head differ. The verdict is based on the PR head.';
+  String get gitHeadDiffers => 'Local HEAD and PR head differ. The verdict is based on the PR head.';
 
   @override
-  String get gitBuildInRunTab =>
-      'Before merging, build and check this commit in the Run tab.';
+  String get gitBuildInRunTab => 'Before merging, build and check this commit in the Run tab.';
 
   @override
   String get gitMerge => 'Merge PR';
@@ -253,8 +232,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get gitUnverifiedDialogTitle => 'This commit has not been checked';
 
   @override
-  String get gitUnverifiedDialogBody =>
-      'If you merge anyway, GitHub builds every OS, and any problem means fixing it and releasing again.';
+  String get gitUnverifiedDialogBody => 'If you merge anyway, GitHub builds every OS, and any problem means fixing it and releasing again.';
 
   @override
   String get gitMergeAnyway => 'Merge anyway';
@@ -375,19 +353,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsPalette => 'Color scheme';
 
   @override
-  String get settingsAppliedNote =>
-      'Changes apply immediately and are kept for the next launch.';
+  String get settingsAppliedNote => 'Changes apply immediately and are kept for the next launch.';
 
   @override
   String get settingsGateHeading => 'Verification before PR merge';
 
   @override
-  String get settingsGateIntro =>
-      'Only commits you built and checked by eye can be merged. If you merge without checking, GitHub builds every OS, and any problem means fixing it and releasing again.';
+  String get settingsGateIntro => 'Only commits you built and checked by eye can be merged. If you merge without checking, GitHub builds every OS, and any problem means fixing it and releasing again.';
 
   @override
-  String get settingsGateConfirmNote =>
-      '\"Confirmed\" is a button you press yourself after running the app from the Run tab. A successful build alone doesn\'t count.';
+  String get settingsGateConfirmNote => '\"Confirmed\" is a button you press yourself after running the app from the Run tab. A successful build alone doesn\'t count.';
 
   @override
   String get settingsEditorUnavailable => 'Editor settings are unavailable.';
@@ -399,36 +374,31 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsResetZoom => 'Reset to 100%';
 
   @override
-  String get settingsZoomNote =>
-      'Applies to the editor, Markdown view and diff view only. In the editor you can also use Ctrl+scroll or Ctrl +/-/0.';
+  String get settingsZoomNote => 'Applies to the editor, Markdown view and diff view only. In the editor you can also use Ctrl+scroll or Ctrl +/-/0.';
 
   @override
   String get gateModeBlock => 'Block';
 
   @override
-  String get gateModeBlockHelp =>
-      'Only checked commits merge. For an exception, press \"Merge without verification\" separately.';
+  String get gateModeBlockHelp => 'Only checked commits merge. For an exception, press \"Merge without verification\" separately.';
 
   @override
   String get gateModeWarn => 'Warn only';
 
   @override
-  String get gateModeWarnHelp =>
-      'Asks once more before merging an unchecked commit.';
+  String get gateModeWarnHelp => 'Asks once more before merging an unchecked commit.';
 
   @override
   String get gateModeOff => 'Off';
 
   @override
-  String get gateModeOffHelp =>
-      'Merging is allowed whether or not the commit was checked.';
+  String get gateModeOffHelp => 'Merging is allowed whether or not the commit was checked.';
 
   @override
   String get gateVerified => 'Verified — ready to merge';
 
   @override
-  String get gateBuiltOnly =>
-      'Built but not checked by eye. After trying it, press \"Confirmed\" in the Run tab.';
+  String get gateBuiltOnly => 'Built but not checked by eye. After trying it, press \"Confirmed\" in the Run tab.';
 
   @override
   String get gateProblem => 'This commit was recorded as having a problem.';
@@ -439,8 +409,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get gateStaleSome =>
-      'Commits were added after verification. Build and check again.';
+  String get gateStaleSome => 'Commits were added after verification. Build and check again.';
 
   @override
   String gateStaleCount(int count) {
@@ -448,8 +417,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get gateUnverified =>
-      'This commit has not been checked locally. Build it in the Run tab and check by eye.';
+  String get gateUnverified => 'This commit has not been checked locally. Build it in the Run tab and check by eye.';
 
   @override
   String get editorOpenFromTree => 'Open a file from the tree on the left';
@@ -458,8 +426,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get editorFileGone => 'This file has disappeared from disk.';
 
   @override
-  String get editorFileChanged =>
-      'The file on disk has changed. Saving will overwrite those edits.';
+  String get editorFileChanged => 'The file on disk has changed. Saving will overwrite those edits.';
 
   @override
   String get editorCloseTab => 'Close tab';
@@ -474,8 +441,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get editorKeepMine => 'Keep my edits';
 
   @override
-  String get editorZoomHint =>
-      'Ctrl+scroll or Ctrl +/- to resize text · click for 100%';
+  String get editorZoomHint => 'Ctrl+scroll or Ctrl +/- to resize text · click for 100%';
 
   @override
   String get editorFoldAll => 'Fold all';
@@ -519,8 +485,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get treeRefresh => 'Refresh tree';
 
   @override
-  String get problemsNoPackage =>
-      'No Dart package (pubspec.yaml) found in the open folder';
+  String get problemsNoPackage => 'No Dart package (pubspec.yaml) found in the open folder';
 
   @override
   String get problemsError => 'Errors';
@@ -535,8 +500,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get problemsReanalyze => 'Analyze again';
 
   @override
-  String get problemsNoPackageInfo =>
-      'Package info (.dart_tool) is missing, so bogus import errors are mixed in.';
+  String get problemsNoPackageInfo => 'Package info (.dart_tool) is missing, so bogus import errors are mixed in.';
 
   @override
   String get problemsAnalyzing => 'Analyzing…';
@@ -554,8 +518,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get problemsNone => 'No problems';
 
   @override
-  String get diffNotComparable =>
-      'This file can\'t be compared with git.\n(Not a git repository, or ignored by .gitignore)';
+  String get diffNotComparable => 'This file can\'t be compared with git.\n(Not a git repository, or ignored by .gitignore)';
 
   @override
   String get diffAgainstHead => 'Compared with HEAD';
@@ -627,6 +590,16 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String messageFolderGoneSwitched(String path, String next) {
+    return 'The open folder is gone: $path\nSwitched to $next.';
+  }
+
+  @override
+  String messageFolderGoneClosed(String path) {
+    return 'The open folder is gone, so the project was closed: $path\nUse Open Project to pick another folder.';
+  }
+
+  @override
   String messageFileTooLarge(String name) {
     return 'Files over 2MB are not opened: $name';
   }
@@ -642,8 +615,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get messageDiskChangedSaveBlocked =>
-      'The file on disk has changed. Before saving, choose \"Reload\" or \"Keep my edits\".';
+  String get messageDiskChangedSaveBlocked => 'The file on disk has changed. Before saving, choose \"Reload\" or \"Keep my edits\".';
 
   @override
   String messageSaveFailed(String error) {
@@ -666,8 +638,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get messageNotUtf8Reload =>
-      'Not a text (UTF-8) file, so it was not reloaded.';
+  String get messageNotUtf8Reload => 'Not a text (UTF-8) file, so it was not reloaded.';
 
   @override
   String get messageAlreadyFormatted => 'Already formatted';
@@ -676,8 +647,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get messageFormatted => 'Formatted';
 
   @override
-  String get formatNoDart =>
-      'dart command not found. Make sure the Flutter SDK bin folder is on your PATH.';
+  String get formatNoDart => 'dart command not found. Make sure the Flutter SDK bin folder is on your PATH.';
 
   @override
   String formatTempWriteFailed(String error) {
@@ -704,8 +674,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get problemsPubGetFailed =>
-      'flutter pub get failed. See the output in the command log below.';
+  String get problemsPubGetFailed => 'flutter pub get failed. See the output in the command log below.';
 
   @override
   String get findHint => 'Find';
@@ -795,8 +764,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get searchNothingReplaced =>
-      'Nothing was replaced. The files may have changed since the search — search again.';
+  String get searchNothingReplaced => 'Nothing was replaced. The files may have changed since the search — search again.';
 
   @override
   String searchSkippedBusy(int count) {
@@ -839,8 +807,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsFormatOnSave => 'Format on save';
 
   @override
-  String get settingsFormatOnSaveNote =>
-      'Formats Dart, JSON and ARB files just before saving. If a syntax error prevents formatting, the file is still saved.';
+  String get settingsFormatOnSaveNote => 'Formats Dart, JSON and ARB files just before saving. If a syntax error prevents formatting, the file is still saved.';
 
   @override
   String get settingsEditorFont => 'Editor font';
@@ -852,8 +819,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsEditorFontDefault => 'Default';
 
   @override
-  String get settingsEditorFontNote =>
-      'Type to filter. Only fonts installed on this computer can be picked.';
+  String get settingsEditorFontNote => 'Type to filter. Only fonts installed on this computer can be picked.';
 
   @override
   String get settingsLineHeight => 'Line spacing';
@@ -865,19 +831,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsLigatures => 'Use ligatures';
 
   @override
-  String get settingsLigaturesNote =>
-      'Lets the font draw sequences like ->, != and >= as one glyph. Only visible with ligature fonts such as Fira Code, JetBrains Mono or Cascadia Code.';
+  String get settingsLigaturesNote => 'Lets the font draw sequences like ->, != and >= as one glyph. Only visible with ligature fonts such as Fira Code, JetBrains Mono or Cascadia Code.';
 
   @override
   String get settingsLogShareFont => 'Use the editor font for logs and output';
 
   @override
-  String get settingsLogShareFontNote =>
-      'Applies the editor font and ligature setting to run output, the command log, paths and hashes, and Markdown code. Off uses the theme\'s default monospace font.';
+  String get settingsLogShareFontNote => 'Applies the editor font and ligature setting to run output, the command log, paths and hashes, and Markdown code. Off uses the theme\'s default monospace font.';
 
   @override
-  String get settingsEditorFontMissing =>
-      'This font doesn\'t seem to be installed on this computer. A fallback such as Menlo is shown instead.';
+  String get settingsEditorFontMissing => 'This font doesn\'t seem to be installed on this computer. A fallback such as Menlo is shown instead.';
 
   @override
   String get settingsPreview => 'Preview';
@@ -886,15 +849,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsUiFont => 'UI font';
 
   @override
-  String get settingsUiFontMissing =>
-      'This font doesn\'t seem to be installed on this computer. The default font is shown instead.';
+  String get settingsUiFontMissing => 'This font doesn\'t seem to be installed on this computer. The default font is shown instead.';
 
   @override
   String get settingsUiFontScale => 'Font size scale';
 
   @override
-  String get settingsUiFontScaleNote =>
-      'Rows, tabs and toolbars keep their size — only the text grows or shrinks.';
+  String get settingsUiFontScaleNote => 'Rows, tabs and toolbars keep their size — only the text grows or shrinks.';
 
   @override
   String get settingsSectionTerminal => 'Terminal';
@@ -903,8 +864,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsTerminalShareFont => 'Share font with editor';
 
   @override
-  String get settingsTerminalShareFontNote =>
-      'Turn off to pick a separate font and size for the terminal. Colors always follow the current theme.';
+  String get settingsTerminalShareFontNote => 'Turn off to pick a separate font and size for the terminal. Colors always follow the current theme.';
 
   @override
   String get settingsTerminalFont => 'Terminal font';
@@ -916,8 +876,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsTerminalScrollback => 'Scrollback lines';
 
   @override
-  String get settingsTerminalScrollbackNote =>
-      'Doesn\'t apply to terminal tabs already open — only to ones opened from now on.';
+  String get settingsTerminalScrollbackNote => 'Doesn\'t apply to terminal tabs already open — only to ones opened from now on.';
 
   @override
   String get settingsIconSet => 'Icon style';
@@ -941,8 +900,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeTeamLabel => 'Apple Team ID';
 
   @override
-  String get homeTeamHelp =>
-      'Passed only as a build argument — the project is not modified. Find it at developer.apple.com/account → Membership';
+  String get homeTeamHelp => 'Passed only as a build argument — the project is not modified. Find it at developer.apple.com/account → Membership';
 
   @override
   String get homeStepsTitle => 'Commands to run';
@@ -975,8 +933,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeActionClean => 'Clean & get packages';
 
   @override
-  String get homeCleanHelp =>
-      'flutter clean → flutter pub get. Worth trying when a build fails for no clear reason.';
+  String get homeCleanHelp => 'flutter clean → flutter pub get. Worth trying when a build fails for no clear reason.';
 
   @override
   String get optTitle => 'Build options';
@@ -988,19 +945,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get optFlavor => 'Flavor';
 
   @override
-  String get optFlavorHelp =>
-      '--flavor. Only if the project defines flavors (Windows needs Flutter 3.47+)';
+  String get optFlavorHelp => '--flavor. Only if the project defines flavors (Windows needs Flutter 3.47+)';
 
   @override
-  String get optFlavorInvalid =>
-      'Start with a letter; letters, digits, _ and - only';
+  String get optFlavorInvalid => 'Start with a letter; letters, digits, _ and - only';
 
   @override
   String get optHelp => 'Help';
 
   @override
-  String get optHelpLink =>
-      'Opens the Flutter docs on setting up flavors for the selected target (Android, iOS, Windows …) in a browser';
+  String get optHelpLink => 'Opens the Flutter docs on setting up flavors for the selected target (Android, iOS, Windows …) in a browser';
 
   @override
   String get optTarget => 'Entry point';
@@ -1012,8 +966,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get optDefineFile => 'dart-define file';
 
   @override
-  String get optDefineFileHelp =>
-      '--dart-define-from-file. Only the path is stored; the file is never read or saved';
+  String get optDefineFileHelp => '--dart-define-from-file. Only the path is stored; the file is never read or saved';
 
   @override
   String get optFileMissing => 'File not found';
@@ -1022,15 +975,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get optAppId => 'App ID (optional)';
 
   @override
-  String get optAppIdHelp =>
-      'When the flavor changes the app ID, the ID to launch after installing (e.g. art.zoomon.app.dev)';
+  String get optAppIdHelp => 'When the flavor changes the app ID, the ID to launch after installing (e.g. art.zoomon.app.dev)';
 
   @override
   String get optExtra => 'Extra arguments';
 
   @override
-  String get optExtraHelp =>
-      'e.g. --obfuscate --split-debug-info=build/symbols';
+  String get optExtraHelp => 'e.g. --obfuscate --split-debug-info=build/symbols';
 
   @override
   String get optPick => 'Choose file';
@@ -1039,12 +990,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get optClear => 'Clear options';
 
   @override
-  String get homeCleanDone =>
-      'Cleaned and packages restored. Try building again.';
+  String get homeCleanDone => 'Cleaned and packages restored. Try building again.';
 
   @override
-  String get homeCleanFailed =>
-      'Clean failed. Check the output in the Log tab.';
+  String get homeCleanFailed => 'Clean failed. Check the output in the Log tab.';
 
   @override
   String get homeActionRun => 'Run debug';
@@ -1177,31 +1126,25 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get stepsCertificate =>
-      '1. Xcode → Settings → Accounts: sign in with your Apple ID\n2. Manage Certificates → + → add Apple Development\n3. Press Check again';
+  String get stepsCertificate => '1. Xcode → Settings → Accounts: sign in with your Apple ID\n2. Manage Certificates → + → add Apple Development\n3. Press Check again';
 
   @override
-  String get stepsFlutterMissing =>
-      '1. Install the Flutter SDK from flutter.dev\n2. Add flutter/bin to PATH (~/.zshrc)\n3. Reopen the app and press Check again';
+  String get stepsFlutterMissing => '1. Install the Flutter SDK from flutter.dev\n2. Add flutter/bin to PATH (~/.zshrc)\n3. Reopen the app and press Check again';
 
   @override
-  String get stepsFlutterMissingWindows =>
-      '1. Install the Flutter SDK from flutter.dev\n2. Add the flutter\\bin folder to PATH, or pick flutter.bat with \"Set tool paths…\" above\n3. Press Check again';
+  String get stepsFlutterMissingWindows => '1. Install the Flutter SDK from flutter.dev\n2. Add the flutter\\bin folder to PATH, or pick flutter.bat with \"Set tool paths…\" above\n3. Press Check again';
 
   @override
-  String get stepsXcodeMissing =>
-      '1. Install Xcode from the App Store\n2. In a terminal run sudo xcode-select -s /Applications/Xcode.app\n3. Open Xcode once and accept the license';
+  String get stepsXcodeMissing => '1. Install Xcode from the App Store\n2. In a terminal run sudo xcode-select -s /Applications/Xcode.app\n3. Open Xcode once and accept the license';
 
   @override
-  String get stepsAdbMissing =>
-      '1. Install the Android SDK platform-tools (Android Studio SDK Manager)\n2. Add the platform-tools folder to PATH\n3. Press Check again';
+  String get stepsAdbMissing => '1. Install the Android SDK platform-tools (Android Studio SDK Manager)\n2. Add the platform-tools folder to PATH\n3. Press Check again';
 
   @override
   String get toolPathsTitle => 'Tool paths';
 
   @override
-  String get toolPathsHelp =>
-      'Point the app at tools it can\'t find on PATH. The choice is saved and used the next time too. Pick the executable file, not the folder.';
+  String get toolPathsHelp => 'Point the app at tools it can\'t find on PATH. The choice is saved and used the next time too. Pick the executable file, not the folder.';
 
   @override
   String get toolPathNotFound => 'Not found';
@@ -1222,12 +1165,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get toolPathAdb => 'adb (Android SDK platform-tools)';
 
   @override
-  String get checkWindowsDevModeOk =>
-      'Windows Developer Mode is on (plugin links can be created)';
+  String get checkWindowsDevModeOk => 'Windows Developer Mode is on (plugin links can be created)';
 
   @override
-  String get checkWindowsDevModeWarn =>
-      'Windows Developer Mode is off (builds can fail because plugin links can\'t be created)';
+  String get checkWindowsDevModeWarn => 'Windows Developer Mode is off (builds can fail because plugin links can\'t be created)';
 
   @override
   String checkVisualStudioOk(String version) {
@@ -1235,16 +1176,13 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get checkVisualStudioFail =>
-      'Visual Studio\'s \'Desktop development with C++\' is missing (needed to build the Windows app)';
+  String get checkVisualStudioFail => 'Visual Studio\'s \'Desktop development with C++\' is missing (needed to build the Windows app)';
 
   @override
-  String get stepsWindowsDevMode =>
-      '1. Open Windows Settings and search for \'For developers\'\n2. Turn on \'Developer Mode\'\n3. Press Check again';
+  String get stepsWindowsDevMode => '1. Open Windows Settings and search for \'For developers\'\n2. Turn on \'Developer Mode\'\n3. Press Check again';
 
   @override
-  String get stepsVisualStudio =>
-      '1. Install Visual Studio 2022 (Community is fine)\n2. In the installer pick \'Desktop development with C++\'\n3. Build again';
+  String get stepsVisualStudio => '1. Install Visual Studio 2022 (Community is fine)\n2. In the installer pick \'Desktop development with C++\'\n3. Build again';
 
   @override
   String get settingsSectionEnvironment => 'Environment check';
@@ -1273,8 +1211,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsIndentGuides => 'Indent guides';
 
   @override
-  String get settingsIndentGuidesNote =>
-      'Draws vertical lines in a different color per depth so you can match blocks. Accurate with monospace fonts.';
+  String get settingsIndentGuidesNote => 'Draws vertical lines in a different color per depth so you can match blocks. Accurate with monospace fonts.';
 
   @override
   String get bdAboutTooltip => 'About';
@@ -1323,8 +1260,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bdAboutTagline => 'A desktop companion for Git and the GitHub CLI';
 
   @override
-  String get bdAboutDescription =>
-      'Dock it beside your editor and handle branches, tags, merges, pull/push, remotes and releases with buttons that show the exact git and gh commands they run.';
+  String get bdAboutDescription => 'Dock it beside your editor and handle branches, tags, merges, pull/push, remotes and releases with buttons that show the exact git and gh commands they run.';
 
   @override
   String get bdHomeEmptyTitle => 'Choose a repository to get started';
@@ -1375,8 +1311,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bdCommandPreviewLabel => 'Command to run';
 
   @override
-  String get bdStartDropHint =>
-      'You can also drop a git repository folder on this window.';
+  String get bdStartDropHint => 'You can also drop a git repository folder on this window.';
 
   @override
   String get bdStartRecent => 'Recent repositories';
@@ -1398,12 +1333,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bdEnvTitle => 'git and GitHub CLI';
 
   @override
-  String get bdEnvGitRequired =>
-      'Branch Dock runs the git installed on your computer. Install git first.';
+  String get bdEnvGitRequired => 'Branch Dock runs the git installed on your computer. Install git first.';
 
   @override
-  String get bdEnvGitOnlyNote =>
-      'Branches, pull and push work without gh. Publishing to GitHub, pull requests and releases need gh and a login.';
+  String get bdEnvGitOnlyNote => 'Branches, pull and push work without gh. Publishing to GitHub, pull requests and releases need gh and a login.';
 
   @override
   String bdEnvVersion(String version) {
@@ -1428,12 +1361,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bdEnvRecheck => 'Check again';
 
   @override
-  String get bdEnvGhMissing =>
-      'Needs the GitHub CLI (gh), which isn\'t installed. See Check git and gh in the menu.';
+  String get bdEnvGhMissing => 'Needs the GitHub CLI (gh), which isn\'t installed. See Check git and gh in the menu.';
 
   @override
-  String get bdEnvGhLoggedOut =>
-      'Log in to gh first: run gh auth login in a terminal.';
+  String get bdEnvGhLoggedOut => 'Log in to gh first: run gh auth login in a terminal.';
 
   @override
   String get bdHeaderOpenFolder => 'Open this folder in the editor';
@@ -1442,8 +1373,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bdVscodeMissingTitle => 'VS Code not found';
 
   @override
-  String get bdVscodeMissingMessage =>
-      'Install VS Code to open the folder where the current branch is checked out with this button. To use another editor, enter its command (cursor, zed, …) under ‘Editor for opening files…’ in the repository menu.';
+  String get bdVscodeMissingMessage => 'Install VS Code to open the folder where the current branch is checked out with this button. To use another editor, enter its command (cursor, zed, …) under ‘Editor for opening files…’ in the repository menu.';
 
   @override
   String get bdVscodeDownload => 'Get VS Code';
@@ -1458,8 +1388,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bdHeaderNoUpstream => 'Not on remote';
 
   @override
-  String get bdHeaderNoUpstreamTooltip =>
-      'This branch isn\'t on the remote yet. Publish it to push it there.';
+  String get bdHeaderNoUpstreamTooltip => 'This branch isn\'t on the remote yet. Publish it to push it there.';
 
   @override
   String bdHeaderAheadTooltip(int count) {
@@ -1526,22 +1455,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bdPullModeMerge => 'Merge (default)';
 
   @override
-  String get bdPullModeMergeWhen =>
-      'If both sides have new commits, joins them with a merge commit. The safest choice.';
+  String get bdPullModeMergeWhen => 'If both sides have new commits, joins them with a merge commit. The safest choice.';
 
   @override
   String get bdPullModeRebase => 'Rebase';
 
   @override
-  String get bdPullModeRebaseWhen =>
-      'Moves your commits on top of the new ones to keep history in one line.';
+  String get bdPullModeRebaseWhen => 'Moves your commits on top of the new ones to keep history in one line.';
 
   @override
   String get bdPullModeFastForward => 'Fast-forward only';
 
   @override
-  String get bdPullModeFastForwardWhen =>
-      'Only pulls when you have no commits of your own; stops and tells you if history has split.';
+  String get bdPullModeFastForwardWhen => 'Only pulls when you have no commits of your own; stops and tells you if history has split.';
 
   @override
   String get bdOperationAbort => 'Abort';
@@ -1556,12 +1482,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bdOperationAbortTitle => 'Abort the operation in progress?';
 
   @override
-  String get bdOperationAbortMergeMessage =>
-      'Goes back to before the merge started. Any conflict resolutions you\'ve made are lost.';
+  String get bdOperationAbortMergeMessage => 'Goes back to before the merge started. Any conflict resolutions you\'ve made are lost.';
 
   @override
-  String get bdOperationAbortRebaseMessage =>
-      'Goes back to before the rebase started. Any conflict resolutions you\'ve made are lost.';
+  String get bdOperationAbortRebaseMessage => 'Goes back to before the rebase started. Any conflict resolutions you\'ve made are lost.';
 
   @override
   String bdBannerConflicts(int count) {
@@ -1672,8 +1596,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bdChangesCleanTitle => 'Nothing to commit';
 
   @override
-  String get bdChangesCleanMessage =>
-      'Save a file in your editor and it shows up here.';
+  String get bdChangesCleanMessage => 'Save a file in your editor and it shows up here.';
 
   @override
   String get bdBranchesTitle => 'Branches';
@@ -1712,8 +1635,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bdBranchesUnbornTitle => 'No commits yet';
 
   @override
-  String get bdBranchesUnbornMessage =>
-      'Make the first commit, then you can create branches.';
+  String get bdBranchesUnbornMessage => 'Make the first commit, then you can create branches.';
 
   @override
   String get bdBranchesForceDeleteTitle => 'This branch isn\'t merged';
@@ -1741,19 +1663,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bdBranchNameEmpty => 'Enter a name';
 
   @override
-  String get bdBranchNameInvalidCharacter =>
-      'Spaces and ~ ^ : ? * [ \\ aren\'t allowed';
+  String get bdBranchNameInvalidCharacter => 'Spaces and ~ ^ : ? * [ \\ aren\'t allowed';
 
   @override
   String get bdBranchNameStartsWithDash => 'Can\'t start with -';
 
   @override
-  String get bdBranchNameInvalidSequence =>
-      'Can\'t contain .. or //, a part starting with ., or a part ending in .lock';
+  String get bdBranchNameInvalidSequence => 'Can\'t contain .. or //, a part starting with ., or a part ending in .lock';
 
   @override
-  String get bdBranchNameInvalidEdge =>
-      'Can\'t start with / or end with / or .';
+  String get bdBranchNameInvalidEdge => 'Can\'t start with / or end with / or .';
 
   @override
   String get bdBranchBaseLabel => 'Start from';
@@ -1798,22 +1717,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bdRemotesEmptyTitle => 'This repository isn\'t on GitHub yet';
 
   @override
-  String get bdRemotesEmptyMessage =>
-      'Creates a new repository on GitHub and pushes your current branch.';
+  String get bdRemotesEmptyMessage => 'Creates a new repository on GitHub and pushes your current branch.';
 
   @override
   String get bdRemotesPublishToGitHub => 'Publish to GitHub';
 
   @override
-  String get bdRemotesPublishAlsoToGitHub =>
-      'Also publish to GitHub (adds a remote)';
+  String get bdRemotesPublishAlsoToGitHub => 'Also publish to GitHub (adds a remote)';
 
   @override
   String get bdRemotesPublishConfirm => 'Create and publish';
 
   @override
-  String get bdRemotesNotGitHubNote =>
-      'Not a GitHub repository, so pull requests, releases and Actions aren\'t available (gh is GitHub-only).';
+  String get bdRemotesNotGitHubNote => 'Not a GitHub repository, so pull requests, releases and Actions aren\'t available (gh is GitHub-only).';
 
   @override
   String get bdRemotesNameLabel => 'Remote name';
@@ -1837,8 +1753,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bdPublishNameLabel => 'Repository name';
 
   @override
-  String get bdPublishNameHelper =>
-      'Use org/name to create it in an organization';
+  String get bdPublishNameHelper => 'Use org/name to create it in an organization';
 
   @override
   String get bdPublishNameInvalid => 'Letters, numbers, - _ . only';
@@ -1853,15 +1768,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bdPublishPublic => 'Public';
 
   @override
-  String get bdPublishNoCommitsNote =>
-      'There are no commits yet, so this only creates the repository. Push after your first commit.';
+  String get bdPublishNoCommitsNote => 'There are no commits yet, so this only creates the repository. Push after your first commit.';
 
   @override
   String get bdEditorTitle => 'Editor for opening files';
 
   @override
-  String get bdEditorMessage =>
-      'Enter an editor command to open files and the repository folder with it. Leave it empty to open files with the system default app and the folder with VS Code.';
+  String get bdEditorMessage => 'Enter an editor command to open files and the repository folder with it. Leave it empty to open files with the system default app and the folder with VS Code.';
 
   @override
   String get bdEditorLabel => 'Editor command';
@@ -1950,28 +1863,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bdErrorGeneric => 'The command failed. See the output below.';
 
   @override
-  String get bdErrorPushRejected =>
-      'Push was rejected because the remote has commits you don\'t have. Pull first.';
+  String get bdErrorPushRejected => 'Push was rejected because the remote has commits you don\'t have. Pull first.';
 
   @override
-  String get bdErrorAuthFailed =>
-      'Authentication failed. Check that you\'re logged in with gh auth login, or that your SSH key is registered.';
+  String get bdErrorAuthFailed => 'Authentication failed. Check that you\'re logged in with gh auth login, or that your SSH key is registered.';
 
   @override
-  String get bdErrorConflict =>
-      'There are conflicts. Open the conflicted files from Changes, fix them, then mark them resolved.';
+  String get bdErrorConflict => 'There are conflicts. Open the conflicted files from Changes, fix them, then mark them resolved.';
 
   @override
-  String get bdErrorLocalChanges =>
-      'Stopped because uncommitted changes would be overwritten. Commit them first.';
+  String get bdErrorLocalChanges => 'Stopped because uncommitted changes would be overwritten. Commit them first.';
 
   @override
-  String get bdErrorNotFastForward =>
-      'History has split, so it can\'t fast-forward. Change the pull method to merge or rebase.';
+  String get bdErrorNotFastForward => 'History has split, so it can\'t fast-forward. Change the pull method to merge or rebase.';
 
   @override
-  String get bdErrorProtectedBranch =>
-      'This branch is protected, so you can\'t push to it directly. Push a new branch and open a pull request.';
+  String get bdErrorProtectedBranch => 'This branch is protected, so you can\'t push to it directly. Push a new branch and open a pull request.';
 
   @override
   String get bdErrorBranchNotMerged => 'This branch has unmerged commits.';
@@ -1983,15 +1890,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bdErrorAlreadyExists => 'That name already exists.';
 
   @override
-  String get bdErrorRepositoryNotFound =>
-      'Remote repository not found. Check the URL and your access.';
+  String get bdErrorRepositoryNotFound => 'Remote repository not found. Check the URL and your access.';
 
   @override
   String get bdErrorNetwork => 'Can\'t reach the server. Check your network.';
 
   @override
-  String get bdErrorNotInstalled =>
-      'Program not found. See Check git and gh in the menu.';
+  String get bdErrorNotInstalled => 'Program not found. See Check git and gh in the menu.';
 
   @override
   String bdErrorBranchInOtherWorktree(String path) {
@@ -2065,12 +1970,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bdHelpCaptionAfterPull => 'After pull — your main catches up';
 
   @override
-  String get bdHelpCaptionAheadOne =>
-      'feature is one commit ahead of origin/feature (↑1)';
+  String get bdHelpCaptionAheadOne => 'feature is one commit ahead of origin/feature (↑1)';
 
   @override
-  String get bdHelpLinkBranchingBasics =>
-      'Pro Git — Basic Branching and Merging';
+  String get bdHelpLinkBranchingBasics => 'Pro Git — Basic Branching and Merging';
 
   @override
   String get bdHelpLinkRemoteBranches => 'Pro Git — Remote Branches';
@@ -2082,76 +1985,61 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bdHelpFetchVsPullTitle => 'Fetch vs. pull';
 
   @override
-  String get bdHelpFetchVsPullWord =>
-      'To fetch is to go and get something; to pull is to draw it toward you.';
+  String get bdHelpFetchVsPullWord => 'To fetch is to go and get something; to pull is to draw it toward you.';
 
   @override
-  String get bdHelpFetchVsPullInGit =>
-      'Fetch downloads new commits from the remote (GitHub) and only moves the remote labels such as origin/main. Your branch and files stay as they are. Pull does a fetch and then joins those commits into your branch.';
+  String get bdHelpFetchVsPullInGit => 'Fetch downloads new commits from the remote (GitHub) and only moves the remote labels such as origin/main. Your branch and files stay as they are. Pull does a fetch and then joins those commits into your branch.';
 
   @override
-  String get bdHelpFetchVsPullWhy =>
-      'Fetch when you want to see what changed first; it\'s always safe. Pull when you want to catch up right away. Pull can stop if you have uncommitted changes, so commit first.';
+  String get bdHelpFetchVsPullWhy => 'Fetch when you want to see what changed first; it\'s always safe. Pull when you want to catch up right away. Pull can stop if you have uncommitted changes, so commit first.';
 
   @override
   String get bdHelpUpstreamTitle => 'Upstream and origin';
 
   @override
-  String get bdHelpUpstreamWord =>
-      'Upstream is the part of a river the water comes from. Origin is where something comes from.';
+  String get bdHelpUpstreamWord => 'Upstream is the part of a river the water comes from. Origin is where something comes from.';
 
   @override
-  String get bdHelpUpstreamInGit =>
-      'origin is the default name for the remote you cloned from, usually GitHub. The remote branch your branch is paired with (such as origin/feature) is its upstream. The ↑↓ numbers compare your branch with it.';
+  String get bdHelpUpstreamInGit => 'origin is the default name for the remote you cloned from, usually GitHub. The remote branch your branch is paired with (such as origin/feature) is its upstream. The ↑↓ numbers compare your branch with it.';
 
   @override
-  String get bdHelpUpstreamWhy =>
-      'With an upstream, plain Push and Pull know where to go. A new branch has none, so the first push is a Publish (git push -u), which sets it.';
+  String get bdHelpUpstreamWhy => 'With an upstream, plain Push and Pull know where to go. A new branch has none, so the first push is a Publish (git push -u), which sets it.';
 
   @override
   String get bdHelpFastForwardTitle => 'Fast-forward';
 
   @override
-  String get bdHelpFastForwardWord =>
-      'Winding a tape or video quickly forward.';
+  String get bdHelpFastForwardWord => 'Winding a tape or video quickly forward.';
 
   @override
-  String get bdHelpFastForwardInGit =>
-      'When your branch is simply behind and hasn\'t split off, git makes no new commit; it just moves the branch label forward to the latest commit. It only winds forward along commits that already exist.';
+  String get bdHelpFastForwardInGit => 'When your branch is simply behind and hasn\'t split off, git makes no new commit; it just moves the branch label forward to the latest commit. It only winds forward along commits that already exist.';
 
   @override
-  String get bdHelpFastForwardWhy =>
-      'History stays in one clean line and there\'s nothing to conflict. If both sides have different new commits (history has split) it can\'t wind forward, so fast-forward only stops and you need a merge or rebase. A push rejected as non-fast-forward fails for the same reason.';
+  String get bdHelpFastForwardWhy => 'History stays in one clean line and there\'s nothing to conflict. If both sides have different new commits (history has split) it can\'t wind forward, so fast-forward only stops and you need a merge or rebase. A push rejected as non-fast-forward fails for the same reason.';
 
   @override
   String get bdHelpMergeCommitTitle => 'Merge commit';
 
   @override
-  String get bdHelpMergeCommitWord =>
-      'To merge is to join; two roads becoming one.';
+  String get bdHelpMergeCommitWord => 'To merge is to join; two roads becoming one.';
 
   @override
-  String get bdHelpMergeCommitInGit =>
-      'Keeps both lines of history as they are and adds one new commit whose parents are both of them. The history shows exactly what was joined and when.';
+  String get bdHelpMergeCommitInGit => 'Keeps both lines of history as they are and adds one new commit whose parents are both of them. The history shows exactly what was joined and when.';
 
   @override
-  String get bdHelpMergeCommitWhy =>
-      'It never rewrites commits you\'ve already shared, so it\'s the safest. Good for branches you share with others. The trade-off is extra merge commits in the history.';
+  String get bdHelpMergeCommitWhy => 'It never rewrites commits you\'ve already shared, so it\'s the safest. Good for branches you share with others. The trade-off is extra merge commits in the history.';
 
   @override
   String get bdHelpRebaseTitle => 'Rebase';
 
   @override
-  String get bdHelpRebaseWord =>
-      'Base is what something stands on; to rebase is to set it on a new base.';
+  String get bdHelpRebaseWord => 'Base is what something stands on; to rebase is to set it on a new base.';
 
   @override
-  String get bdHelpRebaseInGit =>
-      'Takes your commits off and replays them one by one on top of the commits you just got. The changes are the same, but they become new commits (C\', D\') and the history is a single line.';
+  String get bdHelpRebaseInGit => 'Takes your commits off and replays them one by one on top of the commits you just got. The changes are the same, but they become new commits (C\', D\') and the history is a single line.';
 
   @override
-  String get bdHelpRebaseWhy =>
-      'Keeps history clean with no merge commits. Use it only on commits you haven\'t pushed yet: rebasing pushed commits makes your history differ from everyone else\'s and needs a force push.';
+  String get bdHelpRebaseWhy => 'Keeps history clean with no merge commits. Use it only on commits you haven\'t pushed yet: rebasing pushed commits makes your history differ from everyone else\'s and needs a force push.';
 
   @override
   String get bdTabTags => 'Tags';
@@ -2192,26 +2080,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bdMergeFastForward => 'Fast-forward';
 
   @override
-  String get bdMergeFastForwardWhen =>
-      'Just moves the label forward, no new commit. History stays in one line.';
+  String get bdMergeFastForwardWhen => 'Just moves the label forward, no new commit. History stays in one line.';
 
   @override
-  String get bdMergeFastForwardDisabled =>
-      'Not possible: the current branch has its own new commits (history has split).';
+  String get bdMergeFastForwardDisabled => 'Not possible: the current branch has its own new commits (history has split).';
 
   @override
   String get bdMergeMergeCommit => 'Merge commit';
 
   @override
-  String get bdMergeMergeCommitWhen =>
-      'Keeps both histories and joins them with a merge commit. The safest choice.';
+  String get bdMergeMergeCommitWhen => 'Keeps both histories and joins them with a merge commit. The safest choice.';
 
   @override
   String get bdMergeSquash => 'Squash';
 
   @override
-  String get bdMergeSquashWhen =>
-      'Squashes the branch\'s commits into one. One feature, one commit.';
+  String get bdMergeSquashWhen => 'Squashes the branch\'s commits into one. One feature, one commit.';
 
   @override
   String bdMergeSquashNote(String source) {
@@ -2285,8 +2169,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bdTagsEmptyTitle => 'No tags yet';
 
   @override
-  String get bdTagsEmptyMessage =>
-      'A tag is a name for a specific commit, usually a release version like v1.0.0.';
+  String get bdTagsEmptyMessage => 'A tag is a name for a specific commit, usually a release version like v1.0.0.';
 
   @override
   String bdTagsPushAfter(String remote) {
@@ -2303,8 +2186,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bdTagNameInvalid => 'No spaces, .., or ~ ^ : ? * [ \\';
 
   @override
-  String get bdTagNameNotSemVer =>
-      'Not a version (v1.2.3). Allowed, but releases should use versions.';
+  String get bdTagNameNotSemVer => 'Not a version (v1.2.3). Allowed, but releases should use versions.';
 
   @override
   String get bdTagNameMissingV => 'Release tags usually start with v (v1.2.3).';
@@ -2371,8 +2253,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bdPrNotGitHubTitle => 'Not a GitHub repository';
 
   @override
-  String get bdPrNotGitHubMessage =>
-      'Pull requests need a GitHub repository — gh only works with GitHub.';
+  String get bdPrNotGitHubMessage => 'Pull requests need a GitHub repository — gh only works with GitHub.';
 
   @override
   String get bdPrGhRequiredTitle => 'Needs gh';
@@ -2384,8 +2265,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bdPrOnDefaultTitle => 'You\'re on the default branch';
 
   @override
-  String get bdPrOnDefaultMessage =>
-      'Pull requests come from a work branch. Create one in Branches.';
+  String get bdPrOnDefaultMessage => 'Pull requests come from a work branch. Create one in Branches.';
 
   @override
   String bdPrNoneTitle(String head) {
@@ -2437,12 +2317,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bdPrReviewRequired => 'Review required';
 
   @override
-  String get bdPrBlockedDraft =>
-      'Draft pull requests can\'t be merged. Mark it ready for review on GitHub.';
+  String get bdPrBlockedDraft => 'Draft pull requests can\'t be merged. Mark it ready for review on GitHub.';
 
   @override
-  String get bdPrBlockedConflict =>
-      'It conflicts with the base branch. Merge the base branch in and resolve the conflicts.';
+  String get bdPrBlockedConflict => 'It conflicts with the base branch. Merge the base branch in and resolve the conflicts.';
 
   @override
   String bdPrBlockedChecks(String names) {
@@ -2461,8 +2339,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get bdPrBlockedReview =>
-      'A review may be required. If merging is refused, check on GitHub.';
+  String get bdPrBlockedReview => 'A review may be required. If merging is refused, check on GitHub.';
 
   @override
   String get bdPrMethodMerge => 'Merge commit';
@@ -2502,12 +2379,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bdReleaseNoTags => 'No releases yet';
 
   @override
-  String get bdReleaseIntro =>
-      'Walks you through version bump → PR → merge → tag → CI.';
+  String get bdReleaseIntro => 'Walks you through version bump → PR → merge → tag → CI.';
 
   @override
-  String get bdReleaseNeedsGitHub =>
-      'The release wizard needs a GitHub repository. You can still create tags in Tags.';
+  String get bdReleaseNeedsGitHub => 'The release wizard needs a GitHub repository. You can still create tags in Tags.';
 
   @override
   String get bdReleaseStart => 'New release';
@@ -2532,8 +2407,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get bdReleaseCancelAfterTag =>
-      'The tag is already pushed. This only closes the wizard; check CI and the release on GitHub.';
+  String get bdReleaseCancelAfterTag => 'The tag is already pushed. This only closes the wizard; check CI and the release on GitHub.';
 
   @override
   String bdReleaseDone(String tag) {
@@ -2602,8 +2476,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bdCheckGitHub => 'GitHub remote and gh login';
 
   @override
-  String get bdCheckGitBash =>
-      'Git for Windows bash (for the version bump script)';
+  String get bdCheckGitBash => 'Git for Windows bash (for the version bump script)';
 
   @override
   String bdCheckChangesSince(int count, String tag) {
@@ -2620,8 +2493,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bdCheckFirstRelease => 'This is the first release';
 
   @override
-  String get bdCheckNoWorkflow =>
-      'No workflow runs on tags, so the app creates the GitHub release.';
+  String get bdCheckNoWorkflow => 'No workflow runs on tags, so the app creates the GitHub release.';
 
   @override
   String bdCheckWorkflowCi(String file) {
@@ -2637,8 +2509,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bdManualBuildTitle => 'Build check before tagging (recommended)';
 
   @override
-  String get bdManualBuildWhy =>
-      'Files that affect the build changed since the last release. Check that every platform builds before tagging. A manual run never publishes.';
+  String get bdManualBuildWhy => 'Files that affect the build changed since the last release. Check that every platform builds before tagging. A manual run never publishes.';
 
   @override
   String get bdManualBuildStart => 'Run build check';
@@ -2795,12 +2666,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bdRunSkipped => 'skipped';
 
   @override
-  String get bdHelpCaptionAfterSquash =>
-      'After a squash merge — one new commit S on main';
+  String get bdHelpCaptionAfterSquash => 'After a squash merge — one new commit S on main';
 
   @override
-  String get bdHelpCaptionTag =>
-      'v1.0.0 and v1.1.0 stay put; main keeps moving forward';
+  String get bdHelpCaptionTag => 'v1.0.0 and v1.1.0 stay put; main keeps moving forward';
 
   @override
   String get bdHelpLinkGitHubMergeMethods => 'GitHub — About merge methods';
@@ -2815,12 +2684,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bdHelpSquashWord => 'To press something flat.';
 
   @override
-  String get bdHelpSquashInGit =>
-      'Presses the branch\'s commits into a single commit on the target branch. The changes are the same; only the number of commits becomes one.';
+  String get bdHelpSquashInGit => 'Presses the branch\'s commits into a single commit on the target branch. The changes are the same; only the number of commits becomes one.';
 
   @override
-  String get bdHelpSquashWhy =>
-      'Keeps work-in-progress commits like \'fix typo\' out of the main history: one feature, one commit. Common when merging pull requests. The original commits don\'t reach the default branch, so delete the merged branch instead of reusing it.';
+  String get bdHelpSquashWhy => 'Keeps work-in-progress commits like \'fix typo\' out of the main history: one feature, one commit. Common when merging pull requests. The original commits don\'t reach the default branch, so delete the merged branch instead of reusing it.';
 
   @override
   String get bdHelpTagTitle => 'Tags (annotated and lightweight)';
@@ -2829,19 +2696,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bdHelpTagWord => 'A tag is a label you attach to something.';
 
   @override
-  String get bdHelpTagInGit =>
-      'A name attached to one commit. A branch label moves forward with new commits; a tag stays on its commit. An annotated tag also stores who made it, when, and a message; a lightweight tag stores only the name.';
+  String get bdHelpTagInGit => 'A name attached to one commit. A branch label moves forward with new commits; a tag stays on its commit. An annotated tag also stores who made it, when, and a message; a lightweight tag stores only the name.';
 
   @override
-  String get bdHelpTagWhy =>
-      'Use annotated tags for release versions (v1.2.0): the release is recorded, and GitHub releases and CI run from the tag. Don\'t move or delete a pushed tag; if it\'s wrong, tag the next number.';
+  String get bdHelpTagWhy => 'Use annotated tags for release versions (v1.2.0): the release is recorded, and GitHub releases and CI run from the tag. Don\'t move or delete a pushed tag; if it\'s wrong, tag the next number.';
 
   @override
   String get bdHeaderMergedAndGone => 'Merged · deleted on remote';
 
   @override
-  String get bdHeaderMergedAndGoneTooltip =>
-      'This branch is already merged into the default branch and was deleted on the remote. Publishing it again would bring the deleted branch back.';
+  String get bdHeaderMergedAndGoneTooltip => 'This branch is already merged into the default branch and was deleted on the remote. Publishing it again would bring the deleted branch back.';
 
   @override
   String bdBannerMergedAndGone(String branch) {
@@ -2873,8 +2737,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bdCiTitle => 'Workflow runs';
 
   @override
-  String get bdCiNotGitHubMessage =>
-      'Actions need a GitHub repository — gh only works with GitHub.';
+  String get bdCiNotGitHubMessage => 'Actions need a GitHub repository — gh only works with GitHub.';
 
   @override
   String bdCiEmptyTitle(String branch) {
@@ -2882,8 +2745,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get bdCiEmptyMessage =>
-      'Runs triggered by pushes, pull requests or tags show up here.';
+  String get bdCiEmptyMessage => 'Runs triggered by pushes, pull requests or tags show up here.';
 
   @override
   String get bdCiRerun => 'Re-run';
@@ -2895,8 +2757,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bdCiDispatch => 'Run workflow';
 
   @override
-  String get bdCiDispatchNeedsPush =>
-      'Manual runs need a branch that\'s on the remote. Publish it first.';
+  String get bdCiDispatchNeedsPush => 'Manual runs need a branch that\'s on the remote. Publish it first.';
 
   @override
   String bdCiDispatchTitle(String file) {
@@ -2953,8 +2814,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bdPrCheckout => 'Check out this PR';
 
   @override
-  String get bdPrCheckoutWhy =>
-      'Fetches the PR\'s branch and switches to it — to try it out or fix something.';
+  String get bdPrCheckoutWhy => 'Fetches the PR\'s branch and switches to it — to try it out or fix something.';
 
   @override
   String bdDonePrCheckout(int number, String branch) {
@@ -2994,8 +2854,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get bdReleaseDeleteMessage =>
-      'The GitHub release and its files are removed. People may have downloaded them already.';
+  String get bdReleaseDeleteMessage => 'The GitHub release and its files are removed. People may have downloaded them already.';
 
   @override
   String bdReleaseDeleteTagToo(String tag) {
@@ -3037,16 +2896,13 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get bdTagVersionMismatchWhy =>
-      'A release tag goes on the commit that bumps the version — the release wizard does the bump PR through the tag in order.';
+  String get bdTagVersionMismatchWhy => 'A release tag goes on the commit that bumps the version — the release wizard does the bump PR through the tag in order.';
 
   @override
-  String get bdTagVersionMismatchCi =>
-      'In this repository pushing a tag makes CI build the release, and CI stops when the versions differ.';
+  String get bdTagVersionMismatchCi => 'In this repository pushing a tag makes CI build the release, and CI stops when the versions differ.';
 
   @override
-  String get bdTagVersionMismatchBlocked =>
-      'So pushing is blocked. Turn off push to create it only locally.';
+  String get bdTagVersionMismatchBlocked => 'So pushing is blocked. Turn off push to create it only locally.';
 
   @override
   String get bdTagOpenReleaseWizard => 'Open the release wizard';
@@ -3064,8 +2920,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bdChangesAmend => 'Amend';
 
   @override
-  String get bdChangesAmendPushedWarning =>
-      'This commit is already on the remote. Amending splits the history and needs a force push (force-with-lease).';
+  String get bdChangesAmendPushedWarning => 'This commit is already on the remote. Amending splits the history and needs a force push (force-with-lease).';
 
   @override
   String get bdDoneAmend => 'Amended the last commit';
@@ -3126,20 +2981,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bdConflictApply => 'Apply and mark resolved';
 
   @override
-  String get bdConflictApplyNote =>
-      'Rewrites the file as you chose and runs git add. To edit by hand, open it in your editor.';
+  String get bdConflictApplyNote => 'Rewrites the file as you chose and runs git add. To edit by hand, open it in your editor.';
 
   @override
-  String get bdConflictBroken =>
-      'The conflict markers are damaged, so the app can\'t read them. Fix the file in your editor.';
+  String get bdConflictBroken => 'The conflict markers are damaged, so the app can\'t read them. Fix the file in your editor.';
 
   @override
-  String get bdConflictNone =>
-      'This file has no conflict markers. If you already fixed it, just press Mark resolved.';
+  String get bdConflictNone => 'This file has no conflict markers. If you already fixed it, just press Mark resolved.';
 
   @override
-  String get bdConflictUnreadable =>
-      'Can\'t read the file (it may be binary or deleted). Use \"Use mine\" or \"Use incoming\" instead.';
+  String get bdConflictUnreadable => 'Can\'t read the file (it may be binary or deleted). Use \"Use mine\" or \"Use incoming\" instead.';
 
   @override
   String bdDoneConflictResolved(String name) {
@@ -3150,8 +3001,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bdChangesOperationTitle => 'The operation isn\'t finished yet';
 
   @override
-  String get bdChangesOperationMessage =>
-      'All conflicts are resolved. Press Continue above to finish, or Abort to go back to before it started.';
+  String get bdChangesOperationMessage => 'All conflicts are resolved. Press Continue above to finish, or Abort to go back to before it started.';
 
   @override
   String get bdConflictReopen => 'Back to conflicted';
@@ -3165,8 +3015,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bdConflictReopenConfirm => 'Reopen conflict';
 
   @override
-  String get bdConflictMarkersLeftTitle =>
-      'Conflict markers are still in the file';
+  String get bdConflictMarkersLeftTitle => 'Conflict markers are still in the file';
 
   @override
   String bdConflictMarkersLeftMessage(String path, int count) {
@@ -3242,8 +3091,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bdDoneStashDropped => 'Stash deleted';
 
   @override
-  String get bdDoneStashAndRetry =>
-      'Stashed your changes and ran it again. Restore them from Stashes in Changes.';
+  String get bdDoneStashAndRetry => 'Stashed your changes and ran it again. Restore them from Stashes in Changes.';
 
   @override
   String get bdPushOptionsTooltip => 'Push options';
@@ -3255,15 +3103,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bdPushFollowTags => 'Push tags too (--follow-tags)';
 
   @override
-  String get bdPushFollowTagsWhy =>
-      'Also pushes annotated tags on the commits you push. Applies to this repository only.';
+  String get bdPushFollowTagsWhy => 'Also pushes annotated tags on the commits you push. Applies to this repository only.';
 
   @override
   String get bdPushForceTitle => 'Force push (force-with-lease)';
 
   @override
-  String get bdPushForceWhy =>
-      'Only after amending or rebasing commits you already pushed. git refuses if the remote has commits you haven\'t seen, so nobody else\'s work is overwritten.';
+  String get bdPushForceWhy => 'Only after amending or rebasing commits you already pushed. git refuses if the remote has commits you haven\'t seen, so nobody else\'s work is overwritten.';
 
   @override
   String bdPushForceBlockedDefault(String branch) {
@@ -3287,8 +3133,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bdOperationSkip => 'Skip';
 
   @override
-  String get bdOperationSkipTooltip =>
-      'Drops the conflicting commit and continues the rebase';
+  String get bdOperationSkipTooltip => 'Drops the conflicting commit and continues the rebase';
 
   @override
   String get bdDoneSkip => 'Skipped the commit';
@@ -3321,8 +3166,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bdCleanupMerged => 'Merged';
 
   @override
-  String get bdCleanupGoneNotMerged =>
-      'Gone on remote · not merged — its commits get hard to find';
+  String get bdCleanupGoneNotMerged => 'Gone on remote · not merged — its commits get hard to find';
 
   @override
   String bdCleanupConfirm(int count) {
@@ -3378,8 +3222,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get bdTagsCheckoutMessage =>
-      'You\'ll see the files exactly as they were at the tag. You won\'t be on any branch (\'detached HEAD\'), so create a branch before committing here.';
+  String get bdTagsCheckoutMessage => 'You\'ll see the files exactly as they were at the tag. You won\'t be on any branch (\'detached HEAD\'), so create a branch before committing here.';
 
   @override
   String bdDoneCheckoutTag(String tag) {
@@ -3387,8 +3230,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get bdBannerDetached =>
-      'You\'re not on a branch. Create one before committing here';
+  String get bdBannerDetached => 'You\'re not on a branch. Create one before committing here';
 
   @override
   String get bdHistoryTitle => 'History';
@@ -3414,57 +3256,46 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bdHelpLinkStashing => 'Pro Git — Stashing and Cleaning';
 
   @override
-  String get bdHelpCaptionStash =>
-      'Uncommitted changes W put aside at the top of the stash list — main is unchanged';
+  String get bdHelpCaptionStash => 'Uncommitted changes W put aside at the top of the stash list — main is unchanged';
 
   @override
   String get bdHelpStashTitle => 'Stash';
 
   @override
-  String get bdHelpStashWord =>
-      'To stash is to put something away for later, like into a drawer.';
+  String get bdHelpStashWord => 'To stash is to put something away for later, like into a drawer.';
 
   @override
-  String get bdHelpStashInGit =>
-      'Saves your uncommitted changes outside the branch history and resets the working tree to clean. Stashes pile up in a list (newest on top) and can be applied later on any branch.';
+  String get bdHelpStashInGit => 'Saves your uncommitted changes outside the branch history and resets the working tree to clean. Stashes pile up in a list (newest on top) and can be applied later on any branch.';
 
   @override
-  String get bdHelpStashWhy =>
-      'Use it when it\'s too early to commit but you need to switch branches or pull. \'pop\' applies and removes it; \'apply\' keeps it in the list. Add a note — old stashes are easy to forget.';
+  String get bdHelpStashWhy => 'Use it when it\'s too early to commit but you need to switch branches or pull. \'pop\' applies and removes it; \'apply\' keeps it in the list. Add a note — old stashes are easy to forget.';
 
   @override
-  String get bdHelpCaptionDetached =>
-      'HEAD points straight at the v1.0.0 commit, not at a branch';
+  String get bdHelpCaptionDetached => 'HEAD points straight at the v1.0.0 commit, not at a branch';
 
   @override
   String get bdHelpDetachedTitle => 'Detached HEAD';
 
   @override
-  String get bdHelpDetachedWord =>
-      'Detached means separated. HEAD means \'where you are now\'.';
+  String get bdHelpDetachedWord => 'Detached means separated. HEAD means \'where you are now\'.';
 
   @override
-  String get bdHelpDetachedInGit =>
-      'Normally HEAD points at a branch label, and committing moves that label forward. Checking out a tag or commit makes HEAD point straight at the commit, detached from any branch.';
+  String get bdHelpDetachedInGit => 'Normally HEAD points at a branch label, and committing moves that label forward. Checking out a tag or commit makes HEAD point straight at the commit, detached from any branch.';
 
   @override
-  String get bdHelpDetachedWhy =>
-      'Safe for trying out or comparing an old version. Commits made here belong to no branch and are hard to find once you move away — create a branch first if you want to commit.';
+  String get bdHelpDetachedWhy => 'Safe for trying out or comparing an old version. Commits made here belong to no branch and are hard to find once you move away — create a branch first if you want to commit.';
 
   @override
   String get bdHelpForceTitle => 'Force push (force-with-lease)';
 
   @override
-  String get bdHelpForceWord =>
-      'Force means by force; a lease is an agreement — here, \'only if it\'s still how I last saw it\'.';
+  String get bdHelpForceWord => 'Force means by force; a lease is an agreement — here, \'only if it\'s still how I last saw it\'.';
 
   @override
-  String get bdHelpForceInGit =>
-      'After amending or rebasing commits you already pushed, your history has split from the remote and a normal push is rejected. A force push replaces the remote branch with yours. --force-with-lease only does so if the remote is exactly as you last fetched it, and refuses if someone pushed in between.';
+  String get bdHelpForceInGit => 'After amending or rebasing commits you already pushed, your history has split from the remote and a normal push is rejected. A force push replaces the remote branch with yours. --force-with-lease only does so if the remote is exactly as you last fetched it, and refuses if someone pushed in between.';
 
   @override
-  String get bdHelpForceWhy =>
-      'Only on a work branch you use alone, after tidying its history. Never on shared branches, especially main. This app doesn\'t offer plain --force, and blocks force push on the default branch.';
+  String get bdHelpForceWhy => 'Only on a work branch you use alone, after tidying its history. Never on shared branches, especially main. This app doesn\'t offer plain --force, and blocks force push on the default branch.';
 
   @override
   String get bdMenuBrowse => 'Open repository in browser';
@@ -3517,8 +3348,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bdLoginSshRecommended => 'SSH recommended';
 
   @override
-  String get bdLoginSshWhy =>
-      'With an SSH remote or an SSH session, logging in over HTTPS can leave git push authenticating separately.';
+  String get bdLoginSshWhy => 'With an SSH remote or an SSH session, logging in over HTTPS can leave git push authenticating separately.';
 
   @override
   String get bdLoginStepKey => 'Check for an SSH key';
@@ -3527,15 +3357,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bdLoginStepKeyFound => 'This key will be added to GitHub';
 
   @override
-  String get bdLoginStepKeyMissing =>
-      'No key found. Create one in a terminal with the command below (a passphrase is recommended). The app never handles keys or passphrases.';
+  String get bdLoginStepKeyMissing => 'No key found. Create one in a terminal with the command below (a passphrase is recommended). The app never handles keys or passphrases.';
 
   @override
   String get bdLoginStepLogin => 'Log in';
 
   @override
-  String get bdLoginStepLoginWhy =>
-      'Log in to GitHub in the browser and enter a one-time code.';
+  String get bdLoginStepLoginWhy => 'Log in to GitHub in the browser and enter a one-time code.';
 
   @override
   String get bdLoginLoggedIn => 'You\'re logged in';
@@ -3544,33 +3372,28 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bdLoginStart => 'Log in with browser';
 
   @override
-  String get bdLoginDeviceHowTo =>
-      'If no browser opens, or you\'re on a remote server, open this address on any device and enter the code.';
+  String get bdLoginDeviceHowTo => 'If no browser opens, or you\'re on a remote server, open this address on any device and enter the code.';
 
   @override
   String get bdLoginStepUpload => 'Add the public key';
 
   @override
-  String get bdLoginStepUploadWhy =>
-      'Registers the chosen public key with your GitHub account. Skipped if it\'s already there.';
+  String get bdLoginStepUploadWhy => 'Registers the chosen public key with your GitHub account. Skipped if it\'s already there.';
 
   @override
   String get bdLoginUploadKey => 'Add key';
 
   @override
-  String get bdLoginNeedsKeyScope =>
-      'Missing permission to add keys. Add it with the command below in a terminal, then try again.';
+  String get bdLoginNeedsKeyScope => 'Missing permission to add keys. Add it with the command below in a terminal, then try again.';
 
   @override
   String get bdLoginStepTest => 'Test the connection';
 
   @override
-  String get bdLoginStepTestWhy =>
-      'Connects to GitHub over SSH. The first time, github.com\'s host key is added to known_hosts.';
+  String get bdLoginStepTestWhy => 'Connects to GitHub over SSH. The first time, github.com\'s host key is added to known_hosts.';
 
   @override
-  String get bdLoginSshFailed =>
-      'Couldn\'t connect. Check that the key is added to GitHub and loaded in ssh-agent.';
+  String get bdLoginSshFailed => 'Couldn\'t connect. Check that the key is added to GitHub and loaded in ssh-agent.';
 
   @override
   String get bdLoginTest => 'Test';
@@ -3582,15 +3405,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bdLoginStepProtocol => 'Use SSH for git';
 
   @override
-  String get bdLoginStepProtocolWhy =>
-      'gh will use SSH addresses from now on. Switch existing HTTPS remotes in Remotes → Change URL.';
+  String get bdLoginStepProtocolWhy => 'gh will use SSH addresses from now on. Switch existing HTTPS remotes in Remotes → Change URL.';
 
   @override
   String get bdLoginUseSshProtocol => 'Use SSH';
 
   @override
-  String get bdLoginAgentTip =>
-      'To avoid typing the passphrase every time, use ssh-add --apple-use-keychain on macOS, or ssh-agent elsewhere.';
+  String get bdLoginAgentTip => 'To avoid typing the passphrase every time, use ssh-add --apple-use-keychain on macOS, or ssh-agent elsewhere.';
 
   @override
   String get bdDoneProtocolSsh => 'gh now uses SSH for git';
@@ -3601,12 +3422,10 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get bdForkAddWhy =>
-      'Add the original repository as the upstream remote to bring in its new commits.';
+  String get bdForkAddWhy => 'Add the original repository as the upstream remote to bring in its new commits.';
 
   @override
-  String get bdForkSyncWhy =>
-      'Fetches new commits from the original (upstream) and merges them into your current branch.';
+  String get bdForkSyncWhy => 'Fetches new commits from the original (upstream) and merges them into your current branch.';
 
   @override
   String get bdForkAddUpstream => 'Add upstream';
@@ -3626,8 +3445,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get bdReleaseNeedsRemote =>
-      'No remote to release to. Publish it from Remotes first.';
+  String get bdReleaseNeedsRemote => 'No remote to release to. Publish it from Remotes first.';
 
   @override
   String bdReleaseNeedsFiles(String files) {
@@ -3635,12 +3453,10 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get bdReleaseDirectOnlyNotGitHub =>
-      'Not a GitHub repository, so this uses direct commit (check → version → tag). Do PRs, release notes and CI on your host\'s website.';
+  String get bdReleaseDirectOnlyNotGitHub => 'Not a GitHub repository, so this uses direct commit (check → version → tag). Do PRs, release notes and CI on your host\'s website.';
 
   @override
-  String get bdReleaseDirectOnly =>
-      'Without gh, only direct commit is available.';
+  String get bdReleaseDirectOnly => 'Without gh, only direct commit is available.';
 
   @override
   String get bdReleaseDirectMode => 'Direct commit';
@@ -3656,8 +3472,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get bdVersionUsesScript =>
-      'Uses the repository\'s scripts/bump-version.sh (lock files included, same result as the conventions).';
+  String get bdVersionUsesScript => 'Uses the repository\'s scripts/bump-version.sh (lock files included, same result as the conventions).';
 
   @override
   String bdVersionLockFiles(String files) {
@@ -3676,8 +3491,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bdVersionFileTitle => 'Version file';
 
   @override
-  String get bdVersionFileWhy =>
-      'For when the version file isn\'t found or is the wrong one. The first group in the pattern is the version. Applies to this repository only.';
+  String get bdVersionFileWhy => 'For when the version file isn\'t found or is the wrong one. The first group in the pattern is the version. Applies to this repository only.';
 
   @override
   String get bdVersionFilePath => 'File (path in the repository)';
@@ -3691,8 +3505,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get bdVersionFileNotFound =>
-      'File missing, or no version matches the pattern';
+  String get bdVersionFileNotFound => 'File missing, or no version matches the pattern';
 
   @override
   String get bdVersionFileAuto => 'Back to auto-detect';
@@ -3737,8 +3550,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get bdOperationAbortPickMessage =>
-      'Goes back to before it started. Any conflict resolutions you\'ve made are lost.';
+  String get bdOperationAbortPickMessage => 'Goes back to before it started. Any conflict resolutions you\'ve made are lost.';
 
   @override
   String get bdHistoryBranchLabel => 'Branch';
@@ -3774,12 +3586,10 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get bdHistoryRevertMessage =>
-      'Makes a new commit that undoes this one. History isn\'t rewritten, so it\'s safe even for commits you\'ve pushed.';
+  String get bdHistoryRevertMessage => 'Makes a new commit that undoes this one. History isn\'t rewritten, so it\'s safe even for commits you\'ve pushed.';
 
   @override
-  String get bdHistoryRevertUnpushed =>
-      'Makes a new commit that undoes this one. Since it isn\'t pushed yet, you could also amend or fix it in a new commit.';
+  String get bdHistoryRevertUnpushed => 'Makes a new commit that undoes this one. Since it isn\'t pushed yet, you could also amend or fix it in a new commit.';
 
   @override
   String get bdHistoryCherryPick => 'Bring in';
@@ -3795,8 +3605,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get bdHistoryCherryPickMessage =>
-      'Copies the same change onto your current branch as a new commit — for taking just one commit without merging the whole branch.';
+  String get bdHistoryCherryPickMessage => 'Copies the same change onto your current branch as a new commit — for taking just one commit without merging the whole branch.';
 
   @override
   String bdDoneRevert(String hash) {
@@ -3812,8 +3621,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bdMenuPalette => 'Command palette';
 
   @override
-  String get bdPaletteHint =>
-      'What do you want to do? (e.g. push, branch, tag)';
+  String get bdPaletteHint => 'What do you want to do? (e.g. push, branch, tag)';
 
   @override
   String get bdPaletteEmpty => 'No matching commands';
@@ -3844,64 +3652,52 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bdHelpCaptionAfterRevert => 'C stays; a new commit C⁻ undoes it';
 
   @override
-  String get bdHelpCaptionAfterCherryPick =>
-      'The change from feature\'s D is copied onto main as a new commit D\'';
+  String get bdHelpCaptionAfterCherryPick => 'The change from feature\'s D is copied onto main as a new commit D\'';
 
   @override
   String get bdHelpRevertTitle => 'Revert';
 
   @override
-  String get bdHelpRevertWord =>
-      'To revert is to go back to how something was.';
+  String get bdHelpRevertWord => 'To revert is to go back to how something was.';
 
   @override
-  String get bdHelpRevertInGit =>
-      'Doesn\'t delete the commit — it adds a new commit that applies the opposite change. Both the original and the revert stay in history.';
+  String get bdHelpRevertInGit => 'Doesn\'t delete the commit — it adds a new commit that applies the opposite change. Both the original and the revert stay in history.';
 
   @override
-  String get bdHelpRevertWhy =>
-      'Use it when a commit you\'ve already pushed causes trouble. History isn\'t rewritten, so nobody else is affected and no force push is needed. For commits not yet pushed, amending is cleaner.';
+  String get bdHelpRevertWhy => 'Use it when a commit you\'ve already pushed causes trouble. History isn\'t rewritten, so nobody else is affected and no force push is needed. For commits not yet pushed, amending is cleaner.';
 
   @override
   String get bdHelpCaptionBeforeReset => 'Before: main points at D';
 
   @override
-  String get bdHelpCaptionAfterReset =>
-      'After: main moved to B. C and D look gone but are still in the reflog';
+  String get bdHelpCaptionAfterReset => 'After: main moved to B. C and D look gone but are still in the reflog';
 
   @override
-  String get bdHelpCaptionReflog =>
-      'The places HEAD has been are listed in order, so you can go back to D';
+  String get bdHelpCaptionReflog => 'The places HEAD has been are listed in order, so you can go back to D';
 
   @override
   String get bdHelpResetTitle => 'Reset';
 
   @override
-  String get bdHelpResetWord =>
-      'To reset is to put something back where it was.';
+  String get bdHelpResetWord => 'To reset is to put something back where it was.';
 
   @override
-  String get bdHelpResetInGit =>
-      'Moves the branch back to an earlier commit. The commits look deleted but stay in the reflog for a while. --soft keeps the changes staged, --keep protects your uncommitted work, and --hard throws that work away too.';
+  String get bdHelpResetInGit => 'Moves the branch back to an earlier commit. The commits look deleted but stay in the reflog for a while. --soft keeps the changes staged, --keep protects your uncommitted work, and --hard throws that work away too.';
 
   @override
-  String get bdHelpResetWhy =>
-      'Use it to undo commits you haven\'t pushed yet. Don\'t use it on pushed commits: it disagrees with everyone else\'s history, so use revert. This app only uses the safe --soft and --keep.';
+  String get bdHelpResetWhy => 'Use it to undo commits you haven\'t pushed yet. Don\'t use it on pushed commits: it disagrees with everyone else\'s history, so use revert. This app only uses the safe --soft and --keep.';
 
   @override
   String get bdHelpReflogTitle => 'Reflog';
 
   @override
-  String get bdHelpReflogWord =>
-      'Reflog is short for \'reference log\': a record of where a name pointed.';
+  String get bdHelpReflogWord => 'Reflog is short for \'reference log\': a record of where a name pointed.';
 
   @override
-  String get bdHelpReflogInGit =>
-      'A record, kept only on this computer, of where HEAD and your branches pointed. Even after you undo a commit or delete a branch, you can usually find that point again for about 90 days.';
+  String get bdHelpReflogInGit => 'A record, kept only on this computer, of where HEAD and your branches pointed. Even after you undo a commit or delete a branch, you can usually find that point again for about 90 days.';
 
   @override
-  String get bdHelpReflogWhy =>
-      'When you think \'I made a mistake\', look at the reflog first. It exists only on this computer, not on the remote or another machine, and git cleans up old entries.';
+  String get bdHelpReflogWhy => 'When you think \'I made a mistake\', look at the reflog first. It exists only on this computer, not on the remote or another machine, and git cleans up old entries.';
 
   @override
   String get bdHistoryGraph => 'Graph';
@@ -3910,23 +3706,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bdHistoryAllBranches => 'All branches';
 
   @override
-  String get bdHelpCaptionGraphMerged =>
-      'main and feature split apart and meet again at M (the hollow dot is a merge commit)';
+  String get bdHelpCaptionGraphMerged => 'main and feature split apart and meet again at M (the hollow dot is a merge commit)';
 
   @override
   String get bdHelpCommitGraphTitle => 'Reading the commit graph';
 
   @override
-  String get bdHelpCommitGraphWord =>
-      'A graph is a picture made of dots and lines.';
+  String get bdHelpCommitGraphWord => 'A graph is a picture made of dots and lines.';
 
   @override
-  String get bdHelpCommitGraphInGit =>
-      'Dots are commits and lines connect each commit to its parent. Newest is at the top. A line that splits is where a branch began; two lines that join are a merge. A hollow dot is a merge commit, and a dot with a ring is where you are now (HEAD).';
+  String get bdHelpCommitGraphInGit => 'Dots are commits and lines connect each commit to its parent. Newest is at the top. A line that splits is where a branch began; two lines that join are a merge. A hollow dot is a merge commit, and a dot with a ring is where you are now (HEAD).';
 
   @override
-  String get bdHelpCommitGraphWhy =>
-      'See at a glance where your branch left main and where merges happened. In a narrow window only six lines are drawn; any more overlap on the right-most one.';
+  String get bdHelpCommitGraphWhy => 'See at a glance where your branch left main and where merges happened. In a narrow window only six lines are drawn; any more overlap on the right-most one.';
 
   @override
   String get bdRecoveryTitle => 'Undo a mistake';
@@ -3948,8 +3740,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get bdRecoveryUndoCommitPushed =>
-      'This commit is already on the remote. Undoing it here leaves it there, so pushing again needs a force push and your history no longer matches everyone else\'s. For a pushed commit, Revert in the History tab is safer.';
+  String get bdRecoveryUndoCommitPushed => 'This commit is already on the remote. Undoing it here leaves it there, so pushing again needs a force push and your history no longer matches everyone else\'s. For a pushed commit, Revert in the History tab is safer.';
 
   @override
   String get bdRecoveryUndoCommitConfirm => 'Undo commit';
@@ -3961,15 +3752,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bdRecoveryStash => 'Set my changes aside for now';
 
   @override
-  String get bdRecoveryStashWhy =>
-      'Keeps them in a stash so you can bring them back later.';
+  String get bdRecoveryStashWhy => 'Keeps them in a stash so you can bring them back later.';
 
   @override
   String get bdRecoveryHistory => 'Go back to an earlier state';
 
   @override
-  String get bdRecoveryHistoryHint =>
-      'Where HEAD has been. Even after undoing commits or deleting a branch, it usually stays for 90 days.';
+  String get bdRecoveryHistoryHint => 'Where HEAD has been. Even after undoing commits or deleting a branch, it usually stays for 90 days.';
 
   @override
   String get bdRecoveryNow => 'Now';
@@ -4022,8 +3811,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bdRecoveryRescue => 'Create a branch here';
 
   @override
-  String get bdDoneUndoCommit =>
-      'Undid the last commit (its changes stay staged)';
+  String get bdDoneUndoCommit => 'Undid the last commit (its changes stay staged)';
 
   @override
   String bdDoneGoBack(String target) {
@@ -4039,16 +3827,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bdHelpCherryPickTitle => 'Cherry-pick';
 
   @override
-  String get bdHelpCherryPickWord =>
-      'To cherry-pick is to pick only the best cherries — take just what you want.';
+  String get bdHelpCherryPickWord => 'To cherry-pick is to pick only the best cherries — take just what you want.';
 
   @override
-  String get bdHelpCherryPickInGit =>
-      'Copies the change from one commit on another branch onto your current branch as a new commit. Same change, but a new commit (D\') with a different hash.';
+  String get bdHelpCherryPickInGit => 'Copies the change from one commit on another branch onto your current branch as a new commit. Same change, but a new commit (D\') with a different hash.';
 
   @override
-  String get bdHelpCherryPickWhy =>
-      'Handy for pulling one urgent fix from another branch. If you merge that branch later the same change arrives twice and can conflict — merging is still the default.';
+  String get bdHelpCherryPickWhy => 'Handy for pulling one urgent fix from another branch. If you merge that branch later the same change arrives twice and can conflict — merging is still the default.';
 
   @override
   String bdConfirmTypeToContinue(String text) {
@@ -4127,8 +3912,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bdPrReviewComment => 'Comment';
 
   @override
-  String get bdPrReviewOwnPr =>
-      'You can\'t approve or request changes on your own PR, but you can comment.';
+  String get bdPrReviewOwnPr => 'You can\'t approve or request changes on your own PR, but you can comment.';
 
   @override
   String get bdPrReviewSend => 'Send';
@@ -4156,8 +3940,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get bdAssetEmpty =>
-      'No assets. Build outputs uploaded by CI appear here.';
+  String get bdAssetEmpty => 'No assets. Build outputs uploaded by CI appear here.';
 
   @override
   String bdAssetMeta(String size, int count) {
@@ -4193,8 +3976,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get bdAssetDeleteMessage =>
-      'Removes this file from the release page. This can\'t be undone, and download links to it will break.';
+  String get bdAssetDeleteMessage => 'Removes this file from the release page. This can\'t be undone, and download links to it will break.';
 
   @override
   String bdDoneAssetDownloaded(String name) {
@@ -4356,8 +4138,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bdWorktreeRemove => 'Remove';
 
   @override
-  String get bdWorktreeClaudeWarning =>
-      'A Claude Code session may be using this folder. Make sure the session has finished first.';
+  String get bdWorktreeClaudeWarning => 'A Claude Code session may be using this folder. Make sure the session has finished first.';
 
   @override
   String bdWorktreeHeldTitle(String branch) {
@@ -4412,8 +4193,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get bdWorktreeDeleteBranchTitle =>
-      'Remove the worktree and delete the branch?';
+  String get bdWorktreeDeleteBranchTitle => 'Remove the worktree and delete the branch?';
 
   @override
   String bdWorktreeDeleteBranchMessage(String branch, String path) {
@@ -4477,8 +4257,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bdEnvCopyDiagnostics => 'Copy diagnostics';
 
   @override
-  String get bdEnvDiagnosticsCopied =>
-      'Diagnostics copied. Paste them into your report.';
+  String get bdEnvDiagnosticsCopied => 'Diagnostics copied. Paste them into your report.';
 
   @override
   String get bdEnvSearchPath => 'PATH used by the app';
@@ -4575,19 +4354,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bdUpdateCheckFailedTitle => 'Couldn\'t check for updates';
 
   @override
-  String get bdUpdateErrorNetwork =>
-      'Couldn\'t reach the update server. Check your internet connection and try again.';
+  String get bdUpdateErrorNetwork => 'Couldn\'t reach the update server. Check your internet connection and try again.';
 
   @override
-  String get bdUpdateErrorChecksum =>
-      'The downloaded file didn\'t pass verification, so it was not installed. Please try again later.';
+  String get bdUpdateErrorChecksum => 'The downloaded file didn\'t pass verification, so it was not installed. Please try again later.';
 
   @override
   String get bdUpdateErrorInstall => 'Couldn\'t start the installation.';
 
   @override
-  String get bdUpdateErrorGeneric =>
-      'The update server sent an unexpected response. Please try again later.';
+  String get bdUpdateErrorGeneric => 'The update server sent an unexpected response. Please try again later.';
 
   @override
   String get bdUpdateUpToDateTitle => 'You\'re up to date';
@@ -4644,8 +4420,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bdDockNoFolder => 'No project folder is open';
 
   @override
-  String get runStepsNoDevice =>
-      '1. Connect the phone with a USB cable (a charge-only cable won\'t work)\n2. Unlock it, then tap \'Trust This Computer\' on an iPhone or \'Allow USB debugging\' on Android\n3. Press refresh above';
+  String get runStepsNoDevice => '1. Connect the phone with a USB cable (a charge-only cable won\'t work)\n2. Unlock it, then tap \'Trust This Computer\' on an iPhone or \'Allow USB debugging\' on Android\n3. Press refresh above';
 
   @override
   String get runTargetNone => 'No target selected';
@@ -4729,8 +4504,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get menuGoToDefinition => 'Go to Definition';
 
   @override
-  String get symbolSearchHint =>
-      'Go to class, function or method (Ctrl+Shift+O)';
+  String get symbolSearchHint => 'Go to class, function or method (Ctrl+Shift+O)';
 
   @override
   String get symbolSearchLoading => 'Reading declarations…';
@@ -4838,19 +4612,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get updateCheckFailedTitle => 'Couldn\'t check for updates';
 
   @override
-  String get updateErrorNetwork =>
-      'Couldn\'t reach the update server. Check your internet connection and try again.';
+  String get updateErrorNetwork => 'Couldn\'t reach the update server. Check your internet connection and try again.';
 
   @override
-  String get updateErrorChecksum =>
-      'The downloaded file didn\'t pass verification, so it was not installed. Please try again later.';
+  String get updateErrorChecksum => 'The downloaded file didn\'t pass verification, so it was not installed. Please try again later.';
 
   @override
   String get updateErrorInstall => 'Couldn\'t start the installation.';
 
   @override
-  String get updateErrorGeneric =>
-      'The update server sent an unexpected response. Please try again later.';
+  String get updateErrorGeneric => 'The update server sent an unexpected response. Please try again later.';
 
   @override
   String get updateUpToDateTitle => 'You\'re up to date';
@@ -4915,6 +4686,5 @@ class AppLocalizationsEn extends AppLocalizations {
   String get updateBusyTitle => 'Can\'t update right now';
 
   @override
-  String get updateBusyBody =>
-      'A task is in progress. Please try again when it has finished.';
+  String get updateBusyBody => 'A task is in progress. Please try again when it has finished.';
 }

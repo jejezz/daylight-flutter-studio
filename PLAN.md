@@ -53,3 +53,7 @@ Flutter 전용인 부분은 Run 패널(기기·대상·빌드 옵션)과 환경 
 
 서드파티가 자기 플러그인을 넣게 하는 것(Android Studio·VSCode 식)은 Dart/Flutter에 그런 동적 로딩 API가 없어서
 범위가 다르다 — 하려면 LSP처럼 별도 프로세스 + JSON-RPC 프로토콜을 새로 설계해야 하는 훨씬 큰 일이라 지금은 보류.
+
+## 현재 열린 worktree 제거 시 전환
+
+앱의 worktree 제거 메뉴는 지금 열려 있는 worktree에서 비활성이라 사용자가 터미널로 우회하게 된다. 사라진 폴더 감지(`checkRootExists`)로 사후 처리는 되지만, 제거 메뉴에서 "다른 worktree로 전환한 뒤 제거"를 고르게 하면 우회 자체가 없어진다.

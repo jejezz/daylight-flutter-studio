@@ -284,6 +284,25 @@
       }
     }
   },
+  "messageFolderGoneSwitched": "The open folder is gone: {path}\nSwitched to {next}.",
+  "@messageFolderGoneSwitched": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      },
+      "next": {
+        "type": "String"
+      }
+    }
+  },
+  "messageFolderGoneClosed": "The open folder is gone, so the project was closed: {path}\nUse Open Project to pick another folder.",
+  "@messageFolderGoneClosed": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
   "messageFileTooLarge": "Files over 2MB are not opened: {name}",
   "@messageFileTooLarge": {
     "placeholders": {
