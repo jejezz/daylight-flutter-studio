@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -27,26 +28,10 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   registerExtraLicenses();
 
+  Future<void> Function()? showWindow;
   if (_isDesktop) {
     await windowManager.ensureInitialized();
-    // ui-ux.md §5: 최소 크기는 960×600 이하 (1366×768 노트북).
-    const windowSize = Size(1280, 800);
-    WindowPlacement? placement;
-    if (WindowPlacement.enabled) {
-      placement = WindowPlacement(await SharedPreferences.getInstance(), defaultSize: windowSize);
-    }
-    final options = WindowOptions(
-      size: windowSize,
-      minimumSize: const Size(960, 600),
-      center: placement == null,
-      title: AppIdentity.displayName,
-    );
-    await windowManager.waitUntilReadyToShow(options, () async {
-      await placement?.placeInitially();
-      placement?.attach();
-      await windowManager.show();
-      await windowManager.focus();
-    });
+    showWindow = await _prepareWindow();
   }
 
   final settings = await AppSettings.load();
@@ -54,6 +39,47 @@ Future<void> main() async {
   final updates = await UpdateService.create();
   // UpdateScope 는 MaterialApp 위에 둔다 — 정보 창이 이것을 읽어 "업데이트 확인" 단추를 붙인다.
   runApp(UpdateScope(service: updates, child: StudioApp(settings: settings, updates: updates)));
+
+  if (showWindow != null) {
+    final show = showWindow;
+    WidgetsBinding.instance.addPostFrameCallback((_) => unawaited(show()));
+  }
+}
+
+/// 다음 프레임이 그려질 때까지 기다린다.
+Future<void> _nextFrame() {
+  final completer = Completer<void>();
+  WidgetsBinding.instance.addPostFrameCallback((_) => completer.complete());
+  WidgetsBinding.instance.scheduleFrame();
+  return completer.future;
+}
+
+/// ui-ux.md §5: 최소 크기는 960×600 이하 (1366×768 노트북).
+/// 배치가 끝나고 첫 프레임이 그려진 뒤에 show() 를 불러야 깜빡이지 않는다 (window-placement.md §5).
+Future<Future<void> Function()> _prepareWindow() async {
+  const windowSize = Size(1280, 800);
+  WindowPlacement? placement;
+  if (WindowPlacement.enabled) {
+    placement = WindowPlacement(await SharedPreferences.getInstance(), defaultSize: windowSize);
+  }
+  final options = WindowOptions(
+    size: windowSize,
+    minimumSize: const Size(960, 600),
+    center: placement == null,
+    title: AppIdentity.displayName,
+  );
+  final placed = Completer<void>();
+  await windowManager.waitUntilReadyToShow(options, () async {
+    await placement?.placeInitially();
+    placed.complete();
+  });
+  return () async {
+    await placed.future;
+    await _nextFrame();
+    await windowManager.show();
+    await windowManager.focus();
+    placement?.attach();
+  };
 }
 
 class StudioApp extends StatefulWidget {
